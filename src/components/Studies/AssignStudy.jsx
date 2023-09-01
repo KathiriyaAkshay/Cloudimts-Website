@@ -1,0 +1,285 @@
+import {
+  Button,
+  Col,
+  Form,
+  Input,
+  List,
+  Modal,
+  Radio,
+  Row,
+  Select,
+  Spin,
+  Typography,
+} from "antd";
+import React, { useEffect, useState } from "react";
+import {
+  getRadiologistList,
+  getStudyData,
+  postAssignStudy,
+} from "../../apis/studiesApi";
+import UploadImage from "../UploadImage";
+import { omit } from "lodash";
+import NotificationMessage from "../NotificationMessage";
+
+const AssignStudy = ({
+  isAssignModalOpen,
+  setIsAssignModalOpen,
+  studyID,
+  setStudyID,
+}) => {
+  const [modalData, setModalData] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [options, setOptions] = useState([]);
+  const [form] = Form.useForm();
+
+  const handleSubmit = (values) => {
+    const payloadObj = omit(values, ["radiologist", "url"]);
+    const modifiedPayload = {
+      ...payloadObj,
+      id: studyID,
+      assign_user: {
+        user: values.radiologist,
+      },
+      study_data: {
+        images: ["https://www.google.com", "https://www.google.com"],
+      },
+    };
+    console.log(modifiedPayload);
+    postAssignStudy(modifiedPayload)
+      .then((res) => {
+        NotificationMessage("success", "Study Assigned Successfully");
+        setIsAssignModalOpen(false);
+        setStudyID(null);
+        form.resetFields();
+      })
+      .catch((err) => console.log(err));
+  };
+
+  useEffect(() => {
+    if (studyID && isAssignModalOpen) {
+      retrieveStudyData();
+      retrieveRadiologistData();
+    }
+  }, [studyID]);
+
+  const retrieveRadiologistData = () => {
+    getRadiologistList({
+      role_id: 2,
+    })
+      .then((res) => {
+        const resData = res.data.data.map((data) => ({
+          label: data.name,
+          value: data.id,
+        }));
+        setOptions(resData);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const retrieveStudyData = () => {
+    setIsLoading(true);
+    getStudyData({ id: studyID })
+      .then((res) => {
+        const resData = res.data.data.information;
+        const modifiedData = [
+          {
+            name: "Patient's id",
+            value: resData.study__study_metadata.PatientMainDicomTags.PatientID,
+          },
+          {
+            name: "Referring Physician Name",
+            value:
+              resData.study__study_metadata.MainDicomTags
+                ?.ReferringPhysicianName,
+          },
+          {
+            name: "Patient's Name",
+            value:
+              resData.study__study_metadata.PatientMainDicomTags.PatientName,
+          },
+          {
+            name: "Performing Physician Name",
+            value: "",
+          },
+          {
+            name: "Accession Number",
+            value: resData.study__study_metadata.MainDicomTags.AccessionNumber,
+          },
+          {
+            name: "Modality",
+            value: resData.series_metadata.MainDicomTags.Modality,
+          },
+          {
+            name: "Gender",
+            value:
+              resData.study__study_metadata.PatientMainDicomTags?.PatientSex,
+          },
+          {
+            name: "Count",
+            value: "",
+          },
+          {
+            name: "Date of birth",
+            value:
+              resData.study__study_metadata.PatientMainDicomTags
+                ?.PatientBirthDate,
+          },
+          {
+            name: "Study Description",
+            value: resData.study_description,
+          },
+          {
+            name: "Age Group",
+            value: "",
+          },
+          {
+            name: "Patient's comments",
+            value: "",
+          },
+          {
+            name: "UID",
+            value: resData.study__study_metadata.MainDicomTags.StudyInstanceUID,
+          },
+        ];
+        setModalData(modifiedData);
+      })
+      .catch((err) => console.log(err));
+    setIsLoading(false);
+  };
+
+  return (
+    <Modal
+      title="Clinical History"
+      open={isAssignModalOpen}
+      onOk={() => {
+        form.submit();
+      }}
+      onCancel={() => {
+        setStudyID(null);
+        setIsAssignModalOpen(false);
+        form.resetFields();
+      }}
+      width={1000}
+      centered
+    >
+      <Spin spinning={isLoading}>
+        <div
+          style={{
+            background: "#e4e4e4",
+            fontWeight: "600",
+            padding: "10px 24px",
+            borderRadius: "0px",
+            margin: "0 -24px",
+          }}
+        >
+          Patient Info
+        </div>
+        <List
+          style={{ marginTop: "8px" }}
+          grid={{
+            gutter: 5,
+            column: 2,
+          }}
+          className="queue-status-list"
+          dataSource={modalData}
+          renderItem={(item) => (
+            <List.Item className="queue-number-list">
+              <Typography
+                style={{ display: "flex", gap: "4px", fontWeight: "600" }}
+              >
+                {item.name}:
+                <Typography style={{ fontWeight: "400" }}>
+                  {item.value}
+                </Typography>
+              </Typography>
+            </List.Item>
+          )}
+        />
+        <div>
+          <Form
+            labelCol={{
+              span: 24,
+            }}
+            wrapperCol={{
+              span: 24,
+            }}
+            form={form}
+            onFinish={handleSubmit}
+            className="mt"
+          >
+            <Row gutter={30}>
+              <Col lg={12} md={12} sm={12}>
+                <Form.Item
+                  label="Choose Radiologist"
+                  name="radiologist"
+                  // className="category-select"
+                  rules={[
+                    {
+                      required: false,
+                      message: "Please select radiologist",
+                    },
+                  ]}
+                >
+                  <Select
+                    placeholder="Select Radiologist"
+                    options={options}
+                    mode="multiple"
+                    showSearch
+                    filterSort={(optionA, optionB) =>
+                      (optionA?.label ?? "")
+                        .toLowerCase()
+                        .localeCompare((optionB?.label ?? "").toLowerCase())
+                    }
+                    // onChange={appliedOnChangeHandler}
+                  />
+                </Form.Item>
+              </Col>
+              <Col xs={24} sm={12} md={12} lg={12}>
+                <Form.Item
+                  name="study_description"
+                  label="Modality Study Description"
+                  rules={[
+                    {
+                      required: false,
+                      message: "Please enter Modality Study Description",
+                    },
+                  ]}
+                >
+                  <Input placeholder="Enter Modality Study Description" />
+                </Form.Item>
+              </Col>
+              <Col xs={24} sm={12} md={12} lg={12}>
+                <Form.Item
+                  name="study_history"
+                  label="Clinical History"
+                  rules={[
+                    {
+                      required: true,
+                      whitespace: true,
+                      message: "Please enter clinical history",
+                    },
+                  ]}
+                >
+                  <Input.TextArea placeholder="Enter Clinical History" />
+                </Form.Item>
+              </Col>
+              <Col xs={24} sm={12} md={12} lg={12}>
+                <Form.Item name="urgent_case" label="Report Required">
+                  <Radio.Group>
+                    <Radio value={false}>Regular</Radio>
+                    <Radio value={true}>Urgent</Radio>
+                  </Radio.Group>
+                </Form.Item>
+              </Col>
+              <Col xs={24} sm={12} md={12} lg={12}>
+                <UploadImage />
+              </Col>
+            </Row>
+          </Form>
+        </div>
+      </Spin>
+    </Modal>
+  );
+};
+
+export default AssignStudy;

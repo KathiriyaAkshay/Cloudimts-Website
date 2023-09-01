@@ -1,0 +1,47 @@
+{
+  "name": "merchant-account",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint src --ext js,jsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview",
+    "serve": "vite --port 3000"
+  },
+  "dependencies": {
+    "@ant-design/icons": "^5.0.1",
+    "antd": "^5.5.0",
+    "aws-sdk": "^2.1448.0",
+    "axios": "^1.4.0",
+    "cornerstone-core": "^2.6.1",
+    "dayjs": "^1.11.7",
+    "dicomweb-client": "^0.10.3",
+    "dwv": "^0.32.1",
+    "emoji-picker-react": "^4.4.10",
+    "file-saver": "^2.0.5",
+    "lodash": "^4.17.21",
+    "moment": "^2.29.4",
+    "orthanc-client": "^0.10.5",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-icons": "^4.8.0",
+    "react-input-mask": "^2.0.4",
+    "react-router-dom": "^6.11.1",
+    "react-slick": "^0.29.0",
+    "sass": "^1.62.1",
+    "slick-carousel": "^1.8.1",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.28",
+    "@types/react-dom": "^18.0.11",
+    "@vitejs/plugin-react": "^4.0.0",
+    "eslint": "^8.38.0",
+    "eslint-plugin-react": "^7.32.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.3.4",
+    "vite": "^4.3.2"
+  }
+}
