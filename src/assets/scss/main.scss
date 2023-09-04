@@ -230,7 +230,7 @@
   color: #ffffff;
   padding: 12px;
   border-radius: 10px;
-  background: #99d3df;
+  background: #1a2c3e;
   width: 70%;
   float: right;
   margin-bottom: 16px;
@@ -726,6 +726,7 @@
   height: calc(100vh - 65px);
   overflow-y: auto;
   overflow-x: hidden;
+  border-right: 1px solid white;
 }
 .chat-data-div {
   width: -webkit-fill-available;
@@ -735,12 +736,12 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  cursor: pointer;
 
   img {
     height: 50px;
     width: 50px;
   }
-  
 }
 
 .chat-module-width {
@@ -748,10 +749,21 @@
   background-color: #1a2c3e;
 }
 
-.modal-chat-position{
+.modal-chat-position {
   left: 16.5%;
 }
 .chat-list-name {
   font-weight: 600;
   color: white;
+}
+.empty-chat-div {
+  background-color: #1a2c3e;
+  padding-top: 300px;
+  height: calc(100vh - 65px);
+  .chat-empty {
+    .ant-empty-description {
+      font-weight: 600;
+      color: white;
+    }
+  }
 }

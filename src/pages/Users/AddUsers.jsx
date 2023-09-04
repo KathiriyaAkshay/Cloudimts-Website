@@ -21,7 +21,7 @@ import API from "../../apis/getApi";
 import NotificationMessage from "../../components/NotificationMessage";
 import dayjs from "dayjs";
 import UploadImage from "../../components/UploadImage";
-// import AWS from "aws-sdk";
+import { uploadFile } from "react-s3";
 const S3_BUCKET = import.meta.env.VITE_APP_AMAZON_S3_BUCKET_NAME;
 const accessKeyId = import.meta.env.VITE_APP_AMAZON_ACCESS_KEY;
 const secretAccessKey = import.meta.env.VITE_APP_AMAZON_SECRET_KEY;
@@ -110,8 +110,8 @@ const AddUsers = () => {
   const convertToInitialObject = (data) => {
     let initialObject = {};
     for (let i = 1; i <= Object.keys(data).length; i++) {
-      initialObject[`${i}_viewAssign`] = data[i].viewAssign;
-      initialObject[`${i}_viewAll`] = data[i].viewAll;
+      initialObject[`${i}_viewAssign`] = data[i]?.viewAssign;
+      initialObject[`${i}_viewAll`] = data[i]?.viewAll;
     }
     return initialObject;
   };
@@ -241,42 +241,16 @@ const AddUsers = () => {
     } else if (currentStep === 3) {
       console.log(values);
 
-      // S3 Credentials
-      AWS.config.update({
+      const config = {
+        bucketName: S3_BUCKET,
+        region: "ap-south-1",
         accessKeyId: accessKeyId,
         secretAccessKey: secretAccessKey,
-      });
-      const s3 = new AWS.S3({
-        params: { Bucket: S3_BUCKET },
-        region: "us-east",
-      });
-
-      // Files Parameters
-
-      const params = {
-        Bucket: S3_BUCKET,
-        Key: "notfound.png",
-        Body: value.url,
       };
 
-      // Uploading file to s3
-
-      const upload = s3
-        .putObject(params)
-        .on("httpUploadProgress", (evt) => {
-          // File uploading progress
-          console.log(
-            "Uploading " + parseInt((evt.loaded * 100) / evt.total) + "%"
-          );
-        })
-        .promise();
-
-      await upload.then((err, data) => {
-        console.log(err);
-        // Fille successfully uploaded
-        // alert("File uploaded successfully.");
-        console.log(data);
-      });
+      uploadFile(values.url.file, config)
+        .then((data) => console.log(data))
+        .catch((err) => console.error(err));
     } else if (currentStep === 4) {
       setIsLoading(true);
       const modalityData = { ...convertModalityToObject(values) };

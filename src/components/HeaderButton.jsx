@@ -3,11 +3,13 @@ import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserRoleContext } from "../hooks/usersRolesContext";
 import { UserEmailContext } from "../hooks/userEmailContext";
+import { filterDataContext } from "../hooks/filterDataContext";
 
 const HeaderButton = ({ setIsModalOpen }) => {
   const navigate = useNavigate();
   const { setIsRoleModalOpen } = useContext(UserRoleContext);
   const { setIsEmailModalOpen } = useContext(UserEmailContext);
+  const { setIsFilterModalOpen, setIsUserFilterModalOpen } = useContext(filterDataContext);
   return (
     <div>
       {window.location.pathname === "/iod-settings" && (
@@ -21,6 +23,9 @@ const HeaderButton = ({ setIsModalOpen }) => {
       )}
       {window.location.pathname === "/institutions" && (
         <div className="iod-setting-div">
+          <Button type="primary" onClick={() => setIsFilterModalOpen(true)}>
+            Filter
+          </Button>
           <Button type="primary" onClick={() => navigate("/institutions-logs")}>
             Institution Logs
           </Button>
@@ -31,6 +36,12 @@ const HeaderButton = ({ setIsModalOpen }) => {
       )}
       {window.location.pathname === "/users" && (
         <div className="iod-setting-div">
+          <Button type="primary" onClick={() => setIsUserFilterModalOpen(true)}>
+            Filter
+          </Button>
+          <Button type="primary" onClick={() => navigate("/users-logs")}>
+            Users Logs
+          </Button>
           <Button type="primary" onClick={() => navigate("/users/add")}>
             Add Users
           </Button>
@@ -47,6 +58,13 @@ const HeaderButton = ({ setIsModalOpen }) => {
         <div className="iod-setting-div">
           <Button type="primary" onClick={() => setIsEmailModalOpen(true)}>
             Add Email
+          </Button>
+        </div>
+      )}
+      {window.location.pathname === "/studies" && (
+        <div className="iod-setting-div">
+          <Button type="primary" onClick={() => navigate("/study-logs")}>
+            Study Logs
           </Button>
         </div>
       )}

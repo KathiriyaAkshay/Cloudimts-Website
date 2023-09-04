@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 // import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -11,6 +11,12 @@ import { Spin } from "antd";
 import { chatSettingPopUp, getElapsedTime } from "../../helpers/utils";
 import SettingPopup from "./SettingPopup";
 import axios from "axios";
+import {
+  deleteChatMessage,
+  getInitialChatMessages,
+  sendChatMessage,
+} from "../../apis/studiesApi";
+import { RoomDataContext } from "../../hooks/roomDataContext";
 
 const ChatMessanger = (props) => {
   const {
@@ -24,7 +30,8 @@ const ChatMessanger = (props) => {
     orderId,
     restaurantName,
     messages,
-    setMessages, isChatModule
+    setMessages,
+    isChatModule,
   } = props || {};
 
   const navigate = useNavigate();
@@ -70,7 +77,9 @@ const ChatMessanger = (props) => {
     activeIndex: 0,
     chatConnected: false,
   });
-  const roomName = `${orderId}_${userId}`;
+  const user = localStorage.getItem("userID");
+  const { roomID, setRoomID } = useContext(RoomDataContext);
+  const roomName = `${orderId}/${user}/${userId}`;
   //   originated === "profile"
   //     ? ownProfileData?.referral + "_" + userDetail?.referral
   //     : ownProfileData?.referral + "_" + userDetail?.referral_code;
@@ -128,19 +137,25 @@ const ChatMessanger = (props) => {
 
   useEffect(() => {
     if (orderId) {
-      handleAllChatHistory(true);
-      const ws = new WebSocket(
-        `wss://demo.nordinarychicken.com/api/ws/secondhandchat/${roomName}/${userId}/`
-      );
+      // handleAllChatHistory(true);
+      const ws = new WebSocket(`ws://127.0.0.1:8000/ws/personal/${roomName}/`);
 
       ws.onopen = () => {
         console.log("WebSocket connection opened");
       };
 
       ws.onmessage = (event) => {
-        console.log("Received message:", event.data);
-        handleAllChatHistory(false);
-        // getOfferStatusHandler(productData.id, profile, setOffer);
+        console.log("Received message:", JSON.parse(event.data).id);
+        (JSON.parse(event.data).id != null ||
+          JSON.parse(event.data).id != undefined) &&
+          localStorage.setItem("roomID", JSON.parse(event.data).id);
+        setRoomID((prev) =>
+          JSON.parse(event.data).id != null ||
+          JSON.parse(event.data).id != undefined
+            ? JSON.parse(event.data).id
+            : prev
+        );
+        handleAllChatHistory(true);
       };
 
       ws.onclose = () => {
@@ -155,167 +170,72 @@ const ChatMessanger = (props) => {
     }
   }, [orderId]);
 
-  // const handleWebSocket = (type, data) => {
-  //   let ws;
-  //     if (data?.length) {
-  //       ws = new WebSocket(
-  //         `wss://demo.nordinarychicken.com/api/ws/` + 3_4 + `/5` + "/"
-  //       );
-  //     } else {
-  //       ws = new WebSocket(
-  //         `wss://demo.nordinarychicken.com/api/ws/` + 3_4 + `/5` + "/"
-  //       );
-  //     }
-  //   ws.onopen = () => {
-  //     console.log("Connection opened");
-  //     setGallery({
-  //       ...gallery,
-  //       chatConnected: true,
-  //     });
-  //   };
-
-  //   // Listening on ws new added messages
-  //   ws.onmessage = (event) => {
-  //     console.log("event", event);
-  //     const data = JSON.parse(event.data);
-  //     console.log("data", data);
-  //     setMessages((_messages) => [..._messages, data]);
-  //   };
-  // };
-
-  const handleAllChatHistory = async (webSocketConnect) => {
+  const handleAllChatHistory = async (webSocketConnect, roomData = {}) => {
     webSocketConnect && setLoading(true);
-    const headers = {
-      Authorization:
-        "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjk0MDg2OTcyLCJpYXQiOjE2OTE0OTQ5NzIsImp0aSI6ImJiYmQzMzA4Nzk1YzQ3ZGFiODJlMzY5MDUwMWYxMDk0IiwidXNlcl9pZCI6NX0.V7IKMP8RBC4WnXRfpKg2Gy4v4kbemCOc3rjiQS4MJi0",
-    };
-    await fetch(
-      `https://demo.nordinarychicken.com/api/chat/shl_messages/?room_name=${roomName}&merchant_id=10`,
-      { headers }
-    )
-      .then((res) => res.json())
+    console.log(roomID, roomData);
+    const room_id = localStorage.getItem("roomID");
+    getInitialChatMessages({
+      room_id,
+    })
       .then((data) => {
-        const resData = data.data.find(
-          (item) => item.date == moment().format("YYYYMMDD")
-        ).messages;
-        setMessages(resData);
-        setLastSeen(data?.last_seen);
+        // setMessages(data.data?.chat);
+        groupMessagesByDate(data.data?.chat);
+        // setLastSeen(data?.last_seen);
         // setChatDetails({
         //   ...intialData,
         //   singleChat: res?.data?.data[0]?.room,
         // });
         setLoading(false);
+        console.log(data);
       })
-      .catch((err) => setLoading(false));
+      .catch((err) => console.log(err));
   };
 
-  // const sendMessage = () => {
-  //   const uni_key = moment.utc(`${new Date().toJSON()}`) + ownProfileData?.id;
-  //   setForwardMessage({ quoted: false });
-  //   if (chatData) {
-  //     ws.current.send(
-  //       JSON.stringify({
-  //         uni_key: uni_key,
-  //         user: ownProfileData?.id,
-  //         user2:
-  //           chatDetails?.chatType === "group"
-  //             ? ""
-  //             : isHousemateChat
-  //             ? userDetail?.co_tenant
-  //             : userDetail?.id,
-  //         message: chatData,
-  //         room:
-  //           chatDetails?.chatType === "group"
-  //             ? roomId
-  //             : messages?.length
-  //             ? messages[0]?.room
-  //             : roomName,
-  //         is_group: chatDetails?.chatType === "group" ? true : false,
-  //         is_file: imageStore?.length ? true : false,
-  //         is_doc: fileStore?.length ? true : false,
-  //         quoted_msg: forwardMessage?.quoted
-  //           ? forwardMessage?.quotedMessage?.message
-  //           : false,
-  //         quoted_id: forwardMessage?.quoted
-  //           ? forwardMessage?.quotedMessage?.uni_key
-  //           : false,
-  //         chat_type: originated === "profile" ? "user" : chatDetails?.chatType,
-  //       })
-  //     );
-  //     setChatData("");
-  //     setForwardMessage({ ...forwardMessage, quoted: false });
-  //   }
-  //   let formData = new FormData();
-  //   if (imageStore?.length || fileStore?.length) {
-  //     formData.append("uni_key", uni_key);
-  //     imageStore?.length &&
-  //       imageStore?.forEach((image) => {
-  //         formData.append(`media_file`, image);
-  //       });
-  //     fileStore?.length &&
-  //       fileStore?.forEach((docs) => {
-  //         formData.append(`media_file`, docs);
-  //       });
+  function groupMessagesByDate(data) {
+    const groupedMessages = data?.reduce((acc, message) => {
+      const timestamp = message?.timestamp.split(" ")[0]; // Extract date part
+      if (!acc[timestamp]) {
+        acc[timestamp] = [];
+      }
+      acc[timestamp].push(message);
+      return acc;
+    }, {});
 
-  //     if (chatDetails?.chatType === "group") {
-  //       formData.append("group_message", true);
-  //       formData.append("group_id", chatDataInfo?.group_id);
-  //     } else {
-  //       formData.append("chat_message", true);
-  //       formData.append("room_name", chatDataInfo?.room);
-  //     }
-  //     // chatDetails?.chatType === "group"
-  //     //   ? formData.append("group_message", true)
-  //     //   formData.append("room_name", chatDataInfo?.room)
-  //     //   : formData.append("chat_message", true)
-  //     //   formData.append("room_name", chatDataInfo?.room)
-  //     //   ;
-  //     sendMediaOnMessage(formData)
-  //       .then((res) => {
-  //         const intialData = chatDetails;
-  //         setImageStore([]);
-  //         setFileStore([]);
-  //         // getChatHistory(roomName)
-  //         //   .then((res) => {
-  //         //     setMessages(res?.data?.data);
-  //         //     setLastSeen(res?.data?.last_seen);
-  //         //     setChatDetails({
-  //         //       ...intialData,
-  //         //       singleChat: res?.data?.data[0]?.room,
-  //         //     });
-  //         //   })
-  //         // setTimeout(() => {
-  //         //   handleAllChatHistory(false);
-  //         // }, [1000]);
-  //       })
-  //       .catch((err) => {
-  //         setImageStore([]);
-  //         setFileStore([]);
-  //       });
-  //   }
-  // };
+    const formattedData = Object.keys(groupedMessages).map((date) => ({
+      date,
+      messages: groupedMessages[date],
+    }));
 
+    setMessages(formattedData);
+  }
+
+  console.log(messages);
   const sendMessage = async () => {
     const uni_key = moment.utc(`${new Date().toJSON()}`) + "4";
     // setForwardMessage({ quoted: false });
     if (chatData) {
-      ws1.send(
-        JSON.stringify({
-          message: chatData,
-          user: userId,
-          room_name: roomName,
-          uni_key: moment.utc(`${new Date().toJSON()}`) + 5,
-          quoted_msg: forwardMessage?.quoted
-            ? forwardMessage?.quotedMessage?.message
-            : false,
-          quoted_id: forwardMessage?.quoted
-            ? Number(forwardMessage?.quotedMessage?.uni_key)
-            : false,
-          is_quoted: forwardMessage?.quoted ? true : false,
-          is_file: imageStore?.length ? true : false,
-          is_doc: fileStore?.length ? true : false,
-        })
-      );
+      const modifiedObj = {
+        content: chatData,
+        send_from_id: Number(user),
+        room_name: orderId,
+        media_url: "None",
+        media: false,
+        room_id: roomID,
+        // uni_key: moment.utc(`${new Date().toJSON()}`) + 5,
+        // quoted_msg: forwardMessage?.quoted
+        //   ? forwardMessage?.quotedMessage?.message
+        //   : false,
+        // quoted_id: forwardMessage?.quoted
+        //   ? Number(forwardMessage?.quotedMessage?.uni_key)
+        //   : false,
+        // is_quoted: forwardMessage?.quoted ? true : false,
+        // is_file: imageStore?.length ? true : false,
+        // is_doc: fileStore?.length ? true : false,
+      };
+      sendChatMessage(modifiedObj)
+        .then((res) => console.log(res))
+        .catch((err) => console.log(err));
+      // ws1.send(JSON.stringify(modifiedObj));
       setChatData("");
       setForwardMessage({ ...forwardMessage, quoted: false });
     }
@@ -470,17 +390,17 @@ const ChatMessanger = (props) => {
 
   const handleSettingPopup = async (type, messageId, messageData) => {
     if (type === "Remove") {
-      await axios
-        .delete(
-          `https://demo.nordinarychicken.com/api/chat/shl_messages/?uni_key=${messageId}`,
-          {
-            headers: {
-              Authorization:
-                "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjk0MDg2OTcyLCJpYXQiOjE2OTE0OTQ5NzIsImp0aSI6ImJiYmQzMzA4Nzk1YzQ3ZGFiODJlMzY5MDUwMWYxMDk0IiwidXNlcl9pZCI6NX0.V7IKMP8RBC4WnXRfpKg2Gy4v4kbemCOc3rjiQS4MJi0",
-            },
-          }
+      deleteChatMessage({ chat_id: messageId, room_name: orderId })
+        .then((res) =>
+          setMessages((prev) =>
+            prev.map((data) => ({
+              ...data,
+              messages: data.messages.filter(
+                (message) => message.id != messageId
+              ),
+            }))
+          )
         )
-        .then((res) => handleAllChatHistory(false))
         .catch((err) => console.log(err));
     } else if (type === "Forward") {
       setForwardMessage({
@@ -491,7 +411,7 @@ const ChatMessanger = (props) => {
     } else if (type === "Quote") {
       setForwardMessage({ quotedMessage: messageData, quoted: true });
     } else if (type === "Copy") {
-      setChatData(messageData?.message);
+      setChatData(messageData?.content);
     }
     const add = [...description];
     const removed = add.filter((item) => item !== messageId);
@@ -600,7 +520,11 @@ const ChatMessanger = (props) => {
         aria-modal="true"
         style={{ display: "block", background: "#1a2c3e" }}
       >
-        <div className={`modal-dialog-centered chatfilewrap  ${isChatModule && "chat-module-width"}`}>
+        <div
+          className={`modal-dialog-centered chatfilewrap  ${
+            isChatModule && "chat-module-width"
+          }`}
+        >
           <ChatHeader
             imgIcon={whiteback}
             background="#6D7993"
@@ -640,7 +564,11 @@ const ChatMessanger = (props) => {
             restaurantName={restaurantName}
             isChatModule={isChatModule}
           />
-          <div className={`modal-content modal-chat-issue ${isChatModule && "modal-chat-position"}`}>
+          <div
+            className={`modal-content modal-chat-issue ${
+              isChatModule && "modal-chat-position"
+            }`}
+          >
             <SingleChatMessanger
               emojiClick={emojiClick}
               messages={messages}
@@ -701,32 +629,6 @@ const ChatMessanger = (props) => {
                 handleMenu={handleMenu}
               />
             )}
-            {/*
-            {chatDetails?.detailPopUp && (
-              <ChatDetails
-                chatType={chatDetails?.chatType}
-                userDetail={userDetail}
-                chatDetails={chatDetails}
-                handleAllChatHistory={handleAllChatHistory}
-                handleChatDetailsPopUp={handleChatDetailsPopUp}
-              />
-            )}
-            {forwardMessage?.popUp && (
-              <ForwardMsgPopUp
-                handleMangePopup={() => setForwardMessage({ popUp: false })}
-                handleForwardMessage={handleForwardMessage}
-                action={"SEND MESSAGE"}
-              />
-            )}
-            {gallery?.popUp && (
-              <FileGalleryPopUp
-                setGallery={setGallery}
-                activeIndex={gallery?.activeIndex}
-                singleData={gallery?.data}
-                gallery={gallery}
-                galleryData={Array.isArray(gallery?.data) && gallery?.data}
-              />
-            )} */}
           </div>
         </div>
       </div>

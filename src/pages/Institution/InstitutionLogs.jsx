@@ -12,7 +12,7 @@ const InstitutionLogs = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [institutionData, setInstitutionData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [pagi, setPagi] = useState();
+  const [pagi, setPagi] = useState({page: 1});
   const [totalPages, setTotalPages] = useState(0);
   const navigate = useNavigate();
   const token = localStorage.getItem("token");

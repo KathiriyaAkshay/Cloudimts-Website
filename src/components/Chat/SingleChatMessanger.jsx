@@ -12,7 +12,7 @@ const SingleChatMessanger = (props) => {
     classNames,
     emojiClick,
     messages,
-    ownProfileDataId,
+    // ownProfileDataId,
     handleSettingPopup,
     description,
     chatSettingData,
@@ -24,66 +24,86 @@ const SingleChatMessanger = (props) => {
 
   const toDate = moment(new Date()).format("DD-MMM-YYYY")
 
+  const ownProfileDataId = localStorage.getItem("userID")
+
   return (
     <div
       className={`userchat-main ${classNames ? classNames : ""} ${chatfile && "chatfile-style"
         }`}
       style={emojiClick ? { height: "100vh", marginBottom: "10px" } : {}}
     >
-      <div className="userchat-date">
+      {/* <div className="userchat-date">
         <span>{toDate}</span>
-      </div>
-      {messages &&
-        messages?.map((item, index) => {
-
-          return item?.user === ownProfileDataId ? (
-            <>
-              <div
-                className={chatSearchedResults &&
-                  item?.uni_key && item?.uni_key ==
-                  chatSearchedResults[searchIndex - 1]?.uni_key ? "userchat-container black-color" : "userchat-container color-test"}
-              >
-                <MessageComp
-                  item={item}
-                  description={description}
-                  handleSettingPopup={handleSettingPopup}
-                  chatSettingData={chatSettingData}
-                  ownMessages={true}
-                  tickImage={white_double}
-                  colonImage={Col}
-                  groupRecieve={false}
-                  searchedMessages={searchedMessages}
-                  chatSearchedResults={chatSearchedResults}
-                  handleGalleryPopUp={handleGalleryPopUp}
-                  searchIndex={searchIndex}
-                />
-              </div>
-            </>
-          ) : (
-            <>
-              <div
-                className={chatSearchedResults &&
-                  item?.uni_key && item?.uni_key ==
-                  chatSearchedResults[searchIndex - 1]?.uni_key ? "userchat-container userchat-reply black-color" : "userchat-container userchat-reply color-test"}
-              >
-                <MessageComp
-                  item={item}
-                  description={description}
-                  handleSettingPopup={handleSettingPopup}
-                  chatSettingData={chatSettingData}
-                  ownMessages={false}
-                  tickImage={greycheck}
-                  colonImage={ColBlack}
-                  groupRecieve={false}
-                  searchedMessages={searchedMessages}
-                  chatSearchedResults={chatSearchedResults}
-                  handleGalleryPopUp={handleGalleryPopUp}
-                  searchIndex={searchIndex}
-                />
-              </div>
-            </>
-          );
-        })}
+      </div> */}
+       {messages &&
+        messages?.map((messageData) => (
+          <div
+           style={{display: "flex", flexDirection: "column", position: "relative", marginBottom: emojiClick && "10px"}} className={`${chatfile && "chatfile-style"}`}
+          >
+            <div className="userchat-date">
+              <span>{moment(messageData.date).format("DD-MMM-YYYY")}</span>
+            </div>
+            {messageData?.messages?.map((item, index) => {
+              return item?.username.id == ownProfileDataId ? (
+                <div style={{display: "flex", justifyContent: "flex-end"}}>
+                  <div
+                    className={
+                      chatSearchedResults &&
+                      item?.uni_key &&
+                      item?.uni_key ==
+                        chatSearchedResults[searchIndex - 1]?.uni_key
+                        ? "userchat-container black-color"
+                        : "userchat-container color-test"
+                    }
+                  >
+                    <MessageComp
+                      item={item}
+                      description={description}
+                      handleSettingPopup={handleSettingPopup}
+                      chatSettingData={chatSettingData}
+                      ownMessages={true}
+                      tickImage={white_double}
+                      colonImage={Col}
+                      groupRecieve={false}
+                      searchedMessages={searchedMessages}
+                      chatSearchedResults={chatSearchedResults}
+                      handleGalleryPopUp={handleGalleryPopUp}
+                      searchIndex={searchIndex}
+                    />
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <div
+                    className={
+                      chatSearchedResults &&
+                      item?.uni_key &&
+                      item?.uni_key ==
+                        chatSearchedResults[searchIndex - 1]?.uni_key
+                        ? "userchat-container userchat-reply black-color"
+                        : "userchat-container userchat-reply color-test"
+                    }
+                  >
+                    <MessageComp
+                      item={item}
+                      description={description}
+                      handleSettingPopup={handleSettingPopup}
+                      chatSettingData={chatSettingData}
+                      ownMessages={false}
+                      tickImage={greycheck}
+                      colonImage={ColBlack}
+                      groupRecieve={false}
+                      searchedMessages={searchedMessages}
+                      chatSearchedResults={chatSearchedResults}
+                      handleGalleryPopUp={handleGalleryPopUp}
+                      searchIndex={searchIndex}
+                    />
+                  </div>
+                </>
+              );
+            })}
+          </div>
+        ))}
         {/* {messages &&
         messages?.map((item, index) => 
 

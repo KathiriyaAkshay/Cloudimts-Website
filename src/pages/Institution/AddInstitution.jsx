@@ -19,6 +19,11 @@ import TableWithFilter from "../../components/TableWithFilter";
 import API from "../../apis/getApi";
 import NotificationMessage from "../../components/NotificationMessage";
 import dayjs from "dayjs";
+import {
+  getRadiologistList,
+  updateBlockUsers,
+  updateInHouseUser,
+} from "../../apis/studiesApi";
 
 const { Step } = Steps;
 
@@ -31,6 +36,7 @@ const AddInstitution = () => {
   const token = localStorage.getItem("token");
   const [payload, setPayload] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [radiologistOptions, setRadiologistOptions] = useState([]);
   const { id } = useParams();
 
   useEffect(() => {
@@ -42,8 +48,10 @@ const AddInstitution = () => {
     if (id) {
       retrieveInstitutionData();
       retrieveModalityData();
+      retrieveRadiologistData();
     } else {
       retrieveModalityData();
+      retrieveRadiologistData();
     }
   }, []);
 
@@ -70,6 +78,8 @@ const AddInstitution = () => {
           ...res.data.data,
           ...modalityData,
           contract_valid_date: dayjs(res.data.data.contract_valid_date),
+          radiologist: res.data?.blocked_user?.map((data) => data.id),
+          house_radiologist: res.data.data?.house_radiologist?.data,
         };
         form.setFieldsValue(formData);
       })
@@ -88,6 +98,16 @@ const AddInstitution = () => {
         communication_charge: 0,
       }));
       setTableData(resData);
+    });
+  };
+
+  const retrieveRadiologistData = () => {
+    getRadiologistList({ role_id: 2 }).then((res) => {
+      const resData = res.data.data.map((data) => ({
+        label: data.name,
+        value: data.id,
+      }));
+      setRadiologistOptions(resData);
     });
   };
 
@@ -154,20 +174,48 @@ const AddInstitution = () => {
       }
       handleNextStep();
     } else if (currentStep === 2) {
+      console.log(values);
       setPayload((prev) => ({
         ...prev,
-        blocked_user: { data: [] },
-        house_radiologist: { data: [] },
+        blocked_user: { data: values.radiologist },
       }));
+      if (id) {
+        updateBlockUsers({
+          id: id,
+          blocked_user: {
+            data: values.radiologist,
+          },
+        })
+          .then((res) => console.log(res))
+          .catch((err) => console.log(err));
+      }
       handleNextStep();
     } else if (currentStep === 3) {
+      setPayload((prev) => ({
+        ...prev,
+        house_radiologist: { data: values.house_radiologist },
+      }));
       if (id) {
-        navigate("/institutions");
+        updateInHouseUser({
+          id: id,
+          in_house_radiologist: {
+            data: values.house_radiologist,
+          },
+        })
+          .then((res) => {
+            NotificationMessage("success", "Institute Updated Successfully");
+            navigate("/institutions");
+          })
+          .catch((err) => console.log(err));
       } else {
         setIsLoading(true);
-        await API.post("/institute/v1/institute-create", payload, {
-          headers: { Authorization: `Bearer ${token}` },
-        })
+        await API.post(
+          "/institute/v1/institute-create",
+          { ...payload, house_radiologist: { data: values.house_radiologist } },
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        )
           .then((res) => {
             NotificationMessage("success", "Institution Created Successfully");
             form.resetFields();
@@ -278,13 +326,6 @@ const AddInstitution = () => {
       report_option: "dataSet",
       report_option_value: "",
       value_field: "input",
-    },
-  ];
-
-  const institutionOptions = [
-    {
-      label: "Test",
-      value: "test",
     },
   ];
 
@@ -638,7 +679,7 @@ const AddInstitution = () => {
                   >
                     <Select
                       placeholder="Select Radiologist"
-                      options={institutionOptions}
+                      options={radiologistOptions}
                       showSearch
                       mode="multiple"
                       filterSort={(optionA, optionB) =>
@@ -680,7 +721,7 @@ const AddInstitution = () => {
                 <Col lg={12} md={12} sm={12}>
                   <Form.Item
                     label="Choose Radiologist"
-                    name="radiologist"
+                    name="house_radiologist"
                     className="category-select"
                     rules={[
                       {
@@ -691,7 +732,7 @@ const AddInstitution = () => {
                   >
                     <Select
                       placeholder="Select Radiologist"
-                      options={institutionOptions}
+                      options={radiologistOptions}
                       showSearch
                       filterSort={(optionA, optionB) =>
                         (optionA?.label ?? "")

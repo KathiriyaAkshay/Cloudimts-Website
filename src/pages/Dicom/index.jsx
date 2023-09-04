@@ -45,6 +45,7 @@ const Dicom = () => {
   const [tableData, setTableData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [studyID, setStudyID] = useState(null);
+  const [seriesID, setSeriesID] = useState(null);
 
   useEffect(() => {
     changeBreadcrumbs([{ name: "Study Data" }]);
@@ -106,7 +107,13 @@ const Dicom = () => {
       // editable: true,
       render: (text, record) => (
         <Tag
-          color={text === "New" ? "success" : text === "Assigned" ? "blue" : "warning"}
+          color={
+            text === "New"
+              ? "success"
+              : text === "Assigned"
+              ? "blue"
+              : "warning"
+          }
           style={{ textAlign: "center", fontWeight: "600" }}
         >
           {text}
@@ -223,7 +230,14 @@ const Dicom = () => {
                   Edit Study
                 </Typography>
               </Menu.Item>
-              <Menu.Item key="chat" onClick={() => setIsDrawerOpen(true)}>
+              <Menu.Item
+                key="chat"
+                onClick={() => {
+                  setSeriesID(record.series_id);
+                  setStudyID(record.id);
+                  setIsDrawerOpen(true);
+                }}
+              >
                 <Typography className="order-menu-name-primary">
                   Chat
                 </Typography>
@@ -321,6 +335,8 @@ const Dicom = () => {
         placement="right"
         closeIcon={false}
         onClose={() => {
+          setStudyID(null);
+          setSeriesID(null);
           setIsDrawerOpen(false);
           setMessages([]);
         }}
@@ -328,8 +344,8 @@ const Dicom = () => {
         className="chat-drawer"
       >
         <ChatMain
-          userId={16123456}
-          orderId={16120934}
+          userId={studyID}
+          orderId={seriesID}
           restaurantName={"Person"}
           messages={messages}
           setMessages={setMessages}

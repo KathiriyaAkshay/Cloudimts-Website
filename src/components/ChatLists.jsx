@@ -1,57 +1,45 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ProfileImage from "../assets/images/ProfileImg.png";
-import { Badge, Divider, Typography } from "antd";
+import { Badge, Divider, Tag, Typography } from "antd";
+import { getAllChatList } from "../apis/studiesApi";
 
-const ChatLists = () => {
-  const dummyData = [
-    {
-      name: "Harsh",
-      unreadMessage: "2",
-      profile: ProfileImage,
-      key: 1,
-    },
-    {
-      name: "Keyur",
-      unreadMessage: "3",
-      profile: ProfileImage,
-      key: 2,
-    },
-    {
-      name: "Ava",
-      unreadMessage: "0",
-      profile: ProfileImage,
-      key: 3,
-    },
-    {
-      name: "Adam",
-      unreadMessage: "4",
-      profile: ProfileImage,
-      key: 4,
-    },
-    {
-      name: "Sarah",
-      unreadMessage: "0",
-      profile: ProfileImage,
-      key: 5,
-    },
-    {
-      name: "Emily",
-      unreadMessage: "1",
-      profile: ProfileImage,
-      key: 6,
-    },
-    {
-      name: "Daniel",
-      unreadMessage: "5",
-      profile: ProfileImage,
-      key: 7,
-    },
-  ];
+const ChatLists = ({ setSeriesId, setStudyId }) => {
+  const [chatListData, setChatListData] = useState([]);
+  useEffect(() => {
+    retrieveChatListData();
+  }, []);
+
+  const retrieveChatListData = () => {
+    console.log(Date.now());
+    getAllChatList({
+      current_timestamp: Date.now(),
+      page_number: 1,
+      page_size: 10,
+    })
+      .then((res) => {
+        const resData = res.data.data.map((data) => ({
+          ...data,
+          room_id: data.room.id,
+          name: `${data.room.study.patient.patient_id} | ${data.room.study.patient.patient_name}`,
+          modality: data.room.study.modality,
+          status: data.room.study.status,
+          urgent_case: data.room.study.urgent_case,
+          study_id: data.room.study.id,
+          series_id: data.room.study.series_id,
+          profile: ProfileImage,
+        }));
+        setChatListData(resData);
+      })
+      .catch((err) => console.log(err));
+  };
 
   return (
     <div className="chat-list-main-div">
-      <div style={{padding: "10px 0px 0px 0px"}}>
-        <Typography className="chat-list-name" style={{ fontSize: "20px", textAlign: "center" }}>
+      <div style={{ padding: "10px 0px 0px 0px" }}>
+        <Typography
+          className="chat-list-name"
+          style={{ fontSize: "20px", textAlign: "center" }}
+        >
           Chats
         </Typography>
         <Divider
@@ -61,14 +49,50 @@ const ChatLists = () => {
           }}
         />
       </div>
-      {dummyData.map((data) => (
-        <>
-          <div key={data.key} className="chat-list-div">
+      {chatListData?.map((data) => (
+        <Badge.Ribbon
+          text={"Urgent"}
+          color="red"
+          style={!data.urgent_case && { display: "none" }}
+        >
+          <div
+            key={data.study_id}
+            className="chat-list-div"
+            onClick={() => {
+              setSeriesId(data.series_id);
+              setStudyId(data.study_id);
+            }}
+          >
             <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
               <img src={data.profile} alt={data.name} />
-              <Typography className="chat-list-name">{data.name}</Typography>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "6px",
+                }}
+              >
+                <Typography className="chat-list-name">{data.name}</Typography>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    gap: "10px",
+                  }}
+                >
+                  <Typography
+                    className="chat-list-name"
+                    style={{ fontSize: "12px" }}
+                  >
+                    {data.modality}
+                  </Typography>
+                  <Tag color="success" style={{ fontWeight: "600" }}>
+                    {data.status}
+                  </Tag>
+                </div>
+              </div>
             </div>
-            <Badge count={data.unreadMessage} showZero color="#1677ff" />
+            {/* <Badge count={data.unreadMessage} showZero color="#1677ff" /> */}
           </div>
           <Divider
             style={{
@@ -76,7 +100,7 @@ const ChatLists = () => {
               borderBlockStart: "1px solid rgba(255, 255, 255, 0.4)",
             }}
           />
-        </>
+        </Badge.Ribbon>
       ))}
     </div>
   );

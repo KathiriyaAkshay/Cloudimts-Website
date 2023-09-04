@@ -1,35 +1,29 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Progress, Space } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
+import { Drawer, Progress, Space, Tooltip } from "antd";
+import { EyeFilled, PlusOutlined } from "@ant-design/icons";
 import TableWithFilter from "../../components/TableWithFilter";
 import EditActionIcon from "../../components/EditActionIcon";
 import DeleteActionIcon from "../../components/DeleteActionIcon";
 import { useBreadcrumbs } from "../../hooks/useBreadcrumbs";
 import API from "../../apis/getApi";
+import FilterModal from "../../components/FilterModal";
+import {
+  filterInstitutionData,
+  getInstitutionLogs,
+} from "../../apis/studiesApi";
 
 const Institution = () => {
-  const [currentPage, setCurrentPage] = useState(1);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [institutionData, setInstitutionData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [pagi, setPagi] = useState();
+  const [pagi, setPagi] = useState({ page: 1 });
   const [totalPages, setTotalPages] = useState(0);
+  const [logsData, setLogsData] = useState([]);
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
 
   const { changeBreadcrumbs } = useBreadcrumbs();
-
-  const dummyData = [
-    {
-      name: "Institute 1",
-      email: "harsh@gmail.com",
-      usage: "20",
-      contact: 123456,
-      city: "surat",
-      state: "gujarat",
-      country: "india"
-    }
-  ]
 
   useEffect(() => {
     changeBreadcrumbs([{ name: "Institution" }]);
@@ -37,14 +31,15 @@ const Institution = () => {
     retrieveInstitutionData();
   }, []);
 
-  const retrieveInstitutionData = async (pagination) => {
+  const retrieveInstitutionData = async (pagination, values = {}) => {
     setIsLoading(true);
     const currentPagination = pagination || pagi;
-    await API.post(
-      "/institute/v1/institution-list",
-      { page_number: currentPagination.page, page_limit: 10 },
-      { headers: { Authorization: `Bearer ${token}` } }
-    )
+    filterInstitutionData({
+      filter: values,
+      condition: "and",
+      page_number: currentPagination.page,
+      page_size: 10,
+    })
       .then((res) => {
         setTotalPages(res.data.total_object);
         setInstitutionData(res.data.data);
@@ -58,6 +53,20 @@ const Institution = () => {
   };
 
   const deleteActionHandler = () => {};
+
+  const retrieveLogsData = (id) => {
+    getInstitutionLogs({ id: id })
+      .then((res) => {
+        const resData = res.data.data.map((data) => ({
+          ...data,
+          institution: data.institution.name,
+          username: data.user_info.username,
+        }));
+        setLogsData(resData);
+        setIsDrawerOpen(true)
+      })
+      .catch((err) => console.log(err));
+  };
 
   const columns = [
     {
@@ -98,10 +107,10 @@ const Institution = () => {
     },
     {
       title: "Usage",
-      dataIndex: "usage",
+      dataIndex: "institution_space_usage",
       // sorter: (a, b) => {},
       // editable: true,
-      render: (text, record) => <Progress percent={20} />
+      render: (text, record) => <Progress percent={text} />,
     },
     {
       title: "Actions",
@@ -113,11 +122,36 @@ const Institution = () => {
           <EditActionIcon
             editActionHandler={() => editActionHandler(record.id)}
           />
+          <Tooltip title={"View Logs"}>
+            <EyeFilled
+              className="action-icon"
+              onClick={() => retrieveLogsData(record.id)}
+            />
+          </Tooltip>
           <DeleteActionIcon
             deleteActionHandler={() => deleteActionHandler(record)}
           />
         </Space>
       ),
+    },
+  ];
+
+  const logsColumn = [
+    {
+      title: "Institution Name",
+      dataIndex: "institution",
+    },
+    {
+      title: "Username",
+      dataIndex: "username",
+    },
+    {
+      title: "Event",
+      dataIndex: "event_info",
+    },
+    {
+      title: "Time",
+      dataIndex: "time",
     },
   ];
 
@@ -139,7 +173,7 @@ const Institution = () => {
   return (
     <>
       <TableWithFilter
-        tableData={dummyData}
+        tableData={institutionData}
         tableColumns={columns}
         // onAddClick={() => navigate("/institutions/add")}
         // addButtonTitle="Add Institution"
@@ -150,6 +184,20 @@ const Institution = () => {
         onPaginationChange={retrieveInstitutionData}
         loadingTableData={isLoading}
       />
+      <FilterModal
+        name="Institution Filter"
+        setInstitutionData={setInstitutionData}
+        retrieveInstitutionData={retrieveInstitutionData}
+      />
+      <Drawer
+        title="Institution Logs"
+        placement="right"
+        onClose={() => setIsDrawerOpen(false)}
+        open={isDrawerOpen}
+        width={600}
+      >
+        <TableWithFilter tableData={logsData} tableColumns={logsColumn} />
+      </Drawer>
     </>
   );
 };

@@ -1,19 +1,23 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Space } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
+import { Drawer, Space, Tooltip } from "antd";
+import { EyeFilled, PlusOutlined } from "@ant-design/icons";
 import TableWithFilter from "../../components/TableWithFilter";
 import EditActionIcon from "../../components/EditActionIcon";
 import DeleteActionIcon from "../../components/DeleteActionIcon";
 import { useBreadcrumbs } from "../../hooks/useBreadcrumbs";
 import API from "../../apis/getApi";
+import UserFilterModal from "../../components/UserFilterModal";
+import { filterUserData, getParticularUsersLogs } from "../../apis/studiesApi";
 
 const Users = () => {
   const [tableData, setTableData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [pagi, setPagi] = useState();
+  const [pagi, setPagi] = useState({ page: 1 });
   const [totalPages, setTotalPages] = useState(0);
   const token = localStorage.getItem("token");
+  const [logsData, setLogsData] = useState([]);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   const navigate = useNavigate();
 
@@ -25,14 +29,15 @@ const Users = () => {
     retrieveUsersData();
   }, []);
 
-  const retrieveUsersData = async (pagination) => {
+  const retrieveUsersData = async (pagination, values = {}) => {
     setIsLoading(true);
     const currentPagination = pagination || pagi;
-    await API.post(
-      "/user/v1/fetch-user-list",
-      { page_number: currentPagination.page, page_limit: 10 },
-      { headers: { Authorization: `Bearer ${token}` } }
-    )
+    filterUserData({
+      filter: values,
+      condition: "and",
+      page_number: currentPagination.page,
+      page_size: 10,
+    })
       .then((res) => {
         const resData = res.data.data.map((item) => ({
           ...item,
@@ -48,10 +53,25 @@ const Users = () => {
   };
 
   const editActionHandler = (id) => {
-    navigate(`/users/${id}/edit`)
+    navigate(`/users/${id}/edit`);
   };
 
   const deleteActionHandler = () => {};
+
+  const retrieveLogsData = (id) => {
+    console.log(id);
+    getParticularUsersLogs({ id: id })
+      .then((res) => {
+        const resData = res.data.data.map((data) => ({
+          ...data,
+          perform_user: data?.perfrom_user?.username,
+          target_user: data?.target_user?.username,
+        }));
+        setLogsData(resData);
+        setIsDrawerOpen(true);
+      })
+      .catch((err) => console.log(err));
+  };
 
   const columns = [
     {
@@ -91,12 +111,39 @@ const Users = () => {
       width: window.innerWidth < 650 ? "1%" : "10%",
       render: (_, record) => (
         <Space style={{ display: "flex", justifyContent: "space-evenly" }}>
-          <EditActionIcon editActionHandler={() => editActionHandler(record.id)} />
+          <EditActionIcon
+            editActionHandler={() => editActionHandler(record.id)}
+          />
+          <Tooltip title={"View Logs"}>
+            <EyeFilled
+              className="action-icon"
+              onClick={() => retrieveLogsData(record.id)}
+            />
+          </Tooltip>
           <DeleteActionIcon
             deleteActionHandler={() => deleteActionHandler(record)}
           />
         </Space>
       ),
+    },
+  ];
+
+  const logsColumn = [
+    {
+      title: "Perform User",
+      dataIndex: "perform_user",
+    },
+    {
+      title: "Target User",
+      dataIndex: "target_user",
+    },
+    {
+      title: "Event",
+      dataIndex: "logs_id",
+    },
+    {
+      title: "Time",
+      dataIndex: "time",
     },
   ];
 
@@ -129,6 +176,19 @@ const Users = () => {
         onPaginationChange={retrieveUsersData}
         loadingTableData={isLoading}
       />
+      <UserFilterModal
+        retrieveUsersData={retrieveUsersData}
+        name={"User Filter"}
+      />
+      <Drawer
+        title="Study Logs"
+        placement="right"
+        onClose={() => setIsDrawerOpen(false)}
+        open={isDrawerOpen}
+        width={600}
+      >
+        <TableWithFilter tableData={logsData} tableColumns={logsColumn} />
+      </Drawer>
     </>
   );
 };

@@ -25,7 +25,7 @@ const MessageComp = (props) => {
     chatSearchedResults,
     searchIndex,
   } = props;
-  const id = item?.uni_key;
+  const id = item?.id;
   const { file } = item || [];
   useEffect(() => {
     // chatSearchedResults?.length &&
@@ -425,14 +425,14 @@ const MessageComp = (props) => {
                   )}
                 <span id={id} className="text-break">
                   {item?.is_internal_doc
-                    ? handleInternalDocMsg(item?.message, item?.is_internal_doc)
+                    ? handleInternalDocMsg(item?.content, item?.is_internal_doc)
                     : item?.is_post
                     ? handleSocialPostMsg(
-                        item?.message,
-                        item?.message?.split("="),
+                        item?.content,
+                        item?.content?.split("="),
                         item?.plateform_type
                       )
-                    : item?.message}
+                    : item?.content}
                 </span>
               </div>
               {!item?.is_forwarded && !item?.is_quoted ? (
@@ -447,7 +447,7 @@ const MessageComp = (props) => {
             </div>
             <div className="userchat-time">
               <span>
-                {moment(item?.date_added || item?.created_at).format("hh:mm")}
+                {moment(item?.timestamp || item?.timestamp).format("hh:mm")}
               </span>
               <img alt="img" src={tickImage}></img>
             </div>
@@ -482,10 +482,10 @@ const MessageComp = (props) => {
             <div className="userchat-data group-chat-user-chat">
               {item?.is_file &&
                 handleCustomSlider(item?.is_forwarded ? item?.file_url : file)}
-              <span>{item?.message}</span>
+              <span>{item?.content}</span>
             </div>
             <div className="userchat-time">
-              <span>{moment(item?.created_at).format("hh:mm")}</span>
+              <span>{moment(item?.timestamp).format("hh:mm")}</span>
               <img alt="img" src={tickImage}></img>
             </div>
             {description?.includes(id) && (
