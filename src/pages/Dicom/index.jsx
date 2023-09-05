@@ -1,13 +1,6 @@
 import React, { useEffect, useState } from "react";
-import TableWithFilter from "../../components/TableWithFilter";
 import {
-  Button,
-  Col,
-  DatePicker,
   Drawer,
-  Form,
-  Input,
-  List,
   Menu,
   Modal,
   Row,
@@ -19,9 +12,6 @@ import {
 import { RxDropdownMenu } from "react-icons/rx";
 import { useBreadcrumbs } from "../../hooks/useBreadcrumbs";
 import ChatMain from "../../components/Chat/ChatMain";
-import demo1 from "../../assets/images/ID_0009_AGE_0048_CONTRAST_1_CT.png";
-import demo2 from "../../assets/images/ID_0010_AGE_0060_CONTRAST_1_CT.png";
-import demo3 from "../../assets/images/ID_0011_AGE_0061_CONTRAST_1_CT.png";
 import DicomViewer from "../../components/DicomViewer";
 import EditStudy from "../../components/Studies/EditStudy";
 import PatientDetails from "../../components/Studies/PatientDetails";
@@ -46,6 +36,7 @@ const Dicom = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [studyID, setStudyID] = useState(null);
   const [seriesID, setSeriesID] = useState(null);
+  const [personName, setPersonName] = useState(null);
 
   useEffect(() => {
     changeBreadcrumbs([{ name: "Study Data" }]);
@@ -73,38 +64,18 @@ const Dicom = () => {
     setIsLoading(false);
   };
 
-  // const tableData = [
-  //   {
-  //     key: 1,
-  //     id: 1,
-  //     name: "Harsh",
-  //     status: "New",
-  //     modality: "CT",
-  //     date_time: "09-08-2023 12:00:00",
-  //     institution: "institution",
-  //     description: "Brain Plain",
-  //     images: [demo1, demo2, demo3],
-  //   },
-  // ];
-
   const columns = [
     {
       title: "Patient's Id",
       dataIndex: "id",
-      // sorter: (a, b) => {},
-      // editable: true,
     },
     {
       title: "Patient's Name",
       dataIndex: "name",
-      // sorter: (a, b) => {},
-      // editable: true,
     },
     {
       title: "Status",
       dataIndex: "status",
-      // sorter: (a, b) => {},
-      // editable: true,
       render: (text, record) => (
         <Tag
           color={
@@ -123,26 +94,18 @@ const Dicom = () => {
     {
       title: "Modality",
       dataIndex: "modality",
-      // sorter: (a, b) => {},
-      // editable: true,
     },
     {
       title: "Date Time",
       dataIndex: "created_at",
-      // sorter: (a, b) => {},
-      // editable: true,
     },
     {
       title: "Institution",
       dataIndex: "institution",
-      // sorter: (a, b) => {},
-      // editable: true,
     },
     {
       title: "Description",
       dataIndex: "study_description",
-      // sorter: (a, b) => {},
-      // editable: true,
     },
     {
       title: "Actions",
@@ -236,6 +199,7 @@ const Dicom = () => {
                   setSeriesID(record.series_id);
                   setStudyID(record.id);
                   setIsDrawerOpen(true);
+                  setPersonName(`${record.study.patient_id} | ${record.name}`);
                 }}
               >
                 <Typography className="order-menu-name-primary">
@@ -339,6 +303,7 @@ const Dicom = () => {
           setSeriesID(null);
           setIsDrawerOpen(false);
           setMessages([]);
+          setPersonName(null);
         }}
         open={isDrawerOpen}
         className="chat-drawer"
@@ -346,7 +311,7 @@ const Dicom = () => {
         <ChatMain
           userId={studyID}
           orderId={seriesID}
-          restaurantName={"Person"}
+          restaurantName={personName}
           messages={messages}
           setMessages={setMessages}
         />

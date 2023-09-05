@@ -169,3 +169,12 @@ export const deleteChatMessage = async (params) => {
   );
   return deleteChatMessage;
 };
+
+export const emailFilterData = async (params) => {
+  const emailFilterData = await API.post(
+    "/email/v1/email-filter",
+    params,
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+  return emailFilterData;
+};

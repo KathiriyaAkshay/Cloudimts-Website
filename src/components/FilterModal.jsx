@@ -10,17 +10,6 @@ const FilterModal = ({ name, setInstitutionData, retrieveInstitutionData }) => {
   const handleSubmit = (values) => {
     retrieveInstitutionData({ page: 1 }, values);
     setIsFilterModalOpen(false);
-    // filterInstitutionData({
-    //   filter: values,
-    //   condition: "and",
-    //   page_number: 1,
-    //   page_size: 10,
-    // })
-    //   .then((res) => {
-    //     setInstitutionData(res.data.data);
-    //     setIsFilterModalOpen(false);
-    //   })
-    //   .catch((err) => console.log(err));
   };
 
   return (

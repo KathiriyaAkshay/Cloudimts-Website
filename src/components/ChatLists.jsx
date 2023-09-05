@@ -3,14 +3,13 @@ import ProfileImage from "../assets/images/ProfileImg.png";
 import { Badge, Divider, Tag, Typography } from "antd";
 import { getAllChatList } from "../apis/studiesApi";
 
-const ChatLists = ({ setSeriesId, setStudyId }) => {
+const ChatLists = ({ setSeriesId, setStudyId, setPersonName }) => {
   const [chatListData, setChatListData] = useState([]);
   useEffect(() => {
     retrieveChatListData();
   }, []);
 
   const retrieveChatListData = () => {
-    console.log(Date.now());
     getAllChatList({
       current_timestamp: Date.now(),
       page_number: 1,
@@ -61,6 +60,7 @@ const ChatLists = ({ setSeriesId, setStudyId }) => {
             onClick={() => {
               setSeriesId(data.series_id);
               setStudyId(data.study_id);
+              setPersonName(data.name)
             }}
           >
             <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>

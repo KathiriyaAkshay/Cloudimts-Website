@@ -7,7 +7,6 @@ export function Search() {
   const [search, setSearch] = useState("");
 
   const onSearch = (value) => {
-    console.log(value);
     // const temp = value.replace(/\s+/g, " ").toLowerCase();
     // setPagination({
     //   ...Pagination,

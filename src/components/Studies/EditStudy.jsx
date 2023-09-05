@@ -52,7 +52,6 @@ const EditStudy = ({
   };
 
   const handleSubmit = (values) => {
-    console.log(values);
     const modifiedData = {
       ...values,
       id: studyID,

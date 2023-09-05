@@ -1,9 +1,6 @@
 import React from "react";
-// import "./style.css";
-import { useNavigate } from "react-router-dom";
 import ProfileImg from "../../assets/images/ProfileImg.png";
 import search_icon from "../../assets/images/search_icon.png";
-// import "../../../../Components/Header/Header.css";
 import { MdArrowDropDown, MdArrowDropUp } from "react-icons/md";
 import { Input } from "antd";
 const style = {
@@ -15,8 +12,6 @@ const style = {
 };
 
 const ChatHeader = (props) => {
-  // const URL = process.env.REACT_APP_BASE_URL;
-  const navigate = useNavigate();
   const {
     onClick,
     crossRight,

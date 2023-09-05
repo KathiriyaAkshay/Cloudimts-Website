@@ -2,14 +2,14 @@ import { Button, Col, Form, Input, Modal, Row } from "antd";
 import React, { useContext } from "react";
 import { filterDataContext } from "../hooks/filterDataContext";
 
-const UserFilterModal = ({ name, setInstitutionData, retrieveUsersData }) => {
-  const { isUserFilterModalOpen, setIsUserFilterModalOpen} =
+const EmailFilterModal = ({ name, setInstitutionData, retrieveEmailData }) => {
+  const { isEmailFilterModalOpen, setIsEmailFilterModalOpen } =
     useContext(filterDataContext);
   const [form] = Form.useForm();
 
   const handleSubmit = (values) => {
-    retrieveUsersData({ page: 1 }, values);
-    setIsUserFilterModalOpen(false);
+    retrieveEmailData({ page: 1 }, values);
+    setIsEmailFilterModalOpen(false);
   };
 
   return (
@@ -17,20 +17,20 @@ const UserFilterModal = ({ name, setInstitutionData, retrieveUsersData }) => {
       centered
       width={"50%"}
       title={name}
-      open={isUserFilterModalOpen}
+      open={isEmailFilterModalOpen}
       onOk={() => form.submit()}
       onCancel={() => {
         form.resetFields();
-        setIsUserFilterModalOpen(false);
-        retrieveUsersData();
+        setIsEmailFilterModalOpen(false);
+        retrieveEmailData();
       }}
       footer={[
         <Button
           key="back"
           onClick={() => {
             form.resetFields();
-            setIsUserFilterModalOpen(false);
-            retrieveUsersData();
+            setIsEmailFilterModalOpen(false);
+            retrieveEmailData();
           }}
         >
           Cancel
@@ -57,8 +57,8 @@ const UserFilterModal = ({ name, setInstitutionData, retrieveUsersData }) => {
         <Row gutter={15}>
           <Col xs={24} lg={12}>
             <Form.Item
-              name="user__username"
-              label="Username"
+              name="full_name__contains"
+              label="Full Name"
               rules={[
                 {
                   required: false,
@@ -72,7 +72,7 @@ const UserFilterModal = ({ name, setInstitutionData, retrieveUsersData }) => {
           </Col>
           <Col xs={24} lg={12}>
             <Form.Item
-              name="user__email"
+              name="email__contains"
               label="Email"
               rules={[
                 {
@@ -85,55 +85,10 @@ const UserFilterModal = ({ name, setInstitutionData, retrieveUsersData }) => {
               <Input placeholder="Enter Email" />
             </Form.Item>
           </Col>
-          <Col xs={24} lg={12}>
-            <Form.Item
-              name="contact"
-              label="Contact"
-              rules={[
-                {
-                  required: false,
-                  whitespace: true,
-                  message: "Please enter contact",
-                },
-              ]}
-            >
-              <Input placeholder="Enter Contact" />
-            </Form.Item>
-          </Col>
-          <Col xs={24} lg={12}>
-            <Form.Item
-              name="role__role_name"
-              label="Role Name"
-              rules={[
-                {
-                  required: false,
-                  whitespace: true,
-                  message: "Please enter Role Name",
-                },
-              ]}
-            >
-              <Input placeholder="Enter Role Name" />
-            </Form.Item>
-          </Col>
-          <Col xs={24} lg={12}>
-            <Form.Item
-              name="institute__name"
-              label="Institute Name"
-              rules={[
-                {
-                  required: false,
-                  whitespace: true,
-                  message: "Please enter Institute Name",
-                },
-              ]}
-            >
-              <Input placeholder="Enter Institute Name" />
-            </Form.Item>
-          </Col>
         </Row>
       </Form>
     </Modal>
   );
 };
 
-export default UserFilterModal;
+export default EmailFilterModal;

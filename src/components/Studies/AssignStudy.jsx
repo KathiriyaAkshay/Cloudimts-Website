@@ -44,7 +44,6 @@ const AssignStudy = ({
         images: ["https://www.google.com", "https://www.google.com"],
       },
     };
-    console.log(modifiedPayload);
     postAssignStudy(modifiedPayload)
       .then((res) => {
         NotificationMessage("success", "Study Assigned Successfully");

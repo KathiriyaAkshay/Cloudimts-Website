@@ -34,11 +34,11 @@ const ChatMessangerFooter = (props) => {
   };
 
   const handleImageStore = (e) => {
-    setImageStore((prev) => [...e.target.files, ...prev]);
+    setImageStore((prev) => [...e.target.files]);
   };
 
   const handleFileStore = (e) => {
-    setFileStore((prev) => [...e.target.files, ...prev]);
+    setFileStore((prev) => [...e.target.files]);
   };
 
   return (

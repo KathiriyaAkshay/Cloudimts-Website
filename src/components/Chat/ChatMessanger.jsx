@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
-// import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
 import { useNavigate, useLocation } from "react-router-dom";
 import SingleChatMessanger from "./SingleChatMessanger";
@@ -34,12 +33,7 @@ const ChatMessanger = (props) => {
     isChatModule,
   } = props || {};
 
-  const navigate = useNavigate();
-  const location = useLocation();
-  // const profile = useSelector((state) => state?.basicProfileData);
-  // const dispatch = useDispatch();
   const userDetail = userProfileData;
-  // const ownProfileData = profile?.data;
   const [openMenu, setOpenMenu] = useState(false);
   const [loading, setLoading] = useState(false);
   const [emojiClick, setEmojiClick] = useState(false);
@@ -80,12 +74,6 @@ const ChatMessanger = (props) => {
   const user = localStorage.getItem("userID");
   const { roomID, setRoomID } = useContext(RoomDataContext);
   const roomName = `${orderId}/${user}/${userId}`;
-  //   originated === "profile"
-  //     ? ownProfileData?.referral + "_" + userDetail?.referral
-  //     : ownProfileData?.referral + "_" + userDetail?.referral_code;
-  // const roomId = isHousemateChat
-  //   ? userDetail?.group_id
-  //   : chatDataInfo?.group_id;
   const QuoteStyle = isHousemateChat
     ? imageStore?.length < 4 && imageStore?.length
       ? { bottom: "172px" }
@@ -97,19 +85,6 @@ const ChatMessanger = (props) => {
     : imageStore?.length
     ? { bottom: "206px" }
     : { bottom: "-1px" };
-
-  // const handleTabChange = (value) => {
-  //   setValue(value);
-  // };
-
-  // useEffect(() => {
-  //   (messages[messages?.length - 1]?.is_file ||
-  //     messages[messages?.length - 1]?.is_doc) &&
-  //     !messages[messages?.length - 1].hasOwnProperty("id") &&
-  //     setTimeout(() => {
-  //       handleAllChatHistory(true);
-  //     }, [5000]);
-  // }, [messages]);
 
   useEffect(() => {
     let id = messages?.length ? messages[messages?.length - 1]?.uni_key : 1;
@@ -155,7 +130,14 @@ const ChatMessanger = (props) => {
             ? JSON.parse(event.data).id
             : prev
         );
-        handleAllChatHistory(true);
+        handleAllChatHistory(
+          true,
+          JSON.parse(event.data).id != null ||
+            JSON.parse(event.data).id != undefined
+            ? true
+            : false,
+          JSON.parse(event.data)
+        );
       };
 
       ws.onclose = () => {
@@ -170,25 +152,79 @@ const ChatMessanger = (props) => {
     }
   }, [orderId]);
 
-  const handleAllChatHistory = async (webSocketConnect, roomData = {}) => {
-    webSocketConnect && setLoading(true);
-    console.log(roomID, roomData);
+  const handleAllChatHistory = async (webSocketConnect, roomData, chatData) => {
     const room_id = localStorage.getItem("roomID");
-    getInitialChatMessages({
-      room_id,
-    })
-      .then((data) => {
-        // setMessages(data.data?.chat);
-        groupMessagesByDate(data.data?.chat);
-        // setLastSeen(data?.last_seen);
-        // setChatDetails({
-        //   ...intialData,
-        //   singleChat: res?.data?.data[0]?.room,
-        // });
-        setLoading(false);
-        console.log(data);
+    if (roomData) {
+      webSocketConnect && setLoading(true);
+      getInitialChatMessages({
+        room_id,
       })
-      .catch((err) => console.log(err));
+        .then((data) => {
+          // setMessages(data.data?.chat);
+          groupMessagesByDate(data.data?.chat);
+          // setLastSeen(data?.last_seen);
+          // setChatDetails({
+          //   ...intialData,
+          //   singleChat: res?.data?.data[0]?.room,
+          // });
+          setLoading(false);
+        })
+        .catch((err) => console.log(err));
+    } else if (!roomData) {
+      if (chatData.payload.status == "new_chat") {
+        const timestamp = chatData.payload.data.timestamp.split(" ")[0];
+
+        const newMessage = messages.map((data) => {
+          if (data.date == timestamp) {
+            return {
+              ...data,
+              messages: [...data.messages, chatData.payload.data],
+            };
+          } else {
+            return {
+              ...data,
+            };
+          }
+        });
+        console.log(newMessage, messages);
+        setMessages((prev) => {
+          const currentDate = moment().format("YYYY-MM-DD");
+          const existingData = prev.find((data) => data.date === timestamp);
+
+          if (existingData) {
+            // If a message with the same date already exists, update it
+            return prev.map((data) =>
+              data.date === timestamp
+                ? {
+                    ...data,
+                    messages: [...data.messages, chatData.payload.data],
+                  }
+                : data
+            );
+          } else if (currentDate === timestamp) {
+            // If no message with the same date exists and it's the current date, create a new entry
+            return [
+              ...prev,
+              { date: timestamp, messages: [chatData.payload.data] },
+            ];
+          } else {
+            // If no message with the same date exists and it's not the current date, return the previous state
+            return prev;
+          }
+        });
+      } else if (chatData.payload.status == "delete_chat") {
+        setMessages((prev) =>
+          prev
+            .map((data) => ({
+              ...data,
+              messages: data.messages.filter(
+                (message) => message.id != chatData.payload.data.id
+              ),
+            }))
+            .filter((item) => item.messages.length > 0)
+        );
+      }
+    }
   };
 
   function groupMessagesByDate(data) {
@@ -209,7 +245,6 @@ const ChatMessanger = (props) => {
     setMessages(formattedData);
   }
 
-  console.log(messages);
   const sendMessage = async () => {
     const uni_key = moment.utc(`${new Date().toJSON()}`) + "4";
     // setForwardMessage({ quoted: false });
@@ -393,12 +428,14 @@ const ChatMessanger = (props) => {
       deleteChatMessage({ chat_id: messageId, room_name: orderId })
         .then((res) =>
           setMessages((prev) =>
-            prev.map((data) => ({
-              ...data,
-              messages: data.messages.filter(
-                (message) => message.id != messageId
-              ),
-            }))
+            prev
+              .map((data) => ({
+                ...data,
+                messages: data.messages.filter(
+                  (message) => message.id != messageId
+                ),
+              }))
+              .filter((item) => item.messages.length > 0)
           )
         )
         .catch((err) => console.log(err));
@@ -433,28 +470,6 @@ const ChatMessanger = (props) => {
   //     });
   //   }
   // },[state?.chatPopUp])
-
-  // const handleMedialFile = () => {
-
-  // }
-
-  // const handleForwardMessage = (data) => {
-  //   let files = [];
-  //   forwardMessage?.media_file?.forEach((item) => files.push(item?.files));
-  //   let payload = {
-  //     group_ids: data?.hasOwnProperty("group_ids") && data?.group_ids,
-  //     room_names: data?.hasOwnProperty("roomNames") && data?.roomNames,
-  //     media_file: files,
-  //     uni_key: moment.utc(`${new Date().toJSON()}`) + ownProfileData?.id,
-  //     forwarded_msg: forwardMessage?.forwardMessage,
-  //   };
-  //   sendForwardMessage(payload)
-  //     .then((res) => {
-  //       toast.success("Message Forwarded...");
-  //       setForwardMessage({ popUp: false });
-  //     })
-  //     .catch((res) => setForwardMessage({ popUp: false }));
-  // };
 
   const handleSearchValue = (value) => {
     setForwardMessage({

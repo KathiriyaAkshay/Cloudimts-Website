@@ -22,6 +22,7 @@ const IOD = React.lazy(() => import("../pages/IOD"));
 const Chats = React.lazy(() => import("../pages/Chats"));
 const StudyLogs = React.lazy(() => import("../pages/Dicom/StudyLogs"));
 const UsersLogs = React.lazy(() => import("../pages/Users/UsersLogs"));
+const Reports = React.lazy(() => import("../pages/Reports"));
 
 export const routes = [
   { path: "/home", component: <Loader component={Home} /> },
@@ -53,6 +54,7 @@ export const routes = [
   { path: "/chats", component: <Loader component={Chats} /> },
   { path: "/study-logs", component: <Loader component={StudyLogs} /> },
   { path: "/users-logs", component: <Loader component={UsersLogs} /> },
+  { path: "/reports", component: <Loader component={Reports} /> },
 ];
 
 export const superadminRoute = [

@@ -44,7 +44,7 @@ const SingleChatMessanger = (props) => {
               <span>{moment(messageData.date).format("DD-MMM-YYYY")}</span>
             </div>
             {messageData?.messages?.map((item, index) => {
-              return item?.username.id == ownProfileDataId ? (
+              return (item?.username?.id || item?.send_from_id) == ownProfileDataId ? (
                 <div style={{display: "flex", justifyContent: "flex-end"}}>
                   <div
                     className={

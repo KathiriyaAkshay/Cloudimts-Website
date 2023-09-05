@@ -1,4 +1,4 @@
-import { Button } from "antd";
+import { Button, Select } from "antd";
 import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserRoleContext } from "../hooks/usersRolesContext";
@@ -9,7 +9,11 @@ const HeaderButton = ({ setIsModalOpen }) => {
   const navigate = useNavigate();
   const { setIsRoleModalOpen } = useContext(UserRoleContext);
   const { setIsEmailModalOpen } = useContext(UserEmailContext);
-  const { setIsFilterModalOpen, setIsUserFilterModalOpen } = useContext(filterDataContext);
+  const {
+    setIsFilterModalOpen,
+    setIsUserFilterModalOpen,
+    setIsEmailFilterModalOpen,
+  } = useContext(filterDataContext);
   return (
     <div>
       {window.location.pathname === "/iod-settings" && (
@@ -56,6 +60,12 @@ const HeaderButton = ({ setIsModalOpen }) => {
       )}
       {window.location.pathname === "/users/email" && (
         <div className="iod-setting-div">
+          <Button
+            type="primary"
+            onClick={() => setIsEmailFilterModalOpen(true)}
+          >
+            Filter
+          </Button>
           <Button type="primary" onClick={() => setIsEmailModalOpen(true)}>
             Add Email
           </Button>
@@ -66,6 +76,14 @@ const HeaderButton = ({ setIsModalOpen }) => {
           <Button type="primary" onClick={() => navigate("/study-logs")}>
             Study Logs
           </Button>
+        </div>
+      )}
+      {window.location.pathname === "/reports" && (
+        <div className="iod-setting-div">
+          <Button type="primary">Study Images</Button>
+          <Button type="primary">Insert Patient Information</Button>
+          <Button type="primary">Insert Institution Information</Button>
+          <Select placeholder="choose template" />
         </div>
       )}
     </div>

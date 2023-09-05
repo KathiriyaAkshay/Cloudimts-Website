@@ -56,7 +56,6 @@ const AddInstitution = () => {
   }, []);
 
   const convertToInitialObject = (data) => {
-    console.log(data);
     let initialObject = {};
     for (let i = 1; i <= 47; i++) {
       initialObject[`${i}_reporting_charge`] = data[i].reporting_charge;
@@ -174,7 +173,6 @@ const AddInstitution = () => {
       }
       handleNextStep();
     } else if (currentStep === 2) {
-      console.log(values);
       setPayload((prev) => ({
         ...prev,
         blocked_user: { data: values.radiologist },
@@ -267,6 +265,9 @@ const AddInstitution = () => {
     {
       title: "Report Options",
       dataIndex: "report_option",
+      render: (text, record, index) => {
+        if(index === 1){}
+      }
     },
     {
       title: "Value for institution",

@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import ChatBox from "./ChatBox";
 
 const ChatMain = (props) => {
-  const navigate = useNavigate();
   const location = useLocation();
   const { state } = location;
   const [openMenu, setOpenMenu] = useState(false);
@@ -32,23 +31,23 @@ const ChatMain = (props) => {
     }
   }, [searchValue, state]);
 
-  const handleChatListData = () => {
-  };
+  const handleChatListData = () => {};
 
   return (
     <>
       <div className="main-section header-padding footer-paddding fix-dektop-issue">
         <div className="wrap_tabbing">
-            <ChatBox
-              chatList={chatList}
-              loading={loading}
-              handleChatListData={handleChatListData}
-              userId={props.userId} orderId={props.orderId}
-              restaurantName={props.restaurantName}
-              messages={props.messages}
-              setMessages={props.setMessages}
-              isChatModule={props.isChatModule}
-            />
+          <ChatBox
+            chatList={chatList}
+            loading={loading}
+            handleChatListData={handleChatListData}
+            userId={props.userId}
+            orderId={props.orderId}
+            restaurantName={props.restaurantName}
+            messages={props.messages}
+            setMessages={props.setMessages}
+            isChatModule={props.isChatModule}
+          />
         </div>
       </div>
     </>

@@ -9,6 +9,7 @@ const Chats = () => {
   const [messages, setMessages] = useState([]);
   const [seriesId, setSeriesId] = useState(null);
   const [studyId, setStudyId] = useState(null);
+  const [personName, setPersonName] = useState(null);
 
   useEffect(() => {
     changeBreadcrumbs([{ name: "Chats" }]);
@@ -16,13 +17,17 @@ const Chats = () => {
 
   return (
     <div className="chat-module-div">
-      <ChatLists setSeriesId={setSeriesId} setStudyId={setStudyId} />
+      <ChatLists
+        setSeriesId={setSeriesId}
+        setStudyId={setStudyId}
+        setPersonName={setPersonName}
+      />
       <div className="chat-data-div">
         {seriesId ? (
           <ChatMain
             userId={studyId}
             orderId={seriesId}
-            restaurantName={"Person"}
+            restaurantName={personName}
             messages={messages}
             setMessages={setMessages}
             isChatModule={true}

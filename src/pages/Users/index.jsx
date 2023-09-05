@@ -25,8 +25,6 @@ const Users = () => {
 
   useEffect(() => {
     changeBreadcrumbs([{ name: "Users" }]);
-    // setRole(localStorage.getItem("role"))
-    retrieveUsersData();
   }, []);
 
   const retrieveUsersData = async (pagination, values = {}) => {
@@ -59,7 +57,6 @@ const Users = () => {
   const deleteActionHandler = () => {};
 
   const retrieveLogsData = (id) => {
-    console.log(id);
     getParticularUsersLogs({ id: id })
       .then((res) => {
         const resData = res.data.data.map((data) => ({
@@ -77,32 +74,22 @@ const Users = () => {
     {
       title: "Username",
       dataIndex: "username",
-      // sorter: (a, b) => {},
-      // editable: true,
     },
     {
       title: "Email",
       dataIndex: "email",
-      // sorter: (a, b) => {},
-      // editable: true,
     },
     {
       title: "Contact Number",
       dataIndex: "contact",
-      // sorter: (a, b) => {},
-      // editable: true,
     },
     {
       title: "Role",
       dataIndex: "role_name",
-      // sorter: (a, b) => {},
-      // editable: true,
     },
     {
       title: "Institute",
       dataIndex: "institute_name",
-      // sorter: (a, b) => {},
-      // editable: true,
     },
     {
       title: "Actions",
@@ -167,9 +154,6 @@ const Users = () => {
       <TableWithFilter
         tableData={tableData}
         tableColumns={columns}
-        // onAddClick={() => navigate("/users/add")}
-        // addButtonTitle="Add Users"
-        // addButtonIcon={<PlusOutlined />}
         rowSelection={rowSelection}
         setPagi={setPagi}
         totalRecords={totalPages}

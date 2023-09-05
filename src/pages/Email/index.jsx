@@ -9,10 +9,13 @@ import { useBreadcrumbs } from "../../hooks/useBreadcrumbs";
 import API from "../../apis/getApi";
 import NotificationMessage from "../../components/NotificationMessage";
 import { UserEmailContext } from "../../hooks/userEmailContext";
+import EmailFilterModal from "../../components/EmailFilterModal";
+import { emailFilterData } from "../../apis/studiesApi";
 
 const Email = () => {
   const [emailData, setEmailData] = useState([]);
-  const {isEmailModalOpen, setIsEmailModalOpen} = useContext(UserEmailContext);
+  const { isEmailModalOpen, setIsEmailModalOpen } =
+    useContext(UserEmailContext);
   const [form] = Form.useForm();
   const [roleOptions, setRoleOptions] = useState([]);
   const navigate = useNavigate();
@@ -36,25 +39,25 @@ const Email = () => {
       "/email/v1/fetch-particular-email",
       { id: id },
       { headers: { Authorization: `Bearer ${token}` } }
-    ).then((res) => {
-      form.setFieldsValue(res.data.datat);
-      setIsEmailModalOpen(true);
-    }).catch(err => console.log(err));
+    )
+      .then((res) => {
+        form.setFieldsValue(res.data.datat);
+        setIsEmailModalOpen(true);
+      })
+      .catch((err) => console.log(err));
   };
 
   const deleteActionHandler = () => {};
 
-  const retrieveEmailData = async (pagination) => {
+  const retrieveEmailData = async (pagination, values = {}) => {
     const currentPagination = pagination || pagi;
     setIsLoading(true);
-    await API.post(
-      "/email/v1/fetch-email-list",
-      {
-        page_limit: 10,
-        page_number: currentPagination.page,
-      },
-      { headers: { Authorization: `Bearer ${token}` } }
-    )
+    emailFilterData({
+      filter: values,
+      condition: "and",
+      page_number: currentPagination.page,
+      page_size: 10,
+    })
       .then((res) => {
         setEmailData(res.data.data);
         setTotalPages(res.data.totat_object);
@@ -246,6 +249,10 @@ const Email = () => {
           </Form.Item>
         </Form>
       </Modal>
+      <EmailFilterModal
+        retrieveEmailData={retrieveEmailData}
+        name={"Email Filter"}
+      />
     </>
   );
 };
