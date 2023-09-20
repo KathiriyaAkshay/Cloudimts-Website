@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import Loader from "../components/Loader";
 
 const Home = React.lazy(() => import("../pages/Home"));
@@ -23,9 +23,13 @@ const Chats = React.lazy(() => import("../pages/Chats"));
 const StudyLogs = React.lazy(() => import("../pages/Dicom/StudyLogs"));
 const UsersLogs = React.lazy(() => import("../pages/Users/UsersLogs"));
 const Reports = React.lazy(() => import("../pages/Reports"));
+const AddReport = React.lazy(() => import("../pages/Reports/AddReport"));
+const AddTemplate = React.lazy(() => import("../pages/Reports/AddTemplate"));
+const Filters = React.lazy(() => import("../pages/Filters"));
+const Billing = React.lazy(() => import("../pages/Billing"));
 
 export const routes = [
-  { path: "/home", component: <Loader component={Home} /> },
+  { path: "/dashboard", component: <Loader component={Home} /> },
   { path: "/not-found", component: <Loader component={NotFound} /> },
   { path: "/institutions", component: <Loader component={Institution} /> },
   {
@@ -54,7 +58,12 @@ export const routes = [
   { path: "/chats", component: <Loader component={Chats} /> },
   { path: "/study-logs", component: <Loader component={StudyLogs} /> },
   { path: "/users-logs", component: <Loader component={UsersLogs} /> },
+  { path: "/reports/:id", component: <Loader component={AddReport} /> },
+  { path: "/reports/add", component: <Loader component={AddTemplate} /> },
+  { path: "/reports/:id/edit", component: <Loader component={AddTemplate} /> },
   { path: "/reports", component: <Loader component={Reports} /> },
+  { path: "/filters", component: <Loader component={Filters} /> },
+  { path: "/billing", component: <Loader component={Billing} /> },
 ];
 
 export const superadminRoute = [

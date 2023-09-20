@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Drawer,
   Menu,
@@ -7,6 +7,7 @@ import {
   Space,
   Table,
   Tag,
+  Tooltip,
   Typography,
 } from "antd";
 import { RxDropdownMenu } from "react-icons/rx";
@@ -17,8 +18,20 @@ import EditStudy from "../../components/Studies/EditStudy";
 import PatientDetails from "../../components/Studies/PatientDetails";
 import StudyAudits from "../../components/Studies/StudyAudits";
 import StudyReports from "../../components/Studies/StudyReports";
-import { getAllStudyData } from "../../apis/studiesApi";
+import ShareStudy from "../../components/Studies/ShareStudy";
+import {
+  filterStudyData,
+  getAllStudyData,
+  getInstanceData,
+} from "../../apis/studiesApi";
 import AssignStudy from "../../components/Studies/AssignStudy";
+import QuickFilterModal from "../../components/QuickFilterModal";
+import { BsChat, BsEyeFill } from "react-icons/bs";
+import { IoIosDocument, IoIosShareAlt } from "react-icons/io";
+import { MdOutlineHistory } from "react-icons/md";
+import { AuditOutlined } from "@ant-design/icons";
+import EditActionIcon from "../../components/EditActionIcon";
+import { UserPermissionContext } from "../../hooks/userPermissionContext";
 
 const Dicom = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -26,6 +39,7 @@ const Dicom = () => {
   const [isStudyModalOpen, setIsStudyModalOpen] = useState(false);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
+  const [isShareStudyModalOpen, setIsShareStudyModalOpen] = useState(false);
   const { changeBreadcrumbs } = useBreadcrumbs();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [messages, setMessages] = useState([]);
@@ -37,20 +51,24 @@ const Dicom = () => {
   const [studyID, setStudyID] = useState(null);
   const [seriesID, setSeriesID] = useState(null);
   const [personName, setPersonName] = useState(null);
+  const { permissionData } = useContext(UserPermissionContext);
 
   useEffect(() => {
     changeBreadcrumbs([{ name: "Study Data" }]);
     retrieveStudyData();
   }, []);
 
-  const retrieveStudyData = (pagination) => {
+  const retrieveStudyData = (pagination, values = {}) => {
     setIsLoading(true);
     const currentPagination = pagination || pagi;
     getAllStudyData({
+      // filter: values,
       page_size: 10,
       page_number: currentPagination.page,
       all_premission_id: [1],
       all_assign_id: [],
+      deleted: false,
+      deleted_skip: true,
     })
       .then((res) => {
         const resData = res.data.data.map((data) => ({
@@ -64,18 +82,41 @@ const Dicom = () => {
     setIsLoading(false);
   };
 
+  const editActionHandler = (id) => {
+    setStudyID(id);
+    setIsEditModalOpen(true);
+  };
+
+  const checkPermissionStatus = (name) => {
+    const permission = permissionData["StudyTable view"].find(
+      (data) => data.permission === name
+    )?.permission_value;
+    return permission;
+  };
+
   const columns = [
     {
       title: "Patient's Id",
       dataIndex: "id",
+      className: `${
+        checkPermissionStatus("View Patient id") ? "" : "column-display-none"
+      }`,
     },
     {
       title: "Patient's Name",
       dataIndex: "name",
+      className: `${
+        checkPermissionStatus("View Patient name") ? "" : "column-display-none"
+      }`,
     },
     {
       title: "Status",
       dataIndex: "status",
+      // className: `${
+      //   checkPermissionStatus("View Institution name")
+      //     ? ""
+      //     : "column-display-none"
+      // }`,
       render: (text, record) => (
         <Tag
           color={
@@ -94,27 +135,132 @@ const Dicom = () => {
     {
       title: "Modality",
       dataIndex: "modality",
+      // className: `${
+      //   checkPermissionStatus("View Institution name")
+      //     ? ""
+      //     : "column-display-none"
+      // }`,
     },
     {
       title: "Date Time",
       dataIndex: "created_at",
+      // className: `${
+      //   checkPermissionStatus("View Institution name")
+      //     ? ""
+      //     : "column-display-none"
+      // }`,
     },
     {
       title: "Institution",
       dataIndex: "institution",
+      className: `${
+        checkPermissionStatus("View Institution name")
+          ? ""
+          : "column-display-none"
+      }`,
     },
     {
       title: "Description",
       dataIndex: "study_description",
+      className: `${
+        checkPermissionStatus("View Study description")
+          ? ""
+          : "column-display-none"
+      }`,
+    },
+    {
+      title: "Chat",
+      dataIndex: "chat",
+      className: `${
+        checkPermissionStatus("Study chat option") ? "" : "column-display-none"
+      }`,
+      render: (text, record) => (
+        <Tooltip title="Chat">
+          <BsChat
+            className="action-icon"
+            onClick={() => {
+              setSeriesID(record.series_id);
+              setStudyID(record.id);
+              setIsDrawerOpen(true);
+              setPersonName(`${record.study.patient_id} | ${record.name}`);
+            }}
+          />
+        </Tooltip>
+      ),
     },
     {
       title: "Actions",
       dataIndex: "actions",
       fixed: "right",
+      className: `${
+        checkPermissionStatus("View Institution name")
+          ? ""
+          : "column-display-none"
+      }`,
       width: window.innerWidth < 650 ? "1%" : "10%",
       render: (_, record) => (
         <Space style={{ display: "flex", justifyContent: "space-evenly" }}>
-          <Menu
+          {checkPermissionStatus("Study share option") && (
+            <Tooltip title="Share Study">
+              <IoIosShareAlt
+                className="action-icon"
+                onClick={() => {
+                  setStudyID(record.id);
+                  setIsShareStudyModalOpen(true);
+                }}
+              />
+            </Tooltip>
+          )}
+          {checkPermissionStatus("Study clinical history option") && (
+            <Tooltip title="Clinical History">
+              <MdOutlineHistory
+                className="action-icon"
+                onClick={() => {
+                  setStudyID(record.id);
+                  setIsAssignModalOpen(true);
+                }}
+              />
+            </Tooltip>
+          )}
+          {checkPermissionStatus("Study data option") && (
+            <Tooltip title={"Study Report"}>
+              <IoIosDocument
+                className="action-icon"
+                onClick={() => {
+                  setStudyID(record.id);
+                  setIsReportModalOpen(true);
+                }}
+              />
+            </Tooltip>
+          )}
+          {checkPermissionStatus("Study more details option") && (
+            <Tooltip title={"More Details"}>
+              <BsEyeFill
+                className="action-icon"
+                onClick={() => {
+                  setStudyID(record.id);
+                  setIsStudyModalOpen(true);
+                }}
+              />
+            </Tooltip>
+          )}
+          {checkPermissionStatus("Study logs option") && (
+            <Tooltip title="Auditing">
+              <AuditOutlined
+                className="action-icon"
+                onClick={() => {
+                  setStudyID(record.id);
+                  setIsModalOpen(true);
+                }}
+              />
+            </Tooltip>
+          )}
+          {checkPermissionStatus("Study edit option") && (
+            <EditActionIcon
+              editActionHandler={() => editActionHandler(record.id)}
+            />
+          )}
+          {/* <Menu
             mode="vertical"
             expandIcon={() => ""}
             className="order-menu-header"
@@ -207,7 +353,7 @@ const Dicom = () => {
                 </Typography>
               </Menu.Item>
             </Menu.SubMenu>
-          </Menu>
+          </Menu> */}
         </Space>
       ),
     },
@@ -241,10 +387,10 @@ const Dicom = () => {
   const expandableConfig = {
     expandedRowRender: (record) => (
       <p style={{ margin: 0 }}>
-        <DicomViewer dicomUrl={record.images} />
+        <DicomViewer dicomUrl={record?.study?.study_original_id} />
+        {/* {retrieveStudyInstance(record?.study?.study_original_id)} */}
       </p>
     ),
-    rowExpandable: (record) => record.name !== "Not Expandable",
   };
 
   const onRow = (record) => ({
@@ -294,6 +440,12 @@ const Dicom = () => {
         studyID={studyID}
         setStudyID={setStudyID}
       />
+      <ShareStudy
+        isShareStudyModalOpen={isShareStudyModalOpen}
+        setIsShareStudyModalOpen={setIsShareStudyModalOpen}
+        studyID={studyID}
+        setStudyID={setStudyID}
+      />
       <Drawer
         title={null}
         placement="right"
@@ -316,6 +468,10 @@ const Dicom = () => {
           setMessages={setMessages}
         />
       </Drawer>
+      <QuickFilterModal
+        name={"Study Quick Filter"}
+        retrieveStudyData={retrieveStudyData}
+      />
     </>
   );
 };

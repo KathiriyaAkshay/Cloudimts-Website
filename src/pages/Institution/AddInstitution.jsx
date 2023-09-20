@@ -173,6 +173,32 @@ const AddInstitution = () => {
       }
       handleNextStep();
     } else if (currentStep === 2) {
+      console.log(values);
+      setPayload((prev) => ({
+        ...prev,
+        report_setting: {
+          institution_info_header: values.institution_info_header
+            ? values.institution_info_header
+            : false,
+          attach_qr_code: values.attach_qr_code ? values.attach_qr_code : false,
+          show_patient_info: {
+            with_border:
+              values.show_patient_info === "TABLE_WITH_BORDER" ? true : false,
+          },
+        },
+      }));
+      handleNextStep();
+    } else if (currentStep === 3) {
+      console.log(values);
+      setPayload((prev) => ({
+        ...prev,
+        modify_study_id: 
+          values?.modify_study_id
+            ? values?.modify_study_id
+            : false,
+      }));
+      handleNextStep();
+    } else if (currentStep === 4) {
       setPayload((prev) => ({
         ...prev,
         blocked_user: { data: values.radiologist },
@@ -188,7 +214,7 @@ const AddInstitution = () => {
           .catch((err) => console.log(err));
       }
       handleNextStep();
-    } else if (currentStep === 3) {
+    } else if (currentStep === 5) {
       setPayload((prev) => ({
         ...prev,
         house_radiologist: { data: values.house_radiologist },
@@ -265,9 +291,9 @@ const AddInstitution = () => {
     {
       title: "Report Options",
       dataIndex: "report_option",
-      render: (text, record, index) => {
-        if(index === 1){}
-      }
+      // render: (text, record, index) => {
+      //   if(index === 1){}
+      // }
     },
     {
       title: "Value for institution",
@@ -276,8 +302,7 @@ const AddInstitution = () => {
         if (record.value_field === "switch") {
           return {
             children: (
-              <Form.Item name={record.record_option}>
-                {" "}
+              <Form.Item name={record.report_value} valuePropName="checked">
                 <Switch />
               </Form.Item>
             ),
@@ -285,18 +310,20 @@ const AddInstitution = () => {
         } else if (record.value_field === "select") {
           return {
             children: (
-              <Form.Item
-                name={record.record_option}
-                className="category-select"
-              >
-                <Select placeholder="Select Value" />
+              <Form.Item name={record.report_value} className="category-select">
+                <Select
+                  placeholder="Select Value"
+                  options={[
+                    { label: "TABLE_WITH_BORDER", value: "TABLE_WITH_BORDER" },
+                  ]}
+                />
               </Form.Item>
             ),
           };
         } else {
           return {
             children: (
-              <Form.Item name={record.record_option}>
+              <Form.Item name={record.report_value}>
                 {" "}
                 <Input />
               </Form.Item>
@@ -312,23 +339,44 @@ const AddInstitution = () => {
       report_option: "Attach institution info to report header",
       report_option_value: false,
       value_field: "switch",
+      report_value: "institution_info_header",
     },
     {
       report_option: "Attach QR Code to report",
       report_option_value: false,
       value_field: "switch",
+      report_value: "attach_qr_code",
     },
     {
       report_option: "Show patient info as",
       report_option_value: "",
       value_field: "select",
-    },
-    {
-      report_option: "dataSet",
-      report_option_value: "",
-      value_field: "input",
+      report_value: "show_patient_info",
     },
   ];
+
+  const uploadSettingsColumns = [
+    {
+      title: "Upload Option",
+      dataIndex: "upload_option",
+    },
+    {
+      title: "Value",
+      dataIndex: "value",
+      render: (text, record) => (
+        <Form.Item name={"modify_study_id"} valuePropName="checked">
+          <Switch />
+        </Form.Item>
+      ),
+    },
+  ];
+
+  const uploadSettingsData = [
+    {
+      upload_option: "Modify Study Instance UID before upload",
+      value: false,
+    }
+  ]
 
   return (
     <div>
@@ -338,9 +386,10 @@ const AddInstitution = () => {
             <Step title="Basic Info" />
             <Step title="Modality Charges" />
             {/* <Steps title="Set Password" /> */}
+            <Steps title="Report Settings" />
+            <Steps title="Upload Settings" />
             <Steps title="Blocked Users" />
             <Steps title="In house Radiologist" />
-            {/* <Steps title="Report Settings" /> */}
           </Steps>
           {currentStep === 0 && (
             <Form
@@ -550,8 +599,8 @@ const AddInstitution = () => {
               onFinish={handleSubmit}
             >
               <Row>
-                <Col xs={0} sm={0} md={4} lg={5}></Col>
-                <Col xs={24} sm={24} md={15} lg={15}>
+                {/* <Col xs={0} sm={0} md={4} lg={5}></Col> */}
+                <Col xs={24} sm={24} md={24} lg={24}>
                   <TableWithFilter
                     tableColumns={columns}
                     tableData={tableData}
@@ -666,6 +715,74 @@ const AddInstitution = () => {
               onFinish={handleSubmit}
             >
               <Row gutter={30}>
+                <Col lg={24} md={24} sm={24}>
+                  <TableWithFilter
+                    tableColumns={reportColumns}
+                    tableData={reportTableData}
+                    pagination
+                  />
+                </Col>
+                <Col xs={24} sm={24} md={24} lg={24} className="justify-end">
+                  <Button type="primary" onClick={handlePrevStep}>
+                    Previous
+                  </Button>
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    style={{ marginLeft: "10px" }}
+                  >
+                    Next
+                  </Button>
+                </Col>
+              </Row>
+            </Form>
+          )}
+          {currentStep === 3 && (
+            <Form
+              labelCol={{
+                span: 24,
+              }}
+              wrapperCol={{
+                span: 24,
+              }}
+              form={form}
+              onFinish={handleSubmit}
+            >
+              <Row gutter={30}>
+                <Col lg={24} md={24} sm={24}>
+                  <TableWithFilter
+                    tableColumns={uploadSettingsColumns}
+                    tableData={uploadSettingsData}
+                    pagination
+                  />
+                </Col>
+                <Col xs={24} sm={24} md={24} lg={24} className="justify-end">
+                  <Button type="primary" onClick={handlePrevStep}>
+                    Previous
+                  </Button>
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    style={{ marginLeft: "10px" }}
+                  >
+                    Next
+                  </Button>
+                </Col>
+              </Row>
+            </Form>
+          )}
+          {currentStep === 4 && (
+            <Form
+              labelCol={{
+                span: 24,
+              }}
+              wrapperCol={{
+                span: 24,
+              }}
+              form={form}
+              onFinish={handleSubmit}
+            >
+              <Row gutter={30}>
                 <Col lg={12} md={12} sm={12}>
                   <Form.Item
                     label="Choose Radiologist"
@@ -707,7 +824,7 @@ const AddInstitution = () => {
               </Row>
             </Form>
           )}
-          {currentStep === 3 && (
+          {currentStep === 5 && (
             <Form
               labelCol={{
                 span: 24,
@@ -760,42 +877,6 @@ const AddInstitution = () => {
               </Row>
             </Form>
           )}
-          {/* {currentStep === 5 && (
-          <Form
-            labelCol={{
-              span: 24,
-            }}
-            wrapperCol={{
-              span: 24,
-            }}
-            form={form}
-            onFinish={handleSubmit}
-          >
-            <Row gutter={30}>
-              <Col lg={12} md={12} sm={24}>
-                <TableWithFilter
-                  tableColumns={reportColumns}
-                  tableData={reportTableData}
-                  pagination
-                />
-              </Col>
-              <Col
-                lg={24}
-                md={24}
-                sm={24}
-                className="justify-end display-flex"
-                style={{ marginTop: "10px" }}
-              >
-                <Button type="primary" onClick={handlePrevStep}>
-                  Previous
-                </Button>
-                <Button type="primary" htmlType="submit">
-                  Submit
-                </Button>
-              </Col>
-            </Row>
-          </Form>
-        )} */}
         </Spin>
       </Card>
     </div>

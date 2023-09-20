@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Drawer, Progress, Space, Tooltip } from "antd";
 import { EyeFilled, PlusOutlined } from "@ant-design/icons";
@@ -6,12 +6,12 @@ import TableWithFilter from "../../components/TableWithFilter";
 import EditActionIcon from "../../components/EditActionIcon";
 import DeleteActionIcon from "../../components/DeleteActionIcon";
 import { useBreadcrumbs } from "../../hooks/useBreadcrumbs";
-import API from "../../apis/getApi";
 import FilterModal from "../../components/FilterModal";
 import {
   filterInstitutionData,
   getInstitutionLogs,
 } from "../../apis/studiesApi";
+import { UserPermissionContext } from "../../hooks/userPermissionContext";
 
 const Institution = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -21,7 +21,7 @@ const Institution = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [logsData, setLogsData] = useState([]);
   const navigate = useNavigate();
-  const token = localStorage.getItem("token");
+  const { permissionData } = useContext(UserPermissionContext);
 
   const { changeBreadcrumbs } = useBreadcrumbs();
 
@@ -63,59 +63,108 @@ const Institution = () => {
           username: data.user_info.username,
         }));
         setLogsData(resData);
-        setIsDrawerOpen(true)
+        setIsDrawerOpen(true);
       })
       .catch((err) => console.log(err));
+  };
+
+  const checkPermissionStatus = (name) => {
+    const permission = permissionData["InstitutionTable view"]?.find(
+      (data) => data.permission === name
+    )?.permission_value;
+    return permission;
   };
 
   const columns = [
     {
       title: "Institution Name",
       dataIndex: "name",
-      // sorter: (a, b) => {},
-      // editable: true,
+      className: `${
+        checkPermissionStatus("View Institution name")
+          ? ""
+          : "column-display-none"
+      }`,
     },
     {
       title: "Email",
       dataIndex: "email",
-      // sorter: (a, b) => {},
-      // editable: true,
+      className: `${
+        checkPermissionStatus("View Institution email")
+          ? ""
+          : "column-display-none"
+      }`,
     },
     {
       title: "Contact Number",
       dataIndex: "contact",
-      // sorter: (a, b) => {},
-      // editable: true,
+      className: `${
+        checkPermissionStatus("View Institution contact number")
+          ? ""
+          : "column-display-none"
+      }`,
     },
     {
       title: "City",
       dataIndex: "city",
-      // sorter: (a, b) => {},
-      // editable: true,
+      className: `${
+        checkPermissionStatus("View Institution City")
+          ? ""
+          : "column-display-none"
+      }`,
     },
     {
       title: "State",
       dataIndex: "state",
-      // sorter: (a, b) => {},
-      // editable: true,
+      className: `${
+        checkPermissionStatus("View Institution State")
+          ? ""
+          : "column-display-none"
+      }`,
     },
     {
       title: "Country",
       dataIndex: "country",
-      // sorter: (a, b) => {},
-      // editable: true,
+      // className: `${
+      //   checkPermissionStatus("View Username") ? "" : "column-display-none"
+      // }`,
     },
     {
       title: "Usage",
       dataIndex: "institution_space_usage",
-      // sorter: (a, b) => {},
-      // editable: true,
+      className: `${
+        checkPermissionStatus("View Institution space usage")
+          ? ""
+          : "column-display-none"
+      }`,
       render: (text, record) => <Progress percent={text} />,
     },
     {
+      title: "Created At",
+      dataIndex: "created_at",
+      className: `${
+        checkPermissionStatus("View Institution created at")
+          ? ""
+          : "column-display-none"
+      }`,
+    },
+    {
+      title: "Updated At",
+      dataIndex: "updated_at",
+      className: `${
+        checkPermissionStatus("View Institution last updated at")
+          ? ""
+          : "column-display-none"
+      }`,
+    },
+    checkPermissionStatus("Actions option access") && {
       title: "Actions",
       dataIndex: "actions",
       fixed: "right",
+      className: `${
+        checkPermissionStatus("Actions option access")
+          ? ""
+          : "column-display-none"
+      }`,
       width: window.innerWidth < 650 ? "1%" : "10%",
       render: (_, record) => (
         <Space style={{ display: "flex", justifyContent: "space-evenly" }}>
@@ -134,7 +183,7 @@ const Institution = () => {
         </Space>
       ),
     },
-  ];
+  ].filter(Boolean);
 
   const logsColumn = [
     {
@@ -178,7 +227,7 @@ const Institution = () => {
         // onAddClick={() => navigate("/institutions/add")}
         // addButtonTitle="Add Institution"
         // addButtonIcon={<PlusOutlined />}
-        rowSelection={rowSelection}
+        // rowSelection={rowSelection}
         setPagi={setPagi}
         totalRecords={totalPages}
         onPaginationChange={retrieveInstitutionData}

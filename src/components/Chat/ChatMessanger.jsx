@@ -14,6 +14,7 @@ import {
   deleteChatMessage,
   getInitialChatMessages,
   sendChatMessage,
+  sendMediaChat,
 } from "../../apis/studiesApi";
 import { RoomDataContext } from "../../hooks/roomDataContext";
 
@@ -253,9 +254,13 @@ const ChatMessanger = (props) => {
         content: chatData,
         send_from_id: Number(user),
         room_name: orderId,
-        media_url: "None",
-        media: false,
+        media: "None",
+        media_option: false,
         room_id: roomID,
+        is_quoted: forwardMessage?.quoted ? true : false,
+        quoted_message: forwardMessage?.quoted
+          ? forwardMessage?.quotedMessage?.content
+          : false,
         // uni_key: moment.utc(`${new Date().toJSON()}`) + 5,
         // quoted_msg: forwardMessage?.quoted
         //   ? forwardMessage?.quotedMessage?.message
@@ -281,12 +286,12 @@ const ChatMessanger = (props) => {
       imageStore?.length &&
         imageStore?.forEach((image) => {
           // formData.append(`media_file`, image);
-          formData = { ...formData, media_file: image };
+          formData = { ...formData, media: image };
         });
       fileStore?.length &&
         fileStore?.forEach((docs) => {
           // formData.append(`media_file`, docs);
-          formData = { ...formData, media_file: docs };
+          formData = { ...formData, media: docs };
         });
 
       if (chatDetails?.chatType === "group") {
@@ -297,10 +302,15 @@ const ChatMessanger = (props) => {
         // formData.append("room_name", roomName);
         formData = {
           ...formData,
-          chat_message: "True",
-          room_name: roomName,
-          user: userId,
-          is_file: "True",
+          media_option: "True",
+          content: "None",
+          send_from_id: Number(user),
+          room_name: orderId,
+          room_id: roomID,
+          is_quoted: forwardMessage?.quoted ? true : "False",
+          quoted_message: forwardMessage?.quoted
+            ? forwardMessage?.quotedMessage?.content
+            : "None",
         };
       }
       // chatDetails?.chatType === "group"
@@ -310,12 +320,7 @@ const ChatMessanger = (props) => {
       //   formData.append("room_name", chatDataInfo?.room)
       //   ;
       console.log(formData);
-      await axios
-        .post(`https://demo.nordinarychicken.com/api/chat/media/`, formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        })
+      sendMediaChat(formData)
         .then((res) => {
           handleAllChatHistory(false);
         })
@@ -601,14 +606,16 @@ const ChatMessanger = (props) => {
             {forwardMessage?.quoted && (
               <div
                 style={QuoteStyle}
-                className="quotedMessage-container isHousemateChat-quote"
+                className={`quotedMessage-container isHousemateChat-quote ${
+                  isChatModule && "quotedMessage-container-position"
+                }`}
               >
                 <div className="quoted-details">
-                  <h3 className="quotedMessage-name">
+                  {/* <h3 className="quotedMessage-name">
                     {forwardMessage?.quotedMessage?.user_name}
-                  </h3>
+                  </h3> */}
                   <span className="quotedMessage-message">
-                    {forwardMessage?.quotedMessage?.message}
+                    {forwardMessage?.quotedMessage?.content}
                   </span>
                 </div>
                 <div

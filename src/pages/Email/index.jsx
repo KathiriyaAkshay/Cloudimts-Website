@@ -11,6 +11,7 @@ import NotificationMessage from "../../components/NotificationMessage";
 import { UserEmailContext } from "../../hooks/userEmailContext";
 import EmailFilterModal from "../../components/EmailFilterModal";
 import { emailFilterData } from "../../apis/studiesApi";
+import { UserPermissionContext } from "../../hooks/userPermissionContext";
 
 const Email = () => {
   const [emailData, setEmailData] = useState([]);
@@ -24,6 +25,7 @@ const Email = () => {
   const [pagi, setPagi] = useState();
   const [totalPages, setTotalPages] = useState(0);
   const [emailID, setEmailID] = useState(null);
+  const { permissionData } = useContext(UserPermissionContext);
 
   const { changeBreadcrumbs } = useBreadcrumbs();
 
@@ -82,18 +84,41 @@ const Email = () => {
     setIsLoading(false);
   };
 
+  const checkPermissionStatus = (name) => {
+    const permission = permissionData["EmailTable view"].find(
+      (data) => data.permission === name
+    )?.permission_value;
+    return permission;
+  };
+
   const columns = [
     {
       title: "Full Name",
       dataIndex: "full_name",
-      // sorter: (a, b) => {},
-      // editable: true,
+      className: `${
+        checkPermissionStatus("View Full name") ? "" : "column-display-none"
+      }`,
     },
     {
       title: "Email",
       dataIndex: "email",
-      // sorter: (a, b) => {},
-      // editable: true,
+      // className: `${
+      //   checkPermissionStatus("View Patient id") ? "" : "column-display-none"
+      // }`,
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      className: `${
+        checkPermissionStatus("Active status") ? "" : "column-display-none"
+      }`,
+    },
+    {
+      title: "Role",
+      dataIndex: "role",
+      className: `${
+        checkPermissionStatus("View User Role") ? "" : "column-display-none"
+      }`,
     },
     {
       title: "Actions",
@@ -102,12 +127,16 @@ const Email = () => {
       width: window.innerWidth < 650 ? "1%" : "10%",
       render: (_, record) => (
         <Space style={{ display: "flex", justifyContent: "space-evenly" }}>
-          <EditActionIcon
-            editActionHandler={() => editActionHandler(record.id)}
-          />
-          <DeleteActionIcon
-            deleteActionHandler={() => deleteActionHandler(record)}
-          />
+          {checkPermissionStatus("Edit option") && (
+            <EditActionIcon
+              editActionHandler={() => editActionHandler(record.id)}
+            />
+          )}
+          {checkPermissionStatus("Delete option") && (
+            <DeleteActionIcon
+              deleteActionHandler={() => deleteActionHandler(record)}
+            />
+          )}
         </Space>
       ),
     },
@@ -153,7 +182,7 @@ const Email = () => {
         // onAddClick={() => setIsModalOpen(true)}
         // addButtonTitle="Add Email"
         // addButtonIcon={<PlusOutlined />}
-        rowSelection={rowSelection}
+        // rowSelection={rowSelection}
         loadingTableData={isLoading}
         setPagi={setPagi}
         totalRecords={totalPages}

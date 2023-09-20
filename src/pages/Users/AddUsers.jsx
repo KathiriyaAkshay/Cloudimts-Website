@@ -239,6 +239,7 @@ const AddUsers = () => {
       }
       handleNextStep();
     } else if (currentStep === 3) {
+      handleNextStep();
 
       const config = {
         bucketName: S3_BUCKET,

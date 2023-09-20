@@ -83,7 +83,7 @@ const InstitutionLogs = () => {
       <TableWithFilter
         tableData={institutionData}
         tableColumns={columns}
-        rowSelection={rowSelection}
+        // rowSelection={rowSelection}
         setPagi={setPagi}
         totalRecords={totalPages}
         onPaginationChange={retrieveInstitutionData}

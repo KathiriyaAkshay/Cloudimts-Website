@@ -8,6 +8,7 @@ import { useBreadcrumbs } from "../../hooks/useBreadcrumbs";
 function EditPermission() {
   const [permissionData, setPermissionData] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const token = localStorage.getItem("token")
   const { id } = useParams();
   const { changeBreadcrumbs } = useBreadcrumbs();
   useEffect(() => {
@@ -21,7 +22,7 @@ function EditPermission() {
 
   const retrievePermissionData = async () => {
     setIsLoading(true);
-    await API.post("/role/v1/fetch_particular_role_permission", { role_id: id })
+    await API.post("/role/v1/fetch_particular_role_permission", { role_id: id }, {headers: {Authorization: `Bearer ${token}`}})
       .then((res) => {
         setPermissionData(res.data.data);
       })
@@ -71,7 +72,7 @@ function EditPermission() {
         permission: item.permission_value,
       })),
     };
-    await API.post("/role/v1/update_role_permission", resData)
+    await API.post("/role/v1/update_role_permission", resData, {headers: {Authorization: `Bearer ${token}`}})
       .then((res) => {
         NotificationMessage("success", "Permission Updated Successfully");
         retrievePermissionData();

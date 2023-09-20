@@ -30,7 +30,7 @@ const SingleChatMessanger = (props) => {
     <div
       className={`userchat-main ${classNames ? classNames : ""} ${chatfile && "chatfile-style"
         }`}
-      style={emojiClick ? { height: "100vh", marginBottom: "10px" } : {}}
+      style={emojiClick ? { height: "40vh", marginBottom: "10px" } : {}}
     >
       {/* <div className="userchat-date">
         <span>{toDate}</span>

@@ -4,6 +4,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Login from "./pages/Login";
 import { routes } from "./routes/routes";
 import BasicContext from "./hooks";
+import NotFound from "./components/NotFound";
 
 function App() {
   return (
@@ -12,14 +13,17 @@ function App() {
         <Route path="/" element={<Navigate to="/login" />} />
         <Route path="/login" element={<Login />} />
         <Route path="/admin/login" element={<Login />} />
-        <Route path="*" element={<Navigate to="/login" />} />
+        <Route path="/not-found" element={<NotFound />} />
+        <Route path="*" element={<Navigate to="/not-found" />} />
         {routes?.map(({ path, component: Component }, index) => (
           <Route
             key={index}
             path={path}
             element={
               <BasicContext>
-                <BasicLayout>{Component}</BasicLayout>
+                <BasicLayout>
+                  <ProtectedRoute path={path}>{Component}</ProtectedRoute>
+                </BasicLayout>
               </BasicContext>
             }
           />

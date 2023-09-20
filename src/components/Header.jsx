@@ -1,20 +1,6 @@
-import {
-  MenuFoldOutlined,
-  MenuUnfoldOutlined,
-  SettingOutlined,
-  QrcodeOutlined,
-  TeamOutlined,
-  ContainerOutlined,
-  UserOutlined,
-  ApartmentOutlined,
-  UsergroupAddOutlined,
-  PercentageOutlined,
-  PrinterOutlined,
-  AppstoreOutlined,
-  MailOutlined,
-} from "@ant-design/icons";
+import { AppstoreOutlined } from "@ant-design/icons";
 import { Breadcrumb, Button, Divider, Layout, Menu } from "antd";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import {
   Link,
   NavLink,
@@ -27,8 +13,20 @@ import { useBreadcrumbs } from "../hooks/useBreadcrumbs";
 import UserProfile from "./UserProfile";
 import logo from "../assets/images/logo-transparent-svg.svg";
 import { MdOutlineHomeWork } from "react-icons/md";
-import { AiOutlineUserAdd, AiOutlineDown } from "react-icons/ai";
+import {
+  AiOutlineUserAdd,
+  AiOutlineDown,
+  AiOutlineFilter,
+  AiOutlinePlus,
+  AiOutlineFileSync,
+  AiOutlineMail,
+} from "react-icons/ai";
 import HeaderButton from "./HeaderButton";
+import StudyFilterModal from "./StudyFilterModal";
+import { getFilterList } from "../apis/studiesApi";
+import { UserPermissionContext } from "../hooks/userPermissionContext";
+import { FaMoneyBill, FaUserLock } from "react-icons/fa";
+import { CgTemplate } from "react-icons/cg";
 
 const { Header, Sider, Content } = Layout;
 
@@ -40,8 +38,20 @@ const BasicLayout = ({ children }) => {
   const [collapsed, setCollapsed] = useState(true);
   const [token, setToken] = useState(null);
   const { setIsModalOpen } = useBreadcrumbs();
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const [filterOptions, setFilterOptions] = useState([]);
+  const { permissionData } = useContext(UserPermissionContext);
+  const [userPermissionData, setUserPermissionData] = useState({});
+
+  useEffect(() => {
+    setUserPermissionData(permissionData);
+  }, [permissionData]);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    retrieveFilterOptions();
+  }, []);
 
   useEffect(() => {
     contentRef.current.scrollTo(0, 0);
@@ -61,45 +71,19 @@ const BasicLayout = ({ children }) => {
     setSidebarCollapsed(!sidebrCollapsed);
   };
 
+  const retrieveFilterOptions = () => {
+    getFilterList()
+      .then((res) => {
+        const resData = res.data.data.map((data) => ({
+          label: data.filter_name,
+          key: data.id,
+        }));
+        setFilterOptions(resData);
+      })
+      .catch((err) => console.log(err));
+  };
+
   const { pathname } = useLocation();
-
-  const adminItems = [
-    {
-      key: "1",
-      to: "/merchants",
-      icon: <UsergroupAddOutlined />,
-      title: "Merchants",
-    },
-  ];
-
-  const items = [
-    {
-      key: "3",
-      to: "/products",
-      icon: <ApartmentOutlined />,
-      title: "Products",
-    },
-    {
-      key: "2",
-      to: "/menu",
-      icon: <QrcodeOutlined />,
-      subPaths: ["/categories", "/items"],
-      title: "Menu",
-    },
-    {
-      key: "4",
-      to: "/orders",
-      icon: <ContainerOutlined />,
-      subPaths: ["/create-orders", `/create-orders/${id}/edit`],
-      title: "Orders",
-    },
-    {
-      key: "9",
-      to: "/settings",
-      icon: <SettingOutlined />,
-      title: "Settings",
-    },
-  ];
 
   const menuLabel = (title) => (
     <div className="display-flex-between" style={{ gap: "4px" }}>
@@ -108,62 +92,116 @@ const BasicLayout = ({ children }) => {
     </div>
   );
 
+  const checkPermissionStatus = (name) => {
+    const permission = userPermissionData["Menu Permission"]?.find(
+      (data) => data.permission === name
+    )?.permission_value;
+    return permission;
+  };
+
+  console.log(permissionData);
+
   const menuItems = [
-    {
+    checkPermissionStatus("Show Option - Institution option") && {
       label: menuLabel("Institution"),
       key: "SubMenu",
       icon: <MdOutlineHomeWork />,
       children: [
         {
-          label: "All Institution",
+          label: <NavLink to={"/institutions"}>All Institution</NavLink>,
+          key: "all-institution",
         },
         {
-          label: "Create Institution",
+          label: <NavLink to={"/institutions/add"}>Create Institution</NavLink>,
+          key: "add-institution",
         },
       ],
     },
-    {
+    checkPermissionStatus("Show Option - User option") && {
       label: menuLabel("Users"),
       key: "users",
       icon: <AiOutlineUserAdd />,
       children: [
         {
-          label: "All Users",
+          label: <NavLink to={"/users"}>All Users</NavLink>,
+          key: "all-users",
         },
         {
-          label: "Create Users",
+          label: <NavLink to={"/users/add"}>Create Users</NavLink>,
+          key: "add-users",
         },
       ],
     },
-  ];
+    checkPermissionStatus("Show Filter option") && {
+      label: menuLabel("Filters"),
+      key: "filters",
+      icon: <AiOutlineFilter />,
+      children: [
+        ...filterOptions,
+        checkPermissionStatus("Show Add Filter option") && {
+          label: (
+            <div onClick={() => setIsFilterModalOpen(true)}>
+              <AiOutlinePlus /> Add Filter
+            </div>
+          ),
+        },
+      ].filter(Boolean),
+    },
+    checkPermissionStatus("Show Studies option") && {
+      label: <NavLink to={"/studies"}>Studies</NavLink>,
+      key: "studies",
+      icon: <AiOutlineFileSync />,
+    },
+    checkPermissionStatus("Show Option - Role option") && {
+      label: <NavLink to={"/users/roles"}>Roles</NavLink>,
+      key: "roles",
+      icon: <FaUserLock />,
+    },
+    checkPermissionStatus("Show Option - Email option") && {
+      label: <NavLink to={"/users/email"}>Email</NavLink>,
+      key: "email",
+      icon: <AiOutlineMail />,
+    },
+    checkPermissionStatus("Show Option - Billing option") && {
+      label: <NavLink to={"/billing"}>Billing</NavLink>,
+      key: "billing",
+      icon: <FaMoneyBill />,
+    },
+    checkPermissionStatus("Show Option - Template option") && {
+      label: <NavLink to={"/reports"}>Templates</NavLink>,
+      key: "templates",
+      icon: <CgTemplate />,
+    },
+  ].filter(Boolean);
 
   return (
-    <Layout style={{ minHeight: "100vh" }}>
-      {/* {menu} */}
-      <Layout className="site-layout">
-        <Header
-          className="site-layout-background"
-          style={{
-            padding: 0,
-            // backgroundColor: "#fff",
-            // boxShadow: "none",
-          }}
-        >
-          <div
+    <>
+      <Layout style={{ minHeight: "100vh" }}>
+        {/* {menu} */}
+        <Layout className="site-layout">
+          <Header
+            className="site-layout-background"
             style={{
-              fontSize: "14px",
-              display: "flex",
-              alignItems: "center",
-              gap: "1rem",
+              padding: 0,
+              // backgroundColor: "#fff",
+              // boxShadow: "none",
             }}
-            className="header-menu-icon"
           >
-            <img src={logo} alt="log" className="company-logo" />
-            <AppstoreOutlined
-              style={{ fontSize: "24px", color: "#1677ff" }}
-              onClick={() => navigate("/home")}
-            />
-            {/* <Breadcrumb
+            <div
+              style={{
+                fontSize: "14px",
+                display: "flex",
+                alignItems: "center",
+                gap: "1rem",
+              }}
+              className="header-menu-icon"
+            >
+              <img src={logo} alt="log" className="company-logo" />
+              <AppstoreOutlined
+                style={{ fontSize: "24px", color: "#FFF" }}
+                onClick={() => navigate("/dashboard")}
+              />
+              {/* <Breadcrumb
               separator="|"
               style={{
                 fontSize: "18px",
@@ -185,82 +223,90 @@ const BasicLayout = ({ children }) => {
                   </Breadcrumb.Item>
                 ))}
             </Breadcrumb> */}
-            <Divider type="vertical" className="vertical-divider" />
-            <Menu
-              mode="horizontal"
-              theme="dark"
-              items={menuItems}
-              className="header-menu"
-            />
-            <UserProfile />
-          </div>
-        </Header>
-        <Content
-          ref={contentRef}
-          className="site-layout-background"
-          style={
-            window.location.pathname === "/chats" ||
-            window.location.pathname === `/create-orders/${id}/edit`
-              ? {
-                  padding: 0,
-                  height: "calc(100vh - 75px)",
-                  overflow: "auto",
-                  overflowX: "hidden",
-                  minHeight: 280,
-                }
-              : {
-                  height: "calc(100vh - 75px)",
-                  overflow: "auto",
-                  overflowX: "hidden",
-                  minHeight: 280,
-                  paddingBottom: 20,
-                }
-          }
-        >
-          {" "}
-          {window.location.pathname !== "/chats" && (
-            <div className="breadcrumb-div">
-              <Breadcrumb
-                separator="|"
-                style={{
-                  fontSize: "18px",
-                  fontWeight: 500,
-                  color: "#1a2c3e",
-                  justifyContent: "center",
-                }}
-                className="header-breadcrumb"
-              >
-                {breadCrumbs.length > 0 &&
-                  breadCrumbs.map((crumb, index) => (
-                    <Breadcrumb.Item key={index}>
-                      {crumb.to ? (
-                        <Link to={crumb.to} title={crumb.name}>
-                          {crumb.name}
-                        </Link>
-                      ) : (
-                        crumb.name
-                      )}
-                    </Breadcrumb.Item>
-                  ))}
-              </Breadcrumb>
-              <HeaderButton setIsModalOpen={setIsModalOpen} />
+              <Divider type="vertical" className="vertical-divider" />
+              <Menu
+                mode="horizontal"
+                theme="dark"
+                items={menuItems}
+                className="header-menu"
+              />
+              <UserProfile />
             </div>
-          )}
-          <div
+          </Header>
+          <Content
+            ref={contentRef}
+            className="site-layout-background"
             style={
-              window.location.pathname !== "/chats"
+              window.location.pathname === "/chats" ||
+              window.location.pathname === "/dashboard" ||
+              window.location.pathname === `/create-orders/${id}/edit`
                 ? {
-                    padding: "0px 35px 35px 35px",
+                    padding: 0,
+                    height: "calc(100vh - 75px)",
+                    overflow: "auto",
+                    overflowX: "hidden",
+                    minHeight: 280,
                   }
-                : { padding: "0px" }
+                : {
+                    height: "calc(100vh - 75px)",
+                    overflow: "auto",
+                    overflowX: "hidden",
+                    minHeight: 280,
+                    paddingBottom: 20,
+                  }
             }
           >
-            {children}
-          </div>
-          {/* <Outlet /> */}
-        </Content>
+            {" "}
+            {(window.location.pathname !== "/chats" &&
+              window.location.pathname !== "/dashboard") && (
+              <div className="breadcrumb-div">
+                <Breadcrumb
+                  separator="|"
+                  style={{
+                    fontSize: "18px",
+                    fontWeight: 500,
+                    color: "#0189a5",
+                    justifyContent: "center",
+                  }}
+                  className="header-breadcrumb"
+                >
+                  {breadCrumbs.length > 0 &&
+                    breadCrumbs.map((crumb, index) => (
+                      <Breadcrumb.Item key={index}>
+                        {crumb.to ? (
+                          <Link to={crumb.to} title={crumb.name}>
+                            {crumb.name}
+                          </Link>
+                        ) : (
+                          crumb.name
+                        )}
+                      </Breadcrumb.Item>
+                    ))}
+                </Breadcrumb>
+                <HeaderButton setIsModalOpen={setIsModalOpen} id={id} />
+              </div>
+            )}
+            <div
+              style={
+                window.location.pathname !== "/chats"
+                  ? {
+                      padding: "0px 35px 35px 35px",
+                    }
+                  : { padding: "0px" }
+              }
+            >
+              {children}
+            </div>
+            {/* <Outlet /> */}
+          </Content>
+        </Layout>
       </Layout>
-    </Layout>
+      <StudyFilterModal
+        isFilterModalOpen={isFilterModalOpen}
+        setIsFilterModalOpen={setIsFilterModalOpen}
+        retrieveFilterOptions={retrieveFilterOptions}
+      />
+    </>
   );
 };
 export default BasicLayout;

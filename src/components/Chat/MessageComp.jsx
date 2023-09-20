@@ -3,12 +3,12 @@ import { saveAs } from "file-saver";
 import { useNavigate } from "react-router";
 import moment from "moment/moment";
 import ChatSettingPop from "./ChatSettingPop";
-import PdfImg from "../../assets/images/pdf.svg"
-import downloadImg from "../../assets/images/download-chat-img.png"
-import Excel from "../../assets/images/microsoft-excel-icon.svg"
-import Document from "../../assets/images/Document_chat.svg"
-import chatFileImg from "../../assets/images/chat-file-icon.svg"
-import Word from "../../assets/images/microsoft-word-icon.svg"
+import PdfImg from "../../assets/images/pdf.svg";
+import downloadImg from "../../assets/images/download-chat-img.png";
+import Excel from "../../assets/images/microsoft-excel-icon.svg";
+import Document from "../../assets/images/Document_chat.svg";
+import chatFileImg from "../../assets/images/chat-file-icon.svg";
+import Word from "../../assets/images/microsoft-word-icon.svg";
 const MessageComp = (props) => {
   const navigate = useNavigate();
   const {
@@ -26,7 +26,7 @@ const MessageComp = (props) => {
     searchIndex,
   } = props;
   const id = item?.id;
-  const { file } = item || [];
+  const { media } = item || [];
   useEffect(() => {
     // chatSearchedResults?.length &&
     //   document
@@ -34,23 +34,23 @@ const MessageComp = (props) => {
     //     .scrollIntoView();
   }, [searchIndex]);
 
-  const handleCustomSlider = (mainData = []) => {
+  const handleCustomSlider = (mainData = "") => {
     return (
       <div
         className={
-          mainData[0]?.files?.includes(".pdf") ||
-          mainData[0]?.files?.includes(".xlsx") ||
-          mainData[0]?.files?.includes(".doc") ||
-          mainData[0]?.files?.includes(".docx")
+          mainData?.includes(".pdf") ||
+          mainData?.includes(".xlsx") ||
+          mainData?.includes(".doc") ||
+          mainData?.includes(".docx")
             ? "flex-column gap-3 showcard-containerimg"
             : "showcard-containerimg"
         }
         style={
           !(
-            mainData[0]?.files?.includes(".pdf") ||
-            mainData[0]?.files?.includes(".xlsx") ||
-            mainData[0]?.files?.includes(".doc") ||
-            mainData[0]?.files?.includes(".docx")
+            mainData?.includes(".pdf") ||
+            mainData?.includes(".xlsx") ||
+            mainData?.includes(".doc") ||
+            mainData?.includes(".docx")
           )
             ? {
                 display: "flex",
@@ -67,103 +67,64 @@ const MessageComp = (props) => {
               }
         }
       >
-        {mainData?.map((files) => {
-          let fileData = files.file_name?.split("/");
-          console.log(fileData);
-          let fileName = fileData[2];
-          let extnsionData = fileName.split(".");
-          let extensionName = extnsionData[1];
-          return (
-            <>
-              {extensionName === "pdf" ? (
-                <div className="d-flex justify-content-between chat-file-container align-items-center">
-                  <div className="d-flex gap-1 align-items-center">
-                    <img
-                      className="chat-doc-image"
-                      src={PdfImg}
-                      alt="chatFileImg"
-                    />
-                    <div className="d-flex chat-file-name-size">
-                      <span className="text-break">
-                        {fileName.length > 14
-                          ? fileName
-                          : fileName}
-                      </span>
-                    </div>
-                  </div>
-                  <img
-                    style={{ width: "25px", height: "25px" }}
-                    onClick={() =>
-                      saveAs(
-                        `${files?.files}`
-                      )
-                    }
-                    src={downloadImg}
-                    alt="downloadImg"
-                  />
+        <>
+          {mainData?.includes(".pdf") ? (
+            <div className="d-flex justify-content-between chat-file-container align-items-center">
+              <div className="d-flex gap-1 align-items-center">
+                <img
+                  className="chat-doc-image"
+                  src={PdfImg}
+                  alt="chatFileImg"
+                />
+                <div className="d-flex chat-file-name-size">
+                  <span className="text-break">{mainData?.split(".")[0]}</span>
                 </div>
-              ) : extensionName === "xlsx" ? (
-                <div className="d-flex justify-content-between chat-file-container align-items-center">
-                  <div className="d-flex gap-1 align-items-center">
-                    <img
-                      className="chat-doc-image"
-                      src={Excel}
-                      alt="chatFileImg"
-                    />
-                    <div className="d-flex chat-file-name-size">
-                      <span className="text-break">
-                        {fileName.length > 14
-                          ? fileName
-                          : fileName}
-                      </span>
-                    </div>
-                  </div>
-                  <img
-                    style={{ width: "25px", height: "25px" }}
-                    onClick={() =>
-                      saveAs(
-                        `${files?.files}`
-                      )
-                    }
-                    src={downloadImg}
-                    alt="downloadImg"
-                  />
+              </div>
+              <img
+                style={{ width: "25px", height: "25px" }}
+                onClick={() => saveAs(`${mainData?.split[0]}`)}
+                src={downloadImg}
+                alt="downloadImg"
+              />
+            </div>
+          ) : mainData?.includes(".xlsx") ? (
+            <div className="d-flex justify-content-between chat-file-container align-items-center">
+              <div className="d-flex gap-1 align-items-center">
+                <img className="chat-doc-image" src={Excel} alt="chatFileImg" />
+                <div className="d-flex chat-file-name-size">
+                  <span className="text-break">{mainData?.split(".")[0]}</span>
                 </div>
-              ) : extensionName === "doc" || extensionName === "docx" ? (
-                <div className="d-flex justify-content-between chat-file-container align-items-center">
-                  <div className="d-flex gap-1 align-items-center">
-                    <img
-                      className="chat-doc-image"
-                      src={Word}
-                      alt="chatFileImg"
-                    />
-                    <div className="d-flex chat-file-name-size">
-                      <span className="text-break">
-                        {fileName.length > 14
-                          ? fileName
-                          : fileName}
-                      </span>
-                    </div>
-                  </div>
-                  <img
-                    style={{ width: "25px", height: "25px" }}
-                    onClick={() =>
-                      saveAs(
-                        `${files?.files}`
-                      )
-                    }
-                    src={downloadImg}
-                    alt="downloadImg"
-                  />
+              </div>
+              <img
+                style={{ width: "25px", height: "25px" }}
+                onClick={() => saveAs(`${mainData?.split(".")[0]}`)}
+                src={downloadImg}
+                alt="downloadImg"
+              />
+            </div>
+          ) : mainData?.includes(".doc") || mainData?.includes(".docx") ? (
+            <div className="d-flex justify-content-between chat-file-container align-items-center">
+              <div className="d-flex gap-1 align-items-center">
+                <img className="chat-doc-image" src={Word} alt="chatFileImg" />
+                <div className="d-flex chat-file-name-size">
+                  <span className="text-break">{mainData?.split(".")[0]}</span>
                 </div>
-              ) : extensionName === "jpg" ||
-                extensionName === "jpeg" ||
-                extensionName === "png" ||
-                extensionName === "PNG" ||
-                extensionName === "avif" ? (
-                <div className="userchat-container mt-3">
-                  <img src={`${files?.files}`} />
-                  {/* <Slider
+              </div>
+              <img
+                style={{ width: "25px", height: "25px" }}
+                onClick={() => saveAs(`${mainData?.split(".")[0]}`)}
+                src={downloadImg}
+                alt="downloadImg"
+              />
+            </div>
+          ) : mainData?.includes("jpg") ||
+            mainData?.includes("jpeg") ||
+            mainData?.includes("png") ||
+            mainData?.includes("PNG") ||
+            mainData?.includes("avif") ? (
+            <div className="userchat-container mt-3">
+              <img src={`${mainData}`} />
+              {/* <Slider
                           imageData={mainData}
                           numberShowMargin={true}
                           handleGalleryPopUp={handleGalleryPopUp}
@@ -172,53 +133,43 @@ const MessageComp = (props) => {
                           fileName={fileName}
                           files={files}
                         /> */}
+            </div>
+          ) : mainData?.includes(".mp4") ||
+            mainData?.includes(".mov") ||
+            mainData?.includes(".mkv") ? (
+            <video quality={100} width="100%" height="100%">
+              <source
+                // type={`video/${mainData[0]?.files?.split(".")?.pop()}`}
+                src={`${mainData}`}
+              ></source>
+            </video>
+          ) : (
+            // <Slider
+            //   imageData={mainData}
+            //   numberShowMargin={true}
+            //   handleGalleryPopUp={handleGalleryPopUp}
+            //   isMessageGallery={true}
+            // />
+            <div className="d-flex justify-content-between chat-file-container align-items-center">
+              <div className="d-flex gap-1 align-items-center">
+                <img
+                  className="chat-doc-image"
+                  src={Document}
+                  alt="chatFileImg"
+                />
+                <div className="d-flex chat-file-name-size">
+                  <span className="text-break">{mainData?.split(".")[0]}</span>
                 </div>
-              ) : mainData[0]?.files?.includes(".mp4") ||
-                mainData[0]?.files?.includes(".mov") ||
-                mainData[0]?.files?.includes(".mkv") ? (
-                <video quality={100} width="100%" height="100%">
-                  <source
-                    // type={`video/${mainData[0]?.files?.split(".")?.pop()}`}
-                    src={`${files?.files}`}
-                  ></source>
-                </video>
-              ) : (
-                // <Slider
-                //   imageData={mainData}
-                //   numberShowMargin={true}
-                //   handleGalleryPopUp={handleGalleryPopUp}
-                //   isMessageGallery={true}
-                // />
-                <div className="d-flex justify-content-between chat-file-container align-items-center">
-                  <div className="d-flex gap-1 align-items-center">
-                    <img
-                      className="chat-doc-image"
-                      src={Document}
-                      alt="chatFileImg"
-                    />
-                    <div className="d-flex chat-file-name-size">
-                      <span className="text-break">
-                        {fileName.length > 14
-                          ? fileName
-                          : fileName}
-                      </span>
-                    </div>
-                  </div>
-                  <img
-                    style={{ width: "25px", height: "25px" }}
-                    onClick={() =>
-                      saveAs(
-                        `${files?.files}`
-                      )
-                    }
-                    src={downloadImg}
-                    alt="downloadImg"
-                  />
-                </div>
-              )}
-            </>
-          );
-        })}
+              </div>
+              <img
+                style={{ width: "25px", height: "25px" }}
+                onClick={() => saveAs(`${mainData?.split(".")[0]}`)}
+                src={downloadImg}
+                alt="downloadImg"
+              />
+            </div>
+          )}
+        </>
         {/* {mainData[0]?.files?.includes(".pdf") ||
           mainData[0]?.files?.includes(".doc") ||
           mainData[0]?.files?.includes(".docx") ? (
@@ -388,13 +339,14 @@ const MessageComp = (props) => {
             <div className="forwardChat-data">
               <div onClick={() => handleQuotedScroll(item?.quoted_id)}>
                 <i>❝ Quoted ❞ :</i>
-                <p>{item?.quoted_msg}</p>
-                <hr style={{width: "220px"}}/>
+                <p>{item?.quoted_message}</p>
+                <hr style={{ width: "220px" }} />
               </div>
               <img
                 alt="img"
                 src={colonImage}
-                onClick={() => chatSettingData(id)} style={{cursor: "pointer"}}
+                onClick={() => chatSettingData(id)}
+                style={{ cursor: "pointer" }}
               ></img>
             </div>
           </>
@@ -408,7 +360,8 @@ const MessageComp = (props) => {
             </span>
             <img
               alt="img"
-              src={colonImage} style={{cursor: "pointer"}}
+              src={colonImage}
+              style={{ cursor: "pointer" }}
               onClick={() => chatSettingData(id)}
             ></img>
           </div>
@@ -419,9 +372,9 @@ const MessageComp = (props) => {
           <>
             <div className="userchat-data">
               <div style={{ flex: "1" }}>
-                {item?.is_file &&
+                {item?.media_option &&
                   handleCustomSlider(
-                    item?.is_forwarded ? item?.file_url : file
+                    item?.is_forwarded ? item?.file_url : media
                   )}
                 <span id={id} className="text-break">
                   {item?.is_internal_doc
@@ -438,7 +391,8 @@ const MessageComp = (props) => {
               {!item?.is_forwarded && !item?.is_quoted ? (
                 <img
                   alt="img"
-                  src={colonImage} style={{cursor: "pointer"}}
+                  src={colonImage}
+                  style={{ cursor: "pointer" }}
                   onClick={() => chatSettingData(id)}
                 ></img>
               ) : (
@@ -472,7 +426,8 @@ const MessageComp = (props) => {
               {!item?.is_forwarded && !item?.is_quoted ? (
                 <img
                   alt="img"
-                  src={colonImage} style={{cursor: "pointer"}}
+                  src={colonImage}
+                  style={{ cursor: "pointer" }}
                   onClick={() => chatSettingData(id)}
                 ></img>
               ) : (
@@ -480,8 +435,8 @@ const MessageComp = (props) => {
               )}
             </div>
             <div className="userchat-data group-chat-user-chat">
-              {item?.is_file &&
-                handleCustomSlider(item?.is_forwarded ? item?.file_url : file)}
+              {item?.media_option &&
+                handleCustomSlider(item?.is_forwarded ? item?.file_url : media)}
               <span>{item?.content}</span>
             </div>
             <div className="userchat-time">

@@ -99,11 +99,9 @@ export const filterInstitutionData = async (params) => {
 };
 
 export const filterUserData = async (params) => {
-  const filterUserData = await API.post(
-    "/user/v1/user_filter_data",
-    params,
-    { headers: { Authorization: `Bearer ${token}` } }
-  );
+  const filterUserData = await API.post("/user/v1/user_filter_data", params, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
   return filterUserData;
 };
 
@@ -117,11 +115,9 @@ export const getInstitutionLogs = async (params) => {
 };
 
 export const getUsersLogs = async (params) => {
-  const getUsersLogs = await API.post(
-    "/user/v1/fetch-user-logs",
-    params,
-    { headers: { Authorization: `Bearer ${token}` } }
-  );
+  const getUsersLogs = await API.post("/user/v1/fetch-user-logs", params, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
   return getUsersLogs;
 };
 
@@ -144,11 +140,9 @@ export const getInitialChatMessages = async (params) => {
 };
 
 export const sendChatMessage = async (params) => {
-  const sendChatMessage = await API.post(
-    "/chat/v1/send_chat",
-    params,
-    { headers: { Authorization: `Bearer ${token}` } }
-  );
+  const sendChatMessage = await API.post("/chat/v1/send_chat", params, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
   return sendChatMessage;
 };
 
@@ -162,19 +156,207 @@ export const getAllChatList = async (params) => {
 };
 
 export const deleteChatMessage = async (params) => {
-  const deleteChatMessage = await API.post(
-    "/chat/v1/delete_chat",
-    params,
-    { headers: { Authorization: `Bearer ${token}` } }
-  );
+  const deleteChatMessage = await API.post("/chat/v1/delete_chat", params, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
   return deleteChatMessage;
 };
 
 export const emailFilterData = async (params) => {
-  const emailFilterData = await API.post(
-    "/email/v1/email-filter",
+  const emailFilterData = await API.post("/email/v1/email-filter", params, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return emailFilterData;
+};
+
+export const getInstitutionList = async (params) => {
+  const getInstitutionList = await API.get("/user/v1/fetch-institution-list", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return getInstitutionList;
+};
+
+export const getModalityList = async (params) => {
+  const getModalityList = await API.get("/institute/v1/institute-modality", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return getModalityList;
+};
+
+export const createNewFilter = async (params) => {
+  const createNewFilter = await API.post(
+    "/studies/v1/insert-new-filter",
     params,
     { headers: { Authorization: `Bearer ${token}` } }
   );
-  return emailFilterData;
+  return createNewFilter;
+};
+
+export const getFilterList = async (params) => {
+  const getFilterList = await API.post(
+    "/studies/v1/fetch-filter-list",
+    params,
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+  return getFilterList;
+};
+
+export const filterStudyData = async (params) => {
+  const filterStudyData = await API.post(
+    "/studies/v1/study-quick-filter",
+    params,
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+  return filterStudyData;
+};
+
+export const getParticularFilter = async (params) => {
+  const getParticularFilter = await API.post(
+    "/studies/v1/particular-filter-fetch",
+    params,
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+  return getParticularFilter;
+};
+
+export const updateFilterData = async (params) => {
+  const updateFilterData = await API.post("/studies/v1/edit-filter", params, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return updateFilterData;
+};
+
+export const sendMediaChat = async (params) => {
+  const sendMediaChat = await API.post("/chat/v1/send_chat_media", params, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return sendMediaChat;
+};
+
+export const getInstanceData = async (params) => {
+  const getInstanceData = await API.post("/studies/v1/getSeriesInfo", params, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return getInstanceData;
+};
+
+export const getStudyImages = async (params) => {
+  const getStudyImages = await API.get(
+    `/studies/v1/fetch_instance_image/${params}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return getStudyImages;
+};
+
+export const getBillingData = async (params) => {
+  const getBillingData = await API.post(
+    "/billing/v1/fetch-billing-info",
+    params,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return getBillingData;
+};
+
+export const getReportList = async (params) => {
+  const getReportList = await API.post(
+    "/report/v1/getReportlist",
+    params,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return getReportList;
+};
+
+export const insertNewTemplate = async (params) => {
+  const insertNewTemplate = await API.post(
+    "/report/v1/insert-report",
+    params,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return insertNewTemplate;
+};
+
+export const fetchTemplate = async (params) => {
+  const fetchTemplate = await API.post(
+    "/report/v1/particularReportData",
+    params,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return fetchTemplate;
+};
+
+export const fetchPermissions = async (params) => {
+  const fetchPermissions = await API.post(
+    "/role/v1/fetch_particular_role_permission",
+    params,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return fetchPermissions;
+};
+
+export const getDashboardData = async (params = {}) => {
+  const getDashboardData = await API.post(
+    "/dashboard/v1/fetch-dashboard-details",
+    params,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return getDashboardData;
+};
+
+export const getDashboardTableData = async (params = {}) => {
+  const getDashboardTableData = await API.post(
+    "/dashboard/v1/fetch-dashboard-logs",
+    params,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return getDashboardTableData;
+};
+
+export const updateStudyStatus = async (params = {}) => {
+  const updateStudyStatus = await API.post(
+    "/studies/v1/update-status-report-viewed",
+    params,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return updateStudyStatus;
 };

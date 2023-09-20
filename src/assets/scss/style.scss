@@ -680,8 +680,9 @@ header.ant-layout-header.subheader {
     // border: 1px solid #f1f1f1;
     padding: 5px 15px;
     .ant-select-selection-item {
-      display: flex;
-      justify-content: flex-start;
+      // display: flex;
+      // justify-content: flex-start;
+      text-overflow: ellipsis;
     }
     &:hover {
       border-color: #f1f1f1;

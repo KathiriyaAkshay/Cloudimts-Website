@@ -49,7 +49,8 @@ const Login = () => {
         localStorage.setItem("token", res.data.data.accessToken);
         localStorage.setItem("all_permission_id", res.data.data.all_permission_institution_id)
         localStorage.setItem("all_assign_id", res.data.data.all_assign_study_permission_institution_id)
-        localStorage.setItem("userID", res.data.data.user_id)
+        localStorage.setItem("userID", res.data.data.user_id);
+        localStorage.setItem("role_id", res.data.data.rold_id);
         NotificationMessage("success", "Successfully Log In");
         loginForm.resetFields();
         navigate("/institutions");

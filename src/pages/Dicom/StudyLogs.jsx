@@ -82,7 +82,7 @@ const StudyLogs = () => {
       <TableWithFilter
         tableData={tableData}
         tableColumns={columns}
-        rowSelection={rowSelection}
+        // rowSelection={rowSelection}
         setPagi={setPagi}
         totalRecords={totalPages}
         onPaginationChange={retrieveStudyData}

@@ -22,6 +22,7 @@ const Roles = () => {
   const firstIndex = lastIndex - recordsPage;
   const records = tableData.slice(firstIndex, lastIndex);
   const navigate = useNavigate();
+  const token = localStorage.getItem("token");
 
   const { changeBreadcrumbs } = useBreadcrumbs();
 
@@ -41,7 +42,11 @@ const Roles = () => {
 
   const retrieveRoleData = async () => {
     setIsLoading(true);
-    await API.post("/role/v1/fetch_role_list")
+    await API.post(
+      "/role/v1/fetch_role_list",
+      {},
+      { headers: { Authorization: `Bearer ${token}` } }
+    )
       .then((res) => setTableData(res.data.data))
       .catch((err) => console.log(err));
     setIsLoading(false);
@@ -98,7 +103,7 @@ const Roles = () => {
   const handleSubmit = async (values) => {
     setIsLoading(true);
     if (!roleID) {
-      await API.post("/role/v1/create_role", values)
+      await API.post("/role/v1/create_role", values, {headers: {Authorization: `Bearer ${token}`}})
         .then((res) => {
           NotificationMessage("success", "Role Created Successfully");
           setIsRoleModalOpen(false);
@@ -113,7 +118,7 @@ const Roles = () => {
       await API.post("/role/v1/update_user_role_name", {
         update_role_name: values.role_name,
         role_id: roleID,
-      })
+      }, {headers: {Authorization: `Bearer ${token}`}})
         .then((res) => {
           NotificationMessage("success", "Role Updated Successfully");
           setIsRoleModalOpen(false);
@@ -136,11 +141,12 @@ const Roles = () => {
         // onAddClick={() => setIsModalOpen(true)}
         // addButtonTitle="Add Role"
         // addButtonIcon={<PlusOutlined />}
-        rowSelection={rowSelection}
+        // rowSelection={rowSelection}
         loadingTableData={isLoading}
       />
       <Modal
-        title="Add New Role" centered
+        title="Add New Role"
+        centered
         open={isRoleModalOpen}
         onOk={() => form.submit()}
         onCancel={() => {
