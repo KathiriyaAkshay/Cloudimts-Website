@@ -23,7 +23,7 @@ const NotFound = () => {
       {/* Navigation */}
       <nav>
         <div className="menu">
-          <p className="website_name">HealthLink</p>
+          <p className="website_name">ImageiNet</p>
           <div className="menu_links">
           </div>
           <div className="menu_icon">

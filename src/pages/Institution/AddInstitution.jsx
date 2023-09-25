@@ -78,7 +78,14 @@ const AddInstitution = () => {
           ...modalityData,
           contract_valid_date: dayjs(res.data.data.contract_valid_date),
           radiologist: res.data?.blocked_user?.map((data) => data.id),
-          house_radiologist: res.data.data?.house_radiologist?.data,
+          house_radiologist: res.data?.house_radiologist?.data,
+          institution_info_header:
+            res.data.data?.report_settings?.institution_info_header,
+          attach_qr_code: res.data.data?.report_settings?.attach_qr_code,
+          show_patient_info:
+            res.data.data?.report_settings?.show_patient_info?.with_border &&
+            "TABLE_WITH_BORDER",
+          modify_study_id: res.data?.data?.modify_study_id,
         };
         form.setFieldsValue(formData);
       })
@@ -101,7 +108,7 @@ const AddInstitution = () => {
   };
 
   const retrieveRadiologistData = () => {
-    getRadiologistList({ role_id: 2 }).then((res) => {
+    getRadiologistList({ role_id: localStorage.getItem("role_id") }).then((res) => {
       const resData = res.data.data.map((data) => ({
         label: data.name,
         value: data.id,
@@ -173,7 +180,6 @@ const AddInstitution = () => {
       }
       handleNextStep();
     } else if (currentStep === 2) {
-      console.log(values);
       setPayload((prev) => ({
         ...prev,
         report_setting: {
@@ -187,16 +193,51 @@ const AddInstitution = () => {
           },
         },
       }));
+      if (id) {
+        setIsLoading(true);
+        await API.post(
+          "/institute/v1/institute-report-setting-update",
+          {
+            institution_id: id,
+            institution_info_header: values.institution_info_header
+              ? values.institution_info_header
+              : false,
+            attach_qr_code: values.attach_qr_code
+              ? values.attach_qr_code
+              : false,
+            with_border:
+              values.show_patient_info === "TABLE_WITH_BORDER" ? true : false,
+          },
+          { headers: { Authorization: `Bearer ${token}` } }
+        )
+          .then((res) => console.log(res))
+          .catch((err) => console.log(err));
+        setIsLoading(false);
+      }
       handleNextStep();
     } else if (currentStep === 3) {
-      console.log(values);
       setPayload((prev) => ({
         ...prev,
-        modify_study_id: 
-          values?.modify_study_id
-            ? values?.modify_study_id
-            : false,
+        modify_study_id: values?.modify_study_id
+          ? values?.modify_study_id
+          : false,
       }));
+      if (id) {
+        setIsLoading(true);
+        await API.post(
+          "/institute/v1/institution-studyID-update",
+          {
+            id: id,
+            study_uid_option: values?.modify_study_id
+              ? values?.modify_study_id
+              : false,
+          },
+          { headers: { Authorization: `Bearer ${token}` } }
+        )
+          .then((res) => console.log(res))
+          .catch((err) => console.log(err));
+        setIsLoading(false);
+      }
       handleNextStep();
     } else if (currentStep === 4) {
       setPayload((prev) => ({
@@ -257,6 +298,7 @@ const AddInstitution = () => {
     {
       title: "Modality",
       dataIndex: "name",
+      width: "50%",
       // sorter: (a, b) => {},
       // editable: true,
     },
@@ -375,11 +417,11 @@ const AddInstitution = () => {
     {
       upload_option: "Modify Study Instance UID before upload",
       value: false,
-    }
-  ]
+    },
+  ];
 
   return (
-    <div>
+    <div className="secondary-table">
       <Card>
         <Spin spinning={isLoading}>
           <Steps current={currentStep} className="mb">

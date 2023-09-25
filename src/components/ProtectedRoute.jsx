@@ -103,6 +103,13 @@ const ProtectedRoute = ({ path, children, inx, ...rest }) => {
           (data) => data.permission === "Filter list page"
         )?.permission_value;
       setIsAuthenticated(permission);
+    } else if (path === "/role-logs") {
+      const permission =
+        permissionData["Pages permission"] &&
+        permissionData["Pages permission"].find(
+          (data) => data.permission === "All Role logs list page"
+        )?.permission_value;
+      setIsAuthenticated(permission);
     }
   };
 

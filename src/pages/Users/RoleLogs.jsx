@@ -1,33 +1,33 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 import TableWithFilter from "../../components/TableWithFilter";
+import { fetchRoleLogs } from "../../apis/studiesApi";
+import RoleLogsFilter from "../../components/RoleLogsFilter";
 import { useBreadcrumbs } from "../../hooks/useBreadcrumbs";
-import InstitutionLogsFilter from "../../components/InstitutionLogsFilter";
-import { instituteLogsFilter } from "../../apis/studiesApi";
 
-const InstitutionLogs = () => {
-  const [institutionData, setInstitutionData] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+const RoleLogs = () => {
+  const [tableData, setTableData] = useState([]);
   const [pagi, setPagi] = useState({ page: 1 });
   const [totalPages, setTotalPages] = useState(0);
-  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
   const [filterValues, setFilterValues] = useState({});
-
   const { changeBreadcrumbs } = useBreadcrumbs();
 
   useEffect(() => {
-    changeBreadcrumbs([{ name: "Institution Logs" }]);
-    retrieveInstitutionData();
+    const crumbs = [{ name: "Roles", to: "/users/roles" }];
+    crumbs.push({
+      name: "Role Logs",
+    });
+    changeBreadcrumbs(crumbs);
   }, []);
 
-  const retrieveInstitutionData = async (
+  const retrieveRolesData = async (
     pagination,
     values = {},
     valueChanged = false
   ) => {
     setIsLoading(true);
     const currentPagination = pagination || pagi;
-    instituteLogsFilter({
+    fetchRoleLogs({
       filter:
         Object.keys(filterValues).length === 0 &&
         Object.keys(values).length !== 0 &&
@@ -36,19 +36,12 @@ const InstitutionLogs = () => {
           : !valueChanged
           ? filterValues
           : {},
-      condition: "and",
       page_number: currentPagination.page,
       page_size: 10,
     })
       .then((res) => {
+        setTableData(res.data.data);
         setTotalPages(res.data.total_object);
-        setInstitutionData(
-          res?.data?.data?.map((data) => ({
-            ...data,
-            instituteName: data?.institution?.name,
-            username: data?.user_info?.username,
-          }))
-        );
       })
       .catch((err) => console.log(err));
     setIsLoading(false);
@@ -56,16 +49,16 @@ const InstitutionLogs = () => {
 
   const columns = [
     {
-      title: "Institution Name",
-      dataIndex: "instituteName",
-    },
-    {
-      title: "Event Info",
-      dataIndex: "event_info",
-    },
-    {
-      title: "User Name",
+      title: "Username",
       dataIndex: "username",
+    },
+    {
+      title: "Role",
+      dataIndex: "role_name",
+    },
+    {
+      title: "Event Type",
+      dataIndex: "event_display",
     },
     {
       title: "Time",
@@ -74,22 +67,22 @@ const InstitutionLogs = () => {
   ];
 
   return (
-    <>
+    <div>
       <TableWithFilter
-        tableData={institutionData}
         tableColumns={columns}
+        tableData={tableData}
         setPagi={setPagi}
         totalRecords={totalPages}
-        onPaginationChange={retrieveInstitutionData}
+        onPaginationChange={retrieveRolesData}
         loadingTableData={isLoading}
       />
-      <InstitutionLogsFilter
-        name={"Institution Logs Filter"}
-        retrieveRoleData={retrieveInstitutionData}
+      <RoleLogsFilter
+        retrieveRoleData={retrieveRolesData}
+        name={"Role Logs Filter"}
         setFilterValues={setFilterValues}
       />
-    </>
+    </div>
   );
 };
 
-export default InstitutionLogs;
+export default RoleLogs;

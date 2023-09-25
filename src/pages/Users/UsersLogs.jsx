@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useBreadcrumbs } from "../../hooks/useBreadcrumbs";
-import { getUsersLogs } from "../../apis/studiesApi";
+import { getUsersLogs, userLogsFilter } from "../../apis/studiesApi";
 import TableWithFilter from "../../components/TableWithFilter";
+import UserLogsFilter from "../../components/UserLogsFilter";
 
 const UsersLogs = () => {
   const [tableData, setTableData] = useState([]);
@@ -9,18 +10,30 @@ const UsersLogs = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [pagi, setPagi] = useState({ page: 1 });
   const [totalPages, setTotalPages] = useState(0);
+  const [filterValues, setFilterValues] = useState({});
 
   useEffect(() => {
     changeBreadcrumbs([{ name: "Users Logs" }]);
     retrieveStudyData();
   }, []);
 
-  const retrieveStudyData = (pagination) => {
+  const retrieveStudyData = (pagination, values = {}, valueChanged = false) => {
     setIsLoading(true);
     const currentPagination = pagination || pagi;
-    getUsersLogs({
+    userLogsFilter({
+      filter:
+        Object.keys(values).length !== 0
+          ? values
+          : Object.keys(filterValues).length === 0 &&
+            Object.keys(values).length !== 0 &&
+            !valueChanged
+          ? values
+          : !valueChanged
+          ? filterValues
+          : {},
+      condition: "and",
       page_number: currentPagination.page,
-      page_limit: 10,
+      page_size: 10,
     })
       .then((res) => {
         const resData = res.data.data.map((data) => ({
@@ -29,7 +42,7 @@ const UsersLogs = () => {
           target_user: data?.target_user?.username,
         }));
         setTableData(resData);
-        setTotalPages(resData.length);
+        setTotalPages(res.data.total_object);
       })
       .catch((err) => console.log(err));
     setIsLoading(false);
@@ -54,31 +67,20 @@ const UsersLogs = () => {
     },
   ];
 
-  const rowSelection = {
-    onChange: (selectedRowKeys, selectedRows) => {
-      console.log(
-        `selectedRowKeys: ${selectedRowKeys}`,
-        "selectedRows: ",
-        selectedRows
-      );
-    },
-    getCheckboxProps: (record) => ({
-      disabled: record.name === "Disabled User",
-      // Column configuration not to be checked
-      name: record.email,
-    }),
-  };
-
   return (
     <div>
       <TableWithFilter
         tableData={tableData}
         tableColumns={columns}
-        // rowSelection={rowSelection}
         setPagi={setPagi}
         totalRecords={totalPages}
         onPaginationChange={retrieveStudyData}
         loadingTableData={isLoading}
+      />
+      <UserLogsFilter
+        name={"User Logs Filter"}
+        retrieveRoleData={retrieveStudyData}
+        setFilterValues={setFilterValues}
       />
     </div>
   );

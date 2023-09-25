@@ -21,74 +21,79 @@ const PatientDetails = ({
     setIsLoading(true);
     getMoreDetails({ id: studyID })
       .then((res) => {
-        const resData = res.data.data.information;
+        const resData = res.data.data;
         const modifiedData = [
           {
             name: "Patient's id",
-            value: resData.study__study_metadata.PatientMainDicomTags.PatientID,
+            value: resData?.Patient_id,
           },
           {
             name: "Referring Physician Name",
-            value: resData.study__study_metadata.MainDicomTags?.ReferringPhysicianName,
+            value: resData?.Referring_physician_name,
           },
           {
             name: "Patient's Name",
-            value:
-              resData.study__study_metadata.PatientMainDicomTags.PatientName,
+            value: resData?.Patient_name,
           },
           {
             name: "Performing Physician Name",
-            value: "",
+            value: resData?.Performing_physician_name,
           },
           {
             name: "Accession Number",
-            value: resData.study__study_metadata.MainDicomTags.AccessionNumber,
+            value: resData?.Accession_number,
           },
           {
             name: "Modality",
-            value: resData.series_metadata.MainDicomTags.Modality,
+            value: resData?.Modality,
           },
           {
             name: "Gender",
-            value: resData.study__study_metadata.PatientMainDicomTags?.PatientSex,
+            value: resData?.Gender,
           },
-          {
-            name: "Count",
-            value: "",
-          },
+          // {
+          //   name: "Count",
+          //   value: "",
+          // },
           {
             name: "Date of birth",
-            value:
-              resData.study__study_metadata.PatientMainDicomTags
-                ?.PatientBirthDate,
+            value: resData?.DOB,
           },
           {
             name: "Study Description",
-            value: resData.study_description,
+            value: resData?.Study_description,
           },
           {
-            name: "Age Group",
-            value: "",
+            name: "Institution Name",
+            value: resData?.institution?.institution_name,
           },
           {
             name: "Patient's comments",
-            value: "",
+            value: resData?.Patient_comments,
           },
           {
-            name: "Status",
-            value: resData.status,
+            name: "Body Part",
+            value: resData?.Study_body_part,
           },
           {
-            name: "Institution",
-            value: resData.institution__name,
+            name: "Study UID",
+            value: resData?.Study_UID,
           },
           {
-            name: "UID",
-            value: resData.study__study_metadata.MainDicomTags.StudyInstanceUID,
+            name: "Series UID",
+            value: resData?.Series_UID,
           },
           {
             name: "Created At",
-            value: resData.created_at,
+            value: resData?.Created_at,
+          },
+          {
+            name: "Reporting Time",
+            value: resData?.reporting_time,
+          },
+          {
+            name: "Urgent Case",
+            value: resData?.urgent_case,
           },
         ];
         setModalData(modifiedData);

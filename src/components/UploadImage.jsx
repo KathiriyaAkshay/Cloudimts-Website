@@ -10,6 +10,7 @@ const UploadImage = ({
   values,
   setValues,
   imageURL,
+  multipleImage
 }) => {
   const [file, setFile] = useState(imageURL);
   const [imageUploadError, setImageUploadError] = useState("");
@@ -53,10 +54,10 @@ const UploadImage = ({
       >
         <Dragger
           name="url"
-          multiple={false}
+          multiple={multipleImage ? true : false}
           accept=".png, .jpeg, .jpg"
           listType="picture-card"
-          maxCount={1}
+          maxCount={multipleImage ? 20 : 1}
           customRequest={dummyRequest}
           onPreview={handleImagePreview}
           onDrop={(_) => {}}

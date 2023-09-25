@@ -15,7 +15,7 @@ import API from "../../apis/getApi";
 import NotificationMessage from "../../components/NotificationMessage";
 import { useContext, useEffect, useState } from "react";
 import Typography from "antd/es/typography/Typography";
-import logo from "../../assets/images/logo-svg.svg";
+import logo from "../../assets/images/Imageinet-logo.png";
 import { UserDetailsContext } from "../../hooks/userDetailsContext";
 
 const Login = () => {
@@ -47,8 +47,16 @@ const Login = () => {
     await API.post("/owner/v1/login", values)
       .then((res) => {
         localStorage.setItem("token", res.data.data.accessToken);
-        localStorage.setItem("all_permission_id", res.data.data.all_permission_institution_id)
-        localStorage.setItem("all_assign_id", res.data.data.all_assign_study_permission_institution_id)
+        localStorage.setItem(
+          "all_permission_id",
+          JSON.stringify(res.data.data.all_permission_institution_id)
+        );
+        localStorage.setItem(
+          "all_assign_id",
+          JSON.stringify(
+            res.data.data.all_assign_study_permission_institution_id
+          )
+        );
         localStorage.setItem("userID", res.data.data.user_id);
         localStorage.setItem("role_id", res.data.data.rold_id);
         NotificationMessage("success", "Successfully Log In");

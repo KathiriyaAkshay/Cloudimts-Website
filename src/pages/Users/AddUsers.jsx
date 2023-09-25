@@ -22,6 +22,7 @@ import NotificationMessage from "../../components/NotificationMessage";
 import dayjs from "dayjs";
 import UploadImage from "../../components/UploadImage";
 import { uploadFile } from "react-s3";
+import { uploadImage } from "../../apis/studiesApi";
 const S3_BUCKET = import.meta.env.VITE_APP_AMAZON_S3_BUCKET_NAME;
 const accessKeyId = import.meta.env.VITE_APP_AMAZON_ACCESS_KEY;
 const secretAccessKey = import.meta.env.VITE_APP_AMAZON_SECRET_KEY;
@@ -239,18 +240,28 @@ const AddUsers = () => {
       }
       handleNextStep();
     } else if (currentStep === 3) {
+      setIsLoading(true);
+      let signature_image = "";
+      if (values.url) {
+        await uploadImage(values.url)
+          .then((res) => (signature_image = res.data.image_url))
+          .catch((err) => console.log(err));
+      }
+      setPayload((prev) => ({ ...prev, signature_image }));
+      if (id) {
+        await API.post(
+          "/user/v1/user-update-signature",
+          {
+            id: id,
+            signature_image: signature_image,
+          },
+          { headers: { Authorization: `Bearer ${token}` } }
+        )
+          .then((res) => console.log(res))
+          .catch((err) => console.log(err));
+      }
+      setIsLoading(false);
       handleNextStep();
-
-      const config = {
-        bucketName: S3_BUCKET,
-        region: "ap-south-1",
-        accessKeyId: accessKeyId,
-        secretAccessKey: secretAccessKey,
-      };
-
-      uploadFile(values.url.file, config)
-        .then((data) => console.log(data))
-        .catch((err) => console.error(err));
     } else if (currentStep === 4) {
       setIsLoading(true);
       const modalityData = { ...convertModalityToObject(values) };

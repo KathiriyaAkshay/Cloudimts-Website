@@ -1,4 +1,8 @@
-import { AppstoreOutlined } from "@ant-design/icons";
+import {
+  AppstoreOutlined,
+  MenuFoldOutlined,
+  MenuUnfoldOutlined,
+} from "@ant-design/icons";
 import { Breadcrumb, Button, Divider, Layout, Menu } from "antd";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import {
@@ -11,7 +15,7 @@ import {
 } from "react-router-dom";
 import { useBreadcrumbs } from "../hooks/useBreadcrumbs";
 import UserProfile from "./UserProfile";
-import logo from "../assets/images/logo-transparent-svg.svg";
+import logo from "../assets/images/Imageinet-logo.png";
 import { MdOutlineHomeWork } from "react-icons/md";
 import {
   AiOutlineUserAdd,
@@ -88,7 +92,7 @@ const BasicLayout = ({ children }) => {
   const menuLabel = (title) => (
     <div className="display-flex-between" style={{ gap: "4px" }}>
       {title}
-      <AiOutlineDown className="down-icon" />
+      {/* <AiOutlineDown className="down-icon" /> */}
     </div>
   );
 
@@ -174,17 +178,44 @@ const BasicLayout = ({ children }) => {
     },
   ].filter(Boolean);
 
+  const menu = (
+    <Sider
+      className="sidebar-wrapper"
+      theme="light"
+      trigger={null}
+      collapsible
+      collapsed={collapsed}
+      onCollapse={onCollapse}
+      width={240}
+      style={{ paddingLeft: "5px" }}
+    >
+      <Link to="/home">
+        <div className="logo sidebar-logo">
+          <img src={logo} alt="Logo" />
+        </div>
+      </Link>
+      <div className="sidebar-menu-wrap" style={{ overflow: "hidden" }}>
+        <Menu
+          mode="inline"
+          theme="light"
+          items={menuItems}
+          className="header-menu"
+        />
+      </div>
+    </Sider>
+  );
+
   return (
     <>
       <Layout style={{ minHeight: "100vh" }}>
-        {/* {menu} */}
+        {menu}
         <Layout className="site-layout">
           <Header
             className="site-layout-background"
             style={{
               padding: 0,
-              // backgroundColor: "#fff",
-              // boxShadow: "none",
+              backgroundColor: "#fff",
+              boxShadow: "none",
             }}
           >
             <div
@@ -196,40 +227,48 @@ const BasicLayout = ({ children }) => {
               }}
               className="header-menu-icon"
             >
-              <img src={logo} alt="log" className="company-logo" />
+              {/* <img src={logo} alt="log" className="company-logo" /> */}
+              {React.createElement(
+                collapsed ? MenuUnfoldOutlined : MenuFoldOutlined,
+                {
+                  className: "trigger",
+                  onClick: () => setCollapsed(!collapsed),
+                }
+              )}
               <AppstoreOutlined
-                style={{ fontSize: "24px", color: "#FFF" }}
+                style={{ fontSize: "24px", color: "#000000b4" }}
                 onClick={() => navigate("/dashboard")}
               />
-              {/* <Breadcrumb
-              separator="|"
-              style={{
-                fontSize: "18px",
-                fontWeight: 500,
-                color: "#fff",
-                justifyContent: "center",
-              }} className="header-breadcrumb"
-            >
-              {breadCrumbs.length > 0 &&
-                breadCrumbs.map((crumb, index) => (
-                  <Breadcrumb.Item key={index}>
-                    {crumb.to ? (
-                      <Link to={crumb.to} title={crumb.name}>
-                        {crumb.name}
-                      </Link>
-                    ) : (
-                      crumb.name
-                    )}
-                  </Breadcrumb.Item>
-                ))}
-            </Breadcrumb> */}
               <Divider type="vertical" className="vertical-divider" />
-              <Menu
+              <Breadcrumb
+                separator="|"
+                style={{
+                  fontSize: "18px",
+                  fontWeight: 500,
+                  color: "#fff",
+                  justifyContent: "center",
+                }}
+                className="header-breadcrumb"
+              >
+                {breadCrumbs.length > 0 &&
+                  breadCrumbs.map((crumb, index) => (
+                    <Breadcrumb.Item key={index}>
+                      {crumb.to ? (
+                        <Link to={crumb.to} title={crumb.name}>
+                          {crumb.name}
+                        </Link>
+                      ) : (
+                        crumb.name
+                      )}
+                    </Breadcrumb.Item>
+                  ))}
+              </Breadcrumb>
+              {/* <Menu
                 mode="horizontal"
                 theme="dark"
                 items={menuItems}
                 className="header-menu"
-              />
+              /> */}
               <UserProfile />
             </div>
           </Header>
@@ -257,35 +296,35 @@ const BasicLayout = ({ children }) => {
             }
           >
             {" "}
-            {(window.location.pathname !== "/chats" &&
-              window.location.pathname !== "/dashboard") && (
-              <div className="breadcrumb-div">
-                <Breadcrumb
-                  separator="|"
-                  style={{
-                    fontSize: "18px",
-                    fontWeight: 500,
-                    color: "#0189a5",
-                    justifyContent: "center",
-                  }}
-                  className="header-breadcrumb"
-                >
-                  {breadCrumbs.length > 0 &&
-                    breadCrumbs.map((crumb, index) => (
-                      <Breadcrumb.Item key={index}>
-                        {crumb.to ? (
-                          <Link to={crumb.to} title={crumb.name}>
-                            {crumb.name}
-                          </Link>
-                        ) : (
-                          crumb.name
-                        )}
-                      </Breadcrumb.Item>
-                    ))}
-                </Breadcrumb>
-                <HeaderButton setIsModalOpen={setIsModalOpen} id={id} />
-              </div>
-            )}
+            {window.location.pathname !== "/chats" &&
+              window.location.pathname !== "/dashboard" && (
+                <div className="breadcrumb-div">
+                  {/* <Breadcrumb
+                    separator="|"
+                    style={{
+                      fontSize: "18px",
+                      fontWeight: 500,
+                      color: "#FFF",
+                      justifyContent: "center",
+                    }}
+                    className="header-breadcrumb"
+                  >
+                    {breadCrumbs.length > 0 &&
+                      breadCrumbs.map((crumb, index) => (
+                        <Breadcrumb.Item key={index}>
+                          {crumb.to ? (
+                            <Link to={crumb.to} title={crumb.name}>
+                              {crumb.name}
+                            </Link>
+                          ) : (
+                            crumb.name
+                          )}
+                        </Breadcrumb.Item>
+                      ))}
+                  </Breadcrumb> */}
+                  <HeaderButton setIsModalOpen={setIsModalOpen} id={id} />
+                </div>
+              )}
             <div
               style={
                 window.location.pathname !== "/chats"

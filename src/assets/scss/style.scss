@@ -14,14 +14,14 @@
 }
 
 body {
-  font-family: "Montserrat", sans-serif !important;
+  font-family: 'Poppins', sans-serif !important;
   margin-top: 0px;
   margin-bottom: 0px;
   margin: 0px;
 }
 
 div, span, article, input, textarea {
-  font-family: "Montserrat", sans-serif !important;
+  font-family: 'Poppins', sans-serif !important;
 }
 
 .scroll-y {
@@ -85,7 +85,7 @@ div, span, article, input, textarea {
       display: flex;
       justify-content: center;
       margin: 0 auto;
-      height: 50px;
+      height: 80px;
       width: 230px;
       object-fit: contain;
       background: rgb(255, 255, 255);
@@ -125,11 +125,13 @@ form.ant-form {
       text-transform: capitalize;
 
       label {
-        font-size: 16px !important;
+        font-size: 14px !important;
         font-weight: 600;
         height: auto;
         padding: 5px 0;
         position: relative;
+        color: #000;
+        opacity: 0.5;
 
         &.ant-form-item-required:before {
           font-size: 12px !important;
@@ -253,17 +255,20 @@ form.ant-form {
 }
 
 .sidebar-wrapper {
+  background-color: #fff !important;
   .sidebar-logo {
     display: flex;
     justify-content: center;
-    height: 60px;
+    height: 75px;
     padding: 5px;
     align-items: center;
     object-fit: contain;
+    // background-color: #064f32;
     img {
       width: 80%;
       height: 80%;
       object-fit: contain;
+      // background-color: #064f32;
     }
   }
   h5 {
@@ -318,7 +323,7 @@ form.ant-form {
 }
 
 .site-layout-background {
-  // background: transparent;
+  background: transparent;
 }
 
 .sidemenu {
@@ -332,7 +337,7 @@ form.ant-form {
 }
 
 .logo {
-  margin-bottom: 15px;
+  // margin-bottom: 15px;
 }
 
 .drawer-column {
@@ -664,8 +669,10 @@ header.ant-layout-header.subheader {
 }
 
 .header-menu-icon {
+  margin-left: 20px;
   .anticon[tabindex] {
     font-size: 24px;
+    color: #000000b4;
   }
 }
 

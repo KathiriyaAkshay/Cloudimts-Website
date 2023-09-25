@@ -7,7 +7,16 @@ const FilterDataProvider = ({ children }) => {
   const [isUserFilterModalOpen, setIsUserFilterModalOpen] = useState(false);
   const [isEmailFilterModalOpen, setIsEmailFilterModalOpen] = useState(false);
   const [isStudyFilterModalOpen, setIsStudyFilterModalOpen] = useState(false);
-  const [isBillingFilterModalOpen, setIsBillingFilterModalOpen] = useState(true);
+  const [isBillingFilterModalOpen, setIsBillingFilterModalOpen] =
+    useState(true);
+  const [isRoleLogsFilterModalOpen, setIsRoleLogsFilterModalOpen] =
+    useState(false);
+  const [
+    isInstitutionLogsFilterModalOpen,
+    setIsInstitutionLogsFilterModalOpen,
+  ] = useState(false);
+  const [isUserLogsFilterModalOpen, setIsUserLogsFilterModalOpen] =
+    useState(false);
 
   return (
     <filterDataContext.Provider
@@ -21,7 +30,13 @@ const FilterDataProvider = ({ children }) => {
         isStudyFilterModalOpen,
         setIsStudyFilterModalOpen,
         isBillingFilterModalOpen,
-        setIsBillingFilterModalOpen
+        setIsBillingFilterModalOpen,
+        isRoleLogsFilterModalOpen,
+        setIsRoleLogsFilterModalOpen,
+        isInstitutionLogsFilterModalOpen,
+        setIsInstitutionLogsFilterModalOpen,
+        isUserLogsFilterModalOpen,
+        setIsUserLogsFilterModalOpen,
       }}
     >
       {children}

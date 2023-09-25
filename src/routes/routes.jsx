@@ -27,6 +27,7 @@ const AddReport = React.lazy(() => import("../pages/Reports/AddReport"));
 const AddTemplate = React.lazy(() => import("../pages/Reports/AddTemplate"));
 const Filters = React.lazy(() => import("../pages/Filters"));
 const Billing = React.lazy(() => import("../pages/Billing"));
+const RoleLogs = React.lazy(() => import("../pages/Users/RoleLogs"));
 
 export const routes = [
   { path: "/dashboard", component: <Loader component={Home} /> },
@@ -58,6 +59,7 @@ export const routes = [
   { path: "/chats", component: <Loader component={Chats} /> },
   { path: "/study-logs", component: <Loader component={StudyLogs} /> },
   { path: "/users-logs", component: <Loader component={UsersLogs} /> },
+  { path: "/role-logs", component: <Loader component={RoleLogs} /> },
   { path: "/reports/:id", component: <Loader component={AddReport} /> },
   { path: "/reports/add", component: <Loader component={AddTemplate} /> },
   { path: "/reports/:id/edit", component: <Loader component={AddTemplate} /> },

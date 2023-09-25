@@ -23,27 +23,15 @@ const EditStudy = ({
     setIsLoading(true);
     getStudyData({ id: studyID })
       .then((res) => {
-        const resData = res.data.data.information;
+        const resData = res.data.data;
         const modifiedData = {
-          patient_id:
-            resData.study__study_metadata.PatientMainDicomTags.PatientID,
-          patient_name:
-            resData.study__study_metadata.PatientMainDicomTags.PatientName,
-          accession_number:
-            resData.study__study_metadata.MainDicomTags.AccessionNumber,
-          study_description: resData.study_description,
-          dob:
-            resData.study__study_metadata.PatientMainDicomTags
-              .PatientBirthDate &&
-            dayjs(
-              resData.study__study_metadata.PatientMainDicomTags
-                .PatientBirthDate,
-              "DD/MM/YYYY"
-            ),
-          gender:
-            resData.study__study_metadata.PatientMainDicomTags?.PatientSex,
-          referring_physician:
-            resData.study__study_metadata.MainDicomTags?.ReferringPhysicianName,
+          patient_id: resData?.Patient_id,
+          patient_name: resData?.Patient_name,
+          accession_number: resData?.Accession_number,
+          study_description: resData?.Study_description,
+          dob: resData.DOB && dayjs(resData.DOB, "DD/MM/YYYY"),
+          gender: resData?.Gender,
+          referring_physician: resData?.Referring_physician_name,
         };
         form.setFieldsValue(modifiedData);
       })

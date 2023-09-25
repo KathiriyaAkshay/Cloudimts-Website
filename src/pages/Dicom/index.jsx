@@ -1,16 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import {
-  Drawer,
-  Menu,
-  Modal,
-  Row,
-  Space,
-  Table,
-  Tag,
-  Tooltip,
-  Typography,
-} from "antd";
-import { RxDropdownMenu } from "react-icons/rx";
+import { Drawer, Space, Table, Tag, Tooltip, Typography } from "antd";
 import { useBreadcrumbs } from "../../hooks/useBreadcrumbs";
 import ChatMain from "../../components/Chat/ChatMain";
 import DicomViewer from "../../components/DicomViewer";
@@ -23,6 +12,7 @@ import {
   filterStudyData,
   getAllStudyData,
   getInstanceData,
+  updateStudyStatus,
 } from "../../apis/studiesApi";
 import AssignStudy from "../../components/Studies/AssignStudy";
 import QuickFilterModal from "../../components/QuickFilterModal";
@@ -32,6 +22,7 @@ import { MdOutlineHistory } from "react-icons/md";
 import { AuditOutlined } from "@ant-design/icons";
 import EditActionIcon from "../../components/EditActionIcon";
 import { UserPermissionContext } from "../../hooks/userPermissionContext";
+import { StudyDataContext } from "../../hooks/studyDataContext";
 
 const Dicom = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -46,12 +37,12 @@ const Dicom = () => {
   const [expandedRows, setExpandedRows] = useState([]);
   const [pagi, setPagi] = useState({ page: 1 });
   const [totalPages, setTotalPages] = useState(0);
-  const [tableData, setTableData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [studyID, setStudyID] = useState(null);
   const [seriesID, setSeriesID] = useState(null);
   const [personName, setPersonName] = useState(null);
   const { permissionData } = useContext(UserPermissionContext);
+  const { studyData, setStudyData } = useContext(StudyDataContext);
 
   useEffect(() => {
     changeBreadcrumbs([{ name: "Study Data" }]);
@@ -76,7 +67,7 @@ const Dicom = () => {
           name: data.study.patient_name,
           institution: data.institution.name,
         }));
-        setTableData(resData);
+        setStudyData(resData);
       })
       .catch((err) => console.log(err));
     setIsLoading(false);
@@ -395,12 +386,33 @@ const Dicom = () => {
 
   const onRow = (record) => ({
     onClick: () => handleRowClick(record),
+    onDoubleClick: () => handleCellDoubleClick(record),
   });
+
+  const handleCellDoubleClick = (record) => {
+    console.log("hey");
+    if (record.status === "New" || record.status === "Assigned") {
+      updateStudyStatus({ id: record.id })
+        .then((res) => {})
+        .catch((err) => console.log(err));
+      const newTableData = studyData.map((data) => {
+        if (data.id == record.id) {
+          return {
+            ...data,
+            status: "Viewed",
+          };
+        } else {
+          return data;
+        }
+      });
+      setStudyData(newTableData);
+    }
+  };
 
   return (
     <>
       <Table
-        dataSource={tableData}
+        dataSource={studyData}
         columns={columns}
         expandable={expandableConfig}
         // rowSelection={rowSelection}

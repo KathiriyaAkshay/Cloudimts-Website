@@ -111,8 +111,7 @@ const UserProfile = () => {
     <Row justify={"end"} align={"middle"} style={{ marginLeft: "auto" }}>
       <Space size={15}>
         <Button
-          onClick={() => logoutHandler()}
-          className="sign-out-btn ant-btn-link"
+          onClick={() => logoutHandler()} type="primary" style={{display: "flex", gap: "8px", alignItems: "center"}}
         >
           <LogoutOutlined />
           <span>Log Out</span>

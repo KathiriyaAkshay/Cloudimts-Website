@@ -271,28 +271,20 @@ export const getBillingData = async (params) => {
 };
 
 export const getReportList = async (params) => {
-  const getReportList = await API.post(
-    "/report/v1/getReportlist",
-    params,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
+  const getReportList = await API.post("/report/v1/getReportlist", params, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
   return getReportList;
 };
 
 export const insertNewTemplate = async (params) => {
-  const insertNewTemplate = await API.post(
-    "/report/v1/insert-report",
-    params,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
+  const insertNewTemplate = await API.post("/report/v1/insert-report", params, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
   return insertNewTemplate;
 };
 
@@ -349,8 +341,27 @@ export const getDashboardTableData = async (params = {}) => {
 };
 
 export const updateStudyStatus = async (params = {}) => {
-  const updateStudyStatus = await API.post(
-    "/studies/v1/update-status-report-viewed",
+  const updateStudyStatus = await API.post("/studies/v1/view_study", params, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return updateStudyStatus;
+};
+
+export const uploadImage = async (params = {}) => {
+  const uploadImage = await API.post("/image/v1/upload", params, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return uploadImage;
+};
+
+export const submitNormalReportFile = async (params = {}) => {
+  const submitNormalReportFile = await API.post(
+    "/studies/v1/normal-report-file",
     params,
     {
       headers: {
@@ -358,5 +369,62 @@ export const updateStudyStatus = async (params = {}) => {
       },
     }
   );
-  return updateStudyStatus;
+  return submitNormalReportFile;
+};
+
+export const fetchRoleLogs = async (params = {}) => {
+  const fetchRoleLogs = await API.post(
+    "/role/v1/user_role_logs_filter",
+    params,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return fetchRoleLogs;
+};
+
+export const deleteEmail = async (params = {}) => {
+  const deleteEmail = await API.post("/email/v1/delete-email", params, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return deleteEmail;
+};
+
+export const instituteLogsFilter = async (params = {}) => {
+  const instituteLogsFilter = await API.post(
+    "/institute/v1/filter-institution-logs",
+    params,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return instituteLogsFilter;
+};
+
+export const userLogsFilter = async (params = {}) => {
+  const userLogsFilter = await API.post("/user/v1/user_logs_filter", params, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return userLogsFilter;
+};
+
+export const fetchAssignStudy = async (params = {}) => {
+  const fetchAssignStudy = await API.post(
+    "/studies/v1/fetch_assign_study_details",
+    params,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return fetchAssignStudy;
 };

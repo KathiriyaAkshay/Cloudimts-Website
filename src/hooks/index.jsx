@@ -7,6 +7,7 @@ import RoomDataProvider from "./roomDataContext";
 import EditorDataProvider from "./editorDataContext";
 import ReportDataProvider from "./reportDataContext";
 import UserPermissionProvider from "./userPermissionContext";
+import StudyDataProvider from "./studyDataContext";
 
 const index = ({ children }) => {
   return (
@@ -17,7 +18,9 @@ const index = ({ children }) => {
             <RoomDataProvider>
               <UserEmailProvider>
                 <FilterDataProvider>
-                  <ReportDataProvider>{children}</ReportDataProvider>
+                  <ReportDataProvider>
+                    <StudyDataProvider>{children}</StudyDataProvider>
+                  </ReportDataProvider>
                 </FilterDataProvider>
               </UserEmailProvider>
             </RoomDataProvider>

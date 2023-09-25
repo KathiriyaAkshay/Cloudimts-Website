@@ -18,6 +18,9 @@ const HeaderButton = ({ setIsModalOpen, id }) => {
     setIsEmailFilterModalOpen,
     setIsStudyFilterModalOpen,
     setIsBillingFilterModalOpen,
+    setIsRoleLogsFilterModalOpen,
+    setIsInstitutionLogsFilterModalOpen,
+    setIsUserLogsFilterModalOpen,
   } = useContext(filterDataContext);
   const { setSelectedItem } = useContext(ReportDataContext);
   return (
@@ -44,6 +47,16 @@ const HeaderButton = ({ setIsModalOpen, id }) => {
           </Button>
         </div>
       )}
+      {window.location.pathname === "/institutions-logs" && (
+        <div className="iod-setting-div">
+          <Button
+            type="primary"
+            onClick={() => setIsInstitutionLogsFilterModalOpen(true)}
+          >
+            Institution Logs Filter
+          </Button>
+        </div>
+      )}
       {window.location.pathname === "/users" && (
         <div className="iod-setting-div">
           <Button type="primary" onClick={() => setIsUserFilterModalOpen(true)}>
@@ -57,6 +70,16 @@ const HeaderButton = ({ setIsModalOpen, id }) => {
           </Button>
         </div>
       )}
+      {window.location.pathname === "/users-logs" && (
+        <div className="iod-setting-div">
+          <Button
+            type="primary"
+            onClick={() => setIsUserLogsFilterModalOpen(true)}
+          >
+            User Logs Filter
+          </Button>
+        </div>
+      )}
       {window.location.pathname === "/users/roles" && (
         <div className="iod-setting-div">
           {permissionData["Other option permission"] &&
@@ -67,6 +90,19 @@ const HeaderButton = ({ setIsModalOpen, id }) => {
                 Add Role
               </Button>
             )}
+          <Button type="primary" onClick={() => navigate("/role-logs")}>
+            Role Logs
+          </Button>
+        </div>
+      )}
+      {window.location.pathname === "/role-logs" && (
+        <div className="iod-setting-div">
+          <Button
+            type="primary"
+            onClick={() => setIsRoleLogsFilterModalOpen(true)}
+          >
+            Logs Filter
+          </Button>
         </div>
       )}
       {window.location.pathname === "/users/email" && (

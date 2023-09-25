@@ -10,7 +10,7 @@ import API from "../../apis/getApi";
 import NotificationMessage from "../../components/NotificationMessage";
 import { UserEmailContext } from "../../hooks/userEmailContext";
 import EmailFilterModal from "../../components/EmailFilterModal";
-import { emailFilterData } from "../../apis/studiesApi";
+import { deleteEmail, emailFilterData } from "../../apis/studiesApi";
 import { UserPermissionContext } from "../../hooks/userPermissionContext";
 
 const Email = () => {
@@ -49,7 +49,14 @@ const Email = () => {
       .catch((err) => console.log(err));
   };
 
-  const deleteActionHandler = () => {};
+  const deleteActionHandler = async (id) => {
+    await deleteEmail({ id })
+      .then((res) => {
+        NotificationMessage("success", "Email Deleted Successfully");
+        retrieveEmailData();
+      })
+      .catch((err) => console.log(err));
+  };
 
   const retrieveEmailData = async (pagination, values = {}) => {
     const currentPagination = pagination || pagi;
@@ -108,10 +115,11 @@ const Email = () => {
     },
     {
       title: "Status",
-      dataIndex: "status",
+      dataIndex: "active_status",
       className: `${
         checkPermissionStatus("Active status") ? "" : "column-display-none"
       }`,
+      render: (text, record) => `${text ? "Active" : "Inactive"}`,
     },
     {
       title: "Role",
@@ -119,6 +127,7 @@ const Email = () => {
       className: `${
         checkPermissionStatus("View User Role") ? "" : "column-display-none"
       }`,
+      render: (text, record) => `${record?.role?.role_name}`,
     },
     {
       title: "Actions",
@@ -134,7 +143,7 @@ const Email = () => {
           )}
           {checkPermissionStatus("Delete option") && (
             <DeleteActionIcon
-              deleteActionHandler={() => deleteActionHandler(record)}
+              deleteActionHandler={() => deleteActionHandler(record.id)}
             />
           )}
         </Space>

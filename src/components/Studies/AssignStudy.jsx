@@ -13,6 +13,7 @@ import {
 } from "antd";
 import React, { useEffect, useState } from "react";
 import {
+  fetchAssignStudy,
   getRadiologistList,
   getStudyData,
   postAssignStudy,
@@ -58,12 +59,28 @@ const AssignStudy = ({
     if (studyID && isAssignModalOpen) {
       retrieveStudyData();
       retrieveRadiologistData();
+      retrieveAssignStudyDetails();
     }
   }, [studyID]);
 
+  const retrieveAssignStudyDetails = async () => {
+    setIsLoading(true);
+    await fetchAssignStudy({ id: studyID })
+      .then((res) => {
+        form.setFieldsValue({
+          ...res.data?.data,
+          radiologist: res.data?.assign_user?.map(
+            (data) => data?.assign_user_id
+          ),
+        });
+      })
+      .catch((err) => console.log(err));
+    setIsLoading(false);
+  };
+
   const retrieveRadiologistData = () => {
     getRadiologistList({
-      role_id: 2,
+      role_id: localStorage.getItem("role_id"),
     })
       .then((res) => {
         const resData = res.data.data.map((data) => ({
@@ -79,65 +96,67 @@ const AssignStudy = ({
     setIsLoading(true);
     getStudyData({ id: studyID })
       .then((res) => {
-        const resData = res.data.data.information;
+        const resData = res.data.data;
         const modifiedData = [
           {
             name: "Patient's id",
-            value: resData.study__study_metadata.PatientMainDicomTags.PatientID,
+            value: resData?.Patient_id,
           },
           {
             name: "Referring Physician Name",
-            value:
-              resData.study__study_metadata.MainDicomTags
-                ?.ReferringPhysicianName,
+            value: resData?.Referring_physician_name,
           },
           {
             name: "Patient's Name",
-            value:
-              resData.study__study_metadata.PatientMainDicomTags.PatientName,
+            value: resData?.Patient_name,
           },
           {
             name: "Performing Physician Name",
-            value: "",
+            value: resData?.Performing_physician_name,
           },
           {
             name: "Accession Number",
-            value: resData.study__study_metadata.MainDicomTags.AccessionNumber,
+            value: resData?.Accession_number,
           },
           {
             name: "Modality",
-            value: resData.series_metadata.MainDicomTags.Modality,
+            value: resData?.Modality,
           },
           {
             name: "Gender",
-            value:
-              resData.study__study_metadata.PatientMainDicomTags?.PatientSex,
+            value: resData?.Gender,
           },
-          {
-            name: "Count",
-            value: "",
-          },
+          // {
+          //   name: "Count",
+          //   value: "",
+          // },
           {
             name: "Date of birth",
-            value:
-              resData.study__study_metadata.PatientMainDicomTags
-                ?.PatientBirthDate,
+            value: resData?.DOB,
           },
           {
             name: "Study Description",
-            value: resData.study_description,
+            value: resData?.Study_description,
           },
-          {
-            name: "Age Group",
-            value: "",
-          },
+          // {
+          //   name: "Age Group",
+          //   value: "",
+          // },
           {
             name: "Patient's comments",
-            value: "",
+            value: resData?.Patient_comments,
           },
           {
-            name: "UID",
-            value: resData.study__study_metadata.MainDicomTags.StudyInstanceUID,
+            name: "Body Part",
+            value: resData?.Study_body_part,
+          },
+          {
+            name: "Study UID",
+            value: resData?.Study_UID,
+          },
+          {
+            name: "Series UID",
+            value: resData?.Series_UID,
           },
         ];
         setModalData(modifiedData);
