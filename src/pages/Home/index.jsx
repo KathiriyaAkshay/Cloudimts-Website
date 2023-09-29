@@ -1,14 +1,3 @@
-/*!
-  =========================================================
-  * Muse Ant Design Dashboard - v1.0.0
-  =========================================================
-  * Product Page: https://www.creative-tim.com/product/muse-ant-design-dashboard
-  * Copyright 2021 Creative Tim (https://www.creative-tim.com)
-  * Licensed under MIT (https://github.com/creativetimofficial/muse-ant-design-dashboard/blob/main/LICENSE.md)
-  * Coded by Creative Tim
-  =========================================================
-  * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
 import { useEffect, useState } from "react";
 import "../../assets/scss/dashboard.scss";
 
@@ -115,29 +104,29 @@ function Home() {
   const column = [
     {
       title: "Event Type",
-      dataIndex: "event_display"
+      dataIndex: "event_display",
     },
     {
       title: "Performed Time",
-      dataIndex: "time"
+      dataIndex: "time",
     },
     {
       title: "Performed User",
-      dataIndex: "perform_user"
+      dataIndex: "perform_user",
     },
     {
       title: "Target User",
-      dataIndex: "target_user"
+      dataIndex: "target_user",
     },
     {
       title: "Institution",
-      dataIndex: "institution_name"
+      dataIndex: "institution_name",
     },
     {
       title: "Modality",
-      dataIndex: "modality"
+      dataIndex: "modality",
     },
-  ]
+  ];
 
   const list = [
     {
@@ -311,7 +300,7 @@ function Home() {
 
   return (
     <Spin spinning={isLoading}>
-      <div className="layout-content">
+      <div className="layout-content" style={{ marginTop: "20px" }}>
         <Row className="rowgap-vbox" gutter={[24, 0]}>
           <Col xs={24} sm={24} md={12} lg={6} xl={6} className="mb-24">
             <Card bordered={false} className="criclebox ">
@@ -322,7 +311,7 @@ function Home() {
                     <Title level={3}>{dashboardState.new_study}</Title>
                   </Col>
                   <Col xs={6}>
-                    <div className="icon-box">
+                    <div className="icon-box new-study-box">
                       <GrNewWindow className="study-icon" />
                     </div>
                   </Col>
@@ -339,7 +328,7 @@ function Home() {
                     <Title level={3}>{dashboardState.assign_study}</Title>
                   </Col>
                   <Col xs={6}>
-                    <div className="icon-box">
+                    <div className="icon-box assign-study-box">
                       <GrUserSettings className="study-icon" />
                     </div>
                   </Col>
@@ -356,7 +345,7 @@ function Home() {
                     <Title level={3}>{dashboardState.view_study}</Title>
                   </Col>
                   <Col xs={6}>
-                    <div className="icon-box">
+                    <div className="icon-box view-study-box">
                       <GrOverview className="study-icon" />
                     </div>
                   </Col>
@@ -373,7 +362,7 @@ function Home() {
                     <Title level={3}>{dashboardState.reported_study}</Title>
                   </Col>
                   <Col xs={6}>
-                    <div className="icon-box">
+                    <div className="icon-box report-study-box">
                       <BsFillFileTextFill className="study-icon" />
                     </div>
                   </Col>
@@ -382,7 +371,7 @@ function Home() {
             </Card>
           </Col>
         </Row>
-        <Row gutter={0}>
+        <Row gutter={0} style={{ marginTop: "20px" }}>
           <Col xs={24}>
             <TableWithFilter tableData={tableData} tableColumns={column} />
           </Col>

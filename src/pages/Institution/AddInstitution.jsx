@@ -12,6 +12,7 @@ import {
   Switch,
   Select,
   Spin,
+  Modal,
 } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
 import { useBreadcrumbs } from "../../hooks/useBreadcrumbs";
@@ -38,6 +39,7 @@ const AddInstitution = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [radiologistOptions, setRadiologistOptions] = useState([]);
   const { id } = useParams();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     const crumbs = [{ name: "Institution", to: "/institutions" }];
@@ -78,7 +80,7 @@ const AddInstitution = () => {
           ...modalityData,
           contract_valid_date: dayjs(res.data.data.contract_valid_date),
           radiologist: res.data?.blocked_user?.map((data) => data.id),
-          house_radiologist: res.data?.house_radiologist?.data,
+          house_radiologist: res.data?.in_house_radiologist?.map((data) => data.id),
           institution_info_header:
             res.data.data?.report_settings?.institution_info_header,
           attach_qr_code: res.data.data?.report_settings?.attach_qr_code,
@@ -292,6 +294,7 @@ const AddInstitution = () => {
         setIsLoading(false);
       }
     }
+    setIsModalOpen(false)
   };
 
   const columns = [
@@ -622,8 +625,11 @@ const AddInstitution = () => {
                   </Form.Item>
                 </Col>
                 <Col xs={24} sm={24} md={24} lg={24} className="justify-end">
-                  <Button type="primary" htmlType="submit">
-                    Next
+                  <Button type="primary" onClick={() => {
+                      if (id) setIsModalOpen(true);
+                      else form.submit();
+                    }}>
+                  {id ? "Update" : "Next"}
                   </Button>
                 </Col>
               </Row>
@@ -649,16 +655,19 @@ const AddInstitution = () => {
                     pagination
                   />
                 </Col>
-                <Col xs={24} sm={24} md={24} lg={24} className="justify-end">
+                <Col xs={24} sm={24} md={24} lg={24} className="justify-end mt">
                   <Button type="primary" onClick={handlePrevStep}>
                     Previous
                   </Button>
                   <Button
                     type="primary"
-                    htmlType="submit"
+                    onClick={() => {
+                      if (id) setIsModalOpen(true);
+                      else form.submit();
+                    }}
                     style={{ marginLeft: "10px" }}
                   >
-                    Next
+                    {id ? "Update" : "Next"}
                   </Button>
                 </Col>
               </Row>
@@ -764,16 +773,19 @@ const AddInstitution = () => {
                     pagination
                   />
                 </Col>
-                <Col xs={24} sm={24} md={24} lg={24} className="justify-end">
+                <Col xs={24} sm={24} md={24} lg={24} className="justify-end mt">
                   <Button type="primary" onClick={handlePrevStep}>
                     Previous
                   </Button>
                   <Button
                     type="primary"
-                    htmlType="submit"
+                    onClick={() => {
+                      if (id) setIsModalOpen(true);
+                      else form.submit();
+                    }}
                     style={{ marginLeft: "10px" }}
                   >
-                    Next
+                   {id ? "Update" : "Next"}
                   </Button>
                 </Col>
               </Row>
@@ -798,16 +810,19 @@ const AddInstitution = () => {
                     pagination
                   />
                 </Col>
-                <Col xs={24} sm={24} md={24} lg={24} className="justify-end">
+                <Col xs={24} sm={24} md={24} lg={24} className="justify-end mt">
                   <Button type="primary" onClick={handlePrevStep}>
                     Previous
                   </Button>
                   <Button
                     type="primary"
-                    htmlType="submit"
+                    onClick={() => {
+                      if (id) setIsModalOpen(true);
+                      else form.submit();
+                    }}
                     style={{ marginLeft: "10px" }}
                   >
-                    Next
+                   {id ? "Update" : "Next"}
                   </Button>
                 </Col>
               </Row>
@@ -857,10 +872,13 @@ const AddInstitution = () => {
                   </Button>
                   <Button
                     type="primary"
-                    htmlType="submit"
+                    onClick={() => {
+                      if (id) setIsModalOpen(true);
+                      else form.submit();
+                    }}
                     style={{ marginLeft: "10px" }}
                   >
-                    Next
+                    {id ? "Update" : "Next"}
                   </Button>
                 </Col>
               </Row>
@@ -882,7 +900,7 @@ const AddInstitution = () => {
                   <Form.Item
                     label="Choose Radiologist"
                     name="house_radiologist"
-                    className="category-select"
+                    // className="category-select"
                     rules={[
                       {
                         required: false,
@@ -894,6 +912,7 @@ const AddInstitution = () => {
                       placeholder="Select Radiologist"
                       options={radiologistOptions}
                       showSearch
+                      mode="multiple"
                       filterSort={(optionA, optionB) =>
                         (optionA?.label ?? "")
                           .toLowerCase()
@@ -921,6 +940,16 @@ const AddInstitution = () => {
           )}
         </Spin>
       </Card>
+      <Modal
+        centered
+        title="Confirmation"
+        open={isModalOpen}
+        onOk={() => form.submit()}
+        onCancel={() => setIsModalOpen(false)}
+        okText="Update & Next"
+      >
+        <p>Are you sure you want to update this details?</p>
+      </Modal>
     </div>
   );
 };

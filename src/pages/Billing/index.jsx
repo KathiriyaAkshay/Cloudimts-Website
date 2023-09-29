@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useBreadcrumbs } from "../../hooks/useBreadcrumbs";
 import BillingModal from "../../components/BillingModal";
 import TableWithFilter from "../../components/TableWithFilter";
 import { Card, Divider, Table, Tag, Typography } from "antd";
+import { filterDataContext } from "../../hooks/filterDataContext";
 
 const index = () => {
   const { changeBreadcrumbs } = useBreadcrumbs();
@@ -13,6 +14,10 @@ const index = () => {
     total_communication_charge: 0,
     total_reporting_charge: 0,
   });
+  const { isBillingFilterModalOpen, setIsBillingFilterModalOpen } =
+    useContext(filterDataContext);
+
+  useEffect(() => setIsBillingFilterModalOpen(true), []);
 
   const columns = [
     {

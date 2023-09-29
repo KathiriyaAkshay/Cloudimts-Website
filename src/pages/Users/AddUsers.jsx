@@ -13,6 +13,8 @@ import {
   Select,
   TimePicker,
   Checkbox,
+  Modal,
+  Spin,
 } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
 import { useBreadcrumbs } from "../../hooks/useBreadcrumbs";
@@ -46,6 +48,7 @@ const AddUsers = () => {
   const [value, setValues] = useState({
     url: undefined,
   });
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     const crumbs = [{ name: "Users", to: "/users" }];
@@ -188,6 +191,7 @@ const AddUsers = () => {
   };
 
   const handleSubmit = async (values) => {
+    setIsLoading(true);
     if (currentStep === 0) {
       setPayload({
         ...values,
@@ -242,10 +246,17 @@ const AddUsers = () => {
     } else if (currentStep === 3) {
       setIsLoading(true);
       let signature_image = "";
-      if (values.url) {
-        await uploadImage(values.url)
-          .then((res) => (signature_image = res.data.image_url))
-          .catch((err) => console.log(err));
+      if (values.url.file.originFileObj) {
+        try {
+          const res = await uploadImage(values.url.file.originFileObj);
+          signature_image = res.data.image_url;
+          setPayload((prev) => ({
+            ...prev,
+            signature_image: res.data.image_url,
+          }));
+        } catch (err) {
+          console.log(err);
+        }
       }
       setPayload((prev) => ({ ...prev, signature_image }));
       if (id) {
@@ -300,6 +311,8 @@ const AddUsers = () => {
       }
       setIsLoading(false);
     }
+    setIsLoading(false);
+    setIsModalOpen(false);
   };
 
   const institutionColumn = [
@@ -348,391 +361,442 @@ const AddUsers = () => {
   ];
 
   return (
-    <div>
+    <div className="secondary-table">
       <Card>
-        <Steps current={currentStep} className="mb">
-          <Step title="Basic Info" />
-          <Step title="Availability" />
-          <Step title="Assigned Details" />
-          <Step title="Upload Signature" />
-          <Step title="Modality" />
-        </Steps>
-        {currentStep === 0 && (
-          <Form
-            labelCol={{
-              span: 24,
-            }}
-            wrapperCol={{
-              span: 24,
-            }}
-            form={form}
-            onFinish={handleSubmit}
-            className="mt"
-          >
-            <Row gutter={15}>
-              <Col xs={24} sm={12} md={12} lg={6}>
-                <Form.Item
-                  name="username"
-                  label="Username"
-                  rules={[
-                    {
-                      whitespace: true,
-                      required: true,
-                      message: "Please enter username",
-                    },
-                  ]}
-                >
-                  <Input placeholder="Enter Username" />
-                </Form.Item>
-              </Col>
-              <Col xs={24} sm={12} md={12} lg={6}>
-                <Form.Item
-                  name="email"
-                  label="Email Address"
-                  rules={[
-                    {
-                      type: "email",
-                      required: true,
-                      message: "Please enter valid email",
-                    },
-                  ]}
-                >
-                  <Input placeholder="Enter Email" />
-                </Form.Item>
-              </Col>
-              <Col xs={24} sm={12} md={12} lg={6}>
-                <Form.Item
-                  name="contact"
-                  label="Contact Number"
-                  rules={[
-                    {
-                      required: true,
-                      whitespace: true,
-                      message: "Please enter contact number",
-                    },
-                  ]}
-                >
-                  <Input placeholder="Enter Contact Number" />
-                </Form.Item>
-              </Col>
-              <Col xs={24} sm={12} md={12} lg={6}>
-                <Form.Item
-                  name="city"
-                  label="City"
-                  rules={[
-                    {
-                      required: true,
-                      whitespace: true,
-                      message: "Please enter city",
-                    },
-                  ]}
-                >
-                  <Input placeholder="Enter City" />
-                </Form.Item>
-              </Col>
-              <Col xs={24} sm={12} md={12} lg={6}>
-                <Form.Item
-                  name="state"
-                  label="State"
-                  rules={[
-                    {
-                      required: true,
-                      whitespace: true,
-                      message: "Please enter state",
-                    },
-                  ]}
-                >
-                  <Input placeholder="Enter State" />
-                </Form.Item>
-              </Col>
-              <Col xs={24} sm={12} md={12} lg={6}>
-                <Form.Item
-                  name="country"
-                  label="Country"
-                  rules={[
-                    {
-                      required: true,
-                      whitespace: true,
-                      message: "Please enter country",
-                    },
-                  ]}
-                >
-                  <Input placeholder="Enter Country" />
-                </Form.Item>
-              </Col>
-              <Col lg={6} md={12} sm={12}>
-                <Form.Item
-                  label="Institution"
-                  name="institute_id"
-                  className="category-select"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please select Institution",
-                    },
-                  ]}
-                >
-                  <Select
-                    placeholder="Select Institution"
-                    options={institutionOptions}
-                    // onChange={appliedOnChangeHandler}
-                  />
-                </Form.Item>
-              </Col>
-              <Col lg={6} md={12} sm={12}>
-                <Form.Item
-                  label="Role"
-                  name="role_id"
-                  className="category-select"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please select Role",
-                    },
-                  ]}
-                >
-                  <Select
-                    placeholder="Select Role"
-                    options={roleOptions}
-                    // onChange={appliedOnChangeHandler}
-                  />
-                </Form.Item>
-              </Col>
-              <Col xs={24} sm={12} md={12} lg={12}>
-                <Form.Item
-                  name="address"
-                  label="Address"
-                  rules={[
-                    {
-                      required: true,
-                      whitespace: true,
-                      message: "Please enter address",
-                    },
-                  ]}
-                >
-                  <Input.TextArea placeholder="Enter Address" />
-                </Form.Item>
-              </Col>
-              <Col lg={6} md={12} sm={12}>
-                <Form.Item
-                  label="Password"
-                  name="password"
-                  rules={[
-                    {
-                      whitespace: true,
-                      required: true,
-                      message: "Please enter password",
-                    },
-                  ]}
-                  hasFeedback
-                >
-                  <Input.Password
-                    autoComplete="off"
-                    name="password"
-                    style={{ marginBottom: "0.5rem" }}
-                    placeholder="Enter Password"
-                  />
-                </Form.Item>
-              </Col>
-              <Col lg={6} md={12} sm={12}>
-                <Form.Item
-                  label="Confirm Password"
-                  name="confirmPassword"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please confirm your password",
-                    },
-                    ({ getFieldValue }) => ({
-                      validator(_, value) {
-                        if (!value || getFieldValue("password") === value) {
-                          return Promise.resolve();
-                        }
-                        return Promise.reject(
-                          new Error(
-                            "The two passwords that you entered do not match!"
-                          )
-                        );
+        <Spin spinning={isLoading}>
+          <Steps current={currentStep} className="mb">
+            <Step title="Basic Info" />
+            <Step title="Availability" />
+            <Step title="Assigned Details" />
+            <Step title="Upload Signature" />
+            <Step title="Modality" />
+          </Steps>
+          {currentStep === 0 && (
+            <Form
+              labelCol={{
+                span: 24,
+              }}
+              wrapperCol={{
+                span: 24,
+              }}
+              form={form}
+              onFinish={handleSubmit}
+              className="mt"
+            >
+              <Row gutter={15}>
+                <Col xs={24} sm={12} md={12} lg={6}>
+                  <Form.Item
+                    name="username"
+                    label="Username"
+                    rules={[
+                      {
+                        whitespace: true,
+                        required: true,
+                        message: "Please enter username",
                       },
-                    }),
-                  ]}
-                  dependencies={["password"]}
-                  hasFeedback
-                >
-                  <Input.Password
-                    autoComplete="off"
-                    name="confirmPassword"
-                    style={{ marginBottom: "0.5rem" }}
-                    placeholder="Enter Confirm Password"
+                    ]}
+                  >
+                    <Input placeholder="Enter Username" />
+                  </Form.Item>
+                </Col>
+                <Col xs={24} sm={12} md={12} lg={6}>
+                  <Form.Item
+                    name="email"
+                    label="Email Address"
+                    rules={[
+                      {
+                        type: "email",
+                        required: true,
+                        message: "Please enter valid email",
+                      },
+                    ]}
+                  >
+                    <Input placeholder="Enter Email" />
+                  </Form.Item>
+                </Col>
+                <Col xs={24} sm={12} md={12} lg={6}>
+                  <Form.Item
+                    name="contact"
+                    label="Contact Number"
+                    rules={[
+                      {
+                        required: true,
+                        whitespace: true,
+                        message: "Please enter contact number",
+                      },
+                    ]}
+                  >
+                    <Input placeholder="Enter Contact Number" />
+                  </Form.Item>
+                </Col>
+                <Col xs={24} sm={12} md={12} lg={6}>
+                  <Form.Item
+                    name="city"
+                    label="City"
+                    rules={[
+                      {
+                        required: true,
+                        whitespace: true,
+                        message: "Please enter city",
+                      },
+                    ]}
+                  >
+                    <Input placeholder="Enter City" />
+                  </Form.Item>
+                </Col>
+                <Col xs={24} sm={12} md={12} lg={6}>
+                  <Form.Item
+                    name="state"
+                    label="State"
+                    rules={[
+                      {
+                        required: true,
+                        whitespace: true,
+                        message: "Please enter state",
+                      },
+                    ]}
+                  >
+                    <Input placeholder="Enter State" />
+                  </Form.Item>
+                </Col>
+                <Col xs={24} sm={12} md={12} lg={6}>
+                  <Form.Item
+                    name="country"
+                    label="Country"
+                    rules={[
+                      {
+                        required: true,
+                        whitespace: true,
+                        message: "Please enter country",
+                      },
+                    ]}
+                  >
+                    <Input placeholder="Enter Country" />
+                  </Form.Item>
+                </Col>
+                <Col lg={6} md={12} sm={12}>
+                  <Form.Item
+                    label="Institution"
+                    name="institute_id"
+                    className="category-select"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please select Institution",
+                      },
+                    ]}
+                  >
+                    <Select
+                      placeholder="Select Institution"
+                      options={institutionOptions}
+                      // onChange={appliedOnChangeHandler}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col lg={6} md={12} sm={12}>
+                  <Form.Item
+                    label="Role"
+                    name="role_id"
+                    className="category-select"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please select Role",
+                      },
+                    ]}
+                  >
+                    <Select
+                      placeholder="Select Role"
+                      options={roleOptions}
+                      // onChange={appliedOnChangeHandler}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col xs={24} sm={12} md={12} lg={12}>
+                  <Form.Item
+                    name="address"
+                    label="Address"
+                    rules={[
+                      {
+                        required: true,
+                        whitespace: true,
+                        message: "Please enter address",
+                      },
+                    ]}
+                  >
+                    <Input.TextArea placeholder="Enter Address" />
+                  </Form.Item>
+                </Col>
+                {!id && (
+                  <>
+                    {" "}
+                    <Col lg={6} md={12} sm={12}>
+                      <Form.Item
+                        label="Password"
+                        name="password"
+                        rules={[
+                          {
+                            whitespace: true,
+                            required: true,
+                            message: "Please enter password",
+                          },
+                        ]}
+                        hasFeedback
+                      >
+                        <Input.Password
+                          autoComplete="off"
+                          name="password"
+                          style={{ marginBottom: "0.5rem" }}
+                          placeholder="Enter Password"
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col lg={6} md={12} sm={12}>
+                      <Form.Item
+                        label="Confirm Password"
+                        name="confirmPassword"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Please confirm your password",
+                          },
+                          ({ getFieldValue }) => ({
+                            validator(_, value) {
+                              if (
+                                !value ||
+                                getFieldValue("password") === value
+                              ) {
+                                return Promise.resolve();
+                              }
+                              return Promise.reject(
+                                new Error(
+                                  "The two passwords that you entered do not match!"
+                                )
+                              );
+                            },
+                          }),
+                        ]}
+                        dependencies={["password"]}
+                        hasFeedback
+                      >
+                        <Input.Password
+                          autoComplete="off"
+                          name="confirmPassword"
+                          style={{ marginBottom: "0.5rem" }}
+                          placeholder="Enter Confirm Password"
+                        />
+                      </Form.Item>
+                    </Col>{" "}
+                  </>
+                )}
+                <Col xs={4} sm={4} md={4} lg={2}>
+                  <Form.Item
+                    name="allow"
+                    label="Active"
+                    valuePropName="checked"
+                  >
+                    <Switch />
+                  </Form.Item>
+                </Col>
+                <Col xs={4} sm={4} md={4} lg={4}>
+                  <Form.Item
+                    name="allow_offline_download"
+                    label="Allow Offline Download"
+                    valuePropName="checked"
+                  >
+                    <Switch />
+                  </Form.Item>
+                </Col>
+                <Col xs={24} sm={24} md={24} lg={24} className="justify-end">
+                  <Button
+                    type="primary"
+                    onClick={() => {
+                      if (id) setIsModalOpen(true);
+                      else form.submit();
+                    }}
+                  >
+                    {id ? "Update" : "Next"}
+                  </Button>
+                </Col>
+              </Row>
+            </Form>
+          )}
+          {currentStep === 2 && (
+            <Form
+              labelCol={{
+                span: 24,
+              }}
+              wrapperCol={{
+                span: 24,
+              }}
+              form={form}
+              onFinish={handleSubmit}
+            >
+              <Row>
+                <Col xs={24} sm={24} md={24} lg={24}>
+                  <TableWithFilter
+                    tableColumns={institutionColumn}
+                    tableData={institutionOptions}
+                    pagination
                   />
-                </Form.Item>
-              </Col>
-              <Col xs={4} sm={4} md={4} lg={2}>
-                <Form.Item name="allow" label="Active" valuePropName="checked">
-                  <Switch />
-                </Form.Item>
-              </Col>
-              <Col xs={4} sm={4} md={4} lg={4}>
-                <Form.Item
-                  name="allow_offline_download"
-                  label="Allow Offline Download"
-                  valuePropName="checked"
+                </Col>
+                <Col xs={24} sm={24} md={24} lg={24} className="justify-end mt">
+                  <Button type="primary" onClick={handlePrevStep}>
+                    Previous
+                  </Button>
+                  <Button
+                    type="primary"
+                    onClick={() => {
+                      if (id) setIsModalOpen(true);
+                      else form.submit();
+                    }}
+                    style={{ marginLeft: "10px" }}
+                  >
+                    {id ? "Update" : "Next"}
+                  </Button>
+                </Col>
+              </Row>
+            </Form>
+          )}
+          {currentStep === 1 && (
+            <Form
+              labelCol={{
+                span: 24,
+              }}
+              wrapperCol={{
+                span: 24,
+              }}
+              form={form}
+              onFinish={handleSubmit}
+            >
+              <Row gutter={30}>
+                <Col lg={12} md={12} sm={24}>
+                  <Form.Item
+                    label="Availability"
+                    name="availability"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please enter availability",
+                      },
+                    ]}
+                  >
+                    <TimePicker.RangePicker />
+                  </Form.Item>
+                </Col>
+                <Col
+                  lg={24}
+                  md={24}
+                  sm={24}
+                  className="justify-end display-flex"
                 >
-                  <Switch />
-                </Form.Item>
-              </Col>
-              <Col xs={24} sm={24} md={24} lg={24} className="justify-end">
-                <Button type="primary" htmlType="submit">
-                  Next
-                </Button>
-              </Col>
-            </Row>
-          </Form>
-        )}
-        {currentStep === 2 && (
-          <Form
-            labelCol={{
-              span: 24,
-            }}
-            wrapperCol={{
-              span: 24,
-            }}
-            form={form}
-            onFinish={handleSubmit}
-          >
-            <Row>
-              <Col xs={0} sm={0} md={4} lg={5}></Col>
-              <Col xs={24} sm={24} md={15} lg={15}>
-                <TableWithFilter
-                  tableColumns={institutionColumn}
-                  tableData={institutionOptions}
-                  pagination
-                />
-              </Col>
-              <Col xs={24} sm={24} md={24} lg={24} className="justify-end">
-                <Button type="primary" onClick={handlePrevStep}>
-                  Previous
-                </Button>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  style={{ marginLeft: "10px" }}
+                  <Button type="primary" onClick={handlePrevStep}>
+                    Previous
+                  </Button>
+                  <Button
+                    type="primary"
+                    onClick={() => {
+                      if (id) setIsModalOpen(true);
+                      else form.submit();
+                    }}
+                    style={{ marginLeft: "10px" }}
+                  >
+                    {id ? "Update" : "Next"}
+                  </Button>
+                </Col>
+              </Row>
+            </Form>
+          )}
+          {currentStep === 3 && (
+            <Form
+              labelCol={{
+                span: 24,
+              }}
+              wrapperCol={{
+                span: 24,
+              }}
+              form={form}
+              onFinish={handleSubmit}
+            >
+              <Row>
+                <Col lg={12} xs={24}>
+                  <UploadImage
+                    values={value}
+                    setValues={setValues}
+                    imageFile={imageFile}
+                    setImageFile={setImageFile}
+                    imageURL={imageURL}
+                  />
+                </Col>
+                <Col
+                  lg={24}
+                  md={24}
+                  sm={24}
+                  className="justify-end display-flex"
                 >
-                  Next
-                </Button>
-              </Col>
-            </Row>
-          </Form>
-        )}
-        {currentStep === 1 && (
-          <Form
-            labelCol={{
-              span: 24,
-            }}
-            wrapperCol={{
-              span: 24,
-            }}
-            form={form}
-            onFinish={handleSubmit}
-          >
-            <Row gutter={30}>
-              <Col lg={12} md={12} sm={24}>
-                <Form.Item
-                  label="Availability"
-                  name="availability"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please enter availability",
-                    },
-                  ]}
-                >
-                  <TimePicker.RangePicker />
-                </Form.Item>
-              </Col>
-              <Col lg={24} md={24} sm={24} className="justify-end display-flex">
-                <Button type="primary" onClick={handlePrevStep}>
-                  Previous
-                </Button>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  style={{ marginLeft: "10px" }}
-                >
-                  Next
-                </Button>
-              </Col>
-            </Row>
-          </Form>
-        )}
-        {currentStep === 3 && (
-          <Form
-            labelCol={{
-              span: 24,
-            }}
-            wrapperCol={{
-              span: 24,
-            }}
-            form={form}
-            onFinish={handleSubmit}
-          >
-            <Row>
-              <Col lg={12} xs={24}>
-                <UploadImage
-                  values={value}
-                  setValues={setValues}
-                  imageFile={imageFile}
-                  setImageFile={setImageFile}
-                  imageURL={imageURL}
-                />
-              </Col>
-              <Col lg={24} md={24} sm={24} className="justify-end display-flex">
-                <Button type="primary" onClick={handlePrevStep}>
-                  Previous
-                </Button>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  style={{ marginLeft: "10px" }}
-                >
-                  Next
-                </Button>
-              </Col>
-            </Row>
-          </Form>
-        )}
-        {currentStep === 4 && (
-          <Form
-            labelCol={{
-              span: 24,
-            }}
-            wrapperCol={{
-              span: 24,
-            }}
-            form={form}
-            onFinish={handleSubmit}
-          >
-            <Row>
-              <Col xs={0} sm={0} md={4} lg={5}></Col>
-              <Col xs={24} sm={24} md={15} lg={15}>
-                <TableWithFilter
-                  tableColumns={columns}
-                  tableData={tableData}
-                  pagination
-                />
-              </Col>
-              <Col xs={24} sm={24} md={24} lg={24} className="justify-end">
-                <Button type="primary" onClick={handlePrevStep}>
-                  Previous
-                </Button>
-                <Button type="primary" htmlType="submit">
-                  Submit
-                </Button>
-              </Col>
-            </Row>
-          </Form>
-        )}
+                  <Button type="primary" onClick={handlePrevStep}>
+                    Previous
+                  </Button>
+                  <Button
+                    type="primary"
+                    onClick={() => {
+                      if (id) setIsModalOpen(true);
+                      else form.submit();
+                    }}
+                    style={{ marginLeft: "10px" }}
+                  >
+                    {id ? "Update" : "Next"}
+                  </Button>
+                </Col>
+              </Row>
+            </Form>
+          )}
+          {currentStep === 4 && (
+            <Form
+              labelCol={{
+                span: 24,
+              }}
+              wrapperCol={{
+                span: 24,
+              }}
+              form={form}
+              onFinish={handleSubmit}
+            >
+              <Row>
+                <Col xs={24} sm={24} md={24} lg={24}>
+                  <TableWithFilter
+                    tableColumns={columns}
+                    tableData={tableData}
+                    pagination
+                  />
+                </Col>
+                <Col xs={24} sm={24} md={24} lg={24} className="justify-end mt">
+                  <Button
+                    type="primary"
+                    onClick={handlePrevStep}
+                    style={{ marginRight: "10px" }}
+                  >
+                    Previous
+                  </Button>
+                  <Button type="primary" htmlType="submit">
+                    Submit
+                  </Button>
+                </Col>
+              </Row>
+            </Form>
+          )}
+        </Spin>
       </Card>
+      <Modal
+        centered
+        title="Confirmation"
+        open={isModalOpen}
+        onOk={() => form.submit()}
+        onCancel={() => setIsModalOpen(false)}
+        okText="Update & Next"
+      >
+        <p>Are you sure you want to update this details?</p>
+      </Modal>
     </div>
   );
 };

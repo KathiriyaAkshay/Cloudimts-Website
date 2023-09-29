@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Drawer, Progress, Space, Tooltip } from "antd";
+import { Drawer, Progress, Space, Tag, Tooltip } from "antd";
 import { EyeFilled, PlusOutlined } from "@ant-design/icons";
 import TableWithFilter from "../../components/TableWithFilter";
 import EditActionIcon from "../../components/EditActionIcon";
@@ -76,7 +76,7 @@ const Institution = () => {
   };
 
   const columns = [
-    {
+    checkPermissionStatus("View Institution name") && {
       title: "Institution Name",
       dataIndex: "name",
       className: `${
@@ -85,7 +85,7 @@ const Institution = () => {
           : "column-display-none"
       }`,
     },
-    {
+    checkPermissionStatus("View Institution email") && {
       title: "Email",
       dataIndex: "email",
       className: `${
@@ -94,7 +94,7 @@ const Institution = () => {
           : "column-display-none"
       }`,
     },
-    {
+    checkPermissionStatus("View Institution contact number") && {
       title: "Contact Number",
       dataIndex: "contact",
       className: `${
@@ -103,7 +103,7 @@ const Institution = () => {
           : "column-display-none"
       }`,
     },
-    {
+    checkPermissionStatus("View Institution City") && {
       title: "City",
       dataIndex: "city",
       className: `${
@@ -112,7 +112,7 @@ const Institution = () => {
           : "column-display-none"
       }`,
     },
-    {
+    checkPermissionStatus("View Institution State") && {
       title: "State",
       dataIndex: "state",
       className: `${
@@ -128,17 +128,17 @@ const Institution = () => {
       //   checkPermissionStatus("View Username") ? "" : "column-display-none"
       // }`,
     },
-    {
-      title: "Usage",
-      dataIndex: "institution_space_usage",
-      className: `${
-        checkPermissionStatus("View Institution space usage")
-          ? ""
-          : "column-display-none"
-      }`,
-      render: (text, record) => <Progress percent={text} />,
-    },
-    {
+    // checkPermissionStatus("View Institution space usage") && {
+    //   title: "Usage",
+    //   dataIndex: "institution_space_usage",
+    //   className: `${
+    //     checkPermissionStatus("View Institution space usage")
+    //       ? ""
+    //       : "column-display-none"
+    //   }`,
+    //   render: (text, record) => <Progress percent={text} />,
+    // },
+    checkPermissionStatus("View Institution created at") && {
       title: "Created At",
       dataIndex: "created_at",
       className: `${
@@ -147,7 +147,7 @@ const Institution = () => {
           : "column-display-none"
       }`,
     },
-    {
+    checkPermissionStatus("View Institution last updated at") && {
       title: "Updated At",
       dataIndex: "updated_at",
       className: `${
@@ -197,27 +197,38 @@ const Institution = () => {
     {
       title: "Event",
       dataIndex: "event_info",
+      render: (text) => (
+        <Tag
+          color={
+            text.includes("User login")
+              ? "blue"
+              : text.includes("create")
+              ? "green"
+              : text.includes("basic details update")
+              ? "warning"
+              : text.includes("modality charge update")
+              ? "orange"
+              : text.includes("studyID setting update")
+              ? "magenta"
+              : text.includes("report settings update")
+              ? "lime"
+              : text.includes(" Signature image")
+              ? "cyan"
+              : text.includes(" blocked user details update")
+              ? "red"
+              : "purple"
+          }
+          className="event-type-tag"
+        >
+          {text}
+        </Tag>
+      ),
     },
     {
       title: "Time",
       dataIndex: "time",
     },
   ];
-
-  const rowSelection = {
-    onChange: (selectedRowKeys, selectedRows) => {
-      console.log(
-        `selectedRowKeys: ${selectedRowKeys}`,
-        "selectedRows: ",
-        selectedRows
-      );
-    },
-    getCheckboxProps: (record) => ({
-      disabled: record.name === "Disabled User",
-      // Column configuration not to be checked
-      name: record.email,
-    }),
-  };
 
   return (
     <>
@@ -243,7 +254,7 @@ const Institution = () => {
         placement="right"
         onClose={() => setIsDrawerOpen(false)}
         open={isDrawerOpen}
-        width={600}
+        width={800}
       >
         <TableWithFilter tableData={logsData} tableColumns={logsColumn} />
       </Drawer>

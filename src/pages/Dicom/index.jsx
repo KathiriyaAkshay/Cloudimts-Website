@@ -86,14 +86,14 @@ const Dicom = () => {
   };
 
   const columns = [
-    {
+    checkPermissionStatus("View Patient id") && {
       title: "Patient's Id",
       dataIndex: "id",
       className: `${
         checkPermissionStatus("View Patient id") ? "" : "column-display-none"
       }`,
     },
-    {
+    checkPermissionStatus("View Patient name") && {
       title: "Patient's Name",
       dataIndex: "name",
       className: `${
@@ -141,7 +141,7 @@ const Dicom = () => {
       //     : "column-display-none"
       // }`,
     },
-    {
+    checkPermissionStatus("View Institution name") && {
       title: "Institution",
       dataIndex: "institution",
       className: `${
@@ -150,7 +150,7 @@ const Dicom = () => {
           : "column-display-none"
       }`,
     },
-    {
+    checkPermissionStatus("View Study description") && {
       title: "Description",
       dataIndex: "study_description",
       className: `${
@@ -159,7 +159,7 @@ const Dicom = () => {
           : "column-display-none"
       }`,
     },
-    {
+    checkPermissionStatus("Study chat option") && {
       title: "Chat",
       dataIndex: "chat",
       className: `${
@@ -183,11 +183,6 @@ const Dicom = () => {
       title: "Actions",
       dataIndex: "actions",
       fixed: "right",
-      className: `${
-        checkPermissionStatus("View Institution name")
-          ? ""
-          : "column-display-none"
-      }`,
       width: window.innerWidth < 650 ? "1%" : "10%",
       render: (_, record) => (
         <Space style={{ display: "flex", justifyContent: "space-evenly" }}>
@@ -348,7 +343,7 @@ const Dicom = () => {
         </Space>
       ),
     },
-  ];
+  ].filter(Boolean);
 
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {

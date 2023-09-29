@@ -99,7 +99,7 @@ const Email = () => {
   };
 
   const columns = [
-    {
+    checkPermissionStatus("View Full name") && {
       title: "Full Name",
       dataIndex: "full_name",
       className: `${
@@ -113,7 +113,7 @@ const Email = () => {
       //   checkPermissionStatus("View Patient id") ? "" : "column-display-none"
       // }`,
     },
-    {
+    checkPermissionStatus("Active status") && {
       title: "Status",
       dataIndex: "active_status",
       className: `${
@@ -121,13 +121,21 @@ const Email = () => {
       }`,
       render: (text, record) => `${text ? "Active" : "Inactive"}`,
     },
-    {
+    checkPermissionStatus("View User Role") && {
       title: "Role",
       dataIndex: "role",
       className: `${
         checkPermissionStatus("View User Role") ? "" : "column-display-none"
       }`,
       render: (text, record) => `${record?.role?.role_name}`,
+    },
+    {
+      title: "Created At",
+      dataIndex: "created_at",
+    },
+    {
+      title: "Updated At",
+      dataIndex: "updated_at",
     },
     {
       title: "Actions",
@@ -149,37 +157,42 @@ const Email = () => {
         </Space>
       ),
     },
-  ];
-
-  const rowSelection = {
-    onChange: (selectedRowKeys, selectedRows) => {
-      console.log(
-        `selectedRowKeys: ${selectedRowKeys}`,
-        "selectedRows: ",
-        selectedRows
-      );
-    },
-    getCheckboxProps: (record) => ({
-      disabled: record.name === "Disabled User",
-      // Column configuration not to be checked
-      name: record.email,
-    }),
-  };
+  ].filter(Boolean);
 
   const handleSubmit = async (values) => {
     setIsLoading(true);
-    await API.post("/email/v1/insert-email", values, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((res) => {
-        NotificationMessage("success", "Email Added Successfully");
-        form.resetFields();
-        setIsEmailModalOpen(false);
-        retrieveEmailData();
+    if (!emailID) {
+      await API.post("/email/v1/insert-email", values, {
+        headers: { Authorization: `Bearer ${token}` },
       })
-      .catch((err) =>
-        NotificationMessage("warning", err.response.data.message)
-      );
+        .then((res) => {
+          NotificationMessage("success", "Email Added Successfully");
+          form.resetFields();
+          setIsEmailModalOpen(false);
+          retrieveEmailData();
+        })
+        .catch((err) =>
+          NotificationMessage("warning", err.response.data.message)
+        );
+    } else {
+      await API.post(
+        "/email/v1/edit-email",
+        { ...values, id: emailID },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      )
+        .then((res) => {
+          NotificationMessage("success", "Email Updated Successfully");
+          form.resetFields();
+          setIsEmailModalOpen(false);
+          retrieveEmailData();
+          setEmailID(null);
+        })
+        .catch((err) =>
+          NotificationMessage("warning", err.response.data.message)
+        );
+    }
     setIsLoading(false);
   };
 

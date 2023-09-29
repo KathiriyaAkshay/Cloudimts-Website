@@ -4,6 +4,7 @@ import TableWithFilter from "../../components/TableWithFilter";
 import { useBreadcrumbs } from "../../hooks/useBreadcrumbs";
 import InstitutionLogsFilter from "../../components/InstitutionLogsFilter";
 import { instituteLogsFilter } from "../../apis/studiesApi";
+import { Tag } from "antd";
 
 const InstitutionLogs = () => {
   const [institutionData, setInstitutionData] = useState([]);
@@ -17,7 +18,7 @@ const InstitutionLogs = () => {
 
   useEffect(() => {
     changeBreadcrumbs([{ name: "Institution Logs" }]);
-    retrieveInstitutionData();
+    // retrieveInstitutionData();
   }, []);
 
   const retrieveInstitutionData = async (
@@ -29,9 +30,11 @@ const InstitutionLogs = () => {
     const currentPagination = pagination || pagi;
     instituteLogsFilter({
       filter:
-        Object.keys(filterValues).length === 0 &&
-        Object.keys(values).length !== 0 &&
-        !valueChanged
+        Object.keys(values).length !== 0
+          ? values
+          : Object.keys(filterValues).length === 0 &&
+            Object.keys(values).length !== 0 &&
+            !valueChanged
           ? values
           : !valueChanged
           ? filterValues
@@ -62,6 +65,32 @@ const InstitutionLogs = () => {
     {
       title: "Event Info",
       dataIndex: "event_info",
+      render: (text) => (
+        <Tag
+          color={
+            text.includes("User login")
+              ? "blue"
+              : text.includes("create")
+              ? "green"
+              : text.includes("basic details update")
+              ? "warning"
+              : text.includes("modality charge update")
+              ? "orange"
+              : text.includes("studyID setting update")
+              ? "magenta"
+              : text.includes("report settings update")
+              ? "lime"
+              : text.includes(" Signature image")
+              ? "cyan"
+              : text.includes(" blocked user details update")
+              ? "red"
+              : "purple"
+          }
+          className="event-type-tag"
+        >
+          {text}
+        </Tag>
+      ),
     },
     {
       title: "User Name",

@@ -1,7 +1,15 @@
-import { Button, List, Modal, Spin, Typography } from "antd";
+import { Button, List, Modal, Space, Spin, Tooltip, Typography } from "antd";
 import React, { useEffect, useState } from "react";
 import { getStudyData } from "../../apis/studiesApi";
 import FileReport from "./FileReport";
+import TableWithFilter from "../TableWithFilter";
+import { BsEyeFill } from "react-icons/bs";
+import {
+  DownloadOutlined,
+  MailOutlined,
+  WhatsAppOutlined,
+} from "@ant-design/icons";
+import DeleteActionIcon from "../DeleteActionIcon";
 
 const StudyReports = ({
   isReportModalOpen,
@@ -12,12 +20,56 @@ const StudyReports = ({
   const [modalData, setModalData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isFileReportModalOpen, setIsFileReportModalOpen] = useState(false);
+  const [tableData, setTableData] = useState([]);
 
   useEffect(() => {
     if (studyID && isReportModalOpen) {
       retrieveStudyData();
     }
   }, [studyID]);
+
+  const columns = [
+    {
+      title: "Report Type",
+      dataIndex: "report_type",
+    },
+    {
+      title: "Report Time",
+      dataIndex: "reporting_time",
+    },
+    {
+      title: "Report By",
+      dataIndex: "report_by",
+      render: (text, record) => record?.report_by?.username,
+    },
+    {
+      title: "Study Description",
+      dataIndex: "study_description",
+    },
+    {
+      title: "Actions",
+      dataIndex: "actions",
+      fixed: "right",
+      width: window.innerWidth < 650 ? "1%" : "20%",
+      render: (text, record) => (
+        <Space style={{ display: "flex", justifyContent: "space-evenly" }}>
+          <Tooltip title={"View"}>
+            <BsEyeFill className="action-icon" />
+          </Tooltip>
+          <Tooltip title={"Download"}>
+            <DownloadOutlined className="action-icon" />
+          </Tooltip>
+          <Tooltip title={"Email"}>
+            <MailOutlined className="action-icon" />
+          </Tooltip>
+          <Tooltip title={"Whatsapp"}>
+            <WhatsAppOutlined className="action-icon" />
+          </Tooltip>
+          <DeleteActionIcon />
+        </Space>
+      ),
+    },
+  ];
 
   const retrieveStudyData = () => {
     setIsLoading(true);
@@ -87,6 +139,7 @@ const StudyReports = ({
           },
         ];
         setModalData(modifiedData);
+        setTableData(res.data.report);
       })
       .catch((err) => console.log(err));
     setIsLoading(false);
@@ -112,7 +165,11 @@ const StudyReports = ({
           <Button key="submit" type="primary">
             Simplified Report
           </Button>,
-          <Button key="submit" type="primary" onClick={() => setIsFileReportModalOpen(true)}>
+          <Button
+            key="submit"
+            type="primary"
+            onClick={() => setIsFileReportModalOpen(true)}
+          >
             File Report
           </Button>,
           <Button
@@ -159,6 +216,9 @@ const StudyReports = ({
               </List.Item>
             )}
           />
+          {tableData?.length > 0 && (
+            <TableWithFilter tableColumns={columns} tableData={tableData} />
+          )}
         </Spin>
       </Modal>
       <FileReport

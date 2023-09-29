@@ -6,10 +6,13 @@ import {
   getRadiologistList,
 } from "../apis/studiesApi";
 import { filterDataContext } from "../hooks/filterDataContext";
+import { BillingDataContext } from "../hooks/billingDataContext";
 
 const BillingModal = ({ setBillingData, setIsLoading, setCharges }) => {
   const { isBillingFilterModalOpen, setIsBillingFilterModalOpen } =
     useContext(filterDataContext);
+  const { billingFilterData, setBillingFilterData } =
+    useContext(BillingDataContext);
   const [institutionOptions, setInstitutionOptions] = useState([]);
   const [radiologistOptions, setRadiologistOptions] = useState([]);
   const [statusOptions, setStatusOptions] = useState([
@@ -129,6 +132,7 @@ const BillingModal = ({ setBillingData, setIsLoading, setCharges }) => {
         ? true
         : false,
     };
+    setBillingFilterData(modifiedObj);
     getBillingData(modifiedObj)
       .then((res) => {
         setBillingData(res.data.data);

@@ -127,7 +127,7 @@ const Roles = () => {
           setRoleID(null);
         })
         .catch((err) =>
-          NotificationMessage("warning", err.response.data.message)
+          NotificationMessage("warning", err.response.data.memssage)
         );
     }
     setIsLoading(false);

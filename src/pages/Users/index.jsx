@@ -1,15 +1,34 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Drawer, Space, Tooltip } from "antd";
+import {
+  Col,
+  Drawer,
+  Form,
+  Input,
+  Modal,
+  Popconfirm,
+  Row,
+  Space,
+  Switch,
+  Tag,
+  Tooltip,
+} from "antd";
 import { EyeFilled, PlusOutlined } from "@ant-design/icons";
 import TableWithFilter from "../../components/TableWithFilter";
 import EditActionIcon from "../../components/EditActionIcon";
 import DeleteActionIcon from "../../components/DeleteActionIcon";
 import { useBreadcrumbs } from "../../hooks/useBreadcrumbs";
-import API from "../../apis/getApi";
+import { TbLockAccess } from "react-icons/tb";
 import UserFilterModal from "../../components/UserFilterModal";
-import { filterUserData, getParticularUsersLogs } from "../../apis/studiesApi";
+import {
+  disableUser,
+  enableUser,
+  filterUserData,
+  getParticularUsersLogs,
+  updateUserPassword,
+} from "../../apis/studiesApi";
 import { UserPermissionContext } from "../../hooks/userPermissionContext";
+import NotificationMessage from "../../components/NotificationMessage";
 
 const Users = () => {
   const [tableData, setTableData] = useState([]);
@@ -21,6 +40,9 @@ const Users = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const { permissionData } = useContext(UserPermissionContext);
   const [userTablePermission, setUserTablePermission] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [form] = Form.useForm();
+  const [userID, setUserID] = useState(null);
 
   const navigate = useNavigate();
 
@@ -84,22 +106,44 @@ const Users = () => {
     return permission;
   };
 
+  const statusChangeHandler = async (status, id) => {
+    if (status) {
+      await enableUser({ id })
+        .then((res) => {
+          NotificationMessage("success", "User Status Updated Successfully");
+          retrieveUsersData();
+        })
+        .catch((err) =>
+          NotificationMessage("warning", err.response.data.message)
+        );
+    } else {
+      await disableUser({ id })
+        .then((res) => {
+          NotificationMessage("success", "User Status Updated Successfully");
+          retrieveUsersData();
+        })
+        .catch((err) =>
+          NotificationMessage("warning", err.response.data.message)
+        );
+    }
+  };
+
   const columns = [
-    {
+    checkPermissionStatus("View Username") && {
       title: "Username",
       dataIndex: "username",
       className: `${
         checkPermissionStatus("View Username") ? "" : "column-display-none"
       }`,
     },
-    {
+    checkPermissionStatus("View Email") && {
       title: "Email",
       dataIndex: "email",
       className: `${
         checkPermissionStatus("View Email") ? "" : "column-display-none"
       }`,
     },
-    {
+    checkPermissionStatus("View contact number") && {
       title: "Contact Number",
       dataIndex: "contact",
       className: `${
@@ -108,14 +152,14 @@ const Users = () => {
           : "column-display-none"
       }`,
     },
-    {
+    checkPermissionStatus("View Role name") && {
       title: "Role",
       dataIndex: "role_name",
       className: `${
         checkPermissionStatus("View Role name") ? "" : "column-display-none"
       }`,
     },
-    {
+    checkPermissionStatus("View Institution name") && {
       title: "Institute",
       dataIndex: "institute_name",
       className: `${
@@ -124,14 +168,14 @@ const Users = () => {
           : "column-display-none"
       }`,
     },
-    {
+    checkPermissionStatus("View Created time") && {
       title: "Created At",
       dataIndex: "created_at",
       className: `${
         checkPermissionStatus("View Created time") ? "" : "column-display-none"
       }`,
     },
-    {
+    checkPermissionStatus("View last updated time") && {
       title: "Updated At",
       dataIndex: "updated_at",
       className: `${
@@ -141,6 +185,32 @@ const Users = () => {
       }`,
     },
     {
+      title: "Status",
+      dataIndex: "status",
+      render: (text, record) => {
+        return {
+          children: (
+            <Popconfirm
+              title="Are you sure to update status?"
+              onConfirm={() =>
+                statusChangeHandler(!record?.user?.is_active, record.id)
+              }
+            >
+              <Switch
+                checkedChildren="Enable"
+                checked={record?.user?.is_active}
+                // onChange={(state) => {
+                //   changeStatus(record.id, state);
+                // }}
+                unCheckedChildren="Disable"
+                className="table-switch"
+              />
+            </Popconfirm>
+          ),
+        };
+      },
+    },
+    checkPermissionStatus("Actions option access") && {
       title: "Actions",
       dataIndex: "actions",
       fixed: "right",
@@ -161,13 +231,23 @@ const Users = () => {
               onClick={() => retrieveLogsData(record.id)}
             />
           </Tooltip>
+          <Tooltip title={"Reset Password"}>
+            <TbLockAccess
+              className="action-icon"
+              style={{ fontSize: "24px" }}
+              onClick={() => {
+                setUserID(record.id);
+                setIsModalOpen(true);
+              }}
+            />
+          </Tooltip>
           <DeleteActionIcon
             deleteActionHandler={() => deleteActionHandler(record)}
           />
         </Space>
       ),
     },
-  ];
+  ].filter(Boolean);
 
   const logsColumn = [
     {
@@ -181,6 +261,32 @@ const Users = () => {
     {
       title: "Event",
       dataIndex: "logs_id",
+      render: (text) => (
+        <Tag
+          color={
+            text.includes("User login")
+              ? "blue"
+              : text.includes("create")
+              ? "green"
+              : text.includes("basic details update")
+              ? "warning"
+              : text.includes("modality details update")
+              ? "orange"
+              : text.includes("institution details update")
+              ? "magenta"
+              : text.includes("password update")
+              ? "lime"
+              : text.includes(" Signature image")
+              ? "cyan"
+              : text.includes("User disable")
+              ? "red"
+              : "purple"
+          }
+          className="event-type-tag"
+        >
+          {text}
+        </Tag>
+      ),
     },
     {
       title: "Time",
@@ -188,19 +294,21 @@ const Users = () => {
     },
   ];
 
-  const rowSelection = {
-    onChange: (selectedRowKeys, selectedRows) => {
-      console.log(
-        `selectedRowKeys: ${selectedRowKeys}`,
-        "selectedRows: ",
-        selectedRows
+  const submitHandler = async (values) => {
+    setIsLoading(true);
+    await updateUserPassword({
+      update_password: values.update_password,
+      target_id: userID,
+    })
+      .then((res) => {
+        NotificationMessage("success", "User Password Updated Successfully");
+        setUserID(null);
+        setIsModalOpen(false);
+      })
+      .catch((err) =>
+        NotificationMessage("warning", err.response.data.message)
       );
-    },
-    getCheckboxProps: (record) => ({
-      disabled: record.name === "Disabled User",
-      // Column configuration not to be checked
-      name: record.email,
-    }),
+    setIsLoading(false);
   };
 
   return (
@@ -223,10 +331,95 @@ const Users = () => {
         placement="right"
         onClose={() => setIsDrawerOpen(false)}
         open={isDrawerOpen}
-        width={600}
+        width={700}
       >
         <TableWithFilter tableData={logsData} tableColumns={logsColumn} />
       </Drawer>
+      <Modal
+        width={500}
+        title={"Reset Password"}
+        centered
+        open={isModalOpen}
+        onOk={() => form.submit()}
+        onCancel={() => {
+          form.resetFields();
+          setIsModalOpen(false);
+          setUserID(null);
+        }}
+      >
+        {" "}
+        <Form
+          labelCol={{
+            span: 24,
+          }}
+          wrapperCol={{
+            span: 24,
+          }}
+          form={form}
+          onFinish={submitHandler}
+          autoComplete={"off"}
+        >
+          <Row gutter={15}>
+            <Col xs={24} lg={24}>
+              <Form.Item
+                label="New Password"
+                name="update_password"
+                rules={[
+                  {
+                    whitespace: true,
+                    required: true,
+                    message: "Please enter password",
+                  },
+                ]}
+                hasFeedback
+              >
+                <Input.Password
+                  autoComplete="off"
+                  name="update_password"
+                  style={{ marginBottom: "0.5rem" }}
+                  placeholder="Enter Password"
+                />
+              </Form.Item>
+            </Col>
+            <Col xs={24} lg={24}>
+              <Form.Item
+                label="Confirm Password"
+                name="confirmPassword"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please confirm your password",
+                  },
+                  ({ getFieldValue }) => ({
+                    validator(_, value) {
+                      if (
+                        !value ||
+                        getFieldValue("update_password") === value
+                      ) {
+                        return Promise.resolve();
+                      }
+                      return Promise.reject(
+                        new Error(
+                          "The two passwords that you entered do not match!"
+                        )
+                      );
+                    },
+                  }),
+                ]}
+                dependencies={["update_password"]}
+                hasFeedback
+              >
+                <Input.Password
+                  autoComplete="off"
+                  name="confirmPassword"
+                  style={{ marginBottom: "0.5rem" }}
+                  placeholder="Enter Confirm Password"
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+        </Form>
+      </Modal>
     </>
   );
 };

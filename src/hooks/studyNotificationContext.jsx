@@ -121,7 +121,7 @@ const StudyNotificationProvider = ({ children }) => {
     return () => {
       ws.close();
     };
-  }, []);
+  }, [studyData]);
 
   return (
     <StudyNotificationContext.Provider value={{ notification }}>

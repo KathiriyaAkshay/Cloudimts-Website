@@ -3,6 +3,7 @@ import { useBreadcrumbs } from "../../hooks/useBreadcrumbs";
 import { getUsersLogs, userLogsFilter } from "../../apis/studiesApi";
 import TableWithFilter from "../../components/TableWithFilter";
 import UserLogsFilter from "../../components/UserLogsFilter";
+import { Tag } from "antd";
 
 const UsersLogs = () => {
   const [tableData, setTableData] = useState([]);
@@ -60,6 +61,32 @@ const UsersLogs = () => {
     {
       title: "Event",
       dataIndex: "logs_id",
+      render: (text) => (
+        <Tag
+          color={
+            text.includes("User login")
+              ? "blue"
+              : text.includes("create")
+              ? "green"
+              : text.includes("basic details update")
+              ? "warning"
+              : text.includes("modality details update")
+              ? "orange"
+              : text.includes("institution details update")
+              ? "magenta"
+              : text.includes("password update")
+              ? "lime"
+              : text.includes(" Signature image")
+              ? "cyan"
+              : text.includes("User disable")
+              ? "red"
+              : "purple"
+          }
+          className="event-type-tag"
+        >
+          {text}
+        </Tag>
+      ),
     },
     {
       title: "Time",

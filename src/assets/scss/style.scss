@@ -865,6 +865,9 @@ header.ant-layout-header.subheader {
 .setting-main-div {
   background-color: transparent;
   // box-shadow: 4px 4px 10px #e4e4e4;
+  .ant-collapse-expand-icon, .ant-collapse-header-text{
+    color: #00000099;
+  }
 }
 
 .setting-main-div .ant-collapse-header {
@@ -873,9 +876,12 @@ header.ant-layout-header.subheader {
 
 .setting-panel {
   margin-bottom: 18px;
-  background-color: #edf4ff;
+  background-color: #e6f6fc;
   border-radius: 15px !important;
   position: relative;
+  .ant-table-tbody tr {
+    background-color: #ffffff46 !important;
+  }
 }
 
 .slick-prev:before,

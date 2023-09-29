@@ -428,3 +428,65 @@ export const fetchAssignStudy = async (params = {}) => {
   );
   return fetchAssignStudy;
 };
+
+export const updateUserPassword = async (params = {}) => {
+  const updateUserPassword = await API.post(
+    "/owner/v1/update_password",
+    params,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return updateUserPassword;
+};
+
+export const fetchEmailList = async (params = {}) => {
+  const fetchEmailList = await API.post("/email/v1/send-email-list", params, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return fetchEmailList;
+};
+
+export const fetchAuth = async (params = {}) => {
+  const fetchAuth = await API.post("/owner/v1/user_details_fetch", params, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return fetchAuth;
+};
+
+export const enableUser = async (params = {}) => {
+  const enableUser = await API.post("/user/v1/enable-user", params, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return enableUser;
+};
+
+export const disableUser = async (params = {}) => {
+  const disableUser = await API.post("/user/v1/disable-user", params, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return disableUser;
+};
+
+export const downloadBilling = async (params = {}) => {
+  const downloadBilling = await API.post(
+    "/billing/v1/fetch-billing-info",
+    params,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return downloadBilling;
+};

@@ -962,21 +962,36 @@
 //   font-weight: 600;
 //   font-size: 14px;
 // }
-// .icon-box {
-//   width: 48px;
-//   height: 48px;
-//   text-align: center;
-//   background: #1890ff;
-//   color: #fff;
-//   border-radius: 0.5rem;
-//   margin-left: auto;
-//   line-height: 55px;
-// }
+.icon-box {
+  width: 48px;
+  height: 48px;
+  text-align: center;
+  background: #1890ff;
+  color: #fff;
+  border-radius: 0.5rem;
+  margin-left: auto;
+  line-height: 55px;
+}
 
-// .icon-box span {
-//   color: #fff;
-//   font-size: 24px;
-// }
+.icon-box svg {
+  color: #fff;
+  font-size: 22px;
+  path {
+    stroke: #fff !important;
+  }
+}
+.new-study-box {
+  background: #7ac05b;
+}
+.assign-study-box {
+  background: #e4b359;
+}
+.view-study-box {
+  background: #2db7f5;
+}
+.report-study-box {
+  background: #d559a1;
+}
 
 // .listpage {
 //   padding-top: 15px;

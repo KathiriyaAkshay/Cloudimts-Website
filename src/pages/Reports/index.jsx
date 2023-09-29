@@ -49,14 +49,14 @@ const index = () => {
       //   checkPermissionStatus("View Full name") ? "" : "column-display-none"
       // }`,
     },
-    {
+    checkPermissionStatus("View created at") && {
       title: "Created At",
       dataIndex: "created_at",
       className: `${
         checkPermissionStatus("View created at") ? "" : "column-display-none"
       }`,
     },
-    {
+    checkPermissionStatus("View last updated at") && {
       title: "Updated At",
       dataIndex: "updated_at",
       className: `${
@@ -80,7 +80,7 @@ const index = () => {
         </Space>
       ),
     },
-  ];
+  ].filter(Boolean);
 
   return (
     <TableWithFilter

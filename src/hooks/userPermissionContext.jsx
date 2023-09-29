@@ -5,16 +5,6 @@ import { Spin } from "antd";
 export const UserPermissionContext = createContext();
 
 const UserPermissionProvider = ({ children }) => {
-  // const [permissionData, setPermissionData] = useState({
-  //   "Pages permission": [],
-  //   "UserTable view": [],
-  //   "InstitutionTable view": [],
-  //   "StudyTable view": [],
-  //   "EmailTable view": [],
-  //   "TemplateTable view": [],
-  //   "Menu Permission": [],
-  //   "Other option permission": [],
-  // });
   const [permissionData, setPermissionData] = useState({});
   const role_id = localStorage.getItem("role_id");
   const [isLoading, setIsLoading] = useState(false);

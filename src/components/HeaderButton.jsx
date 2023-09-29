@@ -6,6 +6,14 @@ import { UserEmailContext } from "../hooks/userEmailContext";
 import { filterDataContext } from "../hooks/filterDataContext";
 import { ReportDataContext } from "../hooks/reportDataContext";
 import { UserPermissionContext } from "../hooks/userPermissionContext";
+import { SiMicrosoftexcel } from "react-icons/si";
+import {
+  DownloadOutlined,
+  FilterOutlined,
+  PlusOutlined,
+  SearchOutlined,
+} from "@ant-design/icons";
+import { handleDownloadPDF } from "../helpers/billingTemplate";
 
 const HeaderButton = ({ setIsModalOpen, id }) => {
   const navigate = useNavigate();
@@ -36,14 +44,22 @@ const HeaderButton = ({ setIsModalOpen, id }) => {
       )}
       {window.location.pathname === "/institutions" && (
         <div className="iod-setting-div">
-          <Button type="primary" onClick={() => setIsFilterModalOpen(true)}>
-            Filter
+          <Button
+            type="primary"
+            onClick={() => setIsFilterModalOpen(true)}
+            className="btn-icon-div"
+          >
+            <FilterOutlined style={{ fontWeight: "500" }} /> Filter
           </Button>
           <Button type="primary" onClick={() => navigate("/institutions-logs")}>
             Institution Logs
           </Button>
-          <Button type="primary" onClick={() => navigate("/institutions/add")}>
-            Add Institution
+          <Button
+            type="primary"
+            onClick={() => navigate("/institutions/add")}
+            className="btn-icon-div"
+          >
+            <PlusOutlined style={{ fontWeight: "500" }} /> Add Institution
           </Button>
         </div>
       )}
@@ -52,21 +68,31 @@ const HeaderButton = ({ setIsModalOpen, id }) => {
           <Button
             type="primary"
             onClick={() => setIsInstitutionLogsFilterModalOpen(true)}
+            className="btn-icon-div"
           >
-            Institution Logs Filter
+            <FilterOutlined style={{ fontWeight: "500" }} /> Institution Logs
+            Filter
           </Button>
         </div>
       )}
       {window.location.pathname === "/users" && (
         <div className="iod-setting-div">
-          <Button type="primary" onClick={() => setIsUserFilterModalOpen(true)}>
-            Filter
+          <Button
+            type="primary"
+            onClick={() => setIsUserFilterModalOpen(true)}
+            className="btn-icon-div"
+          >
+            <FilterOutlined style={{ fontWeight: "500" }} /> Filter
           </Button>
           <Button type="primary" onClick={() => navigate("/users-logs")}>
             Users Logs
           </Button>
-          <Button type="primary" onClick={() => navigate("/users/add")}>
-            Add Users
+          <Button
+            type="primary"
+            onClick={() => navigate("/users/add")}
+            className="btn-icon-div"
+          >
+            <PlusOutlined style={{ fontWeight: "500" }} /> Add Users
           </Button>
         </div>
       )}
@@ -75,8 +101,9 @@ const HeaderButton = ({ setIsModalOpen, id }) => {
           <Button
             type="primary"
             onClick={() => setIsUserLogsFilterModalOpen(true)}
+            className="btn-icon-div"
           >
-            User Logs Filter
+            <FilterOutlined style={{ fontWeight: "500" }} /> User Logs Filter
           </Button>
         </div>
       )}
@@ -86,8 +113,12 @@ const HeaderButton = ({ setIsModalOpen, id }) => {
             permissionData["Other option permission"].find(
               (data) => data.permission === "Create New UserRole"
             )?.permission_value && (
-              <Button type="primary" onClick={() => setIsRoleModalOpen(true)}>
-                Add Role
+              <Button
+                type="primary"
+                onClick={() => setIsRoleModalOpen(true)}
+                className="btn-icon-div"
+              >
+                <PlusOutlined style={{ fontWeight: "500" }} /> Add Role
               </Button>
             )}
           <Button type="primary" onClick={() => navigate("/role-logs")}>
@@ -100,8 +131,9 @@ const HeaderButton = ({ setIsModalOpen, id }) => {
           <Button
             type="primary"
             onClick={() => setIsRoleLogsFilterModalOpen(true)}
+            className="btn-icon-div"
           >
-            Logs Filter
+            <FilterOutlined style={{ fontWeight: "500" }} /> Logs Filter
           </Button>
         </div>
       )}
@@ -110,15 +142,20 @@ const HeaderButton = ({ setIsModalOpen, id }) => {
           <Button
             type="primary"
             onClick={() => setIsEmailFilterModalOpen(true)}
+            className="btn-icon-div"
           >
-            Filter
+            <FilterOutlined style={{ fontWeight: "500" }} /> Filter
           </Button>
           {permissionData["Other option permission"] &&
             permissionData["Other option permission"].find(
               (data) => data.permission === "Create New Email"
             )?.permission_value && (
-              <Button type="primary" onClick={() => setIsEmailModalOpen(true)}>
-                Add Email
+              <Button
+                type="primary"
+                onClick={() => setIsEmailModalOpen(true)}
+                className="btn-icon-div"
+              >
+                <PlusOutlined style={{ fontWeight: "500" }} /> Add Email
               </Button>
             )}
         </div>
@@ -128,8 +165,9 @@ const HeaderButton = ({ setIsModalOpen, id }) => {
           <Button
             type="primary"
             onClick={() => setIsStudyFilterModalOpen(true)}
+            className="btn-icon-div"
           >
-            Quick Filter
+            <FilterOutlined style={{ fontWeight: "500" }} /> Quick Filter
           </Button>
           <Button type="primary" onClick={() => navigate("/study-logs")}>
             Study Logs
@@ -138,8 +176,12 @@ const HeaderButton = ({ setIsModalOpen, id }) => {
       )}
       {window.location.pathname === "/reports" && (
         <div className="iod-setting-div">
-          <Button type="primary" onClick={() => navigate("/reports/add")}>
-            Add Report Template
+          <Button
+            type="primary"
+            onClick={() => navigate("/reports/add")}
+            className="btn-icon-div"
+          >
+            <PlusOutlined style={{ fontWeight: "500" }} /> Add Report Template
           </Button>
         </div>
       )}
@@ -186,11 +228,24 @@ const HeaderButton = ({ setIsModalOpen, id }) => {
       )}
       {window.location.pathname === "/billing" && (
         <div className="iod-setting-div">
+          {permissionData["Other option permission"] &&
+            permissionData["Other option permission"].find(
+              (data) =>
+                data.permission === "Show Billing - export to excel option"
+            )?.permission_value && (
+              <Button type="primary" className="btn-icon-div">
+                <SiMicrosoftexcel style={{ fontWeight: "500" }} /> Export Excel
+              </Button>
+            )}
+          <Button type="primary" className="btn-icon-div" onClick={handleDownloadPDF}>
+            <DownloadOutlined /> Download Bill
+          </Button>
           <Button
             type="primary"
+            className="btn-icon-div"
             onClick={() => setIsBillingFilterModalOpen(true)}
           >
-            Search Billing
+            <SearchOutlined style={{ fontWeight: "500" }} /> Search Billing
           </Button>
         </div>
       )}

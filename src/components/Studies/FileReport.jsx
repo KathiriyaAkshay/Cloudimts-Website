@@ -34,29 +34,42 @@ const FileReport = ({
     url: undefined,
   });
 
-  const handleSubmit = async (values) => {
-    setIsLoading(true);
-    console.log(values);
-    let report_attach_data = [];
-    if (values.url.fileList.length > 0) {
-      await values.url.fileList.map(async (data) => {
-        let formData = new FormData();
-        formData.append("image", data)
-        await uploadImage(formData)
-          .then((res) => report_attach_data.push(res.data.image_url))
-          .catch((err) => console.log(err));
-      });
-    }
-    submitNormalReportFile({
+  const submitReport = async (values, report_attach_data = []) => {
+    await submitNormalReportFile({
       id: studyID,
       report_type: values.report_type,
       report_study_description: values.report_study_description,
       report_attach_data: report_attach_data,
     })
-      .then((res) =>
-        NotificationMessage("success", "File Report Submitted Successfully")
-      )
+      .then((res) => {
+        NotificationMessage("success", "File Report Submitted Successfully");
+        form.resetFields();
+        setIsFileReportModalOpen(false);
+      })
       .catch((err) => console.log(err));
+  };
+
+  const handleSubmit = async (values) => {
+    setIsLoading(true);
+    console.log(values);
+    const report_attach_data = [];
+    for (const data of values.url.fileList) {
+      try {
+        const formData = {
+          image: data.originFileObj,
+        };
+
+        const res = await uploadImage(formData);
+        report_attach_data.push(res.data.image_url);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    try {
+      await submitReport(values, report_attach_data);
+    } catch (err) {
+      console.error(err);
+    }
     setIsLoading(false);
   };
 

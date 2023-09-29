@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getStudyData } from "../../apis/studiesApi";
+import { fetchEmailList, getStudyData } from "../../apis/studiesApi";
 import {
   Button,
   Col,
@@ -32,6 +32,24 @@ const ShareStudy = ({
       retrieveStudyData();
     }
   }, [studyID]);
+
+  useEffect(() => {
+    if (isEmailModalOpen) {
+      retrieveEmailOptions();
+    }
+  }, [isEmailModalOpen]);
+
+  const retrieveEmailOptions = () => {
+    fetchEmailList()
+      .then((res) => {
+        const resData = res.data?.data?.map((data) => ({
+          label: data.email,
+          value: data.id,
+        }));
+        setEmailOptions(resData);
+      })
+      .catch((err) => console.log(err));
+  };
 
   const retrieveStudyData = () => {
     setIsLoading(true);
@@ -206,7 +224,6 @@ const ShareStudy = ({
                 className="category-select"
                 rules={[
                   {
-                    type: "email",
                     required: true,
                     message: "Please enter valid email address",
                   },

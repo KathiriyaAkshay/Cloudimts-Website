@@ -3,6 +3,7 @@ import TableWithFilter from "../../components/TableWithFilter";
 import { fetchRoleLogs } from "../../apis/studiesApi";
 import RoleLogsFilter from "../../components/RoleLogsFilter";
 import { useBreadcrumbs } from "../../hooks/useBreadcrumbs";
+import { Tag } from "antd";
 
 const RoleLogs = () => {
   const [tableData, setTableData] = useState([]);
@@ -29,9 +30,11 @@ const RoleLogs = () => {
     const currentPagination = pagination || pagi;
     fetchRoleLogs({
       filter:
-        Object.keys(filterValues).length === 0 &&
-        Object.keys(values).length !== 0 &&
-        !valueChanged
+        Object.keys(values).length !== 0
+          ? values
+          : Object.keys(filterValues).length === 0 &&
+            Object.keys(values).length !== 0 &&
+            !valueChanged
           ? values
           : !valueChanged
           ? filterValues
@@ -55,10 +58,27 @@ const RoleLogs = () => {
     {
       title: "Role",
       dataIndex: "role_name",
+      render: (text, record) => record.role.role_name,
     },
     {
       title: "Event Type",
       dataIndex: "event_display",
+      render: (text) => (
+        <Tag
+          color={
+            text.includes("Fetch")
+              ? "blue"
+              : text.includes("Create")
+              ? "green"
+              : text.includes("Update")
+              ? "warning"
+              : "orange"
+          }
+          className="event-type-tag"
+        >
+          {text}
+        </Tag>
+      ),
     },
     {
       title: "Time",
