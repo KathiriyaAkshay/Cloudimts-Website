@@ -7,6 +7,7 @@ import {
   Radio,
   Row,
   Spin,
+  Tag,
   Typography,
 } from "antd";
 import React, { useEffect, useState } from "react";
@@ -91,7 +92,7 @@ const FileReport = ({
       <Spin spinning={isLoading}>
         <div
           style={{
-            background: "#e4e4e4",
+            background: "#ebf7fd",
             fontWeight: "600",
             padding: "10px 24px",
             borderRadius: "0px",
@@ -114,9 +115,17 @@ const FileReport = ({
                 style={{ display: "flex", gap: "4px", fontWeight: "600" }}
               >
                 {item.name}:
-                <Typography style={{ fontWeight: "400" }}>
-                  {item.value}
-                </Typography>
+                {item.name === "Patient's id" ||
+                item.name === "Patient's Name" ||
+                item.name === "Study UID" ||
+                item.name === "Institution Name" ||
+                item.name === "Series UID" ? (
+                  <Tag color="#87d068">{item.value}</Tag>
+                ) : (
+                  <Typography style={{ fontWeight: "400" }}>
+                    {item.value}
+                  </Typography>
+                )}
               </Typography>
             </List.Item>
           )}

@@ -13,7 +13,11 @@ import {
   PlusOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
-import { handleDownloadPDF } from "../helpers/billingTemplate";
+import { handleDownloadPDF, handleExport } from "../helpers/billingTemplate";
+import { BillingDataContext } from "../hooks/billingDataContext";
+import { StudyIdContext } from "../hooks/studyIdContext";
+import NotificationMessage from "./NotificationMessage";
+import { deleteStudy } from "../apis/studiesApi";
 
 const HeaderButton = ({ setIsModalOpen, id }) => {
   const navigate = useNavigate();
@@ -29,8 +33,24 @@ const HeaderButton = ({ setIsModalOpen, id }) => {
     setIsRoleLogsFilterModalOpen,
     setIsInstitutionLogsFilterModalOpen,
     setIsUserLogsFilterModalOpen,
+    setIsSupportModalOpen,
   } = useContext(filterDataContext);
   const { setSelectedItem } = useContext(ReportDataContext);
+  const { billingFilterData, setBillingFilterData } =
+    useContext(BillingDataContext);
+  const { studyIdArray } = useContext(StudyIdContext);
+
+  const deleteStudyData = async () => {
+    if (studyIdArray.length > 0) {
+      deleteStudy({ id: studyIdArray })
+        .then((res) => {})
+        .catch((err) =>
+          NotificationMessage("warning", err.response.data.message)
+        );
+    } else {
+      NotificationMessage("warning", "Please select study");
+    }
+  };
   return (
     <div>
       {window.location.pathname === "/iod-settings" && (
@@ -164,6 +184,13 @@ const HeaderButton = ({ setIsModalOpen, id }) => {
         <div className="iod-setting-div">
           <Button
             type="primary"
+            className="error-btn-primary"
+            onClick={deleteStudyData}
+          >
+            Delete Studies
+          </Button>
+          <Button
+            type="primary"
             onClick={() => setIsStudyFilterModalOpen(true)}
             className="btn-icon-div"
           >
@@ -233,11 +260,19 @@ const HeaderButton = ({ setIsModalOpen, id }) => {
               (data) =>
                 data.permission === "Show Billing - export to excel option"
             )?.permission_value && (
-              <Button type="primary" className="btn-icon-div">
+              <Button
+                type="primary"
+                className="btn-icon-div"
+                onClick={() => handleExport(billingFilterData)}
+              >
                 <SiMicrosoftexcel style={{ fontWeight: "500" }} /> Export Excel
               </Button>
             )}
-          <Button type="primary" className="btn-icon-div" onClick={handleDownloadPDF}>
+          <Button
+            type="primary"
+            className="btn-icon-div"
+            onClick={() => handleDownloadPDF(billingFilterData)}
+          >
             <DownloadOutlined /> Download Bill
           </Button>
           <Button
@@ -246,6 +281,17 @@ const HeaderButton = ({ setIsModalOpen, id }) => {
             onClick={() => setIsBillingFilterModalOpen(true)}
           >
             <SearchOutlined style={{ fontWeight: "500" }} /> Search Billing
+          </Button>
+        </div>
+      )}
+      {window.location.pathname === "/support" && (
+        <div className="iod-setting-div">
+          <Button
+            type="primary"
+            onClick={() => setIsSupportModalOpen(true)}
+            className="btn-icon-div"
+          >
+            <PlusOutlined style={{ fontWeight: "500" }} /> Add New Support
           </Button>
         </div>
       )}

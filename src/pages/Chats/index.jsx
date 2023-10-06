@@ -21,6 +21,7 @@ const Chats = () => {
         setSeriesId={setSeriesId}
         setStudyId={setStudyId}
         setPersonName={setPersonName}
+        studyId={studyId}
       />
       <div className="chat-data-div">
         {seriesId ? (

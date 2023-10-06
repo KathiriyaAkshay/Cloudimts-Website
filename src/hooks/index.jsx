@@ -12,6 +12,7 @@ import StudyNotificationProvider from "./studyNotificationContext";
 import PermissionNotificationProvider from "./permissionNotificationContext";
 import AuthorizationProvider from "./authorizationContext";
 import BillingDataProvider from "./billingDataContext";
+import StudyIdProvider from "./studyIdContext";
 
 const index = ({ children }) => {
   return (
@@ -19,23 +20,27 @@ const index = ({ children }) => {
       <UserPermissionProvider>
         <PermissionNotificationProvider>
           <StudyDataProvider>
-            <StudyNotificationProvider>
-              <BreadcrumbProvider>
-                <EditorDataProvider>
-                  <UserRoleProvider>
-                    <RoomDataProvider>
-                      <UserEmailProvider>
-                        <FilterDataProvider>
-                          <BillingDataProvider>
-                            <ReportDataProvider>{children}</ReportDataProvider>
-                          </BillingDataProvider>
-                        </FilterDataProvider>
-                      </UserEmailProvider>
-                    </RoomDataProvider>
-                  </UserRoleProvider>
-                </EditorDataProvider>
-              </BreadcrumbProvider>
-            </StudyNotificationProvider>
+            <StudyIdProvider>
+              <StudyNotificationProvider>
+                <BreadcrumbProvider>
+                  <EditorDataProvider>
+                    <UserRoleProvider>
+                      <RoomDataProvider>
+                        <UserEmailProvider>
+                          <FilterDataProvider>
+                            <BillingDataProvider>
+                              <ReportDataProvider>
+                                {children}
+                              </ReportDataProvider>
+                            </BillingDataProvider>
+                          </FilterDataProvider>
+                        </UserEmailProvider>
+                      </RoomDataProvider>
+                    </UserRoleProvider>
+                  </EditorDataProvider>
+                </BreadcrumbProvider>
+              </StudyNotificationProvider>
+            </StudyIdProvider>
           </StudyDataProvider>
         </PermissionNotificationProvider>
       </UserPermissionProvider>

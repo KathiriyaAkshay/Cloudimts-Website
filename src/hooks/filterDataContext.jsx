@@ -17,6 +17,7 @@ const FilterDataProvider = ({ children }) => {
   ] = useState(false);
   const [isUserLogsFilterModalOpen, setIsUserLogsFilterModalOpen] =
     useState(false);
+  const [isSupportModalOpen, setIsSupportModalOpen] = useState(false);
 
   return (
     <filterDataContext.Provider
@@ -37,6 +38,8 @@ const FilterDataProvider = ({ children }) => {
         setIsInstitutionLogsFilterModalOpen,
         isUserLogsFilterModalOpen,
         setIsUserLogsFilterModalOpen,
+        isSupportModalOpen,
+        setIsSupportModalOpen
       }}
     >
       {children}

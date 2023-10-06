@@ -10,7 +10,8 @@ const UploadImage = ({
   values,
   setValues,
   imageURL,
-  multipleImage
+  multipleImage,
+  multipleImageFile,
 }) => {
   const [file, setFile] = useState(imageURL);
   const [imageUploadError, setImageUploadError] = useState("");
@@ -23,6 +24,8 @@ const UploadImage = ({
     setFile(imageURL);
   }, [imageURL]);
   const handleImagePreviewCancel = () => setPreviewOpen((prev) => false);
+
+  console.log(multipleImageFile)
 
   const handleImagePreview = async (file) => {
     if (
@@ -114,6 +117,23 @@ const UploadImage = ({
           </>
         </Row>
       )}
+      {multipleImageFile?.length > 0 &&
+        multipleImageFile.map((data) => (
+          <Row
+            className="ant-upload-list-item"
+            style={{ gap: "20px" }}
+            align="middle"
+          >
+            <>
+              <Image
+                style={{ width: "100px", height: "100px" }}
+                src={data}
+                onLoad={() => setImageLoaded(true)}
+                alt="file"
+              />
+            </>
+          </Row>
+        ))}
       <Modal
         open={previewOpen}
         onCancel={handleImagePreviewCancel}

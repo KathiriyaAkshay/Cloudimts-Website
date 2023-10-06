@@ -55,7 +55,7 @@ const ChatHeader = (props) => {
       <header
         style={
           background
-            ? { backgroundColor: "#1a2c3e", display: "flex", alignItems: "center", justifyContent: "space-between", height: "70px"}
+            ? { backgroundColor: "transparent", display: "flex", alignItems: "center", justifyContent: "space-between", height: "70px"}
             : { backgroundColor: "white" }
         }
       >

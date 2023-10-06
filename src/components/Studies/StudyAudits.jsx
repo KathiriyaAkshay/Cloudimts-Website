@@ -1,7 +1,8 @@
-import { List, Modal, Spin, Typography } from "antd";
+import { List, Modal, Spin, Tag, Typography } from "antd";
 import React, { useEffect, useState } from "react";
 import TableWithFilter from "../TableWithFilter";
 import { getStudyData, getStudyLogsData } from "../../apis/studiesApi";
+import moment from "moment/moment";
 
 const StudyAudits = ({ isModalOpen, setIsModalOpen, studyID, setStudyID }) => {
   const [modalData, setModalData] = useState([]);
@@ -16,7 +17,7 @@ const StudyAudits = ({ isModalOpen, setIsModalOpen, studyID, setStudyID }) => {
 
   const retrieveStudyData = () => {
     setIsLoading(true);
-    getStudyData({ id: studyID })
+    getStudyData({ id: studyID})
       .then((res) => {
         const resData = res.data.data;
         const modifiedData = [
@@ -82,7 +83,7 @@ const StudyAudits = ({ isModalOpen, setIsModalOpen, studyID, setStudyID }) => {
           },
         ];
         setModalData(modifiedData);
-        getStudyLogsData({ id: studyID })
+        getStudyLogsData({ id: studyID, sort_option: true })
           .then((res) => {
             const resData = res.data.data.map((data) => ({
               ...data,
@@ -100,25 +101,25 @@ const StudyAudits = ({ isModalOpen, setIsModalOpen, studyID, setStudyID }) => {
     {
       title: "Event Type",
       dataIndex: "event_display",
-      // sorter: (a, b) => {},
+      sorter: (a, b) => a.event_display.localeCompare(b.event_display),
       // editable: true,
     },
     {
       title: "Performed Type",
       dataIndex: "time",
-      // sorter: (a, b) => {},
+      sorter: (a, b) => moment(a.time).diff(b.time),
       // editable: true,
     },
     {
       title: "Performed User",
       dataIndex: "perform_user",
-      // sorter: (a, b) => {},
+      sorter: (a, b) => a?.perform_user?.localeCompare(b?.perform_user),
       // editable: true,
     },
     {
       title: "Target User",
       dataIndex: "target_user",
-      // sorter: (a, b) => {},
+      // sorter: (a, b) => a?.target_user?.localeCompare(b?.target_user),
       // editable: true,
     },
   ];
@@ -328,7 +329,7 @@ const StudyAudits = ({ isModalOpen, setIsModalOpen, studyID, setStudyID }) => {
       <Spin spinning={isLoading}>
         <div
           style={{
-            background: "#e4e4e4",
+            background: "#ebf7fd",
             fontWeight: "600",
             padding: "10px 24px",
             borderRadius: "0px",
@@ -351,9 +352,17 @@ const StudyAudits = ({ isModalOpen, setIsModalOpen, studyID, setStudyID }) => {
                 style={{ display: "flex", gap: "4px", fontWeight: "600" }}
               >
                 {item.name}:
-                <Typography style={{ fontWeight: "400" }}>
-                  {item.value}
-                </Typography>
+                {item.name === "Patient's id" ||
+                item.name === "Patient's Name" ||
+                item.name === "Study UID" ||
+                item.name === "Institution Name" ||
+                item.name === "Series UID" ? (
+                  <Tag color="#87d068">{item.value}</Tag>
+                ) : (
+                  <Typography style={{ fontWeight: "400" }}>
+                    {item.value}
+                  </Typography>
+                )}
               </Typography>
             </List.Item>
           )}

@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Drawer, Progress, Space, Tag, Tooltip } from "antd";
+import { Drawer, Popconfirm, Progress, Space, Switch, Tag, Tooltip } from "antd";
 import { EyeFilled, PlusOutlined } from "@ant-design/icons";
 import TableWithFilter from "../../components/TableWithFilter";
 import EditActionIcon from "../../components/EditActionIcon";
@@ -8,10 +8,13 @@ import DeleteActionIcon from "../../components/DeleteActionIcon";
 import { useBreadcrumbs } from "../../hooks/useBreadcrumbs";
 import FilterModal from "../../components/FilterModal";
 import {
+  disableInstitution,
+  enableInstitution,
   filterInstitutionData,
   getInstitutionLogs,
 } from "../../apis/studiesApi";
 import { UserPermissionContext } from "../../hooks/userPermissionContext";
+import NotificationMessage from "../../components/NotificationMessage";
 
 const Institution = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -75,6 +78,28 @@ const Institution = () => {
     return permission;
   };
 
+  const statusChangeHandler = async (status, id) => {
+    if (status) {
+      await enableInstitution({ id })
+        .then((res) => {
+          NotificationMessage("success", "Institution Status Updated Successfully");
+          retrieveInstitutionData();
+        })
+        .catch((err) =>
+          NotificationMessage("warning", err.response.data.message)
+        );
+    } else {
+      await disableInstitution({ id })
+        .then((res) => {
+          NotificationMessage("success", "Institution Status Updated Successfully");
+          retrieveInstitutionData();
+        })
+        .catch((err) =>
+          NotificationMessage("warning", err.response.data.message)
+        );
+    }
+  };
+
   const columns = [
     checkPermissionStatus("View Institution name") && {
       title: "Institution Name",
@@ -128,6 +153,13 @@ const Institution = () => {
       //   checkPermissionStatus("View Username") ? "" : "column-display-none"
       // }`,
     },
+    {
+      title: "Allocated Storage",
+      dataIndex: "allocated_storage",
+      // className: `${
+      //   checkPermissionStatus("View Username") ? "" : "column-display-none"
+      // }`,
+    },
     // checkPermissionStatus("View Institution space usage") && {
     //   title: "Usage",
     //   dataIndex: "institution_space_usage",
@@ -156,6 +188,32 @@ const Institution = () => {
           : "column-display-none"
       }`,
     },
+    {
+      title: "Status",
+      dataIndex: "status",
+      render: (text, record) => {
+        return {
+          children: (
+            <Popconfirm
+              title="Are you sure to update status?"
+              onConfirm={() =>
+                statusChangeHandler(record?.disable, record.id)
+              }
+            >
+              <Switch
+                checkedChildren="Enable"
+                checked={!record?.disable}
+                // onChange={(state) => {
+                //   changeStatus(record.id, state);
+                // }}
+                unCheckedChildren="Disable"
+                className="table-switch"
+              />
+            </Popconfirm>
+          ),
+        };
+      },
+    },
     checkPermissionStatus("Actions option access") && {
       title: "Actions",
       dataIndex: "actions",
@@ -177,9 +235,9 @@ const Institution = () => {
               onClick={() => retrieveLogsData(record.id)}
             />
           </Tooltip>
-          <DeleteActionIcon
+          {/* <DeleteActionIcon
             deleteActionHandler={() => deleteActionHandler(record)}
-          />
+          /> */}
         </Space>
       ),
     },

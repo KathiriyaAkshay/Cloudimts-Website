@@ -9,10 +9,12 @@ import StudyAudits from "../../components/Studies/StudyAudits";
 import StudyReports from "../../components/Studies/StudyReports";
 import ShareStudy from "../../components/Studies/ShareStudy";
 import {
+  closeStudy,
   filterStudyData,
   getAllStudyData,
   getInstanceData,
   updateStudyStatus,
+  updateStudyStatusReported,
 } from "../../apis/studiesApi";
 import AssignStudy from "../../components/Studies/AssignStudy";
 import QuickFilterModal from "../../components/QuickFilterModal";
@@ -23,6 +25,7 @@ import { AuditOutlined } from "@ant-design/icons";
 import EditActionIcon from "../../components/EditActionIcon";
 import { UserPermissionContext } from "../../hooks/userPermissionContext";
 import { StudyDataContext } from "../../hooks/studyDataContext";
+import { StudyIdContext } from "../../hooks/studyIdContext";
 
 const Dicom = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -43,10 +46,13 @@ const Dicom = () => {
   const [personName, setPersonName] = useState(null);
   const { permissionData } = useContext(UserPermissionContext);
   const { studyData, setStudyData } = useContext(StudyDataContext);
+  const { studyIdArray, setStudyIdArray } = useContext(StudyIdContext);
+  const [studyStatus, setStudyStatus] = useState("");
 
   useEffect(() => {
     changeBreadcrumbs([{ name: "Study Data" }]);
     retrieveStudyData();
+    setStudyIdArray([]);
   }, []);
 
   const retrieveStudyData = (pagination, values = {}) => {
@@ -83,6 +89,24 @@ const Dicom = () => {
       (data) => data.permission === name
     )?.permission_value;
     return permission;
+  };
+
+  const studyStatusHandler = async () => {
+    if (studyStatus === "Viewed" || studyStatus === "Assigned") {
+      await updateStudyStatusReported({ id: studyID })
+        .then((res) => {})
+        .catch((err) => console.log(err));
+    }
+  };
+
+  const studyCloseHandler = async () => {
+    await closeStudy({ id: studyID })
+      .then((res) => {
+        setIsReportModalOpen(false);
+        setStudyID(null);
+        retrieveStudyData();
+      })
+      .catch((err) => console.log(err));
   };
 
   const columns = [
@@ -214,6 +238,7 @@ const Dicom = () => {
                 className="action-icon"
                 onClick={() => {
                   setStudyID(record.id);
+                  setStudyStatus(record.status);
                   setIsReportModalOpen(true);
                 }}
               />
@@ -347,16 +372,11 @@ const Dicom = () => {
 
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
-      console.log(
-        `selectedRowKeys: ${selectedRowKeys}`,
-        "selectedRows: ",
-        selectedRows
-      );
+      setStudyIdArray((prev) => selectedRows?.map((data) => data.id));
     },
     getCheckboxProps: (record) => ({
-      disabled: record.name === "Disabled User",
       // Column configuration not to be checked
-      name: record.email,
+      id: record.id,
     }),
   };
 
@@ -410,7 +430,7 @@ const Dicom = () => {
         dataSource={studyData}
         columns={columns}
         expandable={expandableConfig}
-        // rowSelection={rowSelection}
+        rowSelection={rowSelection}
         onRow={onRow}
         setPagi={setPagi}
         totalRecords={totalPages}
@@ -440,6 +460,10 @@ const Dicom = () => {
         setIsReportModalOpen={setIsReportModalOpen}
         studyID={studyID}
         setStudyID={setStudyID}
+        studyStatus={studyStatus}
+        setStudyStatus={setStudyStatus}
+        studyStatusHandler={studyStatusHandler}
+        studyCloseHandler={studyCloseHandler}
       />
       <PatientDetails
         isStudyModalOpen={isStudyModalOpen}

@@ -70,7 +70,10 @@ const MessageComp = (props) => {
         <>
           {mainData?.includes(".pdf") ? (
             <div className="d-flex justify-content-between chat-file-container align-items-center">
-              <div className="d-flex gap-1 align-items-center">
+              <div
+                className="d-flex gap-1 align-items-center"
+                style={{ display: "flex", alignItems: "center", gap: "10px" }}
+              >
                 <img
                   className="chat-doc-image"
                   src={PdfImg}
@@ -82,14 +85,17 @@ const MessageComp = (props) => {
               </div>
               <img
                 style={{ width: "25px", height: "25px" }}
-                onClick={() => saveAs(`${mainData?.split[0]}`)}
+                onClick={() => saveAs(`${mainData}`)}
                 src={downloadImg}
                 alt="downloadImg"
               />
             </div>
           ) : mainData?.includes(".xlsx") ? (
             <div className="d-flex justify-content-between chat-file-container align-items-center">
-              <div className="d-flex gap-1 align-items-center">
+              <div
+                className="d-flex gap-1 align-items-center"
+                style={{ display: "flex", alignItems: "center", gap: "10px" }}
+              >
                 <img className="chat-doc-image" src={Excel} alt="chatFileImg" />
                 <div className="d-flex chat-file-name-size">
                   <span className="text-break">{mainData?.split(".")[0]}</span>
@@ -104,7 +110,10 @@ const MessageComp = (props) => {
             </div>
           ) : mainData?.includes(".doc") || mainData?.includes(".docx") ? (
             <div className="d-flex justify-content-between chat-file-container align-items-center">
-              <div className="d-flex gap-1 align-items-center">
+              <div
+                className="d-flex gap-1 align-items-center"
+                style={{ display: "flex", alignItems: "center", gap: "10px" }}
+              >
                 <img className="chat-doc-image" src={Word} alt="chatFileImg" />
                 <div className="d-flex chat-file-name-size">
                   <span className="text-break">{mainData?.split(".")[0]}</span>
@@ -151,7 +160,10 @@ const MessageComp = (props) => {
             //   isMessageGallery={true}
             // />
             <div className="d-flex justify-content-between chat-file-container align-items-center">
-              <div className="d-flex gap-1 align-items-center">
+              <div
+                className="d-flex gap-1 align-items-center"
+                style={{ display: "flex", alignItems: "center", gap: "10px" }}
+              >
                 <img
                   className="chat-doc-image"
                   src={Document}
@@ -295,7 +307,10 @@ const MessageComp = (props) => {
   const handleInternalDocMsg = (data, ids) => {
     return (
       <div className="d-flex justify-content-between">
-        <div className="d-flex gap-1 align-items-center">
+        <div
+          className="d-flex gap-1 align-items-center"
+          style={{ display: "flex", alignItems: "center", gap: "10px" }}
+        >
           <img src={chatFileImg} alt="chatFileImg" />
           <span>{data}</span>
         </div>
@@ -335,12 +350,11 @@ const MessageComp = (props) => {
     <>
       <div id={id}>
         {item?.is_quoted ? (
-          <>
+          <div className="forward-chat-message">
             <div className="forwardChat-data">
               <div onClick={() => handleQuotedScroll(item?.quoted_id)}>
-                <i>❝ Quoted ❞ :</i>
+                <i style={{ marginBottom: "6px" }}>❝ Quoted ❞ :</i>
                 <p>{item?.quoted_message}</p>
-                <hr style={{ width: "220px" }} />
               </div>
               <img
                 alt="img"
@@ -349,7 +363,8 @@ const MessageComp = (props) => {
                 style={{ cursor: "pointer" }}
               ></img>
             </div>
-          </>
+            <hr />
+          </div>
         ) : (
           <></>
         )}

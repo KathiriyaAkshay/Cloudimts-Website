@@ -31,6 +31,7 @@ import { getFilterList } from "../apis/studiesApi";
 import { UserPermissionContext } from "../hooks/userPermissionContext";
 import { FaMoneyBill, FaUserLock } from "react-icons/fa";
 import { CgTemplate } from "react-icons/cg";
+import { BiSupport } from "react-icons/bi";
 
 const { Header, Sider, Content } = Layout;
 
@@ -175,6 +176,11 @@ const BasicLayout = ({ children }) => {
       label: <NavLink to={"/reports"}>Templates</NavLink>,
       key: "templates",
       icon: <CgTemplate />,
+    },
+    {
+      label: <NavLink to={"/support"}>Support</NavLink>,
+      key: "support",
+      icon: <BiSupport />,
     },
   ].filter(Boolean);
 

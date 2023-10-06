@@ -260,7 +260,7 @@ const ChatMessanger = (props) => {
         is_quoted: forwardMessage?.quoted ? true : false,
         quoted_message: forwardMessage?.quoted
           ? forwardMessage?.quotedMessage?.content
-          : false,
+          : "",
         // uni_key: moment.utc(`${new Date().toJSON()}`) + 5,
         // quoted_msg: forwardMessage?.quoted
         //   ? forwardMessage?.quotedMessage?.message
@@ -538,7 +538,7 @@ const ChatMessanger = (props) => {
       <div
         className="modal fade show bgColor modal-scroll p-0"
         aria-modal="true"
-        style={{ display: "block", background: "#1a2c3e" }}
+        style={{ display: "block", background: "transparent", borderBottom: "1px solid #00000030" }}
       >
         <div
           className={`modal-dialog-centered chatfilewrap  ${

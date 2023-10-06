@@ -26,6 +26,13 @@ const ProtectedRoute = ({ path, children, inx, ...rest }) => {
           (data) => data.permission === "All Institution logs list page"
         )?.permission_value;
       setIsAuthenticated(permission);
+    } else if (path === "/chats") {
+      const permission =
+        permissionData["Pages permission"] &&
+        permissionData["Pages permission"].find(
+          (data) => data.permission === "Chat page"
+        )?.permission_value;
+      setIsAuthenticated(permission);
     } else if (path === "/institutions/add") {
       const permission =
         permissionData["Other option permission"] &&

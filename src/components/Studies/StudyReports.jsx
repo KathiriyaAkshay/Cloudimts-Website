@@ -1,4 +1,13 @@
-import { Button, List, Modal, Space, Spin, Tooltip, Typography } from "antd";
+import {
+  Button,
+  List,
+  Modal,
+  Space,
+  Spin,
+  Tag,
+  Tooltip,
+  Typography,
+} from "antd";
 import React, { useEffect, useState } from "react";
 import { getStudyData } from "../../apis/studiesApi";
 import FileReport from "./FileReport";
@@ -16,6 +25,10 @@ const StudyReports = ({
   setIsReportModalOpen,
   studyID,
   setStudyID,
+  studyStatus,
+  setStudyStatus,
+  studyStatusHandler,
+  studyCloseHandler,
 }) => {
   const [modalData, setModalData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -137,6 +150,10 @@ const StudyReports = ({
             name: "Series UID",
             value: resData?.Series_UID,
           },
+          {
+            name: "urgent_case",
+            value: resData?.assigned_study_data,
+          },
         ];
         setModalData(modifiedData);
         setTableData(res.data.report);
@@ -144,6 +161,7 @@ const StudyReports = ({
       .catch((err) => console.log(err));
     setIsLoading(false);
   };
+  console.log(modalData?.find((data) => data.name === "urgent_case"));
   return (
     <>
       <Modal
@@ -155,14 +173,18 @@ const StudyReports = ({
         }}
         onCancel={() => {
           setStudyID(null);
+          setStudyStatus("");
           setIsReportModalOpen(false);
         }}
         width={1000}
         centered
         footer={[
+          <Button key="back" className="error-btn" onClick={studyCloseHandler}>
+            Close Study
+          </Button>,
           <Button key="back">OHIF Viewer</Button>,
           <Button key="back">Web Report</Button>,
-          <Button key="submit" type="primary">
+          <Button key="submit" type="primary" onClick={studyStatusHandler}>
             Simplified Report
           </Button>,
           <Button
@@ -176,8 +198,7 @@ const StudyReports = ({
             key="link"
             href="https://google.com"
             type="primary"
-            // loading={loading}
-            // onClick={handleOk}
+            onClick={studyStatusHandler}
           >
             Advanced File Report
           </Button>,
@@ -186,14 +207,18 @@ const StudyReports = ({
         <Spin spinning={isLoading}>
           <div
             style={{
-              background: "#e4e4e4",
+              background: "#ebf7fd",
               fontWeight: "600",
               padding: "10px 24px",
               borderRadius: "0px",
               margin: "0 -24px",
+              display: "flex",
+              justifyContent: "space-between",
             }}
           >
-            Patient Info
+            <div>Patient Info</div>
+            {modalData.find((data) => data.name === "urgent_case")?.value
+              ?.urgent_case && <Tag color="error">Urgent</Tag>}
           </div>
           <List
             style={{ marginTop: "8px" }}
@@ -202,16 +227,26 @@ const StudyReports = ({
               column: 2,
             }}
             className="queue-status-list"
-            dataSource={modalData}
+            dataSource={modalData?.filter(
+              (data) => data.name !== "urgent_case"
+            )}
             renderItem={(item) => (
               <List.Item className="queue-number-list">
                 <Typography
                   style={{ display: "flex", gap: "4px", fontWeight: "600" }}
                 >
                   {item.name}:
-                  <Typography style={{ fontWeight: "400" }}>
-                    {item.value}
-                  </Typography>
+                  {item.name === "Patient's id" ||
+                  item.name === "Patient's Name" ||
+                  item.name === "Study UID" ||
+                  item.name === "Institution Name" ||
+                  item.name === "Series UID" ? (
+                    <Tag color="#87d068">{item.value}</Tag>
+                  ) : (
+                    <Typography style={{ fontWeight: "400" }}>
+                      {item.value}
+                    </Typography>
+                  )}
                 </Typography>
               </List.Item>
             )}

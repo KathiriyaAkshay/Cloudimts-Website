@@ -35,7 +35,7 @@ const index = () => {
   };
 
   const checkPermissionStatus = (name) => {
-    const permission = permissionData["EmailTable view"].find(
+    const permission = permissionData["TemplateTable view"].find(
       (data) => data.permission === name
     )?.permission_value;
     return permission;

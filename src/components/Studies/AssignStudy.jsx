@@ -9,6 +9,7 @@ import {
   Row,
   Select,
   Spin,
+  Tag,
   Typography,
 } from "antd";
 import React, { useEffect, useState } from "react";
@@ -17,6 +18,7 @@ import {
   getRadiologistList,
   getStudyData,
   postAssignStudy,
+  uploadImage,
 } from "../../apis/studiesApi";
 import UploadImage from "../UploadImage";
 import { omit } from "lodash";
@@ -31,28 +33,46 @@ const AssignStudy = ({
   const [modalData, setModalData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [options, setOptions] = useState([]);
+  const [multipleImageFile, setMultipleImageFile] = useState([])
   const [form] = Form.useForm();
 
-  const handleSubmit = (values) => {
+  const handleSubmit = async (values) => {
+    setIsLoading(true)
     const payloadObj = omit(values, ["radiologist", "url"]);
-    const modifiedPayload = {
-      ...payloadObj,
-      id: studyID,
-      assign_user: {
-        user: values.radiologist,
-      },
-      study_data: {
-        images: ["https://www.google.com", "https://www.google.com"],
-      },
-    };
-    postAssignStudy(modifiedPayload)
-      .then((res) => {
-        NotificationMessage("success", "Study Assigned Successfully");
-        setIsAssignModalOpen(false);
-        setStudyID(null);
-        form.resetFields();
-      })
-      .catch((err) => console.log(err));
+    const images = [];
+    for (const data of values.url.fileList) {
+      try {
+        const formData = {
+          image: data.originFileObj,
+        };
+
+        const res = await uploadImage(formData);
+        images.push(res.data.image_url);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    try {
+      const modifiedPayload = {
+        ...payloadObj,
+        id: studyID,
+        assign_user: values.radiologist,
+        study_data: {
+          images: images,
+        },
+      };
+      await postAssignStudy(modifiedPayload)
+        .then((res) => {
+          NotificationMessage("success", "Study Assigned Successfully");
+          setIsAssignModalOpen(false);
+          setStudyID(null);
+          form.resetFields();
+        })
+        .catch((err) => console.log(err));
+    } catch (err) {
+      console.error(err);
+    }
+    setIsLoading(false)
   };
 
   useEffect(() => {
@@ -71,8 +91,9 @@ const AssignStudy = ({
           ...res.data?.data,
           radiologist: res.data?.assign_user?.map(
             (data) => data?.assign_user_id
-          ),
+          )[0],
         });
+        setMultipleImageFile(res.data.data?.study_data?.images)
       })
       .catch((err) => console.log(err));
     setIsLoading(false);
@@ -183,7 +204,7 @@ const AssignStudy = ({
       <Spin spinning={isLoading}>
         <div
           style={{
-            background: "#e4e4e4",
+            background: "#ebf7fd",
             fontWeight: "600",
             padding: "10px 24px",
             borderRadius: "0px",
@@ -206,9 +227,17 @@ const AssignStudy = ({
                 style={{ display: "flex", gap: "4px", fontWeight: "600" }}
               >
                 {item.name}:
-                <Typography style={{ fontWeight: "400" }}>
-                  {item.value}
-                </Typography>
+                {item.name === "Patient's id" ||
+                item.name === "Patient's Name" ||
+                item.name === "Study UID" ||
+                item.name === "Institution Name" ||
+                item.name === "Series UID" ? (
+                  <Tag color="#87d068">{item.value}</Tag>
+                ) : (
+                  <Typography style={{ fontWeight: "400" }}>
+                    {item.value}
+                  </Typography>
+                )}
               </Typography>
             </List.Item>
           )}
@@ -230,7 +259,7 @@ const AssignStudy = ({
                 <Form.Item
                   label="Choose Radiologist"
                   name="radiologist"
-                  // className="category-select"
+                  className="category-select"
                   rules={[
                     {
                       required: false,
@@ -241,7 +270,7 @@ const AssignStudy = ({
                   <Select
                     placeholder="Select Radiologist"
                     options={options}
-                    mode="multiple"
+                    // mode="multiple"
                     showSearch
                     filterSort={(optionA, optionB) =>
                       (optionA?.label ?? "")
@@ -290,7 +319,7 @@ const AssignStudy = ({
                 </Form.Item>
               </Col>
               <Col xs={24} sm={12} md={12} lg={12}>
-                <UploadImage />
+                <UploadImage multipleImage={true} multipleImageFile={multipleImageFile} />
               </Col>
             </Row>
           </Form>

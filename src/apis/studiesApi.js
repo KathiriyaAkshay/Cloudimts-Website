@@ -490,3 +490,112 @@ export const downloadBilling = async (params = {}) => {
   );
   return downloadBilling;
 };
+
+export const enableInstitution = async (params = {}) => {
+  const enableInstitution = await API.post(
+    "/institute/v1/institution-enable",
+    params,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return enableInstitution;
+};
+
+export const disableInstitution = async (params = {}) => {
+  const disableInstitution = await API.post(
+    "/institute/v1/institution-disable",
+    params,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return disableInstitution;
+};
+
+export const updateStudyStatusReported = async (params = {}) => {
+  const updateStudyStatusReported = await API.post(
+    "/studies/v1/report_study",
+    params,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return updateStudyStatusReported;
+};
+
+export const closeStudy = async (params = {}) => {
+  const closeStudy = await API.post("/studies/v1/closed-study", params, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return closeStudy;
+};
+
+export const deleteStudy = async (params = {}) => {
+  const deleteStudy = await API.post("/studies/v1/delete_study", params, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return deleteStudy;
+};
+
+export const addSupport = async (params = {}) => {
+  const addSupport = await API.post(
+    "/support/v1/insert-support-option",
+    params,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return addSupport;
+};
+
+export const fetchSupport = async (params = {}) => {
+  const fetchSupport = await API.post(
+    "/support/v1/support-details-fetch",
+    params,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return fetchSupport;
+};
+
+export const deleteSupport = async (params = {}) => {
+  const deleteSupport = await API.post(
+    "/support/v1/support-details-delete",
+    params,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return deleteSupport;
+};
+
+export const updateReport = async (params = {}) => {
+  const updateReport = await API.post(
+    "/report/v1/updateReportData",
+    params,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return updateReport;
+};

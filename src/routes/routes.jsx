@@ -28,6 +28,7 @@ const AddTemplate = React.lazy(() => import("../pages/Reports/AddTemplate"));
 const Filters = React.lazy(() => import("../pages/Filters"));
 const Billing = React.lazy(() => import("../pages/Billing"));
 const RoleLogs = React.lazy(() => import("../pages/Users/RoleLogs"));
+const Support = React.lazy(() => import("../pages/Support"));
 
 export const routes = [
   { path: "/dashboard", component: <Loader component={Home} /> },
@@ -66,6 +67,7 @@ export const routes = [
   { path: "/reports", component: <Loader component={Reports} /> },
   { path: "/filters", component: <Loader component={Filters} /> },
   { path: "/billing", component: <Loader component={Billing} /> },
+  { path: "/support", component: <Loader component={Support} /> },
 ];
 
 export const superadminRoute = [

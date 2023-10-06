@@ -4,7 +4,11 @@ import { Button, Card, Col, Form, Input, Row } from "antd";
 import "../../../ckeditor5/build/ckeditor";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import { useNavigate, useParams } from "react-router-dom";
-import { fetchTemplate, insertNewTemplate } from "../../apis/studiesApi";
+import {
+  fetchTemplate,
+  insertNewTemplate,
+  updateReport,
+} from "../../apis/studiesApi";
 import NotificationMessage from "../../components/NotificationMessage";
 
 const AddTemplate = () => {
@@ -31,18 +35,32 @@ const AddTemplate = () => {
 
   const retrieveTemplateData = () => {
     fetchTemplate({ id })
-      .then((res) => console.log(res))
+      .then((res) => {
+        form.setFieldsValue({ name: res.data.data.report_name });
+        setEditorData(res.data.data.report_data);
+      })
       .catch((err) => console.log(err));
   };
 
   const handleSubmit = (values) => {
     if (editorData.trim() !== "") {
-      insertNewTemplate({ name: values.name, data: editorData })
-        .then((res) => {
-          NotificationMessage("success", "Template Created Successfully");
-          navigate("/reports");
-        })
-        .catch((err) => console.log(err));
+      if (!id) {
+        insertNewTemplate({ name: values.name, data: editorData })
+          .then((res) => {
+            NotificationMessage("success", "Template Created Successfully");
+            navigate("/reports");
+          })
+          .catch((err) => console.log(err));
+      } else {
+        updateReport({ id, update_data: editorData })
+          .then((res) => {
+            NotificationMessage("success", "Template Updated Successfully");
+            navigate("/reports");
+          })
+          .catch((err) =>
+            NotificationMessage("warning", err.response.data.message)
+          );
+      }
     } else {
       NotificationMessage("warning", "Please enter valid template");
     }
@@ -74,7 +92,10 @@ const AddTemplate = () => {
                   },
                 ]}
               >
-                <Input placeholder="Enter Template Name" />
+                <Input
+                  placeholder="Enter Template Name"
+                  disabled={id ? true : false}
+                />
               </Form.Item>
             </Col>
             <Col

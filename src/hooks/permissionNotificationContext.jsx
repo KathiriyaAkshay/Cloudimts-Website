@@ -22,7 +22,10 @@ const PermissionNotificationProvider = ({ children }) => {
       const eventData = JSON.parse(event.data);
       if (eventData?.payload?.status === "update-role-permission") {
         if (eventData?.payload?.data?.role_id == role_id) {
-          NotificationMessage("success", "Role Permission was updated");
+          NotificationMessage(
+            "success",
+            "Role Permission was updated by management. So you have to login again"
+          );
 
           setTimeout(() => {
             localStorage.clear();
@@ -53,6 +56,18 @@ const PermissionNotificationProvider = ({ children }) => {
           NotificationMessage(
             "success",
             "Your account is disabled by management. Please contact to management for active account"
+          );
+
+          setTimeout(() => {
+            localStorage.clear();
+            navigate("/login");
+          }, 3000);
+        }
+      } else if (eventData?.payload?.status === "Update-password") {
+        if (eventData?.payload?.data?.user_id == user_id) {
+          NotificationMessage(
+            "success",
+            "Your Password is updated by management. So you have to login again"
           );
 
           setTimeout(() => {

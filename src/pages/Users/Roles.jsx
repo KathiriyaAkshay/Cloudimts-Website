@@ -56,14 +56,14 @@ const Roles = () => {
     {
       title: "Role Name",
       dataIndex: "role_name",
-      // sorter: (a, b) => {},
-      // editable: true,
+    },
+    {
+      title: "Created At",
+      dataIndex: "role_created_at",
     },
     {
       title: "Last Updated",
       dataIndex: "role_updated_at",
-      // sorter: (a, b) => {},
-      // editable: true,
     },
     {
       title: "Actions",
@@ -103,7 +103,9 @@ const Roles = () => {
   const handleSubmit = async (values) => {
     setIsLoading(true);
     if (!roleID) {
-      await API.post("/role/v1/create_role", values, {headers: {Authorization: `Bearer ${token}`}})
+      await API.post("/role/v1/create_role", values, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
         .then((res) => {
           NotificationMessage("success", "Role Created Successfully");
           setIsRoleModalOpen(false);
@@ -115,10 +117,14 @@ const Roles = () => {
           NotificationMessage("warning", err.response.data.message)
         );
     } else if (roleID) {
-      await API.post("/role/v1/update_user_role_name", {
-        update_role_name: values.role_name,
-        role_id: roleID,
-      }, {headers: {Authorization: `Bearer ${token}`}})
+      await API.post(
+        "/role/v1/update_user_role_name",
+        {
+          update_role_name: values.role_name,
+          role_id: roleID,
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      )
         .then((res) => {
           NotificationMessage("success", "Role Updated Successfully");
           setIsRoleModalOpen(false);

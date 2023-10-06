@@ -95,6 +95,7 @@ function EditPermission() {
                 dataSource={permissionData[key]}
                 columns={columns}
                 pagination={false}
+                bordered
               />
               <div className="edit-permission-btn-div">
                 <Button

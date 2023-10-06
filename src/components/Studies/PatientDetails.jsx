@@ -1,4 +1,4 @@
-import { List, Modal, Spin, Typography } from "antd";
+import { List, Modal, Spin, Tag, Typography } from "antd";
 import React, { useEffect, useState } from "react";
 import { getMoreDetails } from "../../apis/studiesApi";
 
@@ -65,7 +65,7 @@ const PatientDetails = ({
           },
           {
             name: "Institution Name",
-            value: resData?.institution?.institution_name,
+            value: resData?.institution?.Institution_name,
           },
           {
             name: "Patient's comments",
@@ -74,14 +74,6 @@ const PatientDetails = ({
           {
             name: "Body Part",
             value: resData?.Study_body_part,
-          },
-          {
-            name: "Study UID",
-            value: resData?.Study_UID,
-          },
-          {
-            name: "Series UID",
-            value: resData?.Series_UID,
           },
           {
             name: "Created At",
@@ -94,6 +86,14 @@ const PatientDetails = ({
           {
             name: "Urgent Case",
             value: resData?.urgent_case,
+          },
+          {
+            name: "Study UID",
+            value: resData?.Study_UID,
+          },
+          {
+            name: "Series UID",
+            value: resData?.Series_UID,
           },
         ];
         setModalData(modifiedData);
@@ -119,7 +119,7 @@ const PatientDetails = ({
       <Spin spinning={isLoading}>
         <div
           style={{
-            background: "#e4e4e4",
+            background: "#ebf7fd",
             fontWeight: "600",
             padding: "10px 24px",
             borderRadius: "0px",
@@ -142,9 +142,17 @@ const PatientDetails = ({
                 style={{ display: "flex", gap: "4px", fontWeight: "600" }}
               >
                 {item.name}:
-                <Typography style={{ fontWeight: "400" }}>
-                  {item.value}
-                </Typography>
+                {item.name === "Patient's id" ||
+                item.name === "Patient's Name" ||
+                item.name === "Study UID" ||
+                item.name === "Institution Name" ||
+                item.name === "Series UID" ? (
+                  <Tag color="#87d068">{item.value}</Tag>
+                ) : (
+                  <Typography style={{ fontWeight: "400" }}>
+                    {item.value}
+                  </Typography>
+                )}
               </Typography>
             </List.Item>
           )}

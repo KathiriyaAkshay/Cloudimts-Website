@@ -132,10 +132,11 @@ const BillingModal = ({ setBillingData, setIsLoading, setCharges }) => {
         ? true
         : false,
     };
-    setBillingFilterData(modifiedObj);
+    
     getBillingData(modifiedObj)
       .then((res) => {
         setBillingData(res.data.data);
+        setBillingFilterData(res.data.data);
         setCharges({
           total_reporting_charge: res.data.total_reporting_charge,
           total_communication_charge: res.data.total_communication_charge,

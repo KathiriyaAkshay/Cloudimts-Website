@@ -3,7 +3,7 @@ import ProfileImage from "../assets/images/ProfileImg.png";
 import { Badge, Divider, Tag, Typography } from "antd";
 import { getAllChatList } from "../apis/studiesApi";
 
-const ChatLists = ({ setSeriesId, setStudyId, setPersonName }) => {
+const ChatLists = ({ setSeriesId, setStudyId, setPersonName, studyId }) => {
   const [chatListData, setChatListData] = useState([]);
   useEffect(() => {
     retrieveChatListData();
@@ -37,7 +37,7 @@ const ChatLists = ({ setSeriesId, setStudyId, setPersonName }) => {
       <div style={{ padding: "10px 0px 0px 0px" }}>
         <Typography
           className="chat-list-name"
-          style={{ fontSize: "20px", textAlign: "center" }}
+          style={{ fontSize: "20px" }}
         >
           Chats
         </Typography>
@@ -56,7 +56,7 @@ const ChatLists = ({ setSeriesId, setStudyId, setPersonName }) => {
         >
           <div
             key={data.study_id}
-            className="chat-list-div"
+            className={`chat-list-div ${studyId == data.study_id && `chat-list-div-active`}`}
             onClick={() => {
               setSeriesId(data.series_id);
               setStudyId(data.study_id);
@@ -97,7 +97,7 @@ const ChatLists = ({ setSeriesId, setStudyId, setPersonName }) => {
           <Divider
             style={{
               margin: "10px 0px",
-              borderBlockStart: "1px solid rgba(255, 255, 255, 0.4)",
+              borderBlockStart: "1px solid rgba(0, 0, 0, 0.1)",
             }}
           />
         </Badge.Ribbon>

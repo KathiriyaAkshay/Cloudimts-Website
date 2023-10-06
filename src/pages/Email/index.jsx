@@ -130,6 +130,10 @@ const Email = () => {
       render: (text, record) => `${record?.role?.role_name}`,
     },
     {
+      title: "Contact",
+      dataIndex: "contact",
+    },
+    {
       title: "Created At",
       dataIndex: "created_at",
     },
