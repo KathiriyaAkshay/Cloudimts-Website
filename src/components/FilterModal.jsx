@@ -29,17 +29,17 @@ const FilterModal = ({ name, setInstitutionData, retrieveInstitutionData }) => {
       open={isFilterModalOpen}
       onOk={() => form.submit()}
       onCancel={() => {
-        form.resetFields();
+        // form.resetFields();
         setIsFilterModalOpen(false);
-        retrieveInstitutionData();
+        // retrieveInstitutionData();
       }}
       footer={[
         <Button
           key="back"
           onClick={() => {
-            form.resetFields();
+            // form.resetFields();
             setIsFilterModalOpen(false);
-            retrieveInstitutionData();
+            // retrieveInstitutionData();
           }}
         >
           Cancel
@@ -67,7 +67,7 @@ const FilterModal = ({ name, setInstitutionData, retrieveInstitutionData }) => {
           {checkPermissionStatus("View Institution name") && (
             <Col xs={24} lg={12}>
               <Form.Item
-                name="name"
+                name="name__icontains"
                 label="Institution Name"
                 rules={[
                   {
@@ -84,7 +84,7 @@ const FilterModal = ({ name, setInstitutionData, retrieveInstitutionData }) => {
           {checkPermissionStatus("View Institution email") && (
             <Col xs={24} lg={12}>
               <Form.Item
-                name="email"
+                name="email__icontains"
                 label="Email"
                 rules={[
                   {
@@ -101,7 +101,7 @@ const FilterModal = ({ name, setInstitutionData, retrieveInstitutionData }) => {
           {checkPermissionStatus("View Institution contact number") && (
             <Col xs={24} lg={12}>
               <Form.Item
-                name="contact"
+                name="contact__icontains"
                 label="Contact"
                 rules={[
                   {
@@ -118,7 +118,7 @@ const FilterModal = ({ name, setInstitutionData, retrieveInstitutionData }) => {
           {checkPermissionStatus("View Institution City") && (
             <Col xs={24} lg={12}>
               <Form.Item
-                name="city"
+                name="city__icontains"
                 label="City"
                 rules={[
                   {
@@ -135,7 +135,7 @@ const FilterModal = ({ name, setInstitutionData, retrieveInstitutionData }) => {
           {checkPermissionStatus("View Institution State") && (
             <Col xs={24} lg={12}>
               <Form.Item
-                name="state"
+                name="state__icontains"
                 label="State"
                 rules={[
                   {
@@ -151,7 +151,7 @@ const FilterModal = ({ name, setInstitutionData, retrieveInstitutionData }) => {
           )}
           <Col xs={24} lg={12}>
             <Form.Item
-              name="country"
+              name="country__icontains"
               label="Country"
               rules={[
                 {

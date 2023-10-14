@@ -80,7 +80,9 @@ const AddInstitution = () => {
           ...modalityData,
           contract_valid_date: dayjs(res.data.data.contract_valid_date),
           radiologist: res.data?.blocked_user?.map((data) => data.id),
-          house_radiologist: res.data?.in_house_radiologist?.map((data) => data.id),
+          house_radiologist: res.data?.in_house_radiologist?.map(
+            (data) => data.id
+          ),
           institution_info_header:
             res.data.data?.report_settings?.institution_info_header,
           attach_qr_code: res.data.data?.report_settings?.attach_qr_code,
@@ -110,13 +112,15 @@ const AddInstitution = () => {
   };
 
   const retrieveRadiologistData = () => {
-    getRadiologistList({ role_id: localStorage.getItem("role_id") }).then((res) => {
-      const resData = res.data.data.map((data) => ({
-        label: data.name,
-        value: data.id,
-      }));
-      setRadiologistOptions(resData);
-    });
+    getRadiologistList({ role_id: localStorage.getItem("role_id") }).then(
+      (res) => {
+        const resData = res.data.data.map((data) => ({
+          label: data.name,
+          value: data.id,
+        }));
+        setRadiologistOptions(resData);
+      }
+    );
   };
 
   const handleNextStep = () => {
@@ -294,7 +298,7 @@ const AddInstitution = () => {
         setIsLoading(false);
       }
     }
-    setIsModalOpen(false)
+    setIsModalOpen(false);
   };
 
   const columns = [
@@ -559,7 +563,7 @@ const AddInstitution = () => {
                     label="Website"
                     rules={[
                       {
-                        required: false,
+                        required: true,
                         message: "Please enter website name",
                       },
                     ]}
@@ -625,12 +629,24 @@ const AddInstitution = () => {
                   </Form.Item>
                 </Col>
                 <Col xs={24} sm={24} md={24} lg={24} className="justify-end">
-                  <Button type="primary" onClick={() => {
+                  <Button
+                    type="primary"
+                    onClick={() => {
                       if (id) setIsModalOpen(true);
                       else form.submit();
-                    }}>
-                  {id ? "Update" : "Next"}
+                    }}
+                  >
+                    {id ? "Update" : "Next"}
                   </Button>
+                  {id && (
+                    <Button
+                      type="primary"
+                      onClick={() => handleNextStep()}
+                      style={{ marginLeft: "10px" }}
+                    >
+                      Next
+                    </Button>
+                  )}
                 </Col>
               </Row>
             </Form>
@@ -648,7 +664,16 @@ const AddInstitution = () => {
             >
               <Row>
                 {/* <Col xs={0} sm={0} md={4} lg={5}></Col> */}
-                <Col xs={24} sm={24} md={24} lg={24}>
+                <Col
+                  xs={24}
+                  sm={24}
+                  md={24}
+                  lg={24}
+                  style={{
+                    maxHeight: "calc(100vh - 200px)",
+                    overflowY: "scroll",
+                  }}
+                >
                   <TableWithFilter
                     tableColumns={columns}
                     tableData={tableData}
@@ -669,6 +694,15 @@ const AddInstitution = () => {
                   >
                     {id ? "Update" : "Next"}
                   </Button>
+                  {id && (
+                    <Button
+                      type="primary"
+                      onClick={() => handleNextStep()}
+                      style={{ marginLeft: "10px" }}
+                    >
+                      Next
+                    </Button>
+                  )}
                 </Col>
               </Row>
             </Form>
@@ -785,8 +819,17 @@ const AddInstitution = () => {
                     }}
                     style={{ marginLeft: "10px" }}
                   >
-                   {id ? "Update" : "Next"}
+                    {id ? "Update" : "Next"}
                   </Button>
+                  {id && (
+                    <Button
+                      type="primary"
+                      onClick={() => handleNextStep()}
+                      style={{ marginLeft: "10px" }}
+                    >
+                      Next
+                    </Button>
+                  )}
                 </Col>
               </Row>
             </Form>
@@ -822,8 +865,17 @@ const AddInstitution = () => {
                     }}
                     style={{ marginLeft: "10px" }}
                   >
-                   {id ? "Update" : "Next"}
+                    {id ? "Update" : "Next"}
                   </Button>
+                  {id && (
+                    <Button
+                      type="primary"
+                      onClick={() => handleNextStep()}
+                      style={{ marginLeft: "10px" }}
+                    >
+                      Next
+                    </Button>
+                  )}
                 </Col>
               </Row>
             </Form>
@@ -880,6 +932,15 @@ const AddInstitution = () => {
                   >
                     {id ? "Update" : "Next"}
                   </Button>
+                  {id && (
+                    <Button
+                      type="primary"
+                      onClick={() => handleNextStep()}
+                      style={{ marginLeft: "10px" }}
+                    >
+                      Next
+                    </Button>
+                  )}
                 </Col>
               </Row>
             </Form>

@@ -3,7 +3,7 @@ import React, { useContext } from "react";
 import { filterDataContext } from "../hooks/filterDataContext";
 
 const UserFilterModal = ({ name, setInstitutionData, retrieveUsersData }) => {
-  const { isUserFilterModalOpen, setIsUserFilterModalOpen} =
+  const { isUserFilterModalOpen, setIsUserFilterModalOpen } =
     useContext(filterDataContext);
   const [form] = Form.useForm();
 
@@ -20,17 +20,17 @@ const UserFilterModal = ({ name, setInstitutionData, retrieveUsersData }) => {
       open={isUserFilterModalOpen}
       onOk={() => form.submit()}
       onCancel={() => {
-        form.resetFields();
+        // form.resetFields();
         setIsUserFilterModalOpen(false);
-        retrieveUsersData();
+        // retrieveUsersData();
       }}
       footer={[
         <Button
           key="back"
           onClick={() => {
-            form.resetFields();
+            // form.resetFields();
             setIsUserFilterModalOpen(false);
-            retrieveUsersData();
+            // retrieveUsersData();
           }}
         >
           Cancel
@@ -57,7 +57,7 @@ const UserFilterModal = ({ name, setInstitutionData, retrieveUsersData }) => {
         <Row gutter={15}>
           <Col xs={24} lg={12}>
             <Form.Item
-              name="user__username"
+              name="user__username__icontains"
               label="Username"
               rules={[
                 {
@@ -72,7 +72,7 @@ const UserFilterModal = ({ name, setInstitutionData, retrieveUsersData }) => {
           </Col>
           <Col xs={24} lg={12}>
             <Form.Item
-              name="user__email"
+              name="email__icontains"
               label="Email"
               rules={[
                 {
@@ -87,7 +87,7 @@ const UserFilterModal = ({ name, setInstitutionData, retrieveUsersData }) => {
           </Col>
           <Col xs={24} lg={12}>
             <Form.Item
-              name="contact"
+              name="contact__icontains"
               label="Contact"
               rules={[
                 {
@@ -102,7 +102,7 @@ const UserFilterModal = ({ name, setInstitutionData, retrieveUsersData }) => {
           </Col>
           <Col xs={24} lg={12}>
             <Form.Item
-              name="role__role_name"
+              name="role__role_name__icontains"
               label="Role Name"
               rules={[
                 {
@@ -117,7 +117,7 @@ const UserFilterModal = ({ name, setInstitutionData, retrieveUsersData }) => {
           </Col>
           <Col xs={24} lg={12}>
             <Form.Item
-              name="institute__name"
+              name="institution__name__icontains"
               label="Institute Name"
               rules={[
                 {

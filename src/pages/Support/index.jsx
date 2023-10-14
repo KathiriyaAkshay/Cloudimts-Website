@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import SupportModal from "../../components/SupportModal";
 import TableWithFilter from "../../components/TableWithFilter";
 import { Space } from "antd";
@@ -10,10 +10,16 @@ import {
   fetchSupport,
 } from "../../apis/studiesApi";
 import NotificationMessage from "../../components/NotificationMessage";
+import { UserPermissionContext } from "../../hooks/userPermissionContext";
+import { filterDataContext } from "../../hooks/filterDataContext";
 
 const index = () => {
   const [tableData, setTableData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const { permissionData } = useContext(UserPermissionContext);
+  const [supportId, setSupportId] = useState(null);
+  const { isSupportModalOpen, setIsSupportModalOpen } =
+    useContext(filterDataContext);
 
   useEffect(() => {
     retrieveSupportData();
@@ -27,7 +33,10 @@ const index = () => {
     setIsLoading(false);
   };
 
-  const editActionHandler = (record) => {};
+  const editActionHandler = (id) => {
+    setSupportId(id);
+    setIsSupportModalOpen(true);
+  };
 
   const deleteActionHandler = async (id) => {
     await deleteSupport({ id })
@@ -39,6 +48,14 @@ const index = () => {
         NotificationMessage("warning", err.response.data.message)
       );
   };
+
+  const checkPermissionStatus = (name) => {
+    const permission = permissionData["Support permission"]?.find(
+      (data) => data.permission === name
+    )?.permission_value;
+    return permission;
+  };
+
   const columns = [
     {
       title: "Email",
@@ -54,21 +71,28 @@ const index = () => {
       title: "Description",
       dataIndex: "option_description",
     },
-    {
+    (checkPermissionStatus("Edit Support details") ||
+      checkPermissionStatus("Delete Support details")) && {
       title: "Actions",
       dataIndex: "actions",
       fixed: "right",
       width: window.innerWidth < 650 ? "1%" : "10%",
       render: (_, record) => (
         <Space style={{ display: "flex", justifyContent: "space-evenly" }}>
-          <EditActionIcon editActionHandler={() => editActionHandler(record)} />
-          <DeleteActionIcon
-            deleteActionHandler={() => deleteActionHandler(record.id)}
-          />
+          {checkPermissionStatus("Edit Support details") && (
+            <EditActionIcon
+              editActionHandler={() => editActionHandler(record.id)}
+            />
+          )}
+          {checkPermissionStatus("Delete Support details") && (
+            <DeleteActionIcon
+              deleteActionHandler={() => deleteActionHandler(record.id)}
+            />
+          )}
         </Space>
       ),
     },
-  ];
+  ].filter(Boolean);
   return (
     <>
       <TableWithFilter
@@ -76,7 +100,11 @@ const index = () => {
         tableColumns={columns}
         loadingTableData={isLoading}
       />
-      <SupportModal retrieveSupportData={retrieveSupportData} />
+      <SupportModal
+        retrieveSupportData={retrieveSupportData}
+        setSupportId={setSupportId}
+        supportId={supportId}
+      />
     </>
   );
 };

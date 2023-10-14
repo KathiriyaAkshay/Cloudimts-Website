@@ -1,6 +1,25 @@
-import { Button, Col, DatePicker, Form, Input, Modal, Row } from "antd";
+import { Button, Col, DatePicker, Form, Input, Modal, Row, Select } from "antd";
 import React, { useContext } from "react";
 import { filterDataContext } from "../hooks/filterDataContext";
+
+const roleOptions = [
+  {
+    label: "Create role",
+    value: "Create role",
+  },
+  {
+    label: "Fetch role premission",
+    value: "Fetch role premission",
+  },
+  {
+    label: "Update role premission",
+    value: "Update role premission",
+  },
+  {
+    label: "Update role name",
+    value: "Update role name",
+  },
+];
 
 const RoleLogsFilter = ({
   name,
@@ -15,11 +34,18 @@ const RoleLogsFilter = ({
   const handleSubmit = (values) => {
     setFilterValues({
       ...values,
-      time__startswith: values?.time__startswith && values?.time__startswith.format("YYYY-MM-DD"),
+      time__startswith:
+        values?.time__startswith &&
+        values?.time__startswith.format("YYYY-MM-DD"),
     });
     retrieveRoleData(
       { page: 1 },
-      { ...values, time__startswith: values?.time__startswith && values?.time__startswith.format("YYYY-MM-DD") }
+      {
+        ...values,
+        time__startswith:
+          values?.time__startswith &&
+          values?.time__startswith.format("YYYY-MM-DD"),
+      }
     );
     setIsRoleLogsFilterModalOpen(false);
   };
@@ -32,19 +58,19 @@ const RoleLogsFilter = ({
       open={isRoleLogsFilterModalOpen}
       onOk={() => form.submit()}
       onCancel={() => {
-        setFilterValues({});
-        form.resetFields();
+        // setFilterValues({});
+        // form.resetFields();
         setIsRoleLogsFilterModalOpen(false);
-        retrieveRoleData({ page: 1 }, {}, true);
+        // retrieveRoleData({ page: 1 }, {}, true);
       }}
       footer={[
         <Button
           key="back"
           onClick={() => {
-            setFilterValues({});
-            form.resetFields();
+            // setFilterValues({});
+            // form.resetFields();
             setIsRoleLogsFilterModalOpen(false);
-            retrieveRoleData({ page: 1 }, {}, true);
+            // retrieveRoleData({ page: 1 }, {}, true);
           }}
         >
           Cancel
@@ -73,6 +99,7 @@ const RoleLogsFilter = ({
             <Form.Item
               name="event"
               label="Event Name"
+              className="category-select"
               rules={[
                 {
                   required: false,
@@ -81,12 +108,16 @@ const RoleLogsFilter = ({
                 },
               ]}
             >
-              <Input placeholder="Enter Event" />
+              <Select
+                placeholder="Select Event"
+                options={roleOptions}
+                // onChange={appliedOnChangeHandler}
+              />
             </Form.Item>
           </Col>
           <Col xs={24} lg={12}>
             <Form.Item
-              name="prefrom_user__username__contains"
+              name="prefrom_user__username__icontains"
               label="Username"
               rules={[
                 {

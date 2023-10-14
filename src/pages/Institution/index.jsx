@@ -1,6 +1,14 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Drawer, Popconfirm, Progress, Space, Switch, Tag, Tooltip } from "antd";
+import {
+  Drawer,
+  Popconfirm,
+  Progress,
+  Space,
+  Switch,
+  Tag,
+  Tooltip,
+} from "antd";
 import { EyeFilled, PlusOutlined } from "@ant-design/icons";
 import TableWithFilter from "../../components/TableWithFilter";
 import EditActionIcon from "../../components/EditActionIcon";
@@ -80,23 +88,43 @@ const Institution = () => {
 
   const statusChangeHandler = async (status, id) => {
     if (status) {
-      await enableInstitution({ id })
-        .then((res) => {
-          NotificationMessage("success", "Institution Status Updated Successfully");
-          retrieveInstitutionData();
-        })
-        .catch((err) =>
-          NotificationMessage("warning", err.response.data.message)
+      if (checkPermissionStatus("Enable institution")) {
+        await enableInstitution({ id })
+          .then((res) => {
+            NotificationMessage(
+              "success",
+              "Institution Status Updated Successfully"
+            );
+            retrieveInstitutionData();
+          })
+          .catch((err) =>
+            NotificationMessage("warning", err.response.data.message)
+          );
+      } else {
+        NotificationMessage(
+          "warning",
+          "User Don't have Permission to Enable Institution"
         );
+      }
     } else {
-      await disableInstitution({ id })
-        .then((res) => {
-          NotificationMessage("success", "Institution Status Updated Successfully");
-          retrieveInstitutionData();
-        })
-        .catch((err) =>
-          NotificationMessage("warning", err.response.data.message)
+      if (checkPermissionStatus("Disable institution")) {
+        await disableInstitution({ id })
+          .then((res) => {
+            NotificationMessage(
+              "success",
+              "Institution Status Updated Successfully"
+            );
+            retrieveInstitutionData();
+          })
+          .catch((err) =>
+            NotificationMessage("warning", err.response.data.message)
+          );
+      } else {
+        NotificationMessage(
+          "warning",
+          "User Don't have Permission to Disable Institution"
         );
+      }
     }
   };
 
@@ -160,16 +188,16 @@ const Institution = () => {
       //   checkPermissionStatus("View Username") ? "" : "column-display-none"
       // }`,
     },
-    // checkPermissionStatus("View Institution space usage") && {
-    //   title: "Usage",
-    //   dataIndex: "institution_space_usage",
-    //   className: `${
-    //     checkPermissionStatus("View Institution space usage")
-    //       ? ""
-    //       : "column-display-none"
-    //   }`,
-    //   render: (text, record) => <Progress percent={text} />,
-    // },
+    checkPermissionStatus("View Institution space usage") && {
+      title: "Usage",
+      dataIndex: "institution_space_usage",
+      className: `${
+        checkPermissionStatus("View Institution space usage")
+          ? ""
+          : "column-display-none"
+      }`,
+      render: (text, record) => <Progress percent={text} />,
+    },
     checkPermissionStatus("View Institution created at") && {
       title: "Created At",
       dataIndex: "created_at",
@@ -196,9 +224,7 @@ const Institution = () => {
           children: (
             <Popconfirm
               title="Are you sure to update status?"
-              onConfirm={() =>
-                statusChangeHandler(record?.disable, record.id)
-              }
+              onConfirm={() => statusChangeHandler(record?.disable, record.id)}
             >
               <Switch
                 checkedChildren="Enable"

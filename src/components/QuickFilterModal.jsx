@@ -20,17 +20,17 @@ const QuickFilterModal = ({ name, setInstitutionData, retrieveStudyData }) => {
       open={isStudyFilterModalOpen}
       onOk={() => form.submit()}
       onCancel={() => {
-        form.resetFields();
+        // form.resetFields();
         setIsStudyFilterModalOpen(false);
-        retrieveStudyData();
+        // retrieveStudyData();
       }}
       footer={[
         <Button
           key="back"
           onClick={() => {
-            form.resetFields();
+            // form.resetFields();
             setIsStudyFilterModalOpen(false);
-            retrieveStudyData();
+            // retrieveStudyData();
           }}
         >
           Cancel

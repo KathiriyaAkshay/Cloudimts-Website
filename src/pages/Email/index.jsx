@@ -278,8 +278,8 @@ const Email = () => {
             className="category-select"
             rules={[
               {
-                required: false,
-                message: "Please select radiologist",
+                required: true,
+                message: "Please select role",
               },
             ]}
           >

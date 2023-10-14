@@ -53,7 +53,7 @@ const AddUsers = () => {
   useEffect(() => {
     const crumbs = [{ name: "Users", to: "/users" }];
     crumbs.push({
-      name: "Add",
+      name: id ? "Edit" : "Add",
     });
     changeBreadcrumbs(crumbs);
     retrieveInstitutionData();
@@ -384,6 +384,24 @@ const AddUsers = () => {
               className="mt"
             >
               <Row gutter={15}>
+                <Col xs={4} sm={4} md={4} lg={2}>
+                  <Form.Item
+                    name="allow"
+                    label="Active"
+                    valuePropName="checked"
+                  >
+                    <Switch />
+                  </Form.Item>
+                </Col>
+                <Col xs={4} sm={4} md={4} lg={4}>
+                  <Form.Item
+                    name="allow_offline_download"
+                    label="Allow Offline Download"
+                    valuePropName="checked"
+                  >
+                    <Switch />
+                  </Form.Item>
+                </Col>
                 <Col xs={24} sm={12} md={12} lg={6}>
                   <Form.Item
                     name="username"
@@ -589,24 +607,7 @@ const AddUsers = () => {
                     </Col>{" "}
                   </>
                 )}
-                <Col xs={4} sm={4} md={4} lg={2}>
-                  <Form.Item
-                    name="allow"
-                    label="Active"
-                    valuePropName="checked"
-                  >
-                    <Switch />
-                  </Form.Item>
-                </Col>
-                <Col xs={4} sm={4} md={4} lg={4}>
-                  <Form.Item
-                    name="allow_offline_download"
-                    label="Allow Offline Download"
-                    valuePropName="checked"
-                  >
-                    <Switch />
-                  </Form.Item>
-                </Col>
+
                 <Col xs={24} sm={24} md={24} lg={24} className="justify-end">
                   <Button
                     type="primary"
@@ -617,6 +618,17 @@ const AddUsers = () => {
                   >
                     {id ? "Update" : "Next"}
                   </Button>
+                  {id && (
+                    <Button
+                      type="primary"
+                      onClick={() => {
+                        handleNextStep();
+                      }}
+                      style={{ marginLeft: "10px" }}
+                    >
+                      Next
+                    </Button>
+                  )}
                 </Col>
               </Row>
             </Form>
@@ -633,7 +645,16 @@ const AddUsers = () => {
               onFinish={handleSubmit}
             >
               <Row>
-                <Col xs={24} sm={24} md={24} lg={24}>
+                <Col
+                  xs={24}
+                  sm={24}
+                  md={24}
+                  lg={24}
+                  style={{
+                    maxHeight: "calc(100vh - 200px)",
+                    overflowY: "scroll",
+                  }}
+                >
                   <TableWithFilter
                     tableColumns={institutionColumn}
                     tableData={institutionOptions}
@@ -654,6 +675,17 @@ const AddUsers = () => {
                   >
                     {id ? "Update" : "Next"}
                   </Button>
+                  {id && (
+                    <Button
+                      type="primary"
+                      onClick={() => {
+                        handleNextStep();
+                      }}
+                      style={{ marginLeft: "10px" }}
+                    >
+                      Next
+                    </Button>
+                  )}
                 </Col>
               </Row>
             </Form>
@@ -703,6 +735,17 @@ const AddUsers = () => {
                   >
                     {id ? "Update" : "Next"}
                   </Button>
+                  {id && (
+                    <Button
+                      type="primary"
+                      onClick={() => {
+                        handleNextStep();
+                      }}
+                      style={{ marginLeft: "10px" }}
+                    >
+                      Next
+                    </Button>
+                  )}
                 </Col>
               </Row>
             </Form>
@@ -747,6 +790,17 @@ const AddUsers = () => {
                   >
                     {id ? "Update" : "Next"}
                   </Button>
+                  {id && (
+                    <Button
+                      type="primary"
+                      onClick={() => {
+                        handleNextStep();
+                      }}
+                      style={{ marginLeft: "10px" }}
+                    >
+                      Next
+                    </Button>
+                  )}
                 </Col>
               </Row>
             </Form>
@@ -763,7 +817,16 @@ const AddUsers = () => {
               onFinish={handleSubmit}
             >
               <Row>
-                <Col xs={24} sm={24} md={24} lg={24}>
+                <Col
+                  xs={24}
+                  sm={24}
+                  md={24}
+                  lg={24}
+                  style={{
+                    maxHeight: "calc(100vh - 200px)",
+                    overflowY: "scroll",
+                  }}
+                >
                   <TableWithFilter
                     tableColumns={columns}
                     tableData={tableData}

@@ -1,4 +1,4 @@
-import { Button, Col, Form, Input, Modal, Row } from "antd";
+import { Button, Col, DatePicker, Form, Input, Modal, Row } from "antd";
 import React, { useContext } from "react";
 import { filterDataContext } from "../hooks/filterDataContext";
 
@@ -8,7 +8,13 @@ const EmailFilterModal = ({ name, setInstitutionData, retrieveEmailData }) => {
   const [form] = Form.useForm();
 
   const handleSubmit = (values) => {
-    retrieveEmailData({ page: 1 }, values);
+    const modifiedValues = {
+      ...values,
+      created_at__startswith:
+        values?.created_at__startswith &&
+        values?.created_at__startswith?.format("YYYY-MM-DD"),
+    };
+    retrieveEmailData({ page: 1 }, modifiedValues);
     setIsEmailFilterModalOpen(false);
   };
 
@@ -20,17 +26,17 @@ const EmailFilterModal = ({ name, setInstitutionData, retrieveEmailData }) => {
       open={isEmailFilterModalOpen}
       onOk={() => form.submit()}
       onCancel={() => {
-        form.resetFields();
+        // form.resetFields();
         setIsEmailFilterModalOpen(false);
-        retrieveEmailData();
+        // retrieveEmailData();
       }}
       footer={[
         <Button
           key="back"
           onClick={() => {
-            form.resetFields();
+            // form.resetFields();
             setIsEmailFilterModalOpen(false);
-            retrieveEmailData();
+            // retrieveEmailData();
           }}
         >
           Cancel
@@ -57,7 +63,7 @@ const EmailFilterModal = ({ name, setInstitutionData, retrieveEmailData }) => {
         <Row gutter={15}>
           <Col xs={24} lg={12}>
             <Form.Item
-              name="full_name__contains"
+              name="full_name__icontains"
               label="Full Name"
               rules={[
                 {
@@ -72,7 +78,7 @@ const EmailFilterModal = ({ name, setInstitutionData, retrieveEmailData }) => {
           </Col>
           <Col xs={24} lg={12}>
             <Form.Item
-              name="email__contains"
+              name="email__icontains"
               label="Email"
               rules={[
                 {
@@ -83,6 +89,20 @@ const EmailFilterModal = ({ name, setInstitutionData, retrieveEmailData }) => {
               ]}
             >
               <Input placeholder="Enter Email" />
+            </Form.Item>
+          </Col>
+          <Col xs={24} lg={12}>
+            <Form.Item
+              name="created_at__startswith"
+              label="Date"
+              rules={[
+                {
+                  required: false,
+                  message: "Please enter date",
+                },
+              ]}
+            >
+              <DatePicker format={"YYYY-MM-DD"} />
             </Form.Item>
           </Col>
         </Row>

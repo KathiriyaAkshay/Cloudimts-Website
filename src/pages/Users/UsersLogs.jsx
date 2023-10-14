@@ -35,6 +35,7 @@ const UsersLogs = () => {
       condition: "and",
       page_number: currentPagination.page,
       page_size: 10,
+      sort_option: true,
     })
       .then((res) => {
         const resData = res.data.data.map((data) => ({

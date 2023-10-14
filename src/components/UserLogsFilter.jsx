@@ -1,6 +1,45 @@
-import { Button, Col, DatePicker, Form, Input, Modal, Row } from "antd";
+import { Button, Col, DatePicker, Form, Input, Modal, Row, Select } from "antd";
 import React, { useContext } from "react";
 import { filterDataContext } from "../hooks/filterDataContext";
+
+const eventTypeOptions = [
+  {
+    label: "User create",
+    value: 1,
+  },
+  {
+    label: "User basic details update",
+    value: 2,
+  },
+  {
+    label: "User modality details update",
+    value: 3,
+  },
+  {
+    label: "User instituition details update",
+    value: 4,
+  },
+  {
+    label: "User password update",
+    value: 5,
+  },
+  {
+    label: "User login",
+    value: 6,
+  },
+  {
+    label: "Update Signature image",
+    value: 7,
+  },
+  {
+    label: "User disable",
+    value: 8,
+  },
+  {
+    label: "User enable",
+    value: 9,
+  },
+];
 
 const UserLogsFilter = ({ name, retrieveRoleData, setFilterValues }) => {
   const { isUserLogsFilterModalOpen, setIsUserLogsFilterModalOpen } =
@@ -34,19 +73,19 @@ const UserLogsFilter = ({ name, retrieveRoleData, setFilterValues }) => {
       open={isUserLogsFilterModalOpen}
       onOk={() => form.submit()}
       onCancel={() => {
-        setFilterValues({});
-        form.resetFields();
+        // setFilterValues({});
+        // form.resetFields();
         setIsUserLogsFilterModalOpen(false);
-        retrieveRoleData({ page: 1 }, {}, true);
+        // retrieveRoleData({ page: 1 }, {}, true);
       }}
       footer={[
         <Button
           key="back"
           onClick={() => {
-            setFilterValues({});
-            form.resetFields();
+            // setFilterValues({});
+            // form.resetFields();
             setIsUserLogsFilterModalOpen(false);
-            retrieveRoleData({ page: 1 }, {}, true);
+            // retrieveRoleData({ page: 1 }, {}, true);
           }}
         >
           Cancel
@@ -73,7 +112,7 @@ const UserLogsFilter = ({ name, retrieveRoleData, setFilterValues }) => {
         <Row gutter={15}>
           <Col xs={24} lg={12}>
             <Form.Item
-              name="perfrom_user__username__contains"
+              name="perfrom_user__username__icontains"
               label="Perform User"
               rules={[
                 {
@@ -88,7 +127,7 @@ const UserLogsFilter = ({ name, retrieveRoleData, setFilterValues }) => {
           </Col>
           <Col xs={24} lg={12}>
             <Form.Item
-              name="target_user__username__contains"
+              name="target_user__user__username__icontains"
               label="Target User"
               rules={[
                 {
@@ -117,17 +156,17 @@ const UserLogsFilter = ({ name, retrieveRoleData, setFilterValues }) => {
           </Col>
           <Col xs={24} lg={12}>
             <Form.Item
-              name="logs_id__contains"
+              name="logs_id"
               label="Event Type"
+              className="category-select"
               rules={[
                 {
                   required: false,
-                  whitespace: true,
-                  message: "Please enter event",
+                  message: "Please select event",
                 },
               ]}
             >
-              <Input placeholder="Enter Event" />
+              <Select placeholder="Select Event" options={eventTypeOptions} />
             </Form.Item>
           </Col>
         </Row>

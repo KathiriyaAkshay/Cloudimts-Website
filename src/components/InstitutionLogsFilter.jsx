@@ -1,12 +1,51 @@
-import { Button, Col, DatePicker, Form, Input, Modal, Row } from "antd";
+import { Button, Col, DatePicker, Form, Input, Modal, Row, Select } from "antd";
 import React, { useContext } from "react";
 import { filterDataContext } from "../hooks/filterDataContext";
 
-const InstitutionLogsFilter = ({
-  name,
-  retrieveRoleData,
-  setFilterValues,
-}) => {
+const eventTypeOptions = [
+  {
+    label: "Institution create",
+    value: 1,
+  },
+  {
+    label: "Institution basic details update",
+    value: 2,
+  },
+  {
+    label: "Institution modality charge update",
+    value: 3,
+  },
+  {
+    label: "Default modality details update",
+    value: 4,
+  },
+  {
+    label: "Institution report settings update",
+    value: 5,
+  },
+  {
+    label: "Insitution blocked user details update",
+    value: 6,
+  },
+  {
+    label: "Institution in house radiologist update",
+    value: 7,
+  },
+  {
+    label: "Institution studyID setting update",
+    value: 8,
+  },
+  {
+    label: "Institution Disable",
+    value: 9,
+  },
+  {
+    label: "Institution Enable",
+    value: 10,
+  },
+];
+
+const InstitutionLogsFilter = ({ name, retrieveRoleData, setFilterValues }) => {
   const {
     isInstitutionLogsFilterModalOpen,
     setIsInstitutionLogsFilterModalOpen,
@@ -40,19 +79,19 @@ const InstitutionLogsFilter = ({
       open={isInstitutionLogsFilterModalOpen}
       onOk={() => form.submit()}
       onCancel={() => {
-        setFilterValues({});
-        form.resetFields();
+        // setFilterValues({});
+        // form.resetFields();
         setIsInstitutionLogsFilterModalOpen(false);
-        retrieveRoleData({ page: 1 }, {}, true);
+        // retrieveRoleData({ page: 1 }, {}, true);
       }}
       footer={[
         <Button
           key="back"
           onClick={() => {
-            setFilterValues({});
-            form.resetFields();
+            // setFilterValues({});
+            // form.resetFields();
             setIsInstitutionLogsFilterModalOpen(false);
-            retrieveRoleData({ page: 1 }, {}, true);
+            // retrieveRoleData({ page: 1 }, {}, true);
           }}
         >
           Cancel
@@ -79,7 +118,7 @@ const InstitutionLogsFilter = ({
         <Row gutter={15}>
           <Col xs={24} lg={12}>
             <Form.Item
-              name="institution__name__contains"
+              name="institution__name__icontains"
               label="Institution Name"
               rules={[
                 {
@@ -94,7 +133,7 @@ const InstitutionLogsFilter = ({
           </Col>
           <Col xs={24} lg={12}>
             <Form.Item
-              name="user__username__contains"
+              name="user__username__icontains"
               label="Username"
               rules={[
                 {
@@ -121,21 +160,21 @@ const InstitutionLogsFilter = ({
               <DatePicker format={"YYYY-MM-DD"} />
             </Form.Item>
           </Col>
-          {/* <Col xs={24} lg={12}>
+          <Col xs={24} lg={12}>
             <Form.Item
-              name="event_info__contains"
+              name="logs_id"
               label="Event Type"
+              className="category-select"
               rules={[
                 {
                   required: false,
-                  whitespace: true,
-                  message: "Please enter event",
+                  message: "Please select event",
                 },
               ]}
             >
-              <Input placeholder="Enter Event" />
+              <Select placeholder="Select Event" options={eventTypeOptions} />
             </Form.Item>
-          </Col> */}
+          </Col>
         </Row>
       </Form>
     </Modal>

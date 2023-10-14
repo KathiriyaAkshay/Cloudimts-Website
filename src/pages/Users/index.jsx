@@ -108,23 +108,37 @@ const Users = () => {
 
   const statusChangeHandler = async (status, id) => {
     if (status) {
-      await enableUser({ id })
-        .then((res) => {
-          NotificationMessage("success", "User Status Updated Successfully");
-          retrieveUsersData();
-        })
-        .catch((err) =>
-          NotificationMessage("warning", err.response.data.message)
+      if (checkPermissionStatus("Enable user")) {
+        await enableUser({ id })
+          .then((res) => {
+            NotificationMessage("success", "User Status Updated Successfully");
+            retrieveUsersData();
+          })
+          .catch((err) =>
+            NotificationMessage("warning", err.response.data.message)
+          );
+      } else {
+        NotificationMessage(
+          "warning",
+          "User Don't have Permission to Enable User"
         );
+      }
     } else {
-      await disableUser({ id })
-        .then((res) => {
-          NotificationMessage("success", "User Status Updated Successfully");
-          retrieveUsersData();
-        })
-        .catch((err) =>
-          NotificationMessage("warning", err.response.data.message)
+      if (checkPermissionStatus("Disable user")) {
+        await disableUser({ id })
+          .then((res) => {
+            NotificationMessage("success", "User Status Updated Successfully");
+            retrieveUsersData();
+          })
+          .catch((err) =>
+            NotificationMessage("warning", err.response.data.message)
+          );
+      } else {
+        NotificationMessage(
+          "warning",
+          "User Don't have Permission to Disable User"
         );
+      }
     }
   };
 
@@ -184,7 +198,7 @@ const Users = () => {
           : "column-display-none"
       }`,
     },
-    {
+    checkPermissionStatus("View Disable/Enable user option") && {
       title: "Status",
       dataIndex: "status",
       render: (text, record) => {
@@ -327,7 +341,7 @@ const Users = () => {
         name={"User Filter"}
       />
       <Drawer
-        title="Study Logs"
+        title="Users Logs"
         placement="right"
         onClose={() => setIsDrawerOpen(false)}
         open={isDrawerOpen}
