@@ -12,6 +12,7 @@ import {
 import NotificationMessage from "../../components/NotificationMessage";
 import { UserPermissionContext } from "../../hooks/userPermissionContext";
 import { filterDataContext } from "../../hooks/filterDataContext";
+import { useBreadcrumbs } from "../../hooks/useBreadcrumbs";
 
 const index = () => {
   const [tableData, setTableData] = useState([]);
@@ -21,7 +22,10 @@ const index = () => {
   const { isSupportModalOpen, setIsSupportModalOpen } =
     useContext(filterDataContext);
 
+  const { changeBreadcrumbs } = useBreadcrumbs();
+
   useEffect(() => {
+    changeBreadcrumbs([{ name: "Support" }]);
     retrieveSupportData();
   }, []);
 
