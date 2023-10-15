@@ -6,7 +6,7 @@ import TableWithFilter from "../../components/TableWithFilter";
 const StudyLogs = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [tableData, setTableData] = useState([]);
-  const [pagi, setPagi] = useState({ page: 1 });
+  const [pagi, setPagi] = useState({ page: 1, limit: 10 });
   const [totalPages, setTotalPages] = useState(0);
   const { changeBreadcrumbs } = useBreadcrumbs();
 
@@ -20,7 +20,7 @@ const StudyLogs = () => {
     setIsLoading(true);
     const currentPagination = pagination || pagi;
     getStudyLogs({
-      page_size: 10,
+      page_size: currentPagination.limit || 10,
       page_number: currentPagination.page,
     })
       .then((res) => {

@@ -13,6 +13,7 @@ import {
   Select,
   Spin,
   Modal,
+  InputNumber,
 } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
 import { useBreadcrumbs } from "../../hooks/useBreadcrumbs";
@@ -427,6 +428,14 @@ const AddInstitution = () => {
     },
   ];
 
+  const validateInput = (rule, value, callback) => {
+    if (value !== undefined && value !== null && isNaN(value)) {
+      callback("Please enter a valid number");
+    } else {
+      callback();
+    }
+  };
+
   return (
     <div className="secondary-table">
       <Card>
@@ -595,10 +604,11 @@ const AddInstitution = () => {
                         required: true,
                         // type: "number",
                         message: "Enter storage allocated Limit",
+                        validator: validateInput,
                       },
                     ]}
                   >
-                    <Input placeholder="Enter storage allocated Limit" />
+                    <InputNumber placeholder="Enter storage allocated Limit" />
                   </Form.Item>
                 </Col>
                 <Col xs={4} sm={4} md={4} lg={2}>
@@ -664,16 +674,7 @@ const AddInstitution = () => {
             >
               <Row>
                 {/* <Col xs={0} sm={0} md={4} lg={5}></Col> */}
-                <Col
-                  xs={24}
-                  sm={24}
-                  md={24}
-                  lg={24}
-                  style={{
-                    maxHeight: "calc(100vh - 200px)",
-                    overflowY: "scroll",
-                  }}
-                >
+                <Col xs={24} sm={24} md={24} lg={24}>
                   <TableWithFilter
                     tableColumns={columns}
                     tableData={tableData}

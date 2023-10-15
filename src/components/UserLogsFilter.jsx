@@ -90,7 +90,16 @@ const UserLogsFilter = ({ name, retrieveRoleData, setFilterValues }) => {
         >
           Cancel
         </Button>,
-        <Button key="submit" type="primary" onClick={() => form.resetFields()}>
+        <Button
+          key="submit"
+          type="primary"
+          onClick={() => {
+            setFilterValues({});
+            form.resetFields();
+            setIsUserLogsFilterModalOpen(false);
+            retrieveRoleData({ page: 1 }, {}, true);
+          }}
+        >
           Clear Filter
         </Button>,
         <Button key="submit" type="primary" onClick={() => form.submit()}>

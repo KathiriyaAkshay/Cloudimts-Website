@@ -33,7 +33,7 @@ import NotificationMessage from "../../components/NotificationMessage";
 const Users = () => {
   const [tableData, setTableData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [pagi, setPagi] = useState({ page: 1 });
+  const [pagi, setPagi] = useState({ page: 1, limit: 10 });
   const [totalPages, setTotalPages] = useState(0);
   const token = localStorage.getItem("token");
   const [logsData, setLogsData] = useState([]);
@@ -63,7 +63,7 @@ const Users = () => {
       filter: values,
       condition: "and",
       page_number: currentPagination.page,
-      page_size: 10,
+      page_size: currentPagination.limit || 10,
     })
       .then((res) => {
         const resData = res.data.data.map((item) => ({
@@ -74,6 +74,7 @@ const Users = () => {
           email: item.user.email,
         }));
         setTableData(resData);
+        setTotalPages(res.data.total_object);
       })
       .catch((err) => console.log(err));
     setIsLoading(false);
@@ -255,9 +256,9 @@ const Users = () => {
               }}
             />
           </Tooltip>
-          <DeleteActionIcon
+          {/* <DeleteActionIcon
             deleteActionHandler={() => deleteActionHandler(record)}
-          />
+          /> */}
         </Space>
       ),
     },

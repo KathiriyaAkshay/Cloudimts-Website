@@ -35,10 +35,11 @@ const TableWithFilter = ({
   rowSelection,
 }) => {
   const navigate = useNavigate();
+  const [limit, setLimit] = useState(10);
   const [userRole, setUserRole] = useState(null);
   const [Pagination, setPagination] = useState({
     page: 1,
-    limit: 10,
+    limit: limit,
     total: totalRecords,
     search: "",
     order: "desc",
@@ -49,10 +50,10 @@ const TableWithFilter = ({
     onPaginationChange(Pagination);
   }, [Pagination]);
 
-  // const onShowSizeChange = (current, pageSize) => {
-  //   setLimit(pageSize);
-  //   setPagination((prev) => ({ ...prev, page: current, limit: pageSize }));
-  // };
+  const onShowSizeChange = (current, pageSize) => {
+    setLimit(pageSize);
+    setPagination((prev) => ({ ...prev, page: current, limit: pageSize }));
+  };
 
   // const setFilter = (option) => {
   //   if (option == "active") {
@@ -124,11 +125,14 @@ const TableWithFilter = ({
             !pagination
               ? {
                   current: Pagination.page,
-                  pageSize: 10,
+                  pageSize: limit,
                   total: totalRecords,
-                  onChange: (page = 1, pageSize = 10) => {
+                  pageSizeOptions: [10, 25, 50, 100, 200, 500],
+                  showSizeChanger: totalRecords > 10,
+                  onChange: (page = 1, pageSize = limit) => {
                     setPagination({ ...Pagination, page, limit: pageSize });
                   },
+                  onShowSizeChange: onShowSizeChange,
                 }
               : false
           }
@@ -137,10 +141,10 @@ const TableWithFilter = ({
               ? window.screen.width < 1000
                 ? { x: 1000 }
                 : null
-              : { y: 520, x: window.screen.width < 1000 ? 1000 : null }
+              : { y: 375, x: window.screen.width < 1000 ? 1000 : null }
           }
           loading={loadingTableData}
-          rowSelection={ rowSelection && { type: "checkbox", ...rowSelection }}
+          rowSelection={rowSelection && { type: "checkbox", ...rowSelection }}
           // onChange={(pagi, filters, sorter, extras) => {
           //   setPagination((prev) => ({
           //     ...prev,

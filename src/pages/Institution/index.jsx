@@ -28,7 +28,7 @@ const Institution = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [institutionData, setInstitutionData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [pagi, setPagi] = useState({ page: 1 });
+  const [pagi, setPagi] = useState({ page: 1, limit: 10 });
   const [totalPages, setTotalPages] = useState(0);
   const [logsData, setLogsData] = useState([]);
   const navigate = useNavigate();
@@ -49,7 +49,7 @@ const Institution = () => {
       filter: values,
       condition: "and",
       page_number: currentPagination.page,
-      page_size: 10,
+      page_size: currentPagination.limit || 10,
     })
       .then((res) => {
         setTotalPages(res.data.total_object);
@@ -216,7 +216,7 @@ const Institution = () => {
           : "column-display-none"
       }`,
     },
-    {
+    checkPermissionStatus("View Disable/Enable Institution option") && {
       title: "Status",
       dataIndex: "status",
       render: (text, record) => {

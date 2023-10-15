@@ -22,7 +22,7 @@ const Email = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const token = localStorage.getItem("token");
-  const [pagi, setPagi] = useState();
+  const [pagi, setPagi] = useState({ page: 1, limit: 10 });
   const [totalPages, setTotalPages] = useState(0);
   const [emailID, setEmailID] = useState(null);
   const { permissionData } = useContext(UserPermissionContext);
@@ -65,11 +65,11 @@ const Email = () => {
       filter: values,
       condition: "and",
       page_number: currentPagination.page,
-      page_size: 10,
+      page_size: currentPagination.limit || 10,
     })
       .then((res) => {
         setEmailData(res.data.data);
-        setTotalPages(res.data.totat_object);
+        setTotalPages(res.data.total_object);
       })
       .catch((err) => console.log(err));
     setIsLoading(false);

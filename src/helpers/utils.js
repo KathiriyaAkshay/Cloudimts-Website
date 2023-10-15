@@ -14,8 +14,8 @@ export const dummyRequest = ({ file, onSuccess, onError }) => {
     file.type === "video/mp4" ||
     file.type === "image/svg+xml"
   ) {
-    if (file.size > 1024 * 1024 * 50) {
-      onError(null, "Please select image smaller than 50 MB");
+    if (file.size > 1024 * 1024 * 3) {
+      onError(null, "Please select image smaller than 3 MB");
     } else {
       onSuccess("ok");
     }
@@ -29,7 +29,7 @@ export function getElapsedTime(dt1) {
   const diff = (dt2.getTime() - dt1.getTime()) / 1000;
   const min = Math.abs(Math.round(diff / 60));
   if (min < 1) {
-    return 'Now';
+    return "Now";
   }
   if (min < 60) {
     return `${min}m ago`;
@@ -43,7 +43,7 @@ export function getElapsedTime(dt1) {
     return `${day}d ago`;
   }
   if (day > 7) {
-    const dateArr = dt1.toDateString().split(' ') || [];
+    const dateArr = dt1.toDateString().split(" ") || [];
     return `${dateArr[2]} ${dateArr[1]}`;
   }
 }

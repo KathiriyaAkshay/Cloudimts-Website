@@ -9,7 +9,7 @@ import { Tag } from "antd";
 const InstitutionLogs = () => {
   const [institutionData, setInstitutionData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [pagi, setPagi] = useState({ page: 1 });
+  const [pagi, setPagi] = useState({ page: 1, limit: 10 });
   const [totalPages, setTotalPages] = useState(0);
   const navigate = useNavigate();
   const [filterValues, setFilterValues] = useState({});
@@ -27,6 +27,7 @@ const InstitutionLogs = () => {
     valueChanged = false
   ) => {
     setIsLoading(true);
+    console.log(pagination);
     const currentPagination = pagination || pagi;
     instituteLogsFilter({
       filter:
@@ -41,7 +42,7 @@ const InstitutionLogs = () => {
           : {},
       condition: "and",
       page_number: currentPagination.page,
-      page_size: 10,
+      page_size: currentPagination.limit || 10,
     })
       .then((res) => {
         setTotalPages(res.data.total_object);

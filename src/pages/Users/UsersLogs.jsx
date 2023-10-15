@@ -9,7 +9,7 @@ const UsersLogs = () => {
   const [tableData, setTableData] = useState([]);
   const { changeBreadcrumbs } = useBreadcrumbs();
   const [isLoading, setIsLoading] = useState(false);
-  const [pagi, setPagi] = useState({ page: 1 });
+  const [pagi, setPagi] = useState({ page: 1, limit: 10 });
   const [totalPages, setTotalPages] = useState(0);
   const [filterValues, setFilterValues] = useState({});
 
@@ -21,6 +21,7 @@ const UsersLogs = () => {
   const retrieveStudyData = (pagination, values = {}, valueChanged = false) => {
     setIsLoading(true);
     const currentPagination = pagination || pagi;
+    console.log(currentPagination);
     userLogsFilter({
       filter:
         Object.keys(values).length !== 0
@@ -34,7 +35,7 @@ const UsersLogs = () => {
           : {},
       condition: "and",
       page_number: currentPagination.page,
-      page_size: 10,
+      page_size: currentPagination.limit || 10,
       sort_option: true,
     })
       .then((res) => {

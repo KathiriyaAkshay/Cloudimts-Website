@@ -25,7 +25,7 @@ const UploadImage = ({
   }, [imageURL]);
   const handleImagePreviewCancel = () => setPreviewOpen((prev) => false);
 
-  console.log(multipleImageFile)
+  console.log(multipleImageFile);
 
   const handleImagePreview = async (file) => {
     if (
@@ -104,7 +104,7 @@ const UploadImage = ({
       {file && (
         <Row
           className="ant-upload-list-item"
-          style={{ gap: "20px" }}
+          style={{ gap: "20px", marginBottom: "20px" }}
           align="middle"
         >
           <>

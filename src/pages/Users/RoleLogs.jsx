@@ -7,7 +7,7 @@ import { Tag } from "antd";
 
 const RoleLogs = () => {
   const [tableData, setTableData] = useState([]);
-  const [pagi, setPagi] = useState({ page: 1 });
+  const [pagi, setPagi] = useState({ page: 1, limit: 10 });
   const [totalPages, setTotalPages] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [filterValues, setFilterValues] = useState({});
@@ -40,7 +40,7 @@ const RoleLogs = () => {
           ? filterValues
           : {},
       page_number: currentPagination.page,
-      page_size: 10,
+      page_size: currentPagination.limit || 10,
     })
       .then((res) => {
         setTableData(res.data.data);

@@ -408,6 +408,7 @@ export const instituteLogsFilter = async (params = {}) => {
 };
 
 export const userLogsFilter = async (params = {}) => {
+  console.log(params);
   const userLogsFilter = await API.post("/user/v1/user_logs_filter", params, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -588,8 +589,17 @@ export const deleteSupport = async (params = {}) => {
 };
 
 export const updateReport = async (params = {}) => {
-  const updateReport = await API.post(
-    "/report/v1/updateReportData",
+  const updateReport = await API.post("/report/v1/updateReportData", params, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return updateReport;
+};
+
+export const fetchParticularSupport = async (params = {}) => {
+  const fetchParticularSupport = await API.post(
+    "/support/v1/fetch-particular-support-details",
     params,
     {
       headers: {
@@ -597,5 +607,18 @@ export const updateReport = async (params = {}) => {
       },
     }
   );
-  return updateReport;
+  return fetchParticularSupport;
+};
+
+export const updateParticularSupport = async (params = {}) => {
+  const updateParticularSupport = await API.post(
+    "/support/v1/support-details-edit",
+    params,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return updateParticularSupport;
 };

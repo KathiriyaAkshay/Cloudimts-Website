@@ -44,7 +44,15 @@ const FilterModal = ({ name, setInstitutionData, retrieveInstitutionData }) => {
         >
           Cancel
         </Button>,
-        <Button key="submit" type="primary" onClick={() => form.resetFields()}>
+        <Button
+          key="submit"
+          type="primary"
+          onClick={() => {
+            form.resetFields();
+            setIsFilterModalOpen(false);
+            retrieveInstitutionData();
+          }}
+        >
           Clear Filter
         </Button>,
         <Button key="submit" type="primary" onClick={() => form.submit()}>

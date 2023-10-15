@@ -91,6 +91,7 @@ const AddUsers = () => {
           ...modalityData,
         };
         form.setFieldsValue(resData);
+        setImageURL(res.data.data.signature_image);
       })
       .catch((err) => console.log(err));
   };
@@ -248,7 +249,10 @@ const AddUsers = () => {
       let signature_image = "";
       if (values.url.file.originFileObj) {
         try {
-          const res = await uploadImage(values.url.file.originFileObj);
+          const formData = {
+            image: values.url.file.originFileObj,
+          };
+          const res = await uploadImage(formData);
           signature_image = res.data.image_url;
           setPayload((prev) => ({
             ...prev,
@@ -268,7 +272,10 @@ const AddUsers = () => {
           },
           { headers: { Authorization: `Bearer ${token}` } }
         )
-          .then((res) => console.log(res))
+          .then((res) => {
+            setImageURL(signature_image);
+            setPayload((prev) => ({ ...prev, signature_image }));
+          })
           .catch((err) => console.log(err));
       }
       setIsLoading(false);
@@ -393,7 +400,7 @@ const AddUsers = () => {
                     <Switch />
                   </Form.Item>
                 </Col>
-                <Col xs={4} sm={4} md={4} lg={4}>
+                <Col xs={4} sm={4} md={22} lg={22}>
                   <Form.Item
                     name="allow_offline_download"
                     label="Allow Offline Download"
@@ -402,7 +409,7 @@ const AddUsers = () => {
                     <Switch />
                   </Form.Item>
                 </Col>
-                <Col xs={24} sm={12} md={12} lg={6}>
+                <Col xs={24} sm={12} md={12} lg={8}>
                   <Form.Item
                     name="username"
                     label="Username"
@@ -417,7 +424,7 @@ const AddUsers = () => {
                     <Input placeholder="Enter Username" />
                   </Form.Item>
                 </Col>
-                <Col xs={24} sm={12} md={12} lg={6}>
+                <Col xs={24} sm={12} md={12} lg={8}>
                   <Form.Item
                     name="email"
                     label="Email Address"
@@ -432,7 +439,7 @@ const AddUsers = () => {
                     <Input placeholder="Enter Email" />
                   </Form.Item>
                 </Col>
-                <Col xs={24} sm={12} md={12} lg={6}>
+                <Col xs={24} sm={12} md={12} lg={8}>
                   <Form.Item
                     name="contact"
                     label="Contact Number"
@@ -447,7 +454,7 @@ const AddUsers = () => {
                     <Input placeholder="Enter Contact Number" />
                   </Form.Item>
                 </Col>
-                <Col xs={24} sm={12} md={12} lg={6}>
+                <Col xs={24} sm={12} md={12} lg={8}>
                   <Form.Item
                     name="city"
                     label="City"
@@ -462,7 +469,7 @@ const AddUsers = () => {
                     <Input placeholder="Enter City" />
                   </Form.Item>
                 </Col>
-                <Col xs={24} sm={12} md={12} lg={6}>
+                <Col xs={24} sm={12} md={12} lg={8}>
                   <Form.Item
                     name="state"
                     label="State"
@@ -477,7 +484,7 @@ const AddUsers = () => {
                     <Input placeholder="Enter State" />
                   </Form.Item>
                 </Col>
-                <Col xs={24} sm={12} md={12} lg={6}>
+                <Col xs={24} sm={12} md={12} lg={8}>
                   <Form.Item
                     name="country"
                     label="Country"
@@ -492,7 +499,7 @@ const AddUsers = () => {
                     <Input placeholder="Enter Country" />
                   </Form.Item>
                 </Col>
-                <Col lg={6} md={12} sm={12}>
+                <Col lg={8} md={12} sm={12}>
                   <Form.Item
                     label="Institution"
                     name="institute_id"
@@ -511,7 +518,7 @@ const AddUsers = () => {
                     />
                   </Form.Item>
                 </Col>
-                <Col lg={6} md={12} sm={12}>
+                <Col lg={8} md={12} sm={12}>
                   <Form.Item
                     label="Role"
                     name="role_id"
@@ -530,7 +537,7 @@ const AddUsers = () => {
                     />
                   </Form.Item>
                 </Col>
-                <Col xs={24} sm={12} md={12} lg={12}>
+                <Col xs={24} sm={12} md={12} lg={8}>
                   <Form.Item
                     name="address"
                     label="Address"
@@ -548,7 +555,7 @@ const AddUsers = () => {
                 {!id && (
                   <>
                     {" "}
-                    <Col lg={6} md={12} sm={12}>
+                    <Col lg={8} md={12} sm={12}>
                       <Form.Item
                         label="Password"
                         name="password"
@@ -569,7 +576,7 @@ const AddUsers = () => {
                         />
                       </Form.Item>
                     </Col>
-                    <Col lg={6} md={12} sm={12}>
+                    <Col lg={8} md={12} sm={12}>
                       <Form.Item
                         label="Confirm Password"
                         name="confirmPassword"
@@ -645,16 +652,7 @@ const AddUsers = () => {
               onFinish={handleSubmit}
             >
               <Row>
-                <Col
-                  xs={24}
-                  sm={24}
-                  md={24}
-                  lg={24}
-                  style={{
-                    maxHeight: "calc(100vh - 200px)",
-                    overflowY: "scroll",
-                  }}
-                >
+                <Col xs={24} sm={24} md={24} lg={24}>
                   <TableWithFilter
                     tableColumns={institutionColumn}
                     tableData={institutionOptions}
@@ -817,16 +815,7 @@ const AddUsers = () => {
               onFinish={handleSubmit}
             >
               <Row>
-                <Col
-                  xs={24}
-                  sm={24}
-                  md={24}
-                  lg={24}
-                  style={{
-                    maxHeight: "calc(100vh - 200px)",
-                    overflowY: "scroll",
-                  }}
-                >
+                <Col xs={24} sm={24} md={24} lg={24}>
                   <TableWithFilter
                     tableColumns={columns}
                     tableData={tableData}

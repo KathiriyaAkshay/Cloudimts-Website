@@ -35,7 +35,15 @@ const QuickFilterModal = ({ name, setInstitutionData, retrieveStudyData }) => {
         >
           Cancel
         </Button>,
-        <Button key="submit" type="primary" onClick={() => form.resetFields()}>
+        <Button
+          key="submit"
+          type="primary"
+          onClick={() => {
+            form.resetFields();
+            setIsStudyFilterModalOpen(false);
+            retrieveStudyData();
+          }}
+        >
           Clear Filter
         </Button>,
         <Button key="submit" type="primary" onClick={() => form.submit()}>

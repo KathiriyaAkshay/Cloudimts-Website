@@ -121,7 +121,7 @@ const ProtectedRoute = ({ path, children, inx, ...rest }) => {
       const permission =
         permissionData["Pages permission"] &&
         permissionData["Pages permission"].find(
-          (data) => data.permission === "Support details page"
+          (data) => data.permission === "Support detils page"
         )?.permission_value;
       setIsAuthenticated(permission);
     }

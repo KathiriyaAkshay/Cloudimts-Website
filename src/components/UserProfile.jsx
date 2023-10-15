@@ -27,6 +27,8 @@ import { UserDetailsContext } from "../hooks/userDetailsContext";
 import { BsPinMapFill } from "react-icons/bs";
 import { omit } from "lodash";
 import NotificationMessage from "./NotificationMessage";
+import CustomerSupportModal from "./CustomerSupportModal";
+import { BiSupport } from "react-icons/bi";
 
 const UserProfile = () => {
   const [showDrawer, setShowDrawer] = useState(false);
@@ -38,6 +40,7 @@ const UserProfile = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
   const [form] = Form.useForm();
+  const [show, setShow] = useState(false);
 
   // useEffect(() => {
   //   setLoggedUser({
@@ -111,10 +114,19 @@ const UserProfile = () => {
     <Row justify={"end"} align={"middle"} style={{ marginLeft: "auto" }}>
       <Space size={15}>
         <Button
-          onClick={() => logoutHandler()} type="primary" style={{display: "flex", gap: "8px", alignItems: "center"}}
+          onClick={() => logoutHandler()}
+          type="primary"
+          style={{ display: "flex", gap: "8px", alignItems: "center" }}
         >
           <LogoutOutlined />
           <span>Log Out</span>
+        </Button>
+        <Button
+          onClick={() => setShow(true)}
+          type="primary"
+          style={{ display: "flex", gap: "8px", alignItems: "center" }}
+        >
+          <BiSupport />
         </Button>
         <Avatar
           style={{ marginRight: "30px" }}
@@ -255,6 +267,7 @@ const UserProfile = () => {
           </Col>
         </Form>
       </Modal>
+      <CustomerSupportModal show={show} setShow={setShow} />
     </Row>
   );
 };

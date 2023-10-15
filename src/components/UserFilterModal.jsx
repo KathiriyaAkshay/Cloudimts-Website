@@ -35,7 +35,15 @@ const UserFilterModal = ({ name, setInstitutionData, retrieveUsersData }) => {
         >
           Cancel
         </Button>,
-        <Button key="submit" type="primary" onClick={() => form.resetFields()}>
+        <Button
+          key="submit"
+          type="primary"
+          onClick={() => {
+            form.resetFields();
+            setIsUserFilterModalOpen(false);
+            retrieveUsersData();
+          }}
+        >
           Clear Filter
         </Button>,
         <Button key="submit" type="primary" onClick={() => form.submit()}>

@@ -1,74 +1,35 @@
 import React from "react";
-import "../assets/scss/404.scss"
+import "../assets/scss/404.scss";
 import { useNavigate } from "react-router-dom";
+import logo from "../assets/images/Imageinet-logo.png";
+import { Button, Typography } from "antd";
 
 const NotFound = () => {
   const navigate = useNavigate();
   return (
-    <div className="main-404-div">
-      {/* About Section */}
-      {/* <div className="about">
-        <a className="bg_links social portfolio" href="https://www.rafaelalucas.com" target="_blank">
-          <span className="icon"></span>
-        </a>
-        <a className="bg_links social dribbble" href="https://dribbble.com/rafaelalucas" target="_blank">
-          <span className="icon"></span>
-        </a>
-        <a className="bg_links social linkedin" href="https://www.linkedin.com/in/rafaelalucas/" target="_blank">
-          <span className="icon"></span>
-        </a>
-        <a className="bg_links logo"></a>
-      </div> */}
-
-      {/* Navigation */}
-      <nav>
-        <div className="menu">
-          <p className="website_name">ImageiNet</p>
-          <div className="menu_links">
-          </div>
-          <div className="menu_icon">
-            <span className="icon"></span>
-          </div>
-        </div>
-      </nav>
-
-      {/* Main Content */}
-      <section className="wrapper">
-        <div className="container">
-          <div id="scene" className="scene" data-hover-only="false">
-            <div className="circle" data-depth="1.2"></div>
-            <div className="one" data-depth="0.9">
-              <div className="content">
-                <span className="piece"></span>
-                <span className="piece"></span>
-                <span className="piece"></span>
-              </div>
-            </div>
-            <div className="two" data-depth="0.60">
-              <div className="content">
-                <span className="piece"></span>
-                <span className="piece"></span>
-                <span className="piece"></span>
-              </div>
-            </div>
-            <div className="three" data-depth="0.40">
-              <div className="content">
-                <span className="piece"></span>
-                <span className="piece"></span>
-                <span className="piece"></span>
-              </div>
-            </div>
-            <p className="p404" data-depth="0.50">404</p>
-            <p className="p404" data-depth="0.10">404</p>
-          </div>
-          <div className="text">
-            <article>
-              <p>Uh oh! Looks like you got lost. <br />Go back to the homepage!</p>
-              <button onClick={() => navigate(-1)}>Back!</button>
-            </article>
-          </div>
-        </div>
-      </section>
+    <div
+      style={{
+        marginTop: "200px",
+        display: "flex",
+        gap: "20px",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      <img
+        src={logo}
+        alt="Logo"
+        className={"signup-logo"}
+        style={{ width: "200px", height: "120px" }}
+      />
+      <Typography style={{ fontSize: "50px", fontWeight: "600" }}>
+        404 Error
+      </Typography>
+      <Typography>We can't find the page you are looking for.</Typography>
+      <Button type="primary" onClick={() => navigate(-1)}>
+        Back
+      </Button>
     </div>
   );
 };

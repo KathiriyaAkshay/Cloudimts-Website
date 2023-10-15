@@ -38,7 +38,7 @@ const Dicom = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const [expandedRows, setExpandedRows] = useState([]);
-  const [pagi, setPagi] = useState({ page: 1 });
+  const [pagi, setPagi] = useState({ page: 1, limit: 10 });
   const [totalPages, setTotalPages] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [studyID, setStudyID] = useState(null);
@@ -48,6 +48,24 @@ const Dicom = () => {
   const { studyData, setStudyData } = useContext(StudyDataContext);
   const { studyIdArray, setStudyIdArray } = useContext(StudyIdContext);
   const [studyStatus, setStudyStatus] = useState("");
+  const [limit, setLimit] = useState(10);
+  const [Pagination, setPagination] = useState({
+    page: 1,
+    limit: limit,
+    total: totalPages,
+    search: "",
+    order: "desc",
+  });
+
+  useEffect(() => {
+    setPagi(Pagination);
+    retrieveStudyData(Pagination);
+  }, [Pagination]);
+
+  const onShowSizeChange = (current, pageSize) => {
+    setLimit(pageSize);
+    setPagination((prev) => ({ ...prev, page: current, limit: pageSize }));
+  };
 
   useEffect(() => {
     changeBreadcrumbs([{ name: "Study Data" }]);
@@ -60,10 +78,10 @@ const Dicom = () => {
     const currentPagination = pagination || pagi;
     getAllStudyData({
       // filter: values,
-      page_size: 10,
+      page_size: currentPagination.limit || 10,
       page_number: currentPagination.page,
-      all_premission_id: [1],
-      all_assign_id: [],
+      all_premission_id: JSON.parse(localStorage.getItem("all_permission_id")),
+      all_assign_id: JSON.parse(localStorage.getItem("all_assign_id")),
       deleted: false,
       deleted_skip: true,
     })
@@ -432,10 +450,19 @@ const Dicom = () => {
         expandable={expandableConfig}
         rowSelection={rowSelection}
         onRow={onRow}
-        setPagi={setPagi}
-        totalRecords={totalPages}
         onPaginationChange={retrieveStudyData}
-        loadingTableData={isLoading}
+        loading={isLoading}
+        pagination={{
+          current: Pagination.page,
+          pageSize: limit,
+          total: totalPages,
+          pageSizeOptions: [10, 25, 50, 100, 200, 500],
+          showSizeChanger: totalPages > 10,
+          onChange: (page = 1, pageSize = limit) => {
+            setPagination({ ...Pagination, page, limit: pageSize });
+          },
+          onShowSizeChange: onShowSizeChange,
+        }}
       />
       <EditStudy
         isEditModalOpen={isEditModalOpen}
