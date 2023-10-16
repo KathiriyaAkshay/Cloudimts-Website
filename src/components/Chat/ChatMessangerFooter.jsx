@@ -23,6 +23,7 @@ const ChatMessangerFooter = (props) => {
     imageStore,
     setFileStore,
     fileStore,
+    isChatModule,
   } = props || {};
 
   const handleUploadData = (data, type) => {
@@ -47,6 +48,7 @@ const ChatMessangerFooter = (props) => {
         className={`social-chatmessanger ${
           emojiClick && "emoji-chatmessanger"
         }`}
+        style={!isChatModule ? { paddingLeft: "0px" } : {}}
       >
         <div className="social-chatmessanger-wrap">
           <img
@@ -200,7 +202,10 @@ const ChatMessangerFooter = (props) => {
         )}
       </div>
       {emojiClick && (
-        <div className="emoji-container">
+        <div
+          className="emoji-container"
+          style={!isChatModule ? { paddingLeft: "0px", height: "310px" } : {}}
+        >
           <EmojiPicker
             height="20rem"
             width="100%"

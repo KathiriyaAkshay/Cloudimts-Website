@@ -249,13 +249,13 @@ const AddInstitution = () => {
     } else if (currentStep === 4) {
       setPayload((prev) => ({
         ...prev,
-        blocked_user: { data: values.radiologist },
+        blocked_user: { data: values.radiologist ? values.radiologist : [] },
       }));
       if (id) {
         updateBlockUsers({
           id: id,
           blocked_user: {
-            data: values.radiologist,
+            data: values.radiologist ? values.radiologist : [],
           },
         })
           .then((res) => console.log(res))
@@ -265,13 +265,15 @@ const AddInstitution = () => {
     } else if (currentStep === 5) {
       setPayload((prev) => ({
         ...prev,
-        house_radiologist: { data: values.house_radiologist },
+        house_radiologist: {
+          data: values.house_radiologist ? values.house_radiologist : [],
+        },
       }));
       if (id) {
         updateInHouseUser({
           id: id,
           in_house_radiologist: {
-            data: values.house_radiologist,
+            data: values.house_radiologist ? values.house_radiologist : [],
           },
         })
           .then((res) => {
@@ -283,7 +285,12 @@ const AddInstitution = () => {
         setIsLoading(true);
         await API.post(
           "/institute/v1/institute-create",
-          { ...payload, house_radiologist: { data: values.house_radiologist } },
+          {
+            ...payload,
+            house_radiologist: {
+              data: values.house_radiologist ? values.house_radiologist : [],
+            },
+          },
           {
             headers: { Authorization: `Bearer ${token}` },
           }

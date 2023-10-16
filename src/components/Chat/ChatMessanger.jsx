@@ -538,7 +538,11 @@ const ChatMessanger = (props) => {
       <div
         className="modal fade show bgColor modal-scroll p-0"
         aria-modal="true"
-        style={{ display: "block", background: "transparent", borderBottom: "1px solid #00000030" }}
+        style={{
+          display: "block",
+          background: "transparent",
+          borderBottom: "1px solid #00000030",
+        }}
       >
         <div
           className={`modal-dialog-centered chatfilewrap  ${
@@ -588,6 +592,7 @@ const ChatMessanger = (props) => {
             className={`modal-content modal-chat-issue ${
               isChatModule && "modal-chat-position"
             }`}
+            style={!isChatModule ? { height: "90vh" } : {}}
           >
             <SingleChatMessanger
               emojiClick={emojiClick}
@@ -642,6 +647,7 @@ const ChatMessanger = (props) => {
               setForwardMessage={setForwardMessage}
               setFileStore={setFileStore}
               fileStore={fileStore}
+              isChatModule={isChatModule}
             />
 
             {openMenu && (
