@@ -13,6 +13,7 @@ import PermissionNotificationProvider from "./permissionNotificationContext";
 import AuthorizationProvider from "./authorizationContext";
 import BillingDataProvider from "./billingDataContext";
 import StudyIdProvider from "./studyIdContext";
+import FilterSelectedProvider from "./filterSelectedContext";
 
 const index = ({ children }) => {
   return (
@@ -30,7 +31,9 @@ const index = ({ children }) => {
                           <FilterDataProvider>
                             <BillingDataProvider>
                               <ReportDataProvider>
-                                {children}
+                                <FilterSelectedProvider>
+                                  {children}
+                                </FilterSelectedProvider>
                               </ReportDataProvider>
                             </BillingDataProvider>
                           </FilterDataProvider>

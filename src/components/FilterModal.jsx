@@ -1,7 +1,8 @@
 import { Button, Col, Form, Input, Modal, Row } from "antd";
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { filterDataContext } from "../hooks/filterDataContext";
 import { UserPermissionContext } from "../hooks/userPermissionContext";
+import { FilterSelectedContext } from "../hooks/filterSelectedContext";
 
 const FilterModal = ({ name, setInstitutionData, retrieveInstitutionData }) => {
   const { isFilterModalOpen, setIsFilterModalOpen } =
@@ -9,9 +10,16 @@ const FilterModal = ({ name, setInstitutionData, retrieveInstitutionData }) => {
   const { permissionData } = useContext(UserPermissionContext);
   const [form] = Form.useForm();
 
+  const { setIsFilterSelected } = useContext(FilterSelectedContext);
+
+  useEffect(() => {
+    setIsFilterSelected(false);
+  }, []);
+
   const handleSubmit = (values) => {
     retrieveInstitutionData({ page: 1 }, values);
     setIsFilterModalOpen(false);
+    setIsFilterSelected(true);
   };
 
   const checkPermissionStatus = (name) => {
@@ -51,6 +59,7 @@ const FilterModal = ({ name, setInstitutionData, retrieveInstitutionData }) => {
             form.resetFields();
             setIsFilterModalOpen(false);
             retrieveInstitutionData();
+            setIsFilterSelected(false);
           }}
         >
           Clear Filter

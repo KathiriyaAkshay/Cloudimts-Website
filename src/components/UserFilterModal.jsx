@@ -1,15 +1,23 @@
 import { Button, Col, Form, Input, Modal, Row } from "antd";
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { filterDataContext } from "../hooks/filterDataContext";
+import { FilterSelectedContext } from "../hooks/filterSelectedContext";
 
 const UserFilterModal = ({ name, setInstitutionData, retrieveUsersData }) => {
   const { isUserFilterModalOpen, setIsUserFilterModalOpen } =
     useContext(filterDataContext);
   const [form] = Form.useForm();
 
+  const { setIsFilterSelected } = useContext(FilterSelectedContext);
+
+  useEffect(() => {
+    setIsFilterSelected(false);
+  }, []);
+
   const handleSubmit = (values) => {
     retrieveUsersData({ page: 1 }, values);
     setIsUserFilterModalOpen(false);
+    setIsFilterSelected(true);
   };
 
   return (
@@ -42,6 +50,7 @@ const UserFilterModal = ({ name, setInstitutionData, retrieveUsersData }) => {
             form.resetFields();
             setIsUserFilterModalOpen(false);
             retrieveUsersData();
+            setIsFilterSelected(false);
           }}
         >
           Clear Filter

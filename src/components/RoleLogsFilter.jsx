@@ -1,6 +1,7 @@
 import { Button, Col, DatePicker, Form, Input, Modal, Row, Select } from "antd";
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { filterDataContext } from "../hooks/filterDataContext";
+import { FilterSelectedContext } from "../hooks/filterSelectedContext";
 
 const roleOptions = [
   {
@@ -31,6 +32,12 @@ const RoleLogsFilter = ({
     useContext(filterDataContext);
   const [form] = Form.useForm();
 
+  const { setIsFilterSelected } = useContext(FilterSelectedContext);
+
+  useEffect(() => {
+    setIsFilterSelected(false);
+  }, []);
+
   const handleSubmit = (values) => {
     setFilterValues({
       ...values,
@@ -48,6 +55,7 @@ const RoleLogsFilter = ({
       }
     );
     setIsRoleLogsFilterModalOpen(false);
+    setIsFilterSelected(true);
   };
 
   return (
@@ -83,6 +91,7 @@ const RoleLogsFilter = ({
             form.resetFields();
             setIsRoleLogsFilterModalOpen(false);
             retrieveRoleData({ page: 1 }, {}, true);
+            setIsFilterSelected(false);
           }}
         >
           Clear Filter

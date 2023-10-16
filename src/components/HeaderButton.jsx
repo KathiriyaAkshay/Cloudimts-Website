@@ -18,11 +18,13 @@ import { BillingDataContext } from "../hooks/billingDataContext";
 import { StudyIdContext } from "../hooks/studyIdContext";
 import NotificationMessage from "./NotificationMessage";
 import { deleteStudy } from "../apis/studiesApi";
+import { FilterSelectedContext } from "../hooks/filterSelectedContext";
 
 const HeaderButton = ({ setIsModalOpen, id }) => {
   const navigate = useNavigate();
   const { permissionData } = useContext(UserPermissionContext);
   const { setIsRoleModalOpen } = useContext(UserRoleContext);
+  const { isFilterSelected } = useContext(FilterSelectedContext);
   const { setIsEmailModalOpen } = useContext(UserEmailContext);
   const {
     setIsFilterModalOpen,
@@ -67,7 +69,7 @@ const HeaderButton = ({ setIsModalOpen, id }) => {
           <Button
             type="primary"
             onClick={() => setIsFilterModalOpen(true)}
-            className="btn-icon-div"
+            className={`btn-icon-div ${isFilterSelected && "filter-selected"}`}
           >
             <FilterOutlined style={{ fontWeight: "500" }} /> Filter
           </Button>
@@ -88,7 +90,7 @@ const HeaderButton = ({ setIsModalOpen, id }) => {
           <Button
             type="primary"
             onClick={() => setIsInstitutionLogsFilterModalOpen(true)}
-            className="btn-icon-div"
+            className={`btn-icon-div ${isFilterSelected && "filter-selected"}`}
           >
             <FilterOutlined style={{ fontWeight: "500" }} /> Institution Logs
             Filter
@@ -100,7 +102,7 @@ const HeaderButton = ({ setIsModalOpen, id }) => {
           <Button
             type="primary"
             onClick={() => setIsUserFilterModalOpen(true)}
-            className="btn-icon-div"
+            className={`btn-icon-div ${isFilterSelected && "filter-selected"}`}
           >
             <FilterOutlined style={{ fontWeight: "500" }} /> Filter
           </Button>
@@ -121,7 +123,7 @@ const HeaderButton = ({ setIsModalOpen, id }) => {
           <Button
             type="primary"
             onClick={() => setIsUserLogsFilterModalOpen(true)}
-            className="btn-icon-div"
+            className={`btn-icon-div ${isFilterSelected && "filter-selected"}`}
           >
             <FilterOutlined style={{ fontWeight: "500" }} /> User Logs Filter
           </Button>
@@ -151,7 +153,7 @@ const HeaderButton = ({ setIsModalOpen, id }) => {
           <Button
             type="primary"
             onClick={() => setIsRoleLogsFilterModalOpen(true)}
-            className="btn-icon-div"
+            className={`btn-icon-div ${isFilterSelected && "filter-selected"}`}
           >
             <FilterOutlined style={{ fontWeight: "500" }} /> Logs Filter
           </Button>
@@ -162,7 +164,7 @@ const HeaderButton = ({ setIsModalOpen, id }) => {
           <Button
             type="primary"
             onClick={() => setIsEmailFilterModalOpen(true)}
-            className="btn-icon-div"
+            className={`btn-icon-div ${isFilterSelected && "filter-selected"}`}
           >
             <FilterOutlined style={{ fontWeight: "500" }} /> Filter
           </Button>
@@ -192,7 +194,7 @@ const HeaderButton = ({ setIsModalOpen, id }) => {
           <Button
             type="primary"
             onClick={() => setIsStudyFilterModalOpen(true)}
-            className="btn-icon-div"
+            className={`btn-icon-div ${isFilterSelected && "filter-selected"}`}
           >
             <FilterOutlined style={{ fontWeight: "500" }} /> Quick Filter
           </Button>

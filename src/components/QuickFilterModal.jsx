@@ -1,15 +1,23 @@
 import { Button, Col, DatePicker, Form, Input, Modal, Row } from "antd";
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { filterDataContext } from "../hooks/filterDataContext";
+import { FilterSelectedContext } from "../hooks/filterSelectedContext";
 
 const QuickFilterModal = ({ name, setInstitutionData, retrieveStudyData }) => {
   const { isStudyFilterModalOpen, setIsStudyFilterModalOpen } =
     useContext(filterDataContext);
   const [form] = Form.useForm();
 
+  const { setIsFilterSelected } = useContext(FilterSelectedContext);
+
+  useEffect(() => {
+    setIsFilterSelected(false);
+  }, []);
+
   const handleSubmit = (values) => {
     retrieveStudyData({ page: 1 }, values);
     setIsStudyFilterModalOpen(false);
+    setIsFilterSelected(true);
   };
 
   return (
@@ -42,6 +50,7 @@ const QuickFilterModal = ({ name, setInstitutionData, retrieveStudyData }) => {
             form.resetFields();
             setIsStudyFilterModalOpen(false);
             retrieveStudyData();
+            setIsFilterSelected(false);
           }}
         >
           Clear Filter
