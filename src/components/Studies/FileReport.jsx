@@ -108,7 +108,7 @@ const FileReport = ({
             column: 2,
           }}
           className="queue-status-list"
-          dataSource={modalData}
+          dataSource={modalData?.filter((data) => data.name !== "urgent_case")}
           renderItem={(item) => (
             <List.Item className="queue-number-list">
               <Typography

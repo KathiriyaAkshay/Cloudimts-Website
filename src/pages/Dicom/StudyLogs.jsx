@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useBreadcrumbs } from "../../hooks/useBreadcrumbs";
 import { getStudyLogs } from "../../apis/studiesApi";
 import TableWithFilter from "../../components/TableWithFilter";
+import { Tag } from "antd";
 
 const StudyLogs = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -13,7 +14,7 @@ const StudyLogs = () => {
   useEffect(() => {
     changeBreadcrumbs([{ name: "Study Logs" }]);
     // setRole(localStorage.getItem("role"))
-    retrieveStudyData();
+    // retrieveStudyData();
   }, []);
 
   const retrieveStudyData = (pagination) => {
@@ -30,6 +31,7 @@ const StudyLogs = () => {
           perform_user: data?.perform_user?.username,
         }));
         setTableData(resData);
+        setTotalPages(res.data.total_object);
       })
       .catch((err) => console.log(err));
     setIsLoading(false);
@@ -59,6 +61,40 @@ const StudyLogs = () => {
       dataIndex: "event_display",
       // sorter: (a, b) => {},
       // editable: true,
+      render: (text) => (
+        <Tag
+          color={
+            text.includes("Assigned")
+              ? "blue"
+              : text.includes("Viewed")
+              ? "green"
+              : text.includes("Update study details")
+              ? "warning"
+              : text.includes("Image transfer start")
+              ? "orange"
+              : text.includes("Image transfer complete")
+              ? "magenta"
+              : text.includes("Remove assign user")
+              ? "lime"
+              : text.includes("Report study")
+              ? "cyan"
+              : text.includes("Delete study")
+              ? "red"
+              : text.includes("Report viewed")
+              ? "geekblue"
+              : text.includes("Closed study")
+              ? "yellow"
+              : text.includes("Reporting Study")
+              ? "volcanos"
+              : text.includes("Backup study")
+              ? "gold"
+              : "purple"
+          }
+          className="event-type-tag"
+        >
+          {text}
+        </Tag>
+      ),
     },
   ];
 
@@ -82,7 +118,6 @@ const StudyLogs = () => {
       <TableWithFilter
         tableData={tableData}
         tableColumns={columns}
-        // rowSelection={rowSelection}
         setPagi={setPagi}
         totalRecords={totalPages}
         onPaginationChange={retrieveStudyData}

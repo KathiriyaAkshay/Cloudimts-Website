@@ -127,10 +127,30 @@ const ShareStudy = ({
 
   const handleSubmit = (values) => {};
 
+  const modalHeader = (
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginRight: "50px",
+      }}
+    >
+      <span>Share Study</span>
+      <Button style={{ background: "transparent", border: "1px solid #fff" }}>
+        <MdEmail
+          className="action-icon"
+          style={{ color: "#fff" }}
+          onClick={() => setIsEmailModalOpen(true)}
+        />
+      </Button>
+    </div>
+  );
+
   return (
     <>
       <Modal
-        title="Share Study"
+        title={modalHeader}
         open={isShareStudyModalOpen}
         onOk={() => {
           setStudyID(null);
@@ -142,23 +162,19 @@ const ShareStudy = ({
         }}
         width={1000}
         centered
-        footer={[
-          <Button key="back">
-            <MdEmail
-              className="action-icon"
-              onClick={() => setIsEmailModalOpen(true)}
-            />
-          </Button>,
-          <Button
-            key="back"
-            onClick={() => {
-              setStudyID(null);
-              setIsShareStudyModalOpen(false);
-            }}
-          >
-            Cancel
-          </Button>,
-        ]}
+        // footer={[
+        //   <Button
+        //     key="back"
+        //     onClick={() => {
+        //       setStudyID(null);
+        //       setIsShareStudyModalOpen(false);
+        //     }}
+        //   >
+        //     Cancel
+        //   </Button>,
+        // ]}
+        footer={null}
+        className="share-study-modal"
       >
         <Spin spinning={isLoading}>
           <div

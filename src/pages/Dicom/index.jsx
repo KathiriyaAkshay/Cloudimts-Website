@@ -69,7 +69,7 @@ const Dicom = () => {
 
   useEffect(() => {
     changeBreadcrumbs([{ name: "Study Data" }]);
-    retrieveStudyData();
+    // retrieveStudyData();
     setStudyIdArray([]);
   }, []);
 
@@ -90,6 +90,7 @@ const Dicom = () => {
           ...data,
           name: data.study.patient_name,
           institution: data.institution.name,
+          patient_id: data?.study?.patient_id,
         }));
         setStudyData(resData);
       })
@@ -130,7 +131,7 @@ const Dicom = () => {
   const columns = [
     checkPermissionStatus("View Patient id") && {
       title: "Patient's Id",
-      dataIndex: "id",
+      dataIndex: "patient_id",
       className: `${
         checkPermissionStatus("View Patient id") ? "" : "column-display-none"
       }`,
@@ -157,6 +158,14 @@ const Dicom = () => {
               ? "success"
               : text === "Assigned"
               ? "blue"
+              : text === "Viewed"
+              ? "cyan"
+              : text === "ViewReport"
+              ? "lime"
+              : text === "Reporting"
+              ? "magenta"
+              : text === "CloseStudy"
+              ? "red"
               : "warning"
           }
           style={{ textAlign: "center", fontWeight: "600" }}

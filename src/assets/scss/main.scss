@@ -1024,6 +1024,9 @@
   width: 100% !important;
   max-width: 100% !important;
 }
+.queue-status-list .ant-row div {
+  height: 30px;
+}
 .ant-modal-body {
   max-height: calc(100vh - 200px);
   overflow-y: auto;
@@ -1039,4 +1042,9 @@
 }
 .filter-selected {
   background-color: #00405b !important;
+}
+.share-study-modal {
+  .ant-modal-close {
+    top: 14px !important;
+  }
 }

@@ -33,11 +33,13 @@ const AssignStudy = ({
   const [modalData, setModalData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [options, setOptions] = useState([]);
-  const [multipleImageFile, setMultipleImageFile] = useState([])
+  const [multipleImageFile, setMultipleImageFile] = useState([]);
   const [form] = Form.useForm();
+  const [value, setValues] = useState({ url: undefined });
+  const [imageFile, setImageFile] = useState(null);
 
   const handleSubmit = async (values) => {
-    setIsLoading(true)
+    setIsLoading(true);
     const payloadObj = omit(values, ["radiologist", "url"]);
     const images = [];
     for (const data of values.url.fileList) {
@@ -45,6 +47,7 @@ const AssignStudy = ({
         const formData = {
           image: data.originFileObj,
         };
+        console.log(formData);
 
         const res = await uploadImage(formData);
         images.push(res.data.image_url);
@@ -72,7 +75,7 @@ const AssignStudy = ({
     } catch (err) {
       console.error(err);
     }
-    setIsLoading(false)
+    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -93,7 +96,7 @@ const AssignStudy = ({
             (data) => data?.assign_user_id
           )[0],
         });
-        setMultipleImageFile(res.data.data?.study_data?.images)
+        setMultipleImageFile(res.data.data?.study_data?.images);
       })
       .catch((err) => console.log(err));
     setIsLoading(false);
@@ -319,7 +322,14 @@ const AssignStudy = ({
                 </Form.Item>
               </Col>
               <Col xs={24} sm={12} md={12} lg={12}>
-                <UploadImage multipleImage={true} multipleImageFile={multipleImageFile} />
+                <UploadImage
+                  multipleImage={true}
+                  multipleImageFile={multipleImageFile}
+                  values={value}
+                  setValues={setValues}
+                  imageFile={imageFile}
+                  setImageFile={setImageFile}
+                />
               </Col>
             </Row>
           </Form>
