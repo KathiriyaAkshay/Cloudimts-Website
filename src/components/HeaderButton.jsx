@@ -1,5 +1,5 @@
 import { Button, Select } from "antd";
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserRoleContext } from "../hooks/usersRolesContext";
 import { UserEmailContext } from "../hooks/userEmailContext";
@@ -17,7 +17,7 @@ import { handleDownloadPDF, handleExport } from "../helpers/billingTemplate";
 import { BillingDataContext } from "../hooks/billingDataContext";
 import { StudyIdContext } from "../hooks/studyIdContext";
 import NotificationMessage from "./NotificationMessage";
-import { deleteStudy } from "../apis/studiesApi";
+import { deleteStudy, getReportList } from "../apis/studiesApi";
 import { FilterSelectedContext } from "../hooks/filterSelectedContext";
 
 const HeaderButton = ({ setIsModalOpen, id }) => {
@@ -41,6 +41,25 @@ const HeaderButton = ({ setIsModalOpen, id }) => {
   const { billingFilterData, setBillingFilterData } =
     useContext(BillingDataContext);
   const { studyIdArray } = useContext(StudyIdContext);
+  const [templateOptions, setTemplateOptions] = useState([]);
+
+  useEffect(() => {
+    if (window.location.pathname === `/reports/${id}`) {
+      retrieveTemplateOptions();
+    }
+  }, [window.location.pathname]);
+
+  const retrieveTemplateOptions = async () => {
+    await getReportList({ page_number: 1, page_limit: 50 })
+      .then((res) => {
+        const resData = res.data.data?.map((data) => ({
+          label: data.name,
+          value: data.id,
+        }));
+        setTemplateOptions(resData);
+      })
+      .catch((err) => console.log(err));
+  };
 
   const deleteStudyData = async () => {
     if (studyIdArray.length > 0) {
@@ -223,6 +242,7 @@ const HeaderButton = ({ setIsModalOpen, id }) => {
                 isPatientSelected: false,
                 isInstitutionSelected: false,
                 isImagesSelected: true,
+                templateId: prev?.templateId,
               }))
             }
           >
@@ -235,6 +255,7 @@ const HeaderButton = ({ setIsModalOpen, id }) => {
                 isPatientSelected: true,
                 isInstitutionSelected: false,
                 isImagesSelected: false,
+                templateId: prev?.templateId,
               }))
             }
           >
@@ -247,12 +268,24 @@ const HeaderButton = ({ setIsModalOpen, id }) => {
                 isPatientSelected: false,
                 isInstitutionSelected: true,
                 isImagesSelected: false,
+                templateId: prev?.templateId,
               }))
             }
           >
             Institution Information
           </Button>
-          <Select placeholder="choose template" />
+          <Select
+            placeholder="choose template"
+            options={templateOptions}
+            onChange={(e) =>
+              setSelectedItem((prev) => ({
+                isPatientSelected: prev?.isPatientSelected,
+                isInstitutionSelected: prev?.isInstitutionSelected,
+                isImagesSelected: prev?.isImagesSelected,
+                templateId: e,
+              }))
+            }
+          />
         </div>
       )}
       {window.location.pathname === "/billing" && (

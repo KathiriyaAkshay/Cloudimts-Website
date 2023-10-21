@@ -6,7 +6,8 @@ const ReportDataProvider = ({ children }) => {
   const [selectedItem, setSelectedItem] = useState({
     isPatientSelected: false,
     isInstitutionSelected: false,
-    isImagesSelected: false
+    isImagesSelected: false,
+    templateId: null,
   });
 
   return (

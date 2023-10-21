@@ -622,3 +622,42 @@ export const updateParticularSupport = async (params = {}) => {
   );
   return updateParticularSupport;
 };
+
+export const fetchUserSignature = async (params = {}) => {
+  const fetchUserSignature = await API.post(
+    "/studies/v1/fetch-user-signature",
+    params,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return fetchUserSignature;
+};
+
+export const saveAdvancedFileReport = async (params = {}) => {
+  const saveAdvancedFileReport = await API.post(
+    "/studies/v1/advanced-file-report",
+    params,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return saveAdvancedFileReport;
+};
+
+export const downloadAdvancedFileReport = async (params = {}) => {
+  const downloadAdvancedFileReport = await API.post(
+    "/studies/v1/download_report_data",
+    params,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return downloadAdvancedFileReport;
+};

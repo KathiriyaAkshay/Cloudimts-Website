@@ -132,9 +132,10 @@ const Roles = () => {
           retrieveRoleData();
           setRoleID(null);
         })
-        .catch((err) =>
-          NotificationMessage("warning", err.response.data.memssage)
-        );
+        .catch((err) => {
+          console.log(err);
+          NotificationMessage("warning", err.response.data.memssage);
+        });
     }
     setIsLoading(false);
   };

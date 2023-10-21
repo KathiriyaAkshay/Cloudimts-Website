@@ -51,7 +51,7 @@ const PermissionNotificationProvider = ({ children }) => {
             "Your basic information updated by management"
           );
         }
-      } else if (eventData?.payload?.status === "Disable-user") {
+      } else if (eventData?.payload?.status === "Disable user") {
         if (eventData?.payload?.data?.user_id == user_id) {
           NotificationMessage(
             "success",

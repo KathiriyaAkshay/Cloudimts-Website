@@ -62,6 +62,7 @@ export const routes = [
   { path: "/users-logs", component: <Loader component={UsersLogs} /> },
   { path: "/role-logs", component: <Loader component={RoleLogs} /> },
   { path: "/reports/:id", component: <Loader component={AddReport} /> },
+  { path: "/reports/:id/view", component: <Loader component={AddReport} /> },
   { path: "/reports/add", component: <Loader component={AddTemplate} /> },
   { path: "/reports/:id/edit", component: <Loader component={AddTemplate} /> },
   { path: "/reports", component: <Loader component={Reports} /> },

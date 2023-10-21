@@ -19,6 +19,8 @@ import {
   WhatsAppOutlined,
 } from "@ant-design/icons";
 import DeleteActionIcon from "../DeleteActionIcon";
+import ImageCarousel from "./ImageCarousel";
+import { useNavigate } from "react-router-dom";
 
 const StudyReports = ({
   isReportModalOpen,
@@ -34,6 +36,9 @@ const StudyReports = ({
   const [isLoading, setIsLoading] = useState(false);
   const [isFileReportModalOpen, setIsFileReportModalOpen] = useState(false);
   const [tableData, setTableData] = useState([]);
+  const [studyImages, setStudyImages] = useState([]);
+  const [show, setShow] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (studyID && isReportModalOpen) {
@@ -67,7 +72,13 @@ const StudyReports = ({
       render: (text, record) => (
         <Space style={{ display: "flex", justifyContent: "space-evenly" }}>
           <Tooltip title={"View"}>
-            <BsEyeFill className="action-icon" />
+            <BsEyeFill
+              className="action-icon"
+              onClick={() => {
+                record.report_type === "Advanced report" &&
+                  navigate(`/reports/${record.id}/view`);
+              }}
+            />
           </Tooltip>
           <Tooltip title={"Download"}>
             <DownloadOutlined className="action-icon" />
@@ -156,12 +167,15 @@ const StudyReports = ({
           },
         ];
         setModalData(modifiedData);
-        setTableData(res.data.report);
+        setTableData(res?.data?.report);
+        setStudyImages(
+          res?.data?.data?.assigned_study_data?.study_data?.images
+        );
       })
       .catch((err) => console.log(err));
     setIsLoading(false);
   };
-  console.log(modalData?.find((data) => data.name === "urgent_case"));
+
   return (
     <>
       <Modal
@@ -196,9 +210,11 @@ const StudyReports = ({
           </Button>,
           <Button
             key="link"
-            href="https://google.com"
             type="primary"
-            onClick={studyStatusHandler}
+            onClick={() => {
+              studyStatusHandler();
+              navigate(`/reports/${studyID}`);
+            }}
           >
             Advanced File Report
           </Button>,
@@ -214,11 +230,19 @@ const StudyReports = ({
               margin: "0 -24px",
               display: "flex",
               justifyContent: "space-between",
+              alignItems: "center",
             }}
           >
             <div>Patient Info</div>
-            {modalData.find((data) => data.name === "urgent_case")?.value
-              ?.urgent_case && <Tag color="error">Urgent</Tag>}
+            <div style={{ display: "flex", gap: "20px", alignItems: "center" }}>
+              {modalData.find((data) => data.name === "urgent_case")?.value
+                ?.urgent_case && <Tag color="error">Urgent</Tag>}
+              {studyImages.length > 0 && (
+                <Button type="primary" onClick={() => setShow(true)}>
+                  Study Images
+                </Button>
+              )}
+            </div>
           </div>
           <List
             style={{ marginTop: "8px" }}
@@ -262,6 +286,7 @@ const StudyReports = ({
         studyID={studyID}
         modalData={modalData}
       />
+      <ImageCarousel studyImages={studyImages} show={show} setShow={setShow} />
     </>
   );
 };

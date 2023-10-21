@@ -91,8 +91,10 @@ const Dicom = () => {
           name: data.study.patient_name,
           institution: data.institution.name,
           patient_id: data?.study?.patient_id,
+          study_id: data?.study?.study_original_id,
         }));
         setStudyData(resData);
+        setTotalPages(res.data.total_object);
       })
       .catch((err) => console.log(err));
     setIsLoading(false);
@@ -141,6 +143,13 @@ const Dicom = () => {
       dataIndex: "name",
       className: `${
         checkPermissionStatus("View Patient name") ? "" : "column-display-none"
+      }`,
+    },
+    checkPermissionStatus("Study id") && {
+      title: "Study Id",
+      dataIndex: "study_id",
+      className: `${
+        checkPermissionStatus("Study id") ? "" : "column-display-none"
       }`,
     },
     {
@@ -459,7 +468,7 @@ const Dicom = () => {
         expandable={expandableConfig}
         rowSelection={rowSelection}
         onRow={onRow}
-        onPaginationChange={retrieveStudyData}
+        // onPaginationChange={retrieveStudyData}
         loading={isLoading}
         pagination={{
           current: Pagination.page,

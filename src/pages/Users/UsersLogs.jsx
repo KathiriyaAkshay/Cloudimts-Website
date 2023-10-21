@@ -14,7 +14,11 @@ const UsersLogs = () => {
   const [filterValues, setFilterValues] = useState({});
 
   useEffect(() => {
-    changeBreadcrumbs([{ name: "Users Logs" }]);
+    const crumbs = [{ name: "Users", to: "/users" }];
+    crumbs.push({
+      name: "Users Logs",
+    });
+    changeBreadcrumbs(crumbs);
     retrieveStudyData();
   }, []);
 

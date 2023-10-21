@@ -24,7 +24,7 @@ const PatientDetails = ({
         const resData = res.data.data;
         const modifiedData = [
           {
-            name: "Patient's id",
+            name: "Patient's Id",
             value: resData?.Patient_id,
           },
           {
@@ -40,8 +40,16 @@ const PatientDetails = ({
             value: resData?.Performing_physician_name,
           },
           {
+            name: "Previous Patient's Id",
+            value: resData?.Previous_patient_id,
+          },
+          {
             name: "Accession Number",
             value: resData?.Accession_number,
+          },
+          {
+            name: "Previous Patient's Name",
+            value: resData?.Previous_patient_name,
           },
           {
             name: "Modality",

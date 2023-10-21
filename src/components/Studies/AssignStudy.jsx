@@ -23,6 +23,7 @@ import {
 import UploadImage from "../UploadImage";
 import { omit } from "lodash";
 import NotificationMessage from "../NotificationMessage";
+import { descriptionOptions } from "../../helpers/utils";
 
 const AssignStudy = ({
   isAssignModalOpen,
@@ -42,17 +43,19 @@ const AssignStudy = ({
     setIsLoading(true);
     const payloadObj = omit(values, ["radiologist", "url"]);
     const images = [];
-    for (const data of values.url.fileList) {
-      try {
-        const formData = {
-          image: data.originFileObj,
-        };
-        console.log(formData);
+    if (values?.url?.fileList) {
+      for (const data of values?.url?.fileList) {
+        try {
+          const formData = {
+            image: data?.originFileObj,
+          };
+          console.log(formData);
 
-        const res = await uploadImage(formData);
-        images.push(res.data.image_url);
-      } catch (err) {
-        console.error(err);
+          const res = await uploadImage(formData);
+          images.push(res.data.image_url);
+        } catch (err) {
+          console.error(err);
+        }
       }
     }
     try {
@@ -61,7 +64,7 @@ const AssignStudy = ({
         id: studyID,
         assign_user: values.radiologist,
         study_data: {
-          images: images,
+          images: !values?.url ? multipleImageFile : images,
         },
       };
       await postAssignStudy(modifiedPayload)
@@ -265,7 +268,7 @@ const AssignStudy = ({
                   className="category-select"
                   rules={[
                     {
-                      required: false,
+                      required: true,
                       message: "Please select radiologist",
                     },
                   ]}
@@ -288,14 +291,26 @@ const AssignStudy = ({
                 <Form.Item
                   name="study_description"
                   label="Modality Study Description"
+                  className="category-select"
                   rules={[
                     {
-                      required: false,
-                      message: "Please enter Modality Study Description",
+                      required: true,
+                      message: "Please select Modality Study Description",
                     },
                   ]}
                 >
-                  <Input placeholder="Enter Modality Study Description" />
+                  <Select
+                    placeholder="Select Radiologist"
+                    options={descriptionOptions}
+                    // mode="multiple"
+                    showSearch
+                    filterSort={(optionA, optionB) =>
+                      (optionA?.label ?? "")
+                        .toLowerCase()
+                        .localeCompare((optionB?.label ?? "").toLowerCase())
+                    }
+                    // onChange={appliedOnChangeHandler}
+                  />
                 </Form.Item>
               </Col>
               <Col xs={24} sm={12} md={12} lg={12}>
@@ -314,7 +329,16 @@ const AssignStudy = ({
                 </Form.Item>
               </Col>
               <Col xs={24} sm={12} md={12} lg={12}>
-                <Form.Item name="urgent_case" label="Report Required">
+                <Form.Item
+                  name="urgent_case"
+                  label="Report Required"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please select Report Required",
+                    },
+                  ]}
+                >
                   <Radio.Group>
                     <Radio value={false}>Regular</Radio>
                     <Radio value={true}>Urgent</Radio>

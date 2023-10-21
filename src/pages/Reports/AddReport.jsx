@@ -1,12 +1,17 @@
 import React from "react";
 import Editor from "../../components/Editor";
 import { useParams } from "react-router-dom";
+import ViewReport from "../../components/ViewReport";
 
 const index = () => {
-  const {id} = useParams();
+  const { id } = useParams();
   return (
     <div>
-      <Editor id={id}/>
+      {window.location.pathname.includes("view") ? (
+        <ViewReport id={id} />
+      ) : (
+        <Editor id={id} />
+      )}
     </div>
   );
 };

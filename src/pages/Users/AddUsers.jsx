@@ -221,7 +221,9 @@ const AddUsers = () => {
           { headers: { Authorization: `Bearer ${token}` } }
         )
           .then((res) => console.log(res))
-          .catch((err) => console.log(err));
+          .catch((err) =>
+            NotificationMessage("warning", err.response.data.message)
+          );
         setIsLoading(false);
       }
       handleNextStep();
@@ -240,7 +242,9 @@ const AddUsers = () => {
           { headers: { Authorization: `Bearer ${token}` } }
         )
           .then((res) => console.log(res))
-          .catch((err) => console.log(err));
+          .catch((err) =>
+            NotificationMessage("warning", err.response.data.message)
+          );
         setIsLoading(false);
       }
       handleNextStep();
@@ -259,7 +263,7 @@ const AddUsers = () => {
             signature_image: res.data.image_url,
           }));
         } catch (err) {
-          console.log(err);
+          NotificationMessage("warning", err.response.data.message);
         }
       }
       setPayload((prev) => ({ ...prev, signature_image }));
@@ -276,7 +280,9 @@ const AddUsers = () => {
             setImageURL(signature_image);
             setPayload((prev) => ({ ...prev, signature_image }));
           })
-          .catch((err) => console.log(err));
+          .catch((err) =>
+            NotificationMessage("warning", err.response.data.message)
+          );
       }
       setIsLoading(false);
       handleNextStep();
@@ -300,7 +306,9 @@ const AddUsers = () => {
             form.resetFields();
             navigate("/users");
           })
-          .catch((err) => console.log(err));
+          .catch((err) =>
+            NotificationMessage("warning", err.response.data.message)
+          );
       } else {
         await API.post(
           "/user/v1/create-user",
@@ -831,7 +839,7 @@ const AddUsers = () => {
                     Previous
                   </Button>
                   <Button type="primary" htmlType="submit">
-                    Submit
+                    {id ? "Update" : "Submit"}
                   </Button>
                 </Col>
               </Row>
@@ -847,7 +855,9 @@ const AddUsers = () => {
         onCancel={() => setIsModalOpen(false)}
         okText="Update & Next"
       >
-        <p>Are you sure you want to update this details?</p>
+        <Spin spinning={isLoading}>
+          <p>Are you sure you want to update this details?</p>
+        </Spin>
       </Modal>
     </div>
   );

@@ -1,5 +1,5 @@
 import { DeleteOutlined, InboxOutlined } from "@ant-design/icons";
-import { Form, Image, Input, Modal, Row } from "antd";
+import { Col, Form, Image, Input, Modal, Row } from "antd";
 import Dragger from "antd/es/upload/Dragger";
 import React, { useEffect, useState } from "react";
 import { dummyRequest, getBase64 } from "../helpers/utils";
@@ -60,7 +60,7 @@ const UploadImage = ({
           multiple={multipleImage ? true : false}
           accept=".png, .jpeg, .jpg"
           listType="picture-card"
-          maxCount={multipleImage ? 20 : 1}
+          maxCount={multipleImage ? 10 : 1}
           customRequest={dummyRequest}
           onPreview={handleImagePreview}
           onDrop={(_) => {}}
@@ -117,23 +117,20 @@ const UploadImage = ({
           </>
         </Row>
       )}
-      {multipleImageFile?.length > 0 &&
-        multipleImageFile.map((data) => (
-          <Row
-            className="ant-upload-list-item"
-            style={{ gap: "20px" }}
-            align="middle"
-          >
-            <>
+      {multipleImageFile?.length > 0 && (
+        <Row className="ant-upload-list-item">
+          {multipleImageFile.map((data) => (
+            <Col xs={6}>
               <Image
                 style={{ width: "100px", height: "100px" }}
                 src={data}
                 onLoad={() => setImageLoaded(true)}
                 alt="file"
               />
-            </>
-          </Row>
-        ))}
+            </Col>
+          ))}
+        </Row>
+      )}
       <Modal
         open={previewOpen}
         onCancel={handleImagePreviewCancel}

@@ -1,13 +1,20 @@
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import React, { useContext, useEffect, useState } from "react";
 import "../../ckeditor5/build/ckeditor";
-import { Button, Card, Col, Divider, Row, Typography } from "antd";
-import { getMoreDetails } from "../apis/studiesApi";
+import { Button, Card, Col, Divider, Row, Spin, Typography } from "antd";
+import {
+  fetchTemplate,
+  fetchUserSignature,
+  getMoreDetails,
+  saveAdvancedFileReport,
+} from "../apis/studiesApi";
 import { ReportDataContext } from "../hooks/reportDataContext";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import image from "../assets/images/backgroundImg.jpg";
 import Slider from "react-slick";
+import NotificationMessage from "./NotificationMessage";
+import { useNavigate } from "react-router-dom";
 
 const Editor = ({ id }) => {
   const [editorData, setEditorData] = useState("");
@@ -15,35 +22,64 @@ const Editor = ({ id }) => {
   const [isLoading, setIsLoading] = useState(false);
   const { selectedItem, setSelectedItem } = useContext(ReportDataContext);
   const [studyImageID, setStudyImageID] = useState(0);
+  const [signatureImage, setSignatureImage] = useState(null);
+  const user_id = localStorage.getItem("userID");
+  const navigate = useNavigate();
 
   useEffect(() => {
     setSelectedItem((prev) => ({
       isPatientSelected: true,
       isInstitutionSelected: false,
       isImagesSelected: false,
+      templateId: null,
     }));
   }, []);
 
   useEffect(() => {
     retrievePatientDetails();
+    retrieveUserSignature();
   }, []);
 
-  const retrievePatientDetails = () => {
+  useEffect(() => {
+    if (selectedItem?.templateId) {
+      retrieveTemplateData();
+    }
+  }, [selectedItem?.templateId]);
+
+  const retrieveTemplateData = async () => {
+    await fetchTemplate({ id: selectedItem?.templateId })
+      .then((res) => {
+        setEditorData(res.data.data.report_data);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const retrieveUserSignature = async () => {
     setIsLoading(true);
-    getMoreDetails({ id })
+    await fetchUserSignature({ id: user_id })
+      .then((res) => setSignatureImage(res.data.data.signature_image))
+      .catch((err) =>
+        NotificationMessage("warning", err.response.data.message)
+      );
+    setIsLoading(false);
+  };
+
+  const retrievePatientDetails = async () => {
+    setIsLoading(true);
+    await getMoreDetails({ id })
       .then((res) => {
         const resData = {
           ...res.data.data,
-          patientDetails:
-            res.data.data?.information?.study__study_metadata
-              ?.PatientMainDicomTags,
-          modality:
-            res.data.data?.information?.series_metadata?.MainDicomTags
-              ?.modality,
+          patient_id: res.data.data?.Patient_id,
+          patient_name: res.data?.data?.Patient_name,
+          gender: res.data?.data?.Gender,
+          dob: res.data?.data?.DOB,
+          accession_number: res.data?.data?.Accession_number,
+          modality: res.data.data?.Modality,
           mainTags:
             res.data.data?.information?.study__study_metadata?.MainDicomTags,
           images: res.data.data?.information?.study_data?.images,
-          institution_name: res.data.data?.information?.institution__name,
+          institution_name: res.data.data?.institution?.Institution_name,
         };
         setCardDetails(resData);
         setIsLoading(false);
@@ -54,6 +90,8 @@ const Editor = ({ id }) => {
       });
   };
 
+  const retrieveDicomImages = () => {};
+
   const convertPatientDataToTable = () => {
     const data = selectedItem.isPatientSelected
       ? `<div>
@@ -62,19 +100,19 @@ const Editor = ({ id }) => {
           <tbody>
             <tr>
               <td>Patient ID:</td>
-              <td>${cardDetails?.patientDetails?.PatientID}</td>
+              <td>${cardDetails?.patient_id}</td>
             </tr>
             <tr>
               <td>Patient Name:</td>
-              <td>${cardDetails?.patientDetails?.PatientName}</td>
+              <td>${cardDetails?.patient_name}</td>
             </tr>
             <tr>
               <td>Patient Sex:</td>
-              <td>${cardDetails?.patientDetails?.PatientSex}</td>
+              <td>${cardDetails?.gender}</td>
             </tr>
             <tr>
               <td>Patient Birth Date:</td>
-              <td>${cardDetails?.patientDetails?.PatientBirthDate}</td>
+              <td>${cardDetails?.dob}</td>
             </tr>
           </tbody>
         </table>
@@ -93,7 +131,11 @@ const Editor = ({ id }) => {
     </div>`
       : `<figure class="image"><img src=${imageSlider[studyImageID]?.url} alt="study image"></figure>
     `;
-    setEditorData((prev) => `${prev}${data}`);
+    setEditorData((prev) =>
+      selectedItem.isPatientSelected || selectedItem.isInstitutionSelected
+        ? `${data}${prev}`
+        : `${prev}${data}`
+    );
   };
 
   const imageSlider = [
@@ -108,6 +150,23 @@ const Editor = ({ id }) => {
     },
   ];
 
+  const handleReportSave = async () => {
+    setIsLoading(true);
+    await saveAdvancedFileReport({
+      id,
+      report: `${editorData} ${`<figure class="image"><img src=${signatureImage} alt="signature image" style="width:100px;height:80px"></figure>`}`,
+      report_study_description: "Advance",
+    })
+      .then((res) => {
+        NotificationMessage("success", "Advanced Report Saved Successfully");
+        navigate(-1);
+      })
+      .catch((err) =>
+        NotificationMessage("warning", err.response.data.message)
+      );
+    setIsLoading(false);
+  };
+
   return (
     <>
       <div>
@@ -115,128 +174,137 @@ const Editor = ({ id }) => {
           style={{ minHeight: "calc(100vh - 200px)" }}
           className="report-card"
         >
-          <Row gutter={30}>
-            <Col xs={24} sm={12} md={12}>
-              <div className="report-details-div">
-                {selectedItem?.isPatientSelected && (
-                  <>
-                    <Typography className="card-heading">
-                      Patient Information
-                    </Typography>
-                    <div>
+          <Spin spinning={isLoading}>
+            <Row gutter={30}>
+              <Col xs={24} sm={12} md={12}>
+                <div className="report-details-div">
+                  {selectedItem?.isPatientSelected && (
+                    <>
+                      <Typography className="card-heading">
+                        Patient Information
+                      </Typography>
+                      <div>
+                        <Divider />
+                        <div className="report-main-div">
+                          <Typography className="report-text-primary">
+                            Patient ID:
+                          </Typography>
+                          <Typography>{cardDetails?.patient_id}</Typography>
+                        </div>
+                        <div className="report-main-div">
+                          <Typography className="report-text-primary">
+                            Patient Name:
+                          </Typography>
+                          <Typography>{cardDetails?.patient_name}</Typography>
+                        </div>
+                        <div className="report-main-div">
+                          <Typography className="report-text-primary">
+                            Gender:
+                          </Typography>
+                          <Typography>{cardDetails?.gender}</Typography>
+                        </div>
+                        <div className="report-main-div">
+                          <Typography className="report-text-primary">
+                            Date of Birth:
+                          </Typography>
+                          <Typography>{cardDetails?.dob}</Typography>
+                        </div>
+                        <div className="report-main-div">
+                          <Typography className="report-text-primary">
+                            Accession Number:
+                          </Typography>
+                          <Typography>
+                            {cardDetails?.accession_number}
+                          </Typography>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                  {selectedItem?.isInstitutionSelected && (
+                    <>
+                      <Typography className="card-heading">
+                        Institution Information
+                      </Typography>
+                      <div>
+                        <Divider />
+                        <div className="report-main-div">
+                          <Typography className="report-text-primary">
+                            Institution Name:
+                          </Typography>
+                          <Typography>
+                            {cardDetails?.institution_name}
+                          </Typography>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                  {selectedItem?.isImagesSelected && (
+                    <>
+                      <Typography className="card-heading">
+                        Study Images
+                      </Typography>
                       <Divider />
-                      <div className="report-main-div">
-                        <Typography className="report-text-primary">
-                          Patient ID:
-                        </Typography>
-                        <Typography>
-                          {cardDetails?.patientDetails?.PatientID}
-                        </Typography>
-                      </div>
-                      <div className="report-main-div">
-                        <Typography className="report-text-primary">
-                          Patient Name:
-                        </Typography>
-                        <Typography>
-                          {cardDetails?.patientDetails?.PatientName}
-                        </Typography>
-                      </div>
-                      <div className="report-main-div">
-                        <Typography className="report-text-primary">
-                          Gender:
-                        </Typography>
-                        <Typography>
-                          {cardDetails?.patientDetails?.PatientSex}
-                        </Typography>
-                      </div>
-                      <div className="report-main-div">
-                        <Typography className="report-text-primary">
-                          Date of Birth:
-                        </Typography>
-                        <Typography>
-                          {cardDetails?.patientDetails?.PatientBirthDate}
-                        </Typography>
-                      </div>
-                      <div className="report-main-div">
-                        <Typography className="report-text-primary">
-                          Accession Number:
-                        </Typography>
-                        <Typography>
-                          {cardDetails?.mainTags?.AccessionNumber}
-                        </Typography>
-                      </div>
-                    </div>
-                  </>
-                )}
-                {selectedItem?.isInstitutionSelected && (
-                  <>
-                    <Typography className="card-heading">
-                      Institution Information
-                    </Typography>
-                    <div>
-                      <Divider />
-                      <div className="report-main-div">
-                        <Typography className="report-text-primary">
-                          Institution Name:
-                        </Typography>
-                        <Typography>{cardDetails?.institution_name}</Typography>
-                      </div>
-                    </div>
-                  </>
-                )}
-                {selectedItem?.isImagesSelected && (
-                  <>
-                    <Typography className="card-heading">
-                      Study Images
-                    </Typography>
-                    <Divider />
 
-                    <div className="menu-image-slider">
-                      <Slider
-                        dots={false}
-                        className="slider"
-                        slidesToShow={1}
-                        slidesToScroll={1}
-                        infinite={false}
-                        afterChange={(prev) => setStudyImageID(prev)}
-                      >
-                        {imageSlider.map((image) => (
-                          <img
-                            src={image.url}
-                            alt="image"
-                            className="slider-image"
-                          />
-                        ))}
-                      </Slider>
-                    </div>
-                  </>
-                )}
-                <div className="btn-div">
-                  <Button type="primary" onClick={convertPatientDataToTable}>
-                    Insert
-                  </Button>
+                      <div className="menu-image-slider">
+                        <Slider
+                          dots={false}
+                          className="slider"
+                          slidesToShow={1}
+                          slidesToScroll={1}
+                          infinite={false}
+                          afterChange={(prev) => setStudyImageID(prev)}
+                        >
+                          {imageSlider.map((image) => (
+                            <img
+                              src={image.url}
+                              alt="image"
+                              className="slider-image"
+                            />
+                          ))}
+                        </Slider>
+                      </div>
+                    </>
+                  )}
+                  <div className="btn-div">
+                    <Button type="primary" onClick={convertPatientDataToTable}>
+                      Insert
+                    </Button>
+                  </div>
                 </div>
-              </div>
-            </Col>
-            <Col xs={24} sm={12} md={12}>
-              <CKEditor
-                editor={ClassicEditor}
-                data={editorData}
-                // onReady={(editor) => {
-                //   editor.plugins.get("FileRepository").createUploadAdapter = (
-                //     loader
-                //   ) => {
-                //     return new UploadAdapter(loader);
-                //   };
-                // }}
-                onChange={(event, editor) => {
-                  const data = editor.getData();
-                  setEditorData(data);
-                }}
-              />
-            </Col>
-          </Row>
+              </Col>
+              <Col xs={24} sm={12} md={12}>
+                <CKEditor
+                  editor={ClassicEditor}
+                  data={editorData}
+                  // onReady={(editor) => {
+                  //   editor.plugins.get("FileRepository").createUploadAdapter = (
+                  //     loader
+                  //   ) => {
+                  //     return new UploadAdapter(loader);
+                  //   };
+                  // }}
+                  onChange={(event, editor) => {
+                    const data = editor.getData();
+                    setEditorData(data);
+                  }}
+                />
+              </Col>
+            </Row>
+          </Spin>
         </Card>
+        <div
+          style={{
+            display: "flex",
+            marginTop: "10px",
+            justifyContent: "flex-end",
+            gap: "10px",
+          }}
+        >
+          <Button onClick={() => navigate(-1)}>Cancel</Button>
+          <Button type="primary" onClick={() => handleReportSave()}>
+            Save
+          </Button>
+        </div>
       </div>
       {/* <div>
         <h3>Editor Output:</h3>
