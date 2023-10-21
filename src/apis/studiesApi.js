@@ -661,3 +661,12 @@ export const downloadAdvancedFileReport = async (params = {}) => {
   );
   return downloadAdvancedFileReport;
 };
+
+export const sendEmail = async (params = {}) => {
+  const sendEmail = await API.post("/email/v1/email-share-option", params, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return sendEmail;
+};

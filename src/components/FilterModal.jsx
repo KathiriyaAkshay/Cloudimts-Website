@@ -1,4 +1,4 @@
-import { Button, Col, Form, Input, Modal, Row } from "antd";
+import { Button, Col, DatePicker, Form, Input, Modal, Row, Select } from "antd";
 import React, { useContext, useEffect } from "react";
 import { filterDataContext } from "../hooks/filterDataContext";
 import { UserPermissionContext } from "../hooks/userPermissionContext";
@@ -17,7 +17,13 @@ const FilterModal = ({ name, setInstitutionData, retrieveInstitutionData }) => {
   }, []);
 
   const handleSubmit = (values) => {
-    retrieveInstitutionData({ page: 1 }, values);
+    const modifiedValues = {
+      ...values,
+      created_at__startswith:
+        values?.created_at__startswith &&
+        values?.created_at__startswith?.format("YYYY-MM-DD"),
+    };
+    retrieveInstitutionData({ page: 1 }, modifiedValues);
     setIsFilterModalOpen(false);
     setIsFilterSelected(true);
   };
@@ -166,21 +172,45 @@ const FilterModal = ({ name, setInstitutionData, retrieveInstitutionData }) => {
               </Form.Item>
             </Col>
           )}
-          <Col xs={24} lg={12}>
-            <Form.Item
-              name="country__icontains"
-              label="Country"
-              rules={[
-                {
-                  required: false,
-                  whitespace: true,
-                  message: "Please enter Country",
-                },
-              ]}
-            >
-              <Input placeholder="Enter Country" />
-            </Form.Item>
-          </Col>
+          {checkPermissionStatus("View Institution created at") && (
+            <Col xs={24} lg={12}>
+              <Form.Item
+                name="created_at__startswith"
+                label="Created At"
+                rules={[
+                  {
+                    required: false,
+                    message: "Please enter Created At",
+                  },
+                ]}
+              >
+                <DatePicker format={"YYYY-MM-DD"} />
+              </Form.Item>
+            </Col>
+          )}
+          {checkPermissionStatus("View Disable/Enable Institution option") && (
+            <Col xs={24} lg={12}>
+              <Form.Item
+                name="disable"
+                label="Institution Status"
+                className="category-select"
+                rules={[
+                  {
+                    required: false,
+                    message: "Please enter Institution Status",
+                  },
+                ]}
+              >
+                <Select
+                  placeholder="Select Status"
+                  options={[
+                    { label: "Disabled", value: true },
+                    { label: "Enabled", value: false },
+                  ]}
+                />
+              </Form.Item>
+            </Col>
+          )}
         </Row>
       </Form>
     </Modal>

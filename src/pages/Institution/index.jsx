@@ -257,7 +257,7 @@ const Institution = () => {
           />
           <Tooltip title={"View Logs"}>
             <EyeFilled
-              className="action-icon"
+              className="action-icon action-icon-primary"
               onClick={() => retrieveLogsData(record.id)}
             />
           </Tooltip>

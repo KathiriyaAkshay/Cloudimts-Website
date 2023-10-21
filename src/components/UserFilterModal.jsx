@@ -1,4 +1,4 @@
-import { Button, Col, Form, Input, Modal, Row } from "antd";
+import { Button, Col, DatePicker, Form, Input, Modal, Row, Select } from "antd";
 import React, { useContext, useEffect } from "react";
 import { filterDataContext } from "../hooks/filterDataContext";
 import { FilterSelectedContext } from "../hooks/filterSelectedContext";
@@ -15,7 +15,13 @@ const UserFilterModal = ({ name, setInstitutionData, retrieveUsersData }) => {
   }, []);
 
   const handleSubmit = (values) => {
-    retrieveUsersData({ page: 1 }, values);
+    const modifiedValues = {
+      ...values,
+      created_at__startswith:
+        values?.created_at__startswith &&
+        values?.created_at__startswith?.format("YYYY-MM-DD"),
+    };
+    retrieveUsersData({ page: 1 }, modifiedValues);
     setIsUserFilterModalOpen(false);
     setIsFilterSelected(true);
   };
@@ -145,6 +151,41 @@ const UserFilterModal = ({ name, setInstitutionData, retrieveUsersData }) => {
               ]}
             >
               <Input placeholder="Enter Institute Name" />
+            </Form.Item>
+          </Col>
+          <Col xs={24} lg={12}>
+            <Form.Item
+              name="created_at__startswith"
+              label="Created At"
+              rules={[
+                {
+                  required: false,
+                  message: "Please enter Created At",
+                },
+              ]}
+            >
+              <DatePicker format={"YYYY-MM-DD"} />
+            </Form.Item>
+          </Col>
+          <Col xs={24} lg={12}>
+            <Form.Item
+              name="user__is_active"
+              label="User Status"
+              className="category-select"
+              rules={[
+                {
+                  required: false,
+                  message: "Please enter User Status",
+                },
+              ]}
+            >
+              <Select
+                placeholder="Select Status"
+                options={[
+                  { label: "Disabled", value: false },
+                  { label: "Enabled", value: true },
+                ]}
+              />
             </Form.Item>
           </Col>
         </Row>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { fetchEmailList, getStudyData } from "../../apis/studiesApi";
+import { fetchEmailList, getStudyData, sendEmail } from "../../apis/studiesApi";
 import {
   Button,
   Col,
@@ -15,6 +15,7 @@ import {
   Typography,
 } from "antd";
 import { MdEmail } from "react-icons/md";
+import NotificationMessage from "../NotificationMessage";
 
 const ShareStudy = ({
   isShareStudyModalOpen,
@@ -27,6 +28,7 @@ const ShareStudy = ({
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
   const [emailOptions, setEmailOptions] = useState([]);
   const [form] = Form.useForm();
+  const [studyData, setStudyData] = useState({});
 
   useEffect(() => {
     if (studyID && isShareStudyModalOpen) {
@@ -45,7 +47,7 @@ const ShareStudy = ({
       .then((res) => {
         const resData = res.data?.data?.map((data) => ({
           label: data.email,
-          value: data.id,
+          value: data.email,
         }));
         setEmailOptions(resData);
       })
@@ -120,12 +122,31 @@ const ShareStudy = ({
           },
         ];
         setModalData(modifiedData);
+        setStudyData(resData);
       })
       .catch((err) => console.log(err));
     setIsLoading(false);
   };
 
-  const handleSubmit = (values) => {};
+  const handleSubmit = async (values) => {
+    await sendEmail({
+      patient_name: studyData?.Patient_name,
+      institution_name: studyData?.institution?.Institution_name,
+      patient_id: studyData?.Patient_id,
+      study_date: studyData?.date,
+      modality: studyData?.Modality,
+      sender_email: values?.email,
+      attach_dicom: values?.attach_dicom,
+      series_id: studyData?.Series_UID,
+    })
+      .then((res) => {
+        NotificationMessage("success", "Email Send Successfully");
+        setIsEmailModalOpen(false);
+      })
+      .catch((err) =>
+        NotificationMessage("warning", err.response.data.message)
+      );
+  };
 
   const modalHeader = (
     <div
@@ -275,7 +296,7 @@ const ShareStudy = ({
             </Col>
             <Col xs={24}>
               <Form.Item
-                name="attach_dicom_images"
+                name="attach_dicom"
                 label="Attach Dicom Images"
                 valuePropName="checked"
                 initialValue={false}

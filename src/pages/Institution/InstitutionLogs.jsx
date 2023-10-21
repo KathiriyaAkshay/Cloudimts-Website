@@ -17,7 +17,11 @@ const InstitutionLogs = () => {
   const { changeBreadcrumbs } = useBreadcrumbs();
 
   useEffect(() => {
-    changeBreadcrumbs([{ name: "Institution Logs" }]);
+    const crumbs = [{ name: "Institution", to: "/institutions" }];
+    crumbs.push({
+      name: "Institution Logs",
+    });
+    changeBreadcrumbs(crumbs);
     // retrieveInstitutionData();
   }, []);
 

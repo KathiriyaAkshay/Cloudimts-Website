@@ -45,7 +45,7 @@ const AddInstitution = () => {
   useEffect(() => {
     const crumbs = [{ name: "Institution", to: "/institutions" }];
     crumbs.push({
-      name: "Add",
+      name: id ? "Edit" : "Add",
     });
     changeBreadcrumbs(crumbs);
     if (id) {
