@@ -40,10 +40,10 @@ const StudyNotificationProvider = ({ children }) => {
           else return data;
         });
         setStudyData(updatedData);
-        NotificationMessage(
-          "success",
-          `Status has been updated for Study #${eventData.payload.data.id}`
-        );
+        // NotificationMessage(
+        //   "success",
+        //   `Status has been updated for Study #${eventData.payload.data.id}`
+        // );
       } else if (eventData.payload.status === "Assigned") {
         const permissionId = JSON.parse(
           localStorage.getItem("all_permission_id")

@@ -16,7 +16,7 @@ const StudyFilterModal = ({
   setIsFilterModalOpen,
   filterID,
   setFilterID,
-  retrieveFilterOptions
+  retrieveFilterOptions,
 }) => {
   const [institutionOptions, setInstitutionOptions] = useState([]);
   const [radiologistOptions, setRadiologistOptions] = useState([]);
@@ -121,8 +121,18 @@ const StudyFilterModal = ({
   const submitHandler = (values) => {
     const modifiedObj = {
       ...values,
-      from_date: values?.from_date?.format("YYYY-MM-DD"),
-      to_date: values?.to_date?.format("YYYY-MM-DD"),
+      from_date: values?.from_date
+        ? values?.from_date?.format("YYYY-MM-DD")
+        : "",
+      to_date: values?.to_date ? values?.to_date?.format("YYYY-MM-DD") : "",
+      study_status: values?.study_status ? values?.study_status : [],
+      patient_id: values?.patient_id ? values?.patient_id : "",
+      patient_name: values?.patient_name ? values?.patient_name : "",
+      modality: values?.modality ? values?.modality : [],
+      assigned_user: values?.assigned_user ? values?.assigned_user : [],
+      institution_name: values?.institution_name
+        ? values?.institution_name
+        : [],
     };
     if (filterID) {
       updateFilterData({ ...modifiedObj, id: filterID }).then((res) => {
@@ -140,7 +150,9 @@ const StudyFilterModal = ({
           form.resetFields();
           retrieveFilterOptions();
         })
-        .catch((err) => console.log(err));
+        .catch((err) =>
+          NotificationMessage("warning", err.response.data.message)
+        );
     }
   };
 
@@ -176,7 +188,7 @@ const StudyFilterModal = ({
                 label="Filter Name"
                 rules={[
                   {
-                    required: false,
+                    required: true,
                     whitespace: true,
                     message: "Please enter Filter Name",
                   },
@@ -318,7 +330,7 @@ const StudyFilterModal = ({
                 <Input placeholder="Enter Patient ID" />
               </Form.Item>
             </Col>
-            <Col xs={24} lg={12}>
+            {/* <Col xs={24} lg={12}>
               <Form.Item
                 name="accession_number"
                 label="Accession Number"
@@ -332,7 +344,7 @@ const StudyFilterModal = ({
               >
                 <Input placeholder="Enter Accession Number" />
               </Form.Item>
-            </Col>
+            </Col> */}
             <Col xs={24} lg={12}>
               <Form.Item
                 name="study_description"
@@ -348,7 +360,7 @@ const StudyFilterModal = ({
                 <Input placeholder="Enter Study Description" />
               </Form.Item>
             </Col>
-            <Col xs={24} lg={12}>
+            {/* <Col xs={24} lg={12}>
               <Form.Item
                 name="referring_physician"
                 label="Referring Physician"
@@ -362,8 +374,8 @@ const StudyFilterModal = ({
               >
                 <Input placeholder="Enter Referring Physician" />
               </Form.Item>
-            </Col>
-            <Col xs={24} lg={12}>
+            </Col> */}
+            {/* <Col xs={24} lg={12}>
               <Form.Item
                 name="performing_physician"
                 label="Performing Physician"
@@ -377,7 +389,7 @@ const StudyFilterModal = ({
               >
                 <Input placeholder="Enter Performing Physician" />
               </Form.Item>
-            </Col>
+            </Col> */}
             <Col xs={24} lg={12}>
               <Form.Item
                 name="study_status"

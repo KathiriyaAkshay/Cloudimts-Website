@@ -17,7 +17,7 @@ const StudyAudits = ({ isModalOpen, setIsModalOpen, studyID, setStudyID }) => {
 
   const retrieveStudyData = () => {
     setIsLoading(true);
-    getStudyData({ id: studyID})
+    getStudyData({ id: studyID })
       .then((res) => {
         const resData = res.data.data;
         const modifiedData = [
@@ -81,6 +81,10 @@ const StudyAudits = ({ isModalOpen, setIsModalOpen, studyID, setStudyID }) => {
             name: "Series UID",
             value: resData?.Series_UID,
           },
+          {
+            name: "urgent_case",
+            value: resData?.assigned_study_data,
+          },
         ];
         setModalData(modifiedData);
         getStudyLogsData({ id: studyID, sort_option: true })
@@ -103,6 +107,40 @@ const StudyAudits = ({ isModalOpen, setIsModalOpen, studyID, setStudyID }) => {
       dataIndex: "event_display",
       sorter: (a, b) => a.event_display.localeCompare(b.event_display),
       // editable: true,
+      render: (text) => (
+        <Tag
+          color={
+            text.includes("Assigned")
+              ? "blue"
+              : text.includes("Viewed")
+              ? "green"
+              : text.includes("Update study details")
+              ? "warning"
+              : text.includes("Image transfer start")
+              ? "orange"
+              : text.includes("Image transfer complete")
+              ? "magenta"
+              : text.includes("Remove assign user")
+              ? "lime"
+              : text.includes("Report study")
+              ? "cyan"
+              : text.includes("Delete study")
+              ? "red"
+              : text.includes("Report viewed")
+              ? "geekblue"
+              : text.includes("Closed study")
+              ? "yellow"
+              : text.includes("Reporting Study")
+              ? "volcanos"
+              : text.includes("Backup study")
+              ? "gold"
+              : "purple"
+          }
+          className="event-type-tag"
+        >
+          {text}
+        </Tag>
+      ),
     },
     {
       title: "Performed Type",
@@ -334,9 +372,16 @@ const StudyAudits = ({ isModalOpen, setIsModalOpen, studyID, setStudyID }) => {
             padding: "10px 24px",
             borderRadius: "0px",
             margin: "0 -24px",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
           }}
         >
-          Patient Info
+          <div>Patient Info</div>
+          <div style={{ display: "flex", gap: "20px", alignItems: "center" }}>
+            {modalData.find((data) => data.name === "urgent_case")?.value
+              ?.urgent_case && <Tag color="error">Urgent</Tag>}
+          </div>
         </div>
         <List
           style={{ marginTop: "8px" }}
@@ -345,7 +390,7 @@ const StudyAudits = ({ isModalOpen, setIsModalOpen, studyID, setStudyID }) => {
             column: 2,
           }}
           className="queue-status-list"
-          dataSource={modalData}
+          dataSource={modalData?.filter((data) => data.name !== "urgent_case")}
           renderItem={(item) => (
             <List.Item className="queue-number-list">
               <Typography

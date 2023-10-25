@@ -137,21 +137,21 @@ const BasicLayout = ({ children }) => {
         },
       ],
     },
-    checkPermissionStatus("Show Filter option") && {
-      label: menuLabel("Filters"),
-      key: "filters",
-      icon: <AiOutlineFilter />,
-      children: [
-        ...filterOptions,
-        checkPermissionStatus("Show Add Filter option") && {
-          label: (
-            <div onClick={() => setIsFilterModalOpen(true)}>
-              <AiOutlinePlus /> Add Filter
-            </div>
-          ),
-        },
-      ].filter(Boolean),
-    },
+    // checkPermissionStatus("Show Filter option") && {
+    //   label: menuLabel("Filters"),
+    //   key: "filters",
+    //   icon: <AiOutlineFilter />,
+    //   children: [
+    //     ...filterOptions,
+    //     checkPermissionStatus("Show Add Filter option") && {
+    //       label: (
+    //         <div onClick={() => setIsFilterModalOpen(true)}>
+    //           <AiOutlinePlus /> Add Filter
+    //         </div>
+    //       ),
+    //     },
+    //   ].filter(Boolean),
+    // },
     checkPermissionStatus("Show Studies option") && {
       label: <NavLink to={"/studies"}>Studies</NavLink>,
       key: "studies",
@@ -328,7 +328,12 @@ const BasicLayout = ({ children }) => {
                         </Breadcrumb.Item>
                       ))}
                   </Breadcrumb> */}
-                  <HeaderButton setIsModalOpen={setIsModalOpen} id={id} />
+                  <HeaderButton
+                    setIsModalOpen={setIsModalOpen}
+                    id={id}
+                    filterOptions={filterOptions}
+                    retrieveFilterOptions={retrieveFilterOptions}
+                  />
                 </div>
               )}
             <div

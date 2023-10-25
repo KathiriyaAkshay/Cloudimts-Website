@@ -8,6 +8,7 @@ const ReportDataProvider = ({ children }) => {
     isInstitutionSelected: false,
     isImagesSelected: false,
     templateId: null,
+    isStudyDescriptionSelected: false,
   });
 
   return (

@@ -670,3 +670,42 @@ export const sendEmail = async (params = {}) => {
   });
   return sendEmail;
 };
+
+export const adminFilterStudyData = async (params = {}) => {
+  const adminFilterStudyData = await API.post(
+    "/studies/v1/apply-main-filter",
+    params,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return adminFilterStudyData;
+};
+
+export const fetchSystemFilter = async (params = {}) => {
+  const fetchSystemFilter = await API.post(
+    "/studies/v1/system-filter-list-fetch",
+    params,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return fetchSystemFilter;
+};
+
+export const applyStudySystemFilter = async (params = {}) => {
+  const applyStudySystemFilter = await API.post(
+    "/studies/v1/system-filter",
+    params,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return applyStudySystemFilter;
+};

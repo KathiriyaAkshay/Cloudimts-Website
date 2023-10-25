@@ -91,7 +91,8 @@ const Dicom = () => {
           name: data.study.patient_name,
           institution: data.institution.name,
           patient_id: data?.study?.patient_id,
-          study_id: data?.study?.study_original_id,
+          study_id: data?.study?.id,
+          key: data.id,
         }));
         setStudyData(resData);
         setTotalPages(res.data.total_object);
@@ -228,7 +229,7 @@ const Dicom = () => {
       render: (text, record) => (
         <Tooltip title="Chat">
           <BsChat
-            className="action-icon"
+            className="action-icon action-icon-primary"
             onClick={() => {
               setSeriesID(record.series_id);
               setStudyID(record.id);
@@ -246,17 +247,6 @@ const Dicom = () => {
       width: window.innerWidth < 650 ? "1%" : "10%",
       render: (_, record) => (
         <Space style={{ display: "flex", justifyContent: "space-evenly" }}>
-          {checkPermissionStatus("Study share option") && (
-            <Tooltip title="Share Study">
-              <IoIosShareAlt
-                className="action-icon"
-                onClick={() => {
-                  setStudyID(record.id);
-                  setIsShareStudyModalOpen(true);
-                }}
-              />
-            </Tooltip>
-          )}
           {checkPermissionStatus("Study clinical history option") && (
             <Tooltip title="Clinical History">
               <MdOutlineHistory
@@ -291,21 +281,32 @@ const Dicom = () => {
               />
             </Tooltip>
           )}
+          {checkPermissionStatus("Study edit option") && (
+            <EditActionIcon
+              editActionHandler={() => editActionHandler(record.id)}
+            />
+          )}
+          {checkPermissionStatus("Study share option") && (
+            <Tooltip title="Share Study">
+              <IoIosShareAlt
+                className="action-icon action-icon-primary"
+                onClick={() => {
+                  setStudyID(record.id);
+                  setIsShareStudyModalOpen(true);
+                }}
+              />
+            </Tooltip>
+          )}
           {checkPermissionStatus("Study logs option") && (
             <Tooltip title="Auditing">
               <AuditOutlined
-                className="action-icon"
+                className="action-icon action-icon-primary"
                 onClick={() => {
                   setStudyID(record.id);
                   setIsModalOpen(true);
                 }}
               />
             </Tooltip>
-          )}
-          {checkPermissionStatus("Study edit option") && (
-            <EditActionIcon
-              editActionHandler={() => editActionHandler(record.id)}
-            />
           )}
           {/* <Menu
             mode="vertical"
@@ -417,12 +418,12 @@ const Dicom = () => {
   };
 
   const handleRowClick = (record) => {
-    const isRowExpanded = expandedRows.includes(record.key);
+    const isRowExpanded = expandedRows.includes(record.id);
 
     if (isRowExpanded) {
-      setExpandedRows(expandedRows.filter((key) => key !== record.key));
+      setExpandedRows(expandedRows.filter((key) => key !== record.id));
     } else {
-      setExpandedRows([...expandedRows, record.key]);
+      setExpandedRows([...expandedRows, record.id]);
     }
   };
 
@@ -441,23 +442,22 @@ const Dicom = () => {
   });
 
   const handleCellDoubleClick = (record) => {
-    console.log("hey");
-    if (record.status === "New" || record.status === "Assigned") {
-      updateStudyStatus({ id: record.id })
-        .then((res) => {})
-        .catch((err) => console.log(err));
-      const newTableData = studyData.map((data) => {
-        if (data.id == record.id) {
-          return {
-            ...data,
-            status: "Viewed",
-          };
-        } else {
-          return data;
-        }
-      });
-      setStudyData(newTableData);
-    }
+    // if (record.status === "New" || record.status === "Assigned") {
+    //   updateStudyStatus({ id: record.id })
+    //     .then((res) => {})
+    //     .catch((err) => console.log(err));
+    //   const newTableData = studyData.map((data) => {
+    //     if (data.id == record.id) {
+    //       return {
+    //         ...data,
+    //         status: "Viewed",
+    //       };
+    //     } else {
+    //       return data;
+    //     }
+    //   });
+    //   setStudyData(newTableData);
+    // }
   };
 
   return (
@@ -465,7 +465,14 @@ const Dicom = () => {
       <Table
         dataSource={studyData}
         columns={columns}
-        expandable={expandableConfig}
+        expandable={{
+          expandedRowRender: (record) => (
+            <p style={{ margin: 0 }}>
+              <DicomViewer dicomUrl={record?.study?.study_original_id} />
+              {/* {retrieveStudyInstance(record?.study?.study_original_id)} */}
+            </p>
+          ),
+        }}
         rowSelection={rowSelection}
         onRow={onRow}
         // onPaginationChange={retrieveStudyData}

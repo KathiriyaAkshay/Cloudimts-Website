@@ -1,4 +1,4 @@
-import { Button, Select } from "antd";
+import { Button, Menu, Select } from "antd";
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserRoleContext } from "../hooks/usersRolesContext";
@@ -19,8 +19,21 @@ import { StudyIdContext } from "../hooks/studyIdContext";
 import NotificationMessage from "./NotificationMessage";
 import { deleteStudy, getReportList } from "../apis/studiesApi";
 import { FilterSelectedContext } from "../hooks/filterSelectedContext";
+import { AiOutlineFilter, AiOutlinePlus } from "react-icons/ai";
+import StudyFilterModal from "./StudyFilterModal";
+import { StudyDataContext } from "../hooks/studyDataContext";
+import {
+  applyMainFilter,
+  applySystemFilter,
+  retrieveSystemFilters,
+} from "../helpers/studyDataFilter";
 
-const HeaderButton = ({ setIsModalOpen, id }) => {
+const HeaderButton = ({
+  setIsModalOpen,
+  id,
+  filterOptions,
+  retrieveFilterOptions,
+}) => {
   const navigate = useNavigate();
   const { permissionData } = useContext(UserPermissionContext);
   const { setIsRoleModalOpen } = useContext(UserRoleContext);
@@ -42,12 +55,32 @@ const HeaderButton = ({ setIsModalOpen, id }) => {
     useContext(BillingDataContext);
   const { studyIdArray } = useContext(StudyIdContext);
   const [templateOptions, setTemplateOptions] = useState([]);
+  const [isAddFilterModalOpen, setIsAddFilterModalOpen] = useState(false);
+  const { setStudyDataPayload, setStudyData } = useContext(StudyDataContext);
+  const [systemFilters, setSystemsFilters] = useState([]);
 
   useEffect(() => {
     if (window.location.pathname === `/reports/${id}`) {
       retrieveTemplateOptions();
     }
   }, [window.location.pathname]);
+
+  useEffect(() => {
+    if (window.location.pathname === "/studies") {
+      fetchSystemFilter();
+    }
+  }, [window.location.pathname]);
+
+  const fetchSystemFilter = async () => {
+    const response = await retrieveSystemFilters();
+    console.log(response);
+    const modifiedOptions = response.map((data) => ({
+      label: data.name,
+      value: data.id,
+      details: data.filter_data,
+    }));
+    setSystemsFilters(modifiedOptions);
+  };
 
   const retrieveTemplateOptions = async () => {
     await getReportList({ page_number: 1, page_limit: 50 })
@@ -72,6 +105,48 @@ const HeaderButton = ({ setIsModalOpen, id }) => {
       NotificationMessage("warning", "Please select study");
     }
   };
+
+  const checkPermissionStatus = (name) => {
+    const permission = permissionData["Menu Permission"]?.find(
+      (data) => data.permission === name
+    )?.permission_value;
+    return permission;
+  };
+
+  const menuLabel = (title) => (
+    <div className="display-flex-between" style={{ gap: "4px" }}>
+      {title}
+      {/* <AiOutlineDown className="down-icon" /> */}
+    </div>
+  );
+
+  const menuItems = [
+    checkPermissionStatus("Show Filter option") && {
+      label: "Filters",
+      key: "filters",
+      icon: <AiOutlineFilter />,
+      children: [
+        ...filterOptions,
+        checkPermissionStatus("Show Add Filter option") && {
+          label: (
+            <div onClick={() => setIsAddFilterModalOpen(true)}>
+              <AiOutlinePlus /> Add Filter
+            </div>
+          ),
+        },
+      ].filter(Boolean),
+    },
+  ].filter(Boolean);
+
+  const systemsFilterMenu = [
+    {
+      label: "System Filters",
+      key: "filters",
+      icon: <AiOutlineFilter />,
+      children: systemFilters,
+    },
+  ];
+
   return (
     <div>
       {window.location.pathname === "/iod-settings" && (
@@ -217,6 +292,64 @@ const HeaderButton = ({ setIsModalOpen, id }) => {
           >
             <FilterOutlined style={{ fontWeight: "500" }} /> Quick Filter
           </Button>
+          {checkPermissionStatus("Show Filter option") && (
+            <Menu
+              onClick={(e) => {
+                setStudyDataPayload({
+                  id: e.key,
+                  page_number: 1,
+                  page_size: 10,
+                  deleted_skip: false,
+                });
+                applyMainFilter(
+                  {
+                    id: e.key,
+                    page_number: 1,
+                    page_size: 10,
+                    deleted_skip: false,
+                  },
+                  setStudyData
+                );
+              }}
+              style={{
+                width: 100,
+                height: 32,
+                // padding: "0px 0px 4px 0px",
+              }}
+              mode="horizontal"
+              items={menuItems}
+              className="filter-menu"
+            />
+          )}
+          <Menu
+            onSelect={(e, data, g) => {
+              // setStudyDataPayload({
+              //   id: e.key,
+              //   page_number: 1,
+              //   page_size: 10,
+              //   deleted_skip: false,
+              // });
+              console.log(e, data, g);
+              applySystemFilter(
+                {
+                  id: e.key,
+                  page_number: 1,
+                  page_size: 10,
+                  deleted_skip: false,
+                  filter: {},
+                },
+                setStudyData
+              );
+            }}
+            style={{
+              width: 154,
+              height: 32,
+              // padding: "0px 0px 4px 0px",
+            }}
+            mode="horizontal"
+            items={systemsFilterMenu}
+            className="filter-menu"
+          />
           <Button type="primary" onClick={() => navigate("/study-logs")}>
             Study Logs
           </Button>
@@ -243,6 +376,7 @@ const HeaderButton = ({ setIsModalOpen, id }) => {
                 isInstitutionSelected: false,
                 isImagesSelected: true,
                 templateId: prev?.templateId,
+                isStudyDescriptionSelected: false,
               }))
             }
           >
@@ -252,10 +386,25 @@ const HeaderButton = ({ setIsModalOpen, id }) => {
             type="primary"
             onClick={() =>
               setSelectedItem((prev) => ({
+                isPatientSelected: false,
+                isInstitutionSelected: false,
+                isImagesSelected: false,
+                templateId: prev?.templateId,
+                isStudyDescriptionSelected: true,
+              }))
+            }
+          >
+            Study Description
+          </Button>
+          <Button
+            type="primary"
+            onClick={() =>
+              setSelectedItem((prev) => ({
                 isPatientSelected: true,
                 isInstitutionSelected: false,
                 isImagesSelected: false,
                 templateId: prev?.templateId,
+                isStudyDescriptionSelected: false,
               }))
             }
           >
@@ -269,6 +418,7 @@ const HeaderButton = ({ setIsModalOpen, id }) => {
                 isInstitutionSelected: true,
                 isImagesSelected: false,
                 templateId: prev?.templateId,
+                isStudyDescriptionSelected: false,
               }))
             }
           >
@@ -283,6 +433,7 @@ const HeaderButton = ({ setIsModalOpen, id }) => {
                 isInstitutionSelected: prev?.isInstitutionSelected,
                 isImagesSelected: prev?.isImagesSelected,
                 templateId: e,
+                isStudyDescriptionSelected: prev?.isStudyDescriptionSelected,
               }))
             }
           />
@@ -335,6 +486,11 @@ const HeaderButton = ({ setIsModalOpen, id }) => {
             )}
         </div>
       )}
+      <StudyFilterModal
+        isFilterModalOpen={isAddFilterModalOpen}
+        setIsFilterModalOpen={setIsAddFilterModalOpen}
+        retrieveFilterOptions={retrieveFilterOptions}
+      />
     </div>
   );
 };

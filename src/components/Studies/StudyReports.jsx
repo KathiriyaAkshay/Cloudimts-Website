@@ -8,7 +8,7 @@ import {
   Tooltip,
   Typography,
 } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { getStudyData } from "../../apis/studiesApi";
 import FileReport from "./FileReport";
 import TableWithFilter from "../TableWithFilter";
@@ -21,6 +21,7 @@ import {
 import DeleteActionIcon from "../DeleteActionIcon";
 import ImageCarousel from "./ImageCarousel";
 import { useNavigate } from "react-router-dom";
+import { UserPermissionContext } from "../../hooks/userPermissionContext";
 
 const StudyReports = ({
   isReportModalOpen,
@@ -39,12 +40,20 @@ const StudyReports = ({
   const [studyImages, setStudyImages] = useState([]);
   const [show, setShow] = useState(false);
   const navigate = useNavigate();
+  const { permissionData } = useContext(UserPermissionContext);
 
   useEffect(() => {
     if (studyID && isReportModalOpen) {
       retrieveStudyData();
     }
   }, [studyID]);
+
+  const checkPermissionStatus = (name) => {
+    const permission = permissionData["Studies permission"].find(
+      (data) => data.permission === name
+    )?.permission_value;
+    return permission;
+  };
 
   const columns = [
     {
@@ -193,32 +202,43 @@ const StudyReports = ({
         width={1000}
         centered
         footer={[
-          <Button key="back" className="error-btn" onClick={studyCloseHandler}>
-            Close Study
-          </Button>,
+          checkPermissionStatus("Close study") && (
+            <Button
+              key="back"
+              className="error-btn"
+              onClick={studyCloseHandler}
+            >
+              Close Study
+            </Button>
+          ),
           <Button key="back">OHIF Viewer</Button>,
           <Button key="back">Web Report</Button>,
-          <Button key="submit" type="primary" onClick={studyStatusHandler}>
-            Simplified Report
-          </Button>,
-          <Button
-            key="submit"
-            type="primary"
-            onClick={() => setIsFileReportModalOpen(true)}
-          >
-            File Report
-          </Button>,
-          <Button
-            key="link"
-            type="primary"
-            onClick={() => {
-              studyStatusHandler();
-              navigate(`/reports/${studyID}`);
-            }}
-          >
-            Advanced File Report
-          </Button>,
-        ]}
+          checkPermissionStatus("Report study") && (
+            <Button
+              key="submit"
+              type="primary"
+              className="secondary-btn"
+              onClick={async () => {
+                await studyStatusHandler();
+                setIsFileReportModalOpen(true);
+              }}
+            >
+              Simplified Report
+            </Button>
+          ),
+          checkPermissionStatus("Report study") && (
+            <Button
+              key="link"
+              type="primary"
+              onClick={async () => {
+                await studyStatusHandler();
+                navigate(`/reports/${studyID}`);
+              }}
+            >
+              Advanced File Report
+            </Button>
+          ),
+        ].filter(Boolean)}
       >
         <Spin spinning={isLoading}>
           <div

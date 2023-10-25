@@ -74,7 +74,9 @@ const AssignStudy = ({
           setStudyID(null);
           form.resetFields();
         })
-        .catch((err) => console.log(err));
+        .catch((err) =>
+          NotificationMessage("warning", err.response.data.message)
+        );
     } catch (err) {
       console.error(err);
     }
@@ -101,7 +103,9 @@ const AssignStudy = ({
         });
         setMultipleImageFile(res.data.data?.study_data?.images);
       })
-      .catch((err) => console.log(err));
+      .catch((err) =>
+        NotificationMessage("warning", err.response.data.message)
+      );
     setIsLoading(false);
   };
 
@@ -185,6 +189,10 @@ const AssignStudy = ({
             name: "Series UID",
             value: resData?.Series_UID,
           },
+          {
+            name: "urgent_case",
+            value: resData?.assigned_study_data,
+          },
         ];
         setModalData(modifiedData);
       })
@@ -215,9 +223,16 @@ const AssignStudy = ({
             padding: "10px 24px",
             borderRadius: "0px",
             margin: "0 -24px",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
           }}
         >
-          Patient Info
+          <div>Patient Info</div>
+          <div style={{ display: "flex", gap: "20px", alignItems: "center" }}>
+            {modalData.find((data) => data.name === "urgent_case")?.value
+              ?.urgent_case && <Tag color="error">Urgent</Tag>}
+          </div>
         </div>
         <List
           style={{ marginTop: "8px" }}
@@ -226,7 +241,7 @@ const AssignStudy = ({
             column: 2,
           }}
           className="queue-status-list"
-          dataSource={modalData}
+          dataSource={modalData?.filter((data) => data.name !== "urgent_case")}
           renderItem={(item) => (
             <List.Item className="queue-number-list">
               <Typography
@@ -300,7 +315,7 @@ const AssignStudy = ({
                   ]}
                 >
                   <Select
-                    placeholder="Select Radiologist"
+                    placeholder="Select Study Description"
                     options={descriptionOptions}
                     // mode="multiple"
                     showSearch

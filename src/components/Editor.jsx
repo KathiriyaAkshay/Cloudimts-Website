@@ -25,6 +25,14 @@ const Editor = ({ id }) => {
   const [signatureImage, setSignatureImage] = useState(null);
   const user_id = localStorage.getItem("userID");
   const navigate = useNavigate();
+  const [isPatientInformationInserted, setIsPatientInformationInserted] =
+    useState(false);
+  const [
+    isInstitutionInformationInserted,
+    setIsInstitutionInformationInserted,
+  ] = useState(false);
+  const [isStudyDescriptionInserted, setIsStudyDescriptionInserted] =
+    useState(false);
 
   useEffect(() => {
     setSelectedItem((prev) => ({
@@ -32,6 +40,7 @@ const Editor = ({ id }) => {
       isInstitutionSelected: false,
       isImagesSelected: false,
       templateId: null,
+      isStudyDescriptionSelected: false,
     }));
   }, []);
 
@@ -93,32 +102,50 @@ const Editor = ({ id }) => {
   const retrieveDicomImages = () => {};
 
   const convertPatientDataToTable = () => {
-    const data = selectedItem.isPatientSelected
-      ? `<div>
+    const data =
+      selectedItem.isPatientSelected && !isPatientInformationInserted
+        ? `<div>
         <h2>Patient Information</h2>
         <table>
           <tbody>
             <tr>
-              <td>Patient ID:</td>
+              <td>Patient ID</td>
               <td>${cardDetails?.patient_id}</td>
             </tr>
             <tr>
-              <td>Patient Name:</td>
+              <td>Patient Name</td>
               <td>${cardDetails?.patient_name}</td>
             </tr>
             <tr>
-              <td>Patient Sex:</td>
+              <td>Patient Sex</td>
               <td>${cardDetails?.gender}</td>
             </tr>
             <tr>
-              <td>Patient Birth Date:</td>
+              <td>Patient Birth Date</td>
               <td>${cardDetails?.dob}</td>
+            </tr>
+            <tr>
+              <td>Age</td>
+              <td>${cardDetails?.Age}</td>
+            </tr>
+            <tr>
+              <td>Accession Number</td>
+              <td>${cardDetails?.accession_number}</td>
+            </tr>
+            <tr>
+              <td>Modality</td>
+              <td>${cardDetails?.Modality}</td>
+            </tr>
+            <tr>
+              <td>Patient Comment</td>
+              <td>${cardDetails?.Patient_comments}</td>
             </tr>
           </tbody>
         </table>
       </div>`
-      : selectedItem.isInstitutionSelected
-      ? `<div>
+        : selectedItem.isInstitutionSelected &&
+          !isInstitutionInformationInserted
+        ? `<div>
       <h2>Institution Information</h2>
       <table>
         <tbody>
@@ -126,16 +153,44 @@ const Editor = ({ id }) => {
             <td>Institution Name</td>
             <td>${cardDetails?.institution_name}</td>
           </tr>
+          <tr>
+            <td>Institution Address</td>
+            <td>${cardDetails?.institution?.Institution_address}</td>
+          </tr>
+          <tr>
+            <td>Institution City</td>
+            <td>${cardDetails?.institution?.Institution_city}</td>
+          </tr>
+          <tr>
+            <td>Institution Contact</td>
+            <td>${cardDetails?.institution?.Institution_contact}</td>
+          </tr>
+          <tr>
+            <td>Institution Email</td>
+            <td>${cardDetails?.institution?.Institution_email}</td>
+          </tr>
         </tbody>
       </table>
     </div>`
-      : `<figure class="image"><img src=${imageSlider[studyImageID]?.url} alt="study image"></figure>
-    `;
+        : selectedItem.isImagesSelected
+        ? `<figure class="image"><img src=${imageSlider[studyImageID]?.url} alt="study image" style="width:400px;height:300px"></figure>
+    `
+        : selectedItem.isStudyDescriptionSelected && !isStudyDescriptionInserted
+        ? `<div>
+        <h2>Study Description</h2>
+        <p>${cardDetails?.Study_description}</p>
+        </div>`
+        : "";
     setEditorData((prev) =>
       selectedItem.isPatientSelected || selectedItem.isInstitutionSelected
         ? `${data}${prev}`
         : `${prev}${data}`
     );
+    selectedItem.isPatientSelected && setIsPatientInformationInserted(true);
+    selectedItem.isInstitutionSelected &&
+      setIsInstitutionInformationInserted(true);
+    selectedItem.isStudyDescriptionSelected &&
+      setIsStudyDescriptionInserted(true);
   };
 
   const imageSlider = [
@@ -211,10 +266,30 @@ const Editor = ({ id }) => {
                         </div>
                         <div className="report-main-div">
                           <Typography className="report-text-primary">
+                            Age:
+                          </Typography>
+                          <Typography>{cardDetails?.Age}</Typography>
+                        </div>
+                        <div className="report-main-div">
+                          <Typography className="report-text-primary">
                             Accession Number:
                           </Typography>
                           <Typography>
                             {cardDetails?.accession_number}
+                          </Typography>
+                        </div>
+                        <div className="report-main-div">
+                          <Typography className="report-text-primary">
+                            Modality:
+                          </Typography>
+                          <Typography>{cardDetails?.Modality}</Typography>
+                        </div>
+                        <div className="report-main-div">
+                          <Typography className="report-text-primary">
+                            Patient Comment:
+                          </Typography>
+                          <Typography>
+                            {cardDetails?.Patient_comments}
                           </Typography>
                         </div>
                       </div>
@@ -233,6 +308,56 @@ const Editor = ({ id }) => {
                           </Typography>
                           <Typography>
                             {cardDetails?.institution_name}
+                          </Typography>
+                        </div>
+                        <div className="report-main-div">
+                          <Typography className="report-text-primary">
+                            Institution Address:
+                          </Typography>
+                          <Typography>
+                            {cardDetails?.institution?.Institution_address}
+                          </Typography>
+                        </div>
+                        <div className="report-main-div">
+                          <Typography className="report-text-primary">
+                            Institution City:
+                          </Typography>
+                          <Typography>
+                            {cardDetails?.institution?.Institution_city}
+                          </Typography>
+                        </div>
+                        <div className="report-main-div">
+                          <Typography className="report-text-primary">
+                            Institution Contact:
+                          </Typography>
+                          <Typography>
+                            {cardDetails?.institution?.Institution_contact}
+                          </Typography>
+                        </div>
+                        <div className="report-main-div">
+                          <Typography className="report-text-primary">
+                            Institution Email:
+                          </Typography>
+                          <Typography>
+                            {cardDetails?.institution?.Institution_email}
+                          </Typography>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                  {selectedItem?.isStudyDescriptionSelected && (
+                    <>
+                      <Typography className="card-heading">
+                        Study Description
+                      </Typography>
+                      <div>
+                        <Divider />
+                        <div className="report-main-div">
+                          <Typography className="report-text-primary">
+                            Study Description:
+                          </Typography>
+                          <Typography>
+                            {cardDetails?.Study_description}
                           </Typography>
                         </div>
                       </div>
@@ -302,7 +427,7 @@ const Editor = ({ id }) => {
         >
           <Button onClick={() => navigate(-1)}>Cancel</Button>
           <Button type="primary" onClick={() => handleReportSave()}>
-            Save
+            File Report
           </Button>
         </div>
       </div>

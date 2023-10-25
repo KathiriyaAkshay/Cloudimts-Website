@@ -132,9 +132,17 @@ const PatientDetails = ({
             padding: "10px 24px",
             borderRadius: "0px",
             margin: "0 -24px",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
           }}
         >
-          Patient Info
+          <div>Patient Info</div>
+          <div style={{ display: "flex", gap: "20px", alignItems: "center" }}>
+            {modalData.find((data) => data.name === "Urgent Case")?.value && (
+              <Tag color="error">Urgent</Tag>
+            )}
+          </div>
         </div>
         <List
           style={{ marginTop: "8px" }}

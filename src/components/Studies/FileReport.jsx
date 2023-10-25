@@ -76,7 +76,7 @@ const FileReport = ({
 
   return (
     <Modal
-      title="File Report"
+      title="Simplified Report"
       open={isFileReportModalOpen}
       onOk={() => {
         // setIsFileReportModalOpen(false);
