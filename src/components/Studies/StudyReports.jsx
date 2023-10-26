@@ -257,7 +257,7 @@ const StudyReports = ({
             <div style={{ display: "flex", gap: "20px", alignItems: "center" }}>
               {modalData.find((data) => data.name === "urgent_case")?.value
                 ?.urgent_case && <Tag color="error">Urgent</Tag>}
-              {studyImages.length > 0 && (
+              {studyImages?.length > 0 && (
                 <Button type="primary" onClick={() => setShow(true)}>
                   Study Images
                 </Button>

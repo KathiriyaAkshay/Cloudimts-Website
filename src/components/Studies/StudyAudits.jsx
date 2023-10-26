@@ -131,7 +131,7 @@ const StudyAudits = ({ isModalOpen, setIsModalOpen, studyID, setStudyID }) => {
               : text.includes("Closed study")
               ? "yellow"
               : text.includes("Reporting Study")
-              ? "volcanos"
+              ? "volcano"
               : text.includes("Backup study")
               ? "gold"
               : "purple"

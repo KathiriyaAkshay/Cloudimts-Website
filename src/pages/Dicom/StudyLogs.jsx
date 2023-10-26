@@ -12,7 +12,11 @@ const StudyLogs = () => {
   const { changeBreadcrumbs } = useBreadcrumbs();
 
   useEffect(() => {
-    changeBreadcrumbs([{ name: "Study Logs" }]);
+    const crumbs = [{ name: "Studies", to: "/studies" }];
+    crumbs.push({
+      name: "Study Logs",
+    });
+    changeBreadcrumbs(crumbs);
     // setRole(localStorage.getItem("role"))
     // retrieveStudyData();
   }, []);
@@ -85,7 +89,7 @@ const StudyLogs = () => {
               : text.includes("Closed study")
               ? "yellow"
               : text.includes("Reporting Study")
-              ? "volcanos"
+              ? "volcano"
               : text.includes("Backup study")
               ? "gold"
               : "purple"
