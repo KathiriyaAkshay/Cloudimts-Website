@@ -1087,3 +1087,21 @@
     margin-bottom: 0px !important;
   }
 }
+.mb-0 {
+  margin-bottom: 0px !important;
+  .ant-collapse-content-box {
+    background-color: #fff !important;
+  }
+  .ant-collapse-header {
+    background-color: #70caf0 !important;
+    .ant-collapse-expand-icon,
+    .ant-collapse-header-text {
+      color: #fff !important;
+      font-weight: 500;
+    }
+  }
+}
+
+.ant-popover-content {
+  min-width: 250px !important;
+}

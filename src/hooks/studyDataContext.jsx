@@ -10,10 +10,18 @@ const StudyDataProvider = ({ children }) => {
     page_size: 10,
     deleted_skip: false,
   });
+  const [systemFilterPayload, setSystemFilterPayload] = useState({});
 
   return (
     <StudyDataContext.Provider
-      value={{ studyData, setStudyData, studyDataPayload, setStudyDataPayload }}
+      value={{
+        studyData,
+        setStudyData,
+        studyDataPayload,
+        setStudyDataPayload,
+        systemFilterPayload,
+        setSystemFilterPayload,
+      }}
     >
       {children}
     </StudyDataContext.Provider>

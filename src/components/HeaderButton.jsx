@@ -1,4 +1,12 @@
-import { Button, Menu, Select } from "antd";
+import {
+  Button,
+  Checkbox,
+  Collapse,
+  Divider,
+  Menu,
+  Popover,
+  Select,
+} from "antd";
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserRoleContext } from "../hooks/usersRolesContext";
@@ -27,6 +35,7 @@ import {
   applySystemFilter,
   retrieveSystemFilters,
 } from "../helpers/studyDataFilter";
+import { set } from "lodash";
 
 const HeaderButton = ({
   setIsModalOpen,
@@ -56,8 +65,12 @@ const HeaderButton = ({
   const { studyIdArray } = useContext(StudyIdContext);
   const [templateOptions, setTemplateOptions] = useState([]);
   const [isAddFilterModalOpen, setIsAddFilterModalOpen] = useState(false);
-  const { setStudyDataPayload, setStudyData } = useContext(StudyDataContext);
+  const { setStudyDataPayload, setStudyData, setSystemFilterPayload } =
+    useContext(StudyDataContext);
   const [systemFilters, setSystemsFilters] = useState([]);
+  const [isFilterCollapseOpen, setIsFilterCollapseOpen] = useState(false);
+  const [isFilterChecked, setIsFilterChecked] = useState(null);
+  const [isSystemFilterChecked, setIsSystemFilterChecked] = useState(null);
 
   useEffect(() => {
     if (window.location.pathname === `/reports/${id}`) {
@@ -76,7 +89,8 @@ const HeaderButton = ({
     console.log(response);
     const modifiedOptions = response.map((data) => ({
       label: data.name,
-      value: data.id,
+      value: `${data?.filter_data?.option} ${data?.filter_data?.filter?.status__icontains}`,
+      key: `${data?.filter_data?.option} ${data?.filter_data?.filter?.status__icontains}`,
       details: data.filter_data,
     }));
     setSystemsFilters(modifiedOptions);
@@ -146,6 +160,134 @@ const HeaderButton = ({
       children: systemFilters,
     },
   ];
+
+  const items = [
+    {
+      key: "1",
+      label: "Main Filters",
+      children: <p>{"abc"}</p>,
+    },
+    {
+      key: "2",
+      label: "System Filters",
+      children: <p>{"abc"}</p>,
+    },
+    {
+      key: "3",
+      label: "This is panel header 3",
+      children: <p>{"abc"}</p>,
+    },
+  ];
+
+  const content = (
+    <Collapse
+      bordered={true}
+      expandIconPosition="end"
+      // expandIcon={({ isActive }) => <CaretRightOutlined rotate={isActive ? 90 : 0} />}
+      className="setting-main-div"
+      // style={{
+      //   position: "absolute",
+      //   top: "100%",
+      //   zIndex: "999",
+      //   width: "200px",
+      // }}
+      accordion
+    >
+      <Collapse.Panel
+        header="Main Filter"
+        key="1"
+        className="setting-panel mb-0"
+      >
+        {filterOptions?.map((data) => (
+          <div>
+            <Checkbox
+              name={data?.label}
+              key={data?.key}
+              checked={isFilterChecked === data?.key}
+              onClick={() => {
+                setIsSystemFilterChecked(null);
+                setIsFilterChecked(data?.key);
+                setStudyDataPayload({
+                  id: data.key,
+                  page_number: 1,
+                  page_size: 10,
+                  deleted_skip: false,
+                });
+                applyMainFilter(
+                  {
+                    id: data.key,
+                    page_number: 1,
+                    page_size: 10,
+                    deleted_skip: false,
+                  },
+                  setStudyData
+                );
+              }}
+            >
+              {data?.label}
+            </Checkbox>
+          </div>
+        ))}
+        <Divider style={{ margin: "10px 0px" }} />
+        <div
+          onClick={() => setIsAddFilterModalOpen(true)}
+          style={{
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            gap: "4px",
+            fontWeight: "500",
+          }}
+        >
+          <AiOutlinePlus /> Add Filter
+        </div>
+      </Collapse.Panel>
+      <Collapse.Panel
+        header="System Filter"
+        key="2"
+        className="setting-panel mb-0"
+      >
+        {systemFilters?.map((data) => (
+          <div>
+            <Checkbox
+              name={data?.label}
+              key={data?.key}
+              checked={isSystemFilterChecked === data?.key}
+              onClick={() => {
+                setIsFilterChecked(null);
+                setIsSystemFilterChecked(data?.key);
+                const option = data?.key?.split(" ")[0];
+                const filterOption = data?.key?.split(" ")[1];
+                setSystemFilterPayload({
+                  option,
+                  page_number: 1,
+                  page_size: 10,
+                  deleted_skip: false,
+                  filter: {
+                    status__icontains: filterOption,
+                  },
+                });
+                applySystemFilter(
+                  {
+                    option,
+                    page_number: 1,
+                    page_size: 10,
+                    deleted_skip: false,
+                    filter: {
+                      status__icontains: filterOption,
+                    },
+                  },
+                  setStudyData
+                );
+              }}
+            >
+              {data?.label}
+            </Checkbox>
+          </div>
+        ))}
+      </Collapse.Panel>
+    </Collapse>
+  );
 
   return (
     <div>
@@ -292,7 +434,7 @@ const HeaderButton = ({
           >
             <FilterOutlined style={{ fontWeight: "500" }} /> Quick Filter
           </Button>
-          {checkPermissionStatus("Show Filter option") && (
+          {/* {checkPermissionStatus("Show Filter option") && (
             <Menu
               onClick={(e) => {
                 setStudyDataPayload({
@@ -322,21 +464,27 @@ const HeaderButton = ({
             />
           )}
           <Menu
-            onSelect={(e, data, g) => {
-              // setStudyDataPayload({
-              //   id: e.key,
-              //   page_number: 1,
-              //   page_size: 10,
-              //   deleted_skip: false,
-              // });
-              console.log(e, data, g);
+            onSelect={(e) => {
+              const option = e?.key?.split(" ")[0];
+              const filterOption = e?.key?.split(" ")[1];
+              setSystemFilterPayload({
+                option,
+                page_number: 1,
+                page_size: 10,
+                deleted_skip: false,
+                filter: {
+                  status__icontains: filterOption,
+                },
+              });
               applySystemFilter(
                 {
-                  id: e.key,
+                  option,
                   page_number: 1,
                   page_size: 10,
                   deleted_skip: false,
-                  filter: {},
+                  filter: {
+                    status__icontains: filterOption,
+                  },
                 },
                 setStudyData
               );
@@ -349,7 +497,24 @@ const HeaderButton = ({
             mode="horizontal"
             items={systemsFilterMenu}
             className="filter-menu"
-          />
+          /> */}
+          <div style={{ position: "relative" }}>
+            <Popover
+              content={content}
+              title={null}
+              trigger="click"
+              style={{ minWidth: "300px" }}
+              className="filter-popover"
+            >
+              <Button
+                type="primary"
+                className="btn-icon-div"
+                onClick={() => setIsFilterCollapseOpen((prev) => !prev)}
+              >
+                <FilterOutlined style={{ fontWeight: "500" }} /> Filters
+              </Button>
+            </Popover>
+          </div>
           <Button type="primary" onClick={() => navigate("/study-logs")}>
             Study Logs
           </Button>

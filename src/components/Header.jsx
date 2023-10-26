@@ -137,21 +137,11 @@ const BasicLayout = ({ children }) => {
         },
       ],
     },
-    // checkPermissionStatus("Show Filter option") && {
-    //   label: menuLabel("Filters"),
-    //   key: "filters",
-    //   icon: <AiOutlineFilter />,
-    //   children: [
-    //     ...filterOptions,
-    //     checkPermissionStatus("Show Add Filter option") && {
-    //       label: (
-    //         <div onClick={() => setIsFilterModalOpen(true)}>
-    //           <AiOutlinePlus /> Add Filter
-    //         </div>
-    //       ),
-    //     },
-    //   ].filter(Boolean),
-    // },
+    checkPermissionStatus("Show Default Filter list") && {
+      label: <NavLink to={"/filters"}>Filters</NavLink>,
+      key: "filters",
+      icon: <AiOutlineFilter />,
+    },
     checkPermissionStatus("Show Studies option") && {
       label: <NavLink to={"/studies"}>Studies</NavLink>,
       key: "studies",

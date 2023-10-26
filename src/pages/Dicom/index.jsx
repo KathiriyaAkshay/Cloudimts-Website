@@ -26,6 +26,10 @@ import EditActionIcon from "../../components/EditActionIcon";
 import { UserPermissionContext } from "../../hooks/userPermissionContext";
 import { StudyDataContext } from "../../hooks/studyDataContext";
 import { StudyIdContext } from "../../hooks/studyIdContext";
+import {
+  applyMainFilter,
+  applySystemFilter,
+} from "../../helpers/studyDataFilter";
 
 const Dicom = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -45,7 +49,14 @@ const Dicom = () => {
   const [seriesID, setSeriesID] = useState(null);
   const [personName, setPersonName] = useState(null);
   const { permissionData } = useContext(UserPermissionContext);
-  const { studyData, setStudyData } = useContext(StudyDataContext);
+  const {
+    studyData,
+    setStudyData,
+    studyDataPayload,
+    setStudyDataPayload,
+    systemFilterPayload,
+    setSystemFilterPayload,
+  } = useContext(StudyDataContext);
   const { studyIdArray, setStudyIdArray } = useContext(StudyIdContext);
   const [studyStatus, setStudyStatus] = useState("");
   const [limit, setLimit] = useState(10);
@@ -58,13 +69,30 @@ const Dicom = () => {
   });
 
   useEffect(() => {
+    setSystemFilterPayload({});
+    setStudyDataPayload({});
+  }, []);
+
+  useEffect(() => {
     setPagi(Pagination);
     retrieveStudyData(Pagination);
   }, [Pagination]);
 
   const onShowSizeChange = (current, pageSize) => {
     setLimit(pageSize);
-    setPagination((prev) => ({ ...prev, page: current, limit: pageSize }));
+    if (Object.keys(studyDataPayload).length > 0) {
+      // applyMainFilter(
+      //   { ...studyDataPayload, page_number: current, page_size: pageSize },
+      //   setStudyData
+      // );
+    } else if (Object.keys(systemFilterPayload).length > 0) {
+      // applySystemFilter(
+      //   { ...systemFilterPayload, page_number: current, page_size: pageSize },
+      //   setStudyData
+      // );
+    } else {
+      setPagination((prev) => ({ ...prev, page: current, limit: pageSize }));
+    }
   };
 
   useEffect(() => {
@@ -484,7 +512,23 @@ const Dicom = () => {
           pageSizeOptions: [10, 25, 50, 100, 200, 500],
           showSizeChanger: totalPages > 10,
           onChange: (page = 1, pageSize = limit) => {
-            setPagination({ ...Pagination, page, limit: pageSize });
+            if (Object.keys(studyDataPayload).length > 0) {
+              applyMainFilter(
+                { ...studyDataPayload, page_number: page, page_size: pageSize },
+                setStudyData
+              );
+            } else if (Object.keys(systemFilterPayload).length > 0) {
+              applySystemFilter(
+                {
+                  ...systemFilterPayload,
+                  page_number: page,
+                  page_size: pageSize,
+                },
+                setStudyData
+              );
+            } else {
+              setPagination({ ...Pagination, page, limit: pageSize });
+            }
           },
           onShowSizeChange: onShowSizeChange,
         }}
