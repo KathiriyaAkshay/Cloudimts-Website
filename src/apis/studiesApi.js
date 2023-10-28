@@ -709,3 +709,16 @@ export const applyStudySystemFilter = async (params = {}) => {
   );
   return applyStudySystemFilter;
 };
+
+export const advanceSearchFilter = async (params = {}) => {
+  const advanceSearchFilter = await API.post(
+    "/studies/v1/apply-advance-search",
+    params,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return advanceSearchFilter;
+};

@@ -3,21 +3,29 @@ import React, { useContext, useEffect } from "react";
 import { filterDataContext } from "../hooks/filterDataContext";
 import { FilterSelectedContext } from "../hooks/filterSelectedContext";
 
-const QuickFilterModal = ({ name, setInstitutionData, retrieveStudyData }) => {
+const QuickFilterModal = ({
+  name,
+  setStudyData,
+  retrieveStudyData,
+  quickFilterStudyData,
+}) => {
   const { isStudyFilterModalOpen, setIsStudyFilterModalOpen } =
     useContext(filterDataContext);
   const [form] = Form.useForm();
 
-  const { setIsFilterSelected } = useContext(FilterSelectedContext);
+  const { setIsFilterSelected, setIsAdvanceSearchSelected } = useContext(
+    FilterSelectedContext
+  );
 
   useEffect(() => {
     setIsFilterSelected(false);
   }, []);
 
   const handleSubmit = (values) => {
-    retrieveStudyData({ page: 1 }, values);
+    quickFilterStudyData({ page: 1 }, values);
     setIsStudyFilterModalOpen(false);
     setIsFilterSelected(true);
+    setIsAdvanceSearchSelected(false);
   };
 
   return (
@@ -119,7 +127,7 @@ const QuickFilterModal = ({ name, setInstitutionData, retrieveStudyData }) => {
           </Col>
           <Col xs={24} lg={12}>
             <Form.Item
-              name="status__icontains"
+              name="status"
               label="Status"
               rules={[
                 {

@@ -9,6 +9,7 @@ import StudyAudits from "../../components/Studies/StudyAudits";
 import StudyReports from "../../components/Studies/StudyReports";
 import ShareStudy from "../../components/Studies/ShareStudy";
 import {
+  advanceSearchFilter,
   closeStudy,
   filterStudyData,
   getAllStudyData,
@@ -30,6 +31,9 @@ import {
   applyMainFilter,
   applySystemFilter,
 } from "../../helpers/studyDataFilter";
+import { set } from "lodash";
+import { FilterSelectedContext } from "../../hooks/filterSelectedContext";
+import AdvancedSearchModal from "../../components/AdvancedSearchModal";
 
 const Dicom = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -58,6 +62,9 @@ const Dicom = () => {
     setSystemFilterPayload,
   } = useContext(StudyDataContext);
   const { studyIdArray, setStudyIdArray } = useContext(StudyIdContext);
+  const { isFilterSelected, isAdvanceSearchSelected } = useContext(
+    FilterSelectedContext
+  );
   const [studyStatus, setStudyStatus] = useState("");
   const [limit, setLimit] = useState(10);
   const [Pagination, setPagination] = useState({
@@ -67,6 +74,8 @@ const Dicom = () => {
     search: "",
     order: "desc",
   });
+  const [quickFilterPayload, setQuickFilterPayload] = useState({});
+  const [advanceSearchPayload, setAdvanceSearchPayload] = useState({});
 
   useEffect(() => {
     setSystemFilterPayload({});
@@ -75,8 +84,15 @@ const Dicom = () => {
 
   useEffect(() => {
     setPagi(Pagination);
-    retrieveStudyData(Pagination);
-  }, [Pagination]);
+    if (
+      !isFilterSelected &&
+      Object.keys(systemFilterPayload).length === 0 &&
+      Object.keys(studyDataPayload).length === 0 &&
+      !isAdvanceSearchSelected
+    ) {
+      retrieveStudyData(Pagination);
+    }
+  }, [Pagination, isFilterSelected, studyDataPayload, systemFilterPayload]);
 
   const onShowSizeChange = (current, pageSize) => {
     setLimit(pageSize);
@@ -112,6 +128,60 @@ const Dicom = () => {
       all_assign_id: JSON.parse(localStorage.getItem("all_assign_id")),
       deleted: false,
       deleted_skip: true,
+    })
+      .then((res) => {
+        const resData = res.data.data.map((data) => ({
+          ...data,
+          name: data.study.patient_name,
+          institution: data.institution.name,
+          patient_id: data?.study?.patient_id,
+          study_id: data?.study?.id,
+          key: data.id,
+        }));
+        setStudyData(resData);
+        setTotalPages(res.data.total_object);
+      })
+      .catch((err) => console.log(err));
+    setIsLoading(false);
+  };
+
+  const quickFilterStudyData = (pagination, values = {}) => {
+    setIsLoading(true);
+    setQuickFilterPayload(values);
+    filterStudyData({
+      filter: values,
+      page_size: pagination?.limit || 10,
+      page_number: pagination?.page || 1,
+      all_permission_id: JSON.parse(localStorage.getItem("all_permission_id")),
+      all_assign_id: JSON.parse(localStorage.getItem("all_assign_id")),
+      deleted_skip: true,
+    })
+      .then((res) => {
+        const resData = res.data.data.map((data) => ({
+          ...data,
+          name: data.study.patient_name,
+          institution: data.institution.name,
+          patient_id: data?.study?.patient_id,
+          study_id: data?.study?.id,
+          key: data.id,
+        }));
+        setStudyData(resData);
+        setTotalPages(res.data.total_object);
+      })
+      .catch((err) => console.log(err));
+    setIsLoading(false);
+  };
+
+  const advanceSearchFilterData = (pagination, values = {}) => {
+    setIsLoading(true);
+    setAdvanceSearchPayload(values);
+    advanceSearchFilter({
+      ...values,
+      page_size: pagination?.limit || 10,
+      page_number: pagination?.page || 1,
+      all_premission_id: JSON.parse(localStorage.getItem("all_permission_id")),
+      all_assign_id: JSON.parse(localStorage.getItem("all_assign_id")),
+      // deleted_skip: true,
     })
       .then((res) => {
         const resData = res.data.data.map((data) => ({
@@ -526,9 +596,18 @@ const Dicom = () => {
                 },
                 setStudyData
               );
-            } else {
-              setPagination({ ...Pagination, page, limit: pageSize });
+            } else if (isFilterSelected) {
+              quickFilterStudyData(
+                { page, limit: pageSize },
+                quickFilterPayload
+              );
+            } else if (isAdvanceSearchSelected) {
+              advanceSearchFilterData(
+                { page, limit: pageSize },
+                advanceSearchPayload
+              );
             }
+            setPagination({ ...Pagination, page, limit: pageSize });
           },
           onShowSizeChange: onShowSizeChange,
         }}
@@ -598,6 +677,13 @@ const Dicom = () => {
       <QuickFilterModal
         name={"Study Quick Filter"}
         retrieveStudyData={retrieveStudyData}
+        setStudyData={setStudyData}
+        quickFilterStudyData={quickFilterStudyData}
+      />
+      <AdvancedSearchModal
+        name={"Advance Search"}
+        retrieveStudyData={retrieveStudyData}
+        advanceSearchFilterData={advanceSearchFilterData}
       />
     </>
   );

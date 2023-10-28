@@ -46,7 +46,11 @@ const HeaderButton = ({
   const navigate = useNavigate();
   const { permissionData } = useContext(UserPermissionContext);
   const { setIsRoleModalOpen } = useContext(UserRoleContext);
-  const { isFilterSelected } = useContext(FilterSelectedContext);
+  const {
+    isFilterSelected,
+    isAdvanceSearchSelected,
+    setIsAdvanceSearchSelected,
+  } = useContext(FilterSelectedContext);
   const { setIsEmailModalOpen } = useContext(UserEmailContext);
   const {
     setIsFilterModalOpen,
@@ -58,6 +62,7 @@ const HeaderButton = ({
     setIsInstitutionLogsFilterModalOpen,
     setIsUserLogsFilterModalOpen,
     setIsSupportModalOpen,
+    setIsAdvancedSearchModalOpen,
   } = useContext(filterDataContext);
   const { setSelectedItem } = useContext(ReportDataContext);
   const { billingFilterData, setBillingFilterData } =
@@ -65,8 +70,13 @@ const HeaderButton = ({
   const { studyIdArray } = useContext(StudyIdContext);
   const [templateOptions, setTemplateOptions] = useState([]);
   const [isAddFilterModalOpen, setIsAddFilterModalOpen] = useState(false);
-  const { setStudyDataPayload, setStudyData, setSystemFilterPayload } =
-    useContext(StudyDataContext);
+  const {
+    setStudyDataPayload,
+    setStudyData,
+    setSystemFilterPayload,
+    studyDataPayload,
+    systemFilterPayload,
+  } = useContext(StudyDataContext);
   const [systemFilters, setSystemsFilters] = useState([]);
   const [isFilterCollapseOpen, setIsFilterCollapseOpen] = useState(false);
   const [isFilterChecked, setIsFilterChecked] = useState(null);
@@ -161,24 +171,6 @@ const HeaderButton = ({
     },
   ];
 
-  const items = [
-    {
-      key: "1",
-      label: "Main Filters",
-      children: <p>{"abc"}</p>,
-    },
-    {
-      key: "2",
-      label: "System Filters",
-      children: <p>{"abc"}</p>,
-    },
-    {
-      key: "3",
-      label: "This is panel header 3",
-      children: <p>{"abc"}</p>,
-    },
-  ];
-
   const content = (
     <Collapse
       bordered={true}
@@ -206,22 +198,41 @@ const HeaderButton = ({
               checked={isFilterChecked === data?.key}
               onClick={() => {
                 setIsSystemFilterChecked(null);
-                setIsFilterChecked(data?.key);
-                setStudyDataPayload({
-                  id: data.key,
-                  page_number: 1,
-                  page_size: 10,
-                  deleted_skip: false,
-                });
-                applyMainFilter(
-                  {
+                if (data?.key === isFilterChecked) {
+                  setIsFilterChecked(null);
+                  setStudyDataPayload({});
+                } else {
+                  setIsFilterChecked(data?.key);
+                  setStudyDataPayload({
                     id: data.key,
                     page_number: 1,
                     page_size: 10,
                     deleted_skip: false,
-                  },
-                  setStudyData
-                );
+                    all_premission_id: JSON.parse(
+                      localStorage.getItem("all_permission_id")
+                    ),
+                    all_assign_id: JSON.parse(
+                      localStorage.getItem("all_assign_id")
+                    ),
+                  });
+                  applyMainFilter(
+                    {
+                      id: data.key,
+                      page_number: 1,
+                      page_size: 10,
+                      deleted_skip: false,
+                      all_premission_id: JSON.parse(
+                        localStorage.getItem("all_permission_id")
+                      ),
+                      all_assign_id: JSON.parse(
+                        localStorage.getItem("all_assign_id")
+                      ),
+                    },
+                    setStudyData
+                  );
+                }
+                setSystemFilterPayload({});
+                setIsAdvanceSearchSelected(false);
               }}
             >
               {data?.label}
@@ -256,29 +267,54 @@ const HeaderButton = ({
               onClick={() => {
                 setIsFilterChecked(null);
                 setIsSystemFilterChecked(data?.key);
-                const option = data?.key?.split(" ")[0];
-                const filterOption = data?.key?.split(" ")[1];
-                setSystemFilterPayload({
-                  option,
-                  page_number: 1,
-                  page_size: 10,
-                  deleted_skip: false,
-                  filter: {
-                    status__icontains: filterOption,
-                  },
-                });
-                applySystemFilter(
-                  {
+                if (data?.key === isSystemFilterChecked) {
+                  setIsSystemFilterChecked(null);
+                  setSystemFilterPayload({});
+                } else {
+                  const option = data?.key?.split(" ")[0];
+                  const filterOption = data?.key?.split(" ")[1];
+                  setSystemFilterPayload({
                     option,
                     page_number: 1,
                     page_size: 10,
                     deleted_skip: false,
-                    filter: {
-                      status__icontains: filterOption,
+                    filter:
+                      filterOption !== "undefined"
+                        ? {
+                            status__icontains: filterOption,
+                          }
+                        : {},
+                    all_premission_id: JSON.parse(
+                      localStorage.getItem("all_permission_id")
+                    ),
+                    all_assign_id: JSON.parse(
+                      localStorage.getItem("all_assign_id")
+                    ),
+                  });
+                  applySystemFilter(
+                    {
+                      option,
+                      page_number: 1,
+                      page_size: 10,
+                      deleted_skip: false,
+                      filter:
+                        filterOption !== "undefined"
+                          ? {
+                              status__icontains: filterOption,
+                            }
+                          : {},
+                      all_premission_id: JSON.parse(
+                        localStorage.getItem("all_permission_id")
+                      ),
+                      all_assign_id: JSON.parse(
+                        localStorage.getItem("all_assign_id")
+                      ),
                     },
-                  },
-                  setStudyData
-                );
+                    setStudyData
+                  );
+                }
+                setStudyDataPayload({});
+                setIsAdvanceSearchSelected(false);
               }}
             >
               {data?.label}
@@ -429,6 +465,16 @@ const HeaderButton = ({
           </Button>
           <Button
             type="primary"
+            className={`btn-icon-div ${
+              isAdvanceSearchSelected && "filter-selected"
+            }`}
+            onClick={() => setIsAdvancedSearchModalOpen(true)}
+          >
+            <SearchOutlined style={{ fontWeight: "500" }} />
+            Advance Search
+          </Button>
+          <Button
+            type="primary"
             onClick={() => setIsStudyFilterModalOpen(true)}
             className={`btn-icon-div ${isFilterSelected && "filter-selected"}`}
           >
@@ -508,7 +554,11 @@ const HeaderButton = ({
             >
               <Button
                 type="primary"
-                className="btn-icon-div"
+                className={`btn-icon-div ${
+                  (Object.keys(systemFilterPayload)?.length !== 0 ||
+                    Object.keys(studyDataPayload)?.length !== 0) &&
+                  "filter-selected"
+                }`}
                 onClick={() => setIsFilterCollapseOpen((prev) => !prev)}
               >
                 <FilterOutlined style={{ fontWeight: "500" }} /> Filters
