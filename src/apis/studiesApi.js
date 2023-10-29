@@ -744,3 +744,16 @@ export const backupStudy = async (params = {}) => {
   });
   return backupStudy;
 };
+
+export const viewReported = async (params = {}) => {
+  const viewReported = await API.post(
+    "/studies/v1/update-status-report-viewed",
+    params,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return viewReported;
+};

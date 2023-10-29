@@ -12,6 +12,7 @@ import React, { useContext, useEffect, useState } from "react";
 import {
   downloadAdvancedFileReport,
   getStudyData,
+  viewReported,
 } from "../../apis/studiesApi";
 import FileReport from "./FileReport";
 import TableWithFilter from "../TableWithFilter";
@@ -47,6 +48,9 @@ const StudyReports = ({
   const [show, setShow] = useState(false);
   const navigate = useNavigate();
   const { permissionData } = useContext(UserPermissionContext);
+  const [isViewReportModalOpen, setIsViewReportModalOpen] = useState(false);
+  const [normalReportImages, setNormalReportImages] = useState([]);
+  const [normalReportModalData, setNormalReportModalData] = useState({});
 
   useEffect(() => {
     if (studyID && isReportModalOpen) {
@@ -102,6 +106,12 @@ const StudyReports = ({
       );
   };
 
+  const handleStudyStatus = async () => {
+    await viewReported({ id: studyID })
+      .then((res) => {})
+      .catch((err) => console.log(err));
+  };
+
   const columns = [
     {
       title: "Report Type",
@@ -130,9 +140,17 @@ const StudyReports = ({
           <Tooltip title={"View"}>
             <BsEyeFill
               className="action-icon"
-              onClick={() => {
+              onClick={async () => {
+                await handleStudyStatus();
                 record.report_type === "Advanced report" &&
                   navigate(`/reports/${record.id}/view`);
+                if (record.report_type === "Normal report") {
+                  setIsViewReportModalOpen(true);
+                  setNormalReportImages(
+                    record?.normal_report_data?.report_attach_data
+                  );
+                  setNormalReportModalData(record);
+                }
               }}
             />
           </Tooltip>
@@ -361,6 +379,13 @@ const StudyReports = ({
         modalData={modalData}
       />
       <ImageCarousel studyImages={studyImages} show={show} setShow={setShow} />
+      <ImageCarousel
+        studyImages={normalReportImages}
+        show={isViewReportModalOpen}
+        setShow={setIsViewReportModalOpen}
+        showStudyData={true}
+        studyData={normalReportModalData}
+      />
     </>
   );
 };
