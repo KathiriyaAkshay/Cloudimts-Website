@@ -16,7 +16,7 @@ import {
 import { useBreadcrumbs } from "../hooks/useBreadcrumbs";
 import UserProfile from "./UserProfile";
 import logo from "../assets/images/Imageinet-logo.png";
-import { MdOutlineHomeWork } from "react-icons/md";
+import { MdDeleteSweep, MdOutlineHomeWork } from "react-icons/md";
 import {
   AiOutlineUserAdd,
   AiOutlineDown,
@@ -166,6 +166,13 @@ const BasicLayout = ({ children }) => {
       label: <NavLink to={"/reports"}>Templates</NavLink>,
       key: "templates",
       icon: <CgTemplate />,
+    },
+    userPermissionData["StudyTable view"]?.find(
+      (data) => data.permission === "View Deleted studies"
+    )?.permission_value && {
+      label: <NavLink to={"/deleted-studies"}>Deleted Studies</NavLink>,
+      key: "deletedStudy",
+      icon: <MdDeleteSweep />,
     },
     {
       label: <NavLink to={"/support"}>Support</NavLink>,

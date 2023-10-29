@@ -722,3 +722,25 @@ export const advanceSearchFilter = async (params = {}) => {
   );
   return advanceSearchFilter;
 };
+
+export const fetchDeletedStudies = async (params = {}) => {
+  const fetchDeletedStudies = await API.post(
+    "/studies/v1/fetch_delete_studies_list",
+    params,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return fetchDeletedStudies;
+};
+
+export const backupStudy = async (params = {}) => {
+  const backupStudy = await API.post("/studies/v1/backup_study", params, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return backupStudy;
+};

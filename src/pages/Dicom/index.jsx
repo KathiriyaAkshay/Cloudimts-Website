@@ -11,6 +11,7 @@ import ShareStudy from "../../components/Studies/ShareStudy";
 import {
   advanceSearchFilter,
   closeStudy,
+  deleteStudy,
   filterStudyData,
   getAllStudyData,
   getInstanceData,
@@ -34,6 +35,8 @@ import {
 import { set } from "lodash";
 import { FilterSelectedContext } from "../../hooks/filterSelectedContext";
 import AdvancedSearchModal from "../../components/AdvancedSearchModal";
+import DeleteActionIcon from "../../components/DeleteActionIcon";
+import NotificationMessage from "../../components/NotificationMessage";
 
 const Dicom = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -229,6 +232,44 @@ const Dicom = () => {
       .catch((err) => console.log(err));
   };
 
+  const deleteParticularStudy = async (id) => {
+    await deleteStudy({ id: [id] })
+      .then((res) => {
+        NotificationMessage("success", "Study deleted Successfully");
+        if (isFilterSelected) {
+          quickFilterStudyData({ page: Pagination.page }, quickFilterPayload);
+        } else if (isAdvanceSearchSelected) {
+          advanceSearchFilterData(
+            { page: Pagination.page },
+            advanceSearchPayload
+          );
+        } else if (Object.keys(studyDataPayload).length > 0) {
+          applyMainFilter(
+            {
+              ...studyDataPayload,
+              page_number: Pagination.page,
+              page_size: limit,
+            },
+            setStudyData
+          );
+        } else if (Object.keys(systemFilterPayload).length > 0) {
+          applySystemFilter(
+            {
+              ...systemFilterPayload,
+              page_number: Pagination.page,
+              page_size: limit,
+            },
+            setStudyData
+          );
+        } else {
+          retrieveStudyData();
+        }
+      })
+      .catch((err) =>
+        NotificationMessage("warning", err.response.data.message)
+      );
+  };
+
   const columns = [
     checkPermissionStatus("View Patient id") && {
       title: "Patient's Id",
@@ -405,6 +446,11 @@ const Dicom = () => {
                 }}
               />
             </Tooltip>
+          )}
+          {checkPermissionStatus("Study delete option") && (
+            <DeleteActionIcon
+              deleteActionHandler={() => deleteParticularStudy(record?.id)}
+            />
           )}
           {/* <Menu
             mode="vertical"

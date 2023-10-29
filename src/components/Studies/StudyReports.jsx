@@ -9,7 +9,10 @@ import {
   Typography,
 } from "antd";
 import React, { useContext, useEffect, useState } from "react";
-import { getStudyData } from "../../apis/studiesApi";
+import {
+  downloadAdvancedFileReport,
+  getStudyData,
+} from "../../apis/studiesApi";
 import FileReport from "./FileReport";
 import TableWithFilter from "../TableWithFilter";
 import { BsEyeFill } from "react-icons/bs";
@@ -22,6 +25,9 @@ import DeleteActionIcon from "../DeleteActionIcon";
 import ImageCarousel from "./ImageCarousel";
 import { useNavigate } from "react-router-dom";
 import { UserPermissionContext } from "../../hooks/userPermissionContext";
+import { html2pdf } from "html2pdf.js";
+// import jsPDF from "jspdf";
+// import html2canvas from "html2canvas";
 
 const StudyReports = ({
   isReportModalOpen,
@@ -53,6 +59,47 @@ const StudyReports = ({
       (data) => data.permission === name
     )?.permission_value;
     return permission;
+  };
+
+  const downloadReport = async (id) => {
+    await downloadAdvancedFileReport({ id })
+      .then((res) => {
+        // setEditorData(res.data.data.report);
+        const pdfOptions = {
+          margin: 10,
+          filename: "document.pdf",
+          image: { type: "jpeg", quality: 0.98 },
+          html2canvas: { scale: 2 },
+          jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+        };
+
+        // html2pdf()
+        //   .from(res?.data?.data?.report)
+        //   .set(pdfOptions)
+        //   .outputPdf((pdf) => {
+        //     console.log(pdf);
+        //     const blob = pdf.output("blob");
+        //     const url = URL.createObjectURL(blob);
+        //     const link = document.createElement("a");
+        //     link.href = url;
+        //     link.download = "document.pdf";
+        //     link.click();
+        //     URL.revokeObjectURL(url);
+        //   });
+        // const pdf = new jsPDF();
+
+        // html2canvas(res?.data?.data?.report)
+        //   .then((canvas) => {
+        //     const imgData = canvas.toDataURL("image/jpeg");
+        //     pdf.addImage(imgData, "JPEG", 10, 10, 190, 277);
+        //     pdf.save("document.pdf");
+        //   })
+        //   .catch((err) => console.log(err));
+      })
+      .catch((err) => console.log(err))
+      .catch((err) =>
+        NotificationMessage("warning", err.response.data.message)
+      );
   };
 
   const columns = [
@@ -90,15 +137,22 @@ const StudyReports = ({
             />
           </Tooltip>
           <Tooltip title={"Download"}>
-            <DownloadOutlined className="action-icon" />
+            <DownloadOutlined
+              className="action-icon"
+              onClick={() => downloadReport(record.id)}
+            />
           </Tooltip>
-          <Tooltip title={"Email"}>
-            <MailOutlined className="action-icon" />
-          </Tooltip>
-          <Tooltip title={"Whatsapp"}>
-            <WhatsAppOutlined className="action-icon" />
-          </Tooltip>
-          <DeleteActionIcon />
+          {record.report_type === "Advanced report" && (
+            <Tooltip title={"Email"}>
+              <MailOutlined className="action-icon" />
+            </Tooltip>
+          )}
+          {record.report_type === "Advanced report" && (
+            <Tooltip title={"Whatsapp"}>
+              <WhatsAppOutlined className="action-icon" />
+            </Tooltip>
+          )}
+          {/* <DeleteActionIcon /> */}
         </Space>
       ),
     },

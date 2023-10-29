@@ -23,6 +23,7 @@ const Editor = ({ id }) => {
   const { selectedItem, setSelectedItem } = useContext(ReportDataContext);
   const [studyImageID, setStudyImageID] = useState(0);
   const [signatureImage, setSignatureImage] = useState(null);
+  const [username, setUsername] = useState("");
   const user_id = localStorage.getItem("userID");
   const navigate = useNavigate();
   const [isPatientInformationInserted, setIsPatientInformationInserted] =
@@ -66,7 +67,10 @@ const Editor = ({ id }) => {
   const retrieveUserSignature = async () => {
     setIsLoading(true);
     await fetchUserSignature({ id: user_id })
-      .then((res) => setSignatureImage(res.data.data.signature_image))
+      .then((res) => {
+        setUsername(res?.data?.data?.user__username);
+        setSignatureImage(res?.data?.data?.signature_image);
+      })
       .catch((err) =>
         NotificationMessage("warning", err.response.data.message)
       );
@@ -209,7 +213,7 @@ const Editor = ({ id }) => {
     setIsLoading(true);
     await saveAdvancedFileReport({
       id,
-      report: `${editorData} ${`<figure class="image"><img src=${signatureImage} alt="signature image" style="width:100px;height:80px"></figure>`}`,
+      report: `${editorData} ${`<p style="text-align: right;"><img src=${signatureImage} alt="signature image" style="width:100px;height:80px;text-align: right;"></p>`} ${`<p style="text-align: right;">${username}</p>`}`,
       report_study_description: "Advance",
     })
       .then((res) => {

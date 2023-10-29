@@ -29,6 +29,9 @@ const Filters = React.lazy(() => import("../pages/Filters"));
 const Billing = React.lazy(() => import("../pages/Billing"));
 const RoleLogs = React.lazy(() => import("../pages/Users/RoleLogs"));
 const Support = React.lazy(() => import("../pages/Support"));
+const DeletedStudies = React.lazy(() =>
+  import("../pages/Dicom/DeletedStudies")
+);
 
 export const routes = [
   { path: "/dashboard", component: <Loader component={Home} /> },
@@ -69,6 +72,10 @@ export const routes = [
   { path: "/filters", component: <Loader component={Filters} /> },
   { path: "/billing", component: <Loader component={Billing} /> },
   { path: "/support", component: <Loader component={Support} /> },
+  {
+    path: "/deleted-studies",
+    component: <Loader component={DeletedStudies} />,
+  },
 ];
 
 export const superadminRoute = [
