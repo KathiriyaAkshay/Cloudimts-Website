@@ -281,7 +281,8 @@ const BasicLayout = ({ children }) => {
             style={
               window.location.pathname === "/chats" ||
               window.location.pathname === "/dashboard" ||
-              window.location.pathname === `/create-orders/${id}/edit`
+              window.location.pathname === `/create-orders/${id}/edit` ||
+              window.location.pathname === `/reports/${id}`
                 ? {
                     padding: 0,
                     height: "calc(100vh - 75px)",

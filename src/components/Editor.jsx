@@ -177,7 +177,7 @@ const Editor = ({ id }) => {
       </table>
     </div>`
         : selectedItem.isImagesSelected
-        ? `<figure class="image"><img src=${imageSlider[studyImageID]?.url} alt="study image" style="width:400px;height:300px"></figure>
+        ? `<figure class="image"><img src=${imageSlider[studyImageID]?.url} alt="study image" style="width:256px;height:200px"></figure>
     `
         : selectedItem.isStudyDescriptionSelected && !isStudyDescriptionInserted
         ? `<div>
@@ -401,7 +401,7 @@ const Editor = ({ id }) => {
                   </div>
                 </div>
               </Col>
-              <Col xs={24} sm={12} md={12}>
+              <Col xs={24} sm={12} md={12} className="report-editor-div">
                 <CKEditor
                   editor={ClassicEditor}
                   data={editorData}

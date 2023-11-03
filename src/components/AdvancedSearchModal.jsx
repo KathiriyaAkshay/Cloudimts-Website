@@ -129,7 +129,7 @@ const AdvancedSearchModal = ({
   return (
     <Modal
       centered
-      width={"50%"}
+      width={"75%"}
       title={name}
       open={isAdvancedSearchModalOpen}
       onOk={() => form.submit()}

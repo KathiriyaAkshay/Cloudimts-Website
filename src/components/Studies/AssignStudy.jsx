@@ -212,8 +212,11 @@ const AssignStudy = ({
         setIsAssignModalOpen(false);
         form.resetFields();
       }}
-      width={1000}
-      centered
+      width={1200}
+      style={{
+        top: 20,
+      }}
+      className="assign-study-modal"
     >
       <Spin spinning={isLoading}>
         <div
@@ -238,9 +241,9 @@ const AssignStudy = ({
           style={{ marginTop: "8px" }}
           grid={{
             gutter: 5,
-            column: 2,
+            column: 3,
           }}
-          className="queue-status-list"
+          className="assign-queue-status-list"
           dataSource={modalData?.filter((data) => data.name !== "urgent_case")}
           renderItem={(item) => (
             <List.Item className="queue-number-list">
@@ -342,8 +345,6 @@ const AssignStudy = ({
                 >
                   <Input.TextArea placeholder="Enter Clinical History" />
                 </Form.Item>
-              </Col>
-              <Col xs={24} sm={12} md={12} lg={12}>
                 <Form.Item
                   name="urgent_case"
                   label="Report Required"
@@ -370,6 +371,7 @@ const AssignStudy = ({
                   setImageFile={setImageFile}
                 />
               </Col>
+              <Col xs={24} sm={12} md={12} lg={12}></Col>
             </Row>
           </Form>
         </div>

@@ -55,28 +55,28 @@ const DicomViewer = ({ dicomUrl }) => {
   console.log(imageData);
   return (
     <Spin spinning={isLoading}>
-    <div
-      id="dwv"
-      style={{
-        display: "flex",
-        gap: "10px",
-        flexWrap: "wrap",
-        padding: "10px",
-      }}
-    >
-      {imageData?.map((images) => (
-        <div>
-          <Badge count={images.instances} showZero offset={[-12, 12]}>
-            <img
-              id="imageElement"
-              src={images.image}
-              width={200}
-              height={200}
-            />
-          </Badge>
-        </div>
-      ))}
-    </div>
+      <div
+        id="dwv"
+        style={{
+          display: "flex",
+          gap: "10px",
+          flexWrap: "wrap",
+          padding: "10px",
+        }}
+      >
+        {imageData?.map((images) => (
+          <div>
+            <Badge count={images.instances} showZero offset={[-12, 12]}>
+              <img
+                id="imageElement"
+                src={images.image}
+                width={128}
+                height={128}
+              />
+            </Badge>
+          </div>
+        ))}
+      </div>
     </Spin>
   );
 };

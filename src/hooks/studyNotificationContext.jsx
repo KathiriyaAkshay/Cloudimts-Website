@@ -10,6 +10,8 @@ const StudyNotificationProvider = ({ children }) => {
   const { studyData, setStudyData } = useContext(StudyDataContext);
 
   useEffect(() => {
+    console.log(studyData);
+    // setStudyData((prev) => console.log(prev));
     const ws = new WebSocket(`${BASE_URL}studies/`);
 
     ws.onopen = () => {
@@ -43,6 +45,15 @@ const StudyNotificationProvider = ({ children }) => {
         // NotificationMessage(
         //   "success",
         //   `Status has been updated for Study #${eventData.payload.data.id}`
+        // );
+      } else if (eventData.payload.status === "Delete") {
+        const updatedData = studyData.filter(
+          (data) => data.id !== eventData.payload.data.id
+        );
+        setStudyData(updatedData);
+        // NotificationMessage(
+        //   "success",
+        //   `Study #${eventData.payload.data.id} has been deleted`
         // );
       } else if (eventData.payload.status === "Assigned") {
         const permissionId = JSON.parse(

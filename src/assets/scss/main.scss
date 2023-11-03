@@ -1027,6 +1027,9 @@
 .queue-status-list .ant-row div {
   height: 30px;
 }
+.assign-queue-status-list .ant-row div {
+  height: 30px;
+}
 .ant-modal-body {
   max-height: calc(100vh - 200px);
   overflow-y: auto;
@@ -1104,4 +1107,32 @@
 
 .ant-popover-content {
   min-width: 250px !important;
+}
+
+.report-editor-div {
+  .ck-editor__main {
+    max-height: 420px !important;
+    overflow-y: auto !important;
+  }
+  ::-webkit-scrollbar {
+    width: 3px !important;
+    height: 3px !important;
+  }
+
+  ::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background-color: #fff;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background-color: #99999984;
+  }
+}
+
+.assign-study-modal {
+  .ant-modal-body {
+    max-height: calc(100vh - 150px) !important;
+    overflow-y: auto;
+  }
 }

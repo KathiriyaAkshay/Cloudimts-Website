@@ -27,6 +27,7 @@ import ImageCarousel from "./ImageCarousel";
 import { useNavigate } from "react-router-dom";
 import { UserPermissionContext } from "../../hooks/userPermissionContext";
 import { html2pdf } from "html2pdf.js";
+import jsPDF from "jspdf";
 // import jsPDF from "jspdf";
 // import html2canvas from "html2canvas";
 
@@ -99,6 +100,25 @@ const StudyReports = ({
         //     pdf.save("document.pdf");
         //   })
         //   .catch((err) => console.log(err));
+        const doc = new jsPDF({
+          format: "a4",
+          unit: "px",
+        });
+
+        // Adding the fonts.
+        doc.setFont("Inter-Regular", "normal");
+
+        doc.html(res?.data?.data?.report, {
+          async callback(doc) {
+            await doc.save("report");
+          },
+          margin: [10, 10, 10, 10],
+          autoPaging: "text",
+          x: 0,
+          y: 0,
+          width: 190, //target width in the PDF document
+          windowWidth: 675, //window width in CSS pixels
+        });
       })
       .catch((err) => console.log(err))
       .catch((err) =>
@@ -271,7 +291,7 @@ const StudyReports = ({
           setStudyStatus("");
           setIsReportModalOpen(false);
         }}
-        width={1000}
+        width={1200}
         centered
         footer={[
           checkPermissionStatus("Close study") && (
