@@ -105,6 +105,12 @@ const BasicLayout = ({ children }) => {
   };
 
   const menuItems = [
+    checkPermissionStatus("Show Studies option") && {
+      label: <NavLink to={"/studies"}>Studies</NavLink>,
+      key: "studies",
+      icon: <AiOutlineFileSync color="red"/>,
+    },
+
     checkPermissionStatus("Show Option - Institution option") && {
       label: menuLabel("Institution"),
       key: "SubMenu",
@@ -139,11 +145,6 @@ const BasicLayout = ({ children }) => {
       label: <NavLink to={"/filters"}>Filters</NavLink>,
       key: "filters",
       icon: <AiOutlineFilter />,
-    },
-    checkPermissionStatus("Show Studies option") && {
-      label: <NavLink to={"/studies"}>Studies</NavLink>,
-      key: "studies",
-      icon: <AiOutlineFileSync />,
     },
     checkPermissionStatus("Show Option - Role option") && {
       label: <NavLink to={"/users/roles"}>Roles</NavLink>,
@@ -188,7 +189,6 @@ const BasicLayout = ({ children }) => {
       collapsed={collapsed}
       onCollapse={onCollapse}
       width={240}
-      style={{ paddingLeft: "5px" }}
     >
       <Link to="/home">
 
