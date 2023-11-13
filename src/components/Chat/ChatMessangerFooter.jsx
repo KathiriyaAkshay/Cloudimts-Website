@@ -1,15 +1,13 @@
-import React, { useState } from "react";
-// import EmojiPicker from "emoji-picker-react";
+import React, { useEffect, useState } from "react";
 import { Input } from "antd";
-// import ChatCameraUploader from "./ChatCameraUploader";
 import ChatFileUploader from "./ChatFileUploader";
-import arrowFront from "../../assets/images/arrowfront.svg";
 import backgroundImg from "../../assets/images/backgroundImg.jpg";
-import camera from "../../assets/images/camera.svg";
-import link from "../../assets/images/link.svg";
-import smily from "../../assets/images/smily.svg";
+import SmilyImage from "../../assets/images/smiley.png" ; 
+import CameraImage from "../../assets/images/camera.png" ;
+import SendImage from '../../assets/images/send.png' 
 import EmojiPicker from "emoji-picker-react";
 import ChatCameraUploader from "./ChatCameraUploader";
+import DisableEmoji from "../../assets/images/laugh.png"
 
 const ChatMessangerFooter = (props) => {
   const {
@@ -24,6 +22,7 @@ const ChatMessangerFooter = (props) => {
     setFileStore,
     fileStore,
     isChatModule,
+    layoutHeight
   } = props || {};
 
   const handleUploadData = (data, type) => {
@@ -34,7 +33,16 @@ const ChatMessangerFooter = (props) => {
     }
   };
 
+  useEffect(() => {
+    if (imageStore.length !== 0){
+      layoutHeight("55vh") ; 
+    } else{
+      layoutHeight("71vh") ;
+    }
+  }, [imageStore])
+
   const handleImageStore = (e) => {
+    layoutHeight("55vh") ; 
     setImageStore((prev) => [...e.target.files]);
   };
 
@@ -42,74 +50,45 @@ const ChatMessangerFooter = (props) => {
     setFileStore((prev) => [...e.target.files]);
   };
 
+  console.log("EmojinClick information  =======>");
+  console.log(emojiClick);
+
   return (
     <>
       <div>
+
         <div className="social-chatmessanger-wrap">
-          <img
-            src={smily}
-            alt="icon"
-            onClick={() => handleEmoji()}
-            style={{ cursor: "pointer" }}
-          />
+          
+          {/* ==== Emoji Option =====  */}
+
+          {emojiClick?<>
+            <img
+              src={DisableEmoji}
+              alt="icon"
+              onClick={() => handleEmoji()}
+              className="Smiley-option-image"
+            />
+          
+          </>:<>
+            <img
+              src={SmilyImage}
+              alt="icon"
+              onClick={() => handleEmoji()}
+              className="Smiley-option-image"
+            />
+          </>}
+
+
+          {/* ===== TextInput option division =====  */}
+
           <Input.TextArea
-            className=""
+            className="Chat-message-input"
             placeholder="Message"
             value={chatData}
             rows={1}
             onChange={handleChangeText}
           ></Input.TextArea>
-          {chatData !== "" && fileStore?.length ? (
-            <div className="d-flex">
-              <div
-                style={{ display: "flex", flexWrap: "wrap", cursor: "pointer" }}
-              >
-                <div
-                  className="chat-camera-module"
-                  style={{ cursor: "pointer" }}
-                >
-                  <input
-                    type="file"
-                    id="myfile"
-                    name="myfile"
-                    onChange={(e) => handleFileStore(e)}
-                    multiple="multiple"
-                  />
-                  <img
-                    className="social-chatmessanger-img"
-                    src={link}
-                    alt="icon"
-                    style={{ cursor: "pointer" }}
-                  />
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className="d-flex">
-              <div
-                style={{ display: "flex", flexWrap: "wrap", cursor: "pointer" }}
-              >
-                <div
-                  className="chat-camera-module position-relative"
-                  style={{ cursor: "pointer" }}
-                >
-                  <input
-                    type="file"
-                    id="myfile"
-                    name="myfile"
-                    onChange={(e) => handleFileStore(e)}
-                    multiple="multiple"
-                    className="w-100 start-0"
-                  />
-                  <img
-                    style={{ width: 20, cursor: "pointer" }}
-                    src={link}
-                    alt="icon"
-                  />
-                </div>
-              </div>
-            </div>
-          )}
+
           {chatData !== "" && imageStore?.length ? (
             <div
               className="d-flex"
@@ -119,6 +98,7 @@ const ChatMessangerFooter = (props) => {
                 style={{ display: "flex", flexWrap: "wrap", cursor: "pointer" }}
               >
                 <div className="chat-camera-module">
+
                   <input
                     type="file"
                     id="myfile"
@@ -127,13 +107,17 @@ const ChatMessangerFooter = (props) => {
                     onChange={(e) => handleImageStore(e)}
                     multiple="multiple"
                   />
+                  
                   <img
-                    src={camera}
+                    src={CameraImage}
                     alt="alt"
-                    style={{ cursor: "pointer" }}
+                    style={{ cursor: "pointer", marginTop: "5px" }}
                   ></img>
+                
                 </div>
+              
               </div>
+            
             </div>
           ) : (
             <div
@@ -141,10 +125,12 @@ const ChatMessangerFooter = (props) => {
               style={{ marginLeft: "20px", cursor: "pointer" }}
             >
               <div style={{ display: "flex", flexWrap: "wrap" }}>
+                
                 <div
                   className="chat-camera-module"
                   style={{ position: "relative", cursor: "pointer" }}
                 >
+                
                   <input
                     type="file"
                     id="myfile"
@@ -154,22 +140,30 @@ const ChatMessangerFooter = (props) => {
                     multiple="multiple"
                     style={{ left: 0, width: "100%" }}
                   />
+                
                   <img
-                    src={camera}
+                    src={CameraImage}
                     alt="alt"
-                    style={{ cursor: "pointer" }}
+                    style={{ cursor: "pointer", marginTop: '5px' }}
                   ></img>
+                
                 </div>
+              
               </div>
+            
             </div>
           )}
+
           {chatData?.length || imageStore?.length || fileStore?.length ? (
+            
             <div onClick={() => sendMessage()} className="send-chat-button">
-              <img src={arrowFront} alt="ok" />
+              <img src={SendImage} alt="ok" className="Send-option-image" />
             </div>
+          
           ) : (
             ""
           )}
+          
         </div>
 
         {imageStore?.length ? null : (
@@ -196,6 +190,8 @@ const ChatMessangerFooter = (props) => {
           />
         )}
       </div>
+
+      {/* ===== Emoji option layout =====  */}
 
       {emojiClick && (
         <div

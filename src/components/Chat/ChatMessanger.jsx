@@ -37,6 +37,9 @@ const ChatMessanger = (props) => {
   console.log(isChatModule);
 
   const userDetail = userProfileData;
+
+  const [layoutHeight, setLayoutHeight] = useState("71vh") ; 
+
   const [openMenu, setOpenMenu] = useState(false);
   const [loading, setLoading] = useState(false);
   const [emojiClick, setEmojiClick] = useState(false);
@@ -502,47 +505,49 @@ const ChatMessanger = (props) => {
             restaurantName={restaurantName}
             isChatModule={isChatModule}
           />
+            <div className="User-chat-messages-division" style={{height: layoutHeight}}>
 
-          <div>
+              <SingleChatMessanger
+                emojiClick={emojiClick}
+                messages={messages}
+                ownProfileDataId={userId}
+                handleSettingPopup={handleSettingPopup}
+                description={description}
+                chatSettingData={chatSettingData}
+                classNames={isHousemateChat ? "isHousemateChat" : ""}
+                searchedMessages={forwardMessage?.chatSearchValue}
+                chatSearchedResults={forwardMessage?.chatSearchedResults}
+                handleGalleryPopUp={handleGalleryPopUp}
+                searchIndex={forwardMessage?.searchIndex}
+              />
 
-            <SingleChatMessanger
-              emojiClick={emojiClick}
-              messages={messages}
-              ownProfileDataId={userId}
-              handleSettingPopup={handleSettingPopup}
-              description={description}
-              chatSettingData={chatSettingData}
-              classNames={isHousemateChat ? "isHousemateChat" : ""}
-              searchedMessages={forwardMessage?.chatSearchValue}
-              chatSearchedResults={forwardMessage?.chatSearchedResults}
-              handleGalleryPopUp={handleGalleryPopUp}
-              searchIndex={forwardMessage?.searchIndex}
-            />
-
-            {forwardMessage?.quoted && (
-              <div
-                style={QuoteStyle}
-                className={`quotedMessage-container isHousemateChat-quote ${
-                  isChatModule && "quotedMessage-container-position"
-                }`}
-              >
-                <div className="quoted-details">
-                  <span className="quotedMessage-message">
-                    {forwardMessage?.quotedMessage?.content}
-                  </span>
-                </div>
+              {forwardMessage?.quoted && (
                 <div
-                  style={{
-                    fontWeight: "600",
-                    color: "rgb(109, 121, 147)",
-                    cursor: "pointer",
-                  }}
-                  onClick={() => setForwardMessage({ quoted: false })}
+                  style={QuoteStyle}
+                  className={`quotedMessage-container isHousemateChat-quote ${
+                    isChatModule && "quotedMessage-container-position"
+                  }`}
                 >
-                  X
+                  <div className="quoted-details">
+                    <span className="quotedMessage-message">
+                      {forwardMessage?.quotedMessage?.content}
+                    </span>
+                  </div>
+                  <div
+                    style={{
+                      fontWeight: "600",
+                      color: "rgb(109, 121, 147)",
+                      cursor: "pointer",
+                    }}
+                    onClick={() => setForwardMessage({ quoted: false })}
+                  >
+                    X
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+
+            </div>
+
             <ChatMessangerFooter
               handleEmoji={handleEmoji}
               emojiClick={emojiClick}
@@ -556,9 +561,8 @@ const ChatMessanger = (props) => {
               setFileStore={setFileStore}
               fileStore={fileStore}
               isChatModule={isChatModule}
+              layoutHeight = {setLayoutHeight}
             />
-
-          </div>
 
         </div>
 
