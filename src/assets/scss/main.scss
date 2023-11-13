@@ -1027,9 +1027,11 @@
 .queue-status-list .ant-row div {
   height: 30px;
 }
+
 .assign-queue-status-list .ant-row div {
   height: 30px;
 }
+
 .ant-modal-body {
   max-height: calc(100vh - 200px);
   overflow-y: auto;
@@ -1148,4 +1150,61 @@
 
 .ant-menu-submenu:hover{
   background-color: transparent !important;
+}
+
+.input-option-layout{
+  height: 60vh !important;
+}
+
+.Report-setting-modal{
+  width: 90% !important;
+}
+
+.Report-setting-option{
+  display: flex;
+  flex-direction: row;
+}
+
+.Report-setting-particular-option-div{
+  width:50%;
+}
+
+.ant-modal-body{
+  padding-top: 0px !important;
+}
+
+.ant-modal-header{
+  margin-bottom: 0px !important;
+}
+
+.Assign-study-info-tag{
+  max-width: 80% !important;
+  white-space: initial !important;
+}
+
+.study-modal-patient-info-layout{
+  height: 22vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.Assign-study-upload-option-input-layout{
+  display: flex;
+  flex-direction: row;
+}
+
+.Assign-study-specific-option{
+  width: 50%;
+  padding-left: 0.8rem;
+  padding-right: 0.8rem;
+}
+
+.Study-modal-input-option-division{
+  padding-top: 1rem;
+  border-top: 1px solid #c4c4c4;
+  margin-top: 1rem;
+}
+
+.assign-study-modal{
+  height: 95vh !important;
 }

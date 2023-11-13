@@ -39,6 +39,7 @@ import DeleteActionIcon from "../../components/DeleteActionIcon";
 import NotificationMessage from "../../components/NotificationMessage";
 
 const Dicom = () => {
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isStudyModalOpen, setIsStudyModalOpen] = useState(false);
@@ -56,6 +57,7 @@ const Dicom = () => {
   const [seriesID, setSeriesID] = useState(null);
   const [personName, setPersonName] = useState(null);
   const { permissionData } = useContext(UserPermissionContext);
+  
   const {
     studyData,
     setStudyData,
@@ -64,6 +66,7 @@ const Dicom = () => {
     systemFilterPayload,
     setSystemFilterPayload,
   } = useContext(StudyDataContext);
+  
   const { studyIdArray, setStudyIdArray } = useContext(StudyIdContext);
   const { isFilterSelected, isAdvanceSearchSelected } = useContext(
     FilterSelectedContext
@@ -100,10 +103,6 @@ const Dicom = () => {
   const onShowSizeChange = (current, pageSize) => {
     setLimit(pageSize);
     if (Object.keys(studyDataPayload).length > 0) {
-      // applyMainFilter(
-      //   { ...studyDataPayload, page_number: current, page_size: pageSize },
-      //   setStudyData
-      // );
     } else if (Object.keys(systemFilterPayload).length > 0) {
       // applySystemFilter(
       //   { ...systemFilterPayload, page_number: current, page_size: pageSize },
@@ -452,100 +451,6 @@ const Dicom = () => {
               deleteActionHandler={() => deleteParticularStudy(record?.id)}
             />
           )}
-          {/* <Menu
-            mode="vertical"
-            expandIcon={() => ""}
-            className="order-menu-header"
-            triggerSubMenuAction="click"
-            onClick={(e) => {
-              e.domEvent.stopPropagation();
-            }}
-          >
-            <Menu.SubMenu
-              title={
-                <RxDropdownMenu
-                  className="order-menu-icon"
-                  style={{ fontSize: "24px" }}
-                />
-              }
-              onTitleClick={(e) => e.domEvent.stopPropagation()}
-            >
-              <Menu.Item key="share-study">
-                <Typography className="order-menu-name-secondary">
-                  Share Study
-                </Typography>
-              </Menu.Item>
-
-              <Menu.Item
-                key="clinical-history"
-                onClick={() => {
-                  setStudyID(record.id);
-                  setIsAssignModalOpen(true);
-                }}
-              >
-                <Typography className="order-menu-name-primary">
-                  Clinical History
-                </Typography>
-              </Menu.Item>
-              <Menu.Item
-                key="study_data"
-                onClick={() => {
-                  setStudyID(record.id);
-                  setIsReportModalOpen(true);
-                }}
-              >
-                <Typography className="order-menu-name-primary">
-                  Study Data
-                </Typography>
-              </Menu.Item>
-              <Menu.Item
-                key="more"
-                onClick={() => {
-                  setStudyID(record.id);
-                  setIsStudyModalOpen(true);
-                }}
-              >
-                <Typography className="order-menu-name-primary">
-                  More Details
-                </Typography>
-              </Menu.Item>
-              <Menu.Item
-                key="auditing"
-                onClick={() => {
-                  setStudyID(record.id);
-                  setIsModalOpen(true);
-                }}
-              >
-                <Typography className="order-menu-name-primary">
-                  Auditing
-                </Typography>
-              </Menu.Item>
-              <Menu.Item
-                key="edit"
-                onClick={() => {
-                  setStudyID(record.id);
-                  setIsEditModalOpen(true);
-                }}
-              >
-                <Typography className="order-menu-name-primary">
-                  Edit Study
-                </Typography>
-              </Menu.Item>
-              <Menu.Item
-                key="chat"
-                onClick={() => {
-                  setSeriesID(record.series_id);
-                  setStudyID(record.id);
-                  setIsDrawerOpen(true);
-                  setPersonName(`${record.study.patient_id} | ${record.name}`);
-                }}
-              >
-                <Typography className="order-menu-name-primary">
-                  Chat
-                </Typography>
-              </Menu.Item>
-            </Menu.SubMenu>
-          </Menu> */}
         </Space>
       ),
     },
@@ -619,7 +524,6 @@ const Dicom = () => {
         }}
         rowSelection={rowSelection}
         onRow={onRow}
-        // onPaginationChange={retrieveStudyData}
         loading={isLoading}
         pagination={{
           current: Pagination.page,
@@ -658,24 +562,28 @@ const Dicom = () => {
           onShowSizeChange: onShowSizeChange,
         }}
       />
+
       <EditStudy
         isEditModalOpen={isEditModalOpen}
         setIsEditModalOpen={setIsEditModalOpen}
         studyID={studyID}
         setStudyID={setStudyID}
       />
+
       <AssignStudy
         isAssignModalOpen={isAssignModalOpen}
         setIsAssignModalOpen={setIsAssignModalOpen}
         studyID={studyID}
         setStudyID={setStudyID}
       />
+
       <StudyAudits
         isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}
         studyID={studyID}
         setStudyID={setStudyID}
       />
+
       <StudyReports
         isReportModalOpen={isReportModalOpen}
         setIsReportModalOpen={setIsReportModalOpen}
@@ -686,18 +594,21 @@ const Dicom = () => {
         studyStatusHandler={studyStatusHandler}
         studyCloseHandler={studyCloseHandler}
       />
+      
       <PatientDetails
         isStudyModalOpen={isStudyModalOpen}
         setIsStudyModalOpen={setIsStudyModalOpen}
         studyID={studyID}
         setStudyID={setStudyID}
       />
+      
       <ShareStudy
         isShareStudyModalOpen={isShareStudyModalOpen}
         setIsShareStudyModalOpen={setIsShareStudyModalOpen}
         studyID={studyID}
         setStudyID={setStudyID}
       />
+      
       <Drawer
         title={null}
         placement="right"
@@ -720,17 +631,20 @@ const Dicom = () => {
           setMessages={setMessages}
         />
       </Drawer>
+      
       <QuickFilterModal
         name={"Study Quick Filter"}
         retrieveStudyData={retrieveStudyData}
         setStudyData={setStudyData}
         quickFilterStudyData={quickFilterStudyData}
       />
+      
       <AdvancedSearchModal
         name={"Advance Search"}
         retrieveStudyData={retrieveStudyData}
         advanceSearchFilterData={advanceSearchFilterData}
       />
+      
     </>
   );
 };

@@ -12,8 +12,9 @@ import {
   Switch,
   Select,
   Spin,
-  Modal,
   InputNumber,
+  Modal, 
+  Typography
 } from "antd";
 
 import { useNavigate, useParams } from "react-router-dom";
@@ -31,21 +32,25 @@ import {
 const { Step } = Steps;
 
 const AddInstitution = () => {
+  
+  const { id } = useParams();
+  const { changeBreadcrumbs } = useBreadcrumbs();
+  
   const [currentStep, setCurrentStep] = useState(0);
   const [tableData, setTableData] = useState([]);
   const [form] = Form.useForm();
   const navigate = useNavigate();
-  const { changeBreadcrumbs } = useBreadcrumbs();
   const token = localStorage.getItem("token");
   const [payload, setPayload] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [radiologistOptions, setRadiologistOptions] = useState([]);
-  const { id } = useParams();
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const [open, setOpen] = useState(false);
+  const [confirmLoading, setConfirmLoading] = useState(false);
+  
   useEffect(() => {
-    
     const crumbs = [{ name: "Institution", to: "/institutions" }];
+
     crumbs.push({
       name: id ? "Edit" : "Add",
     });
@@ -72,7 +77,6 @@ const AddInstitution = () => {
   };
 
   const retrieveInstitutionData = async () => {
-    
     setIsLoading(true);
 
     await API.post(
@@ -82,7 +86,7 @@ const AddInstitution = () => {
     )
       .then((res) => {
         const modalityData = convertToInitialObject(res.data.data.modality);
-    
+
         const formData = {
           ...res.data.data,
           ...modalityData,
@@ -321,14 +325,10 @@ const AddInstitution = () => {
       title: "Modality",
       dataIndex: "name",
       width: "50%",
-      // sorter: (a, b) => {},
-      // editable: true,
     },
     {
       title: "Reporting Charge",
       dataIndex: "reporting_charge",
-      // sorter: (a, b) => {},
-      // editable: true,
       render: (text, record) => (
         <Form.Item name={`${record.id}_reporting_charge`} initialValue={text}>
           <Input />
@@ -338,8 +338,6 @@ const AddInstitution = () => {
     {
       title: "Communication Charge",
       dataIndex: "communication_charge",
-      // sorter: (a, b) => {},
-      // editable: true,
       render: (text, record) => (
         <Form.Item
           name={`${record.id}_communication_charge`}
@@ -352,13 +350,12 @@ const AddInstitution = () => {
   ];
 
   const reportColumns = [
+
     {
       title: "Report Options",
       dataIndex: "report_option",
-      // render: (text, record, index) => {
-      //   if(index === 1){}
-      // }
     },
+    
     {
       title: "Value for institution",
       dataIndex: "report_option_value",
@@ -450,6 +447,23 @@ const AddInstitution = () => {
     }
   };
 
+  const handleOk = () => {
+  
+    setModalText('The modal will be closed after two seconds');
+    setConfirmLoading(true);
+    setTimeout(() => {
+      setOpen(false);
+      setConfirmLoading(false);
+    }, 2000);
+  
+  };
+
+  const handleCancel = () => {
+  
+    console.log('Clicked cancel button');
+    setOpen(false);
+  };
+
   return (
     <div className="secondary-table">
       <Card>
@@ -457,12 +471,12 @@ const AddInstitution = () => {
           <Steps current={currentStep} className="mb">
             <Step title="Basic Info" />
             <Step title="Modality Charges" />
-            {/* <Steps title="Set Password" /> */}
             <Steps title="Report Settings" />
             <Steps title="Upload Settings" />
             <Steps title="Blocked Users" />
             <Steps title="In house Radiologist" />
           </Steps>
+
           {currentStep === 0 && (
             <Form
               labelCol={{
@@ -675,6 +689,7 @@ const AddInstitution = () => {
               </Row>
             </Form>
           )}
+          
           {currentStep === 1 && (
             <Form
               labelCol={{
@@ -722,87 +737,7 @@ const AddInstitution = () => {
               </Row>
             </Form>
           )}
-          {/* {currentStep === 2 && (
-          <Form
-            labelCol={{
-              span: 24,
-            }}
-            wrapperCol={{
-              span: 24,
-            }}
-            form={form}
-            onFinish={handleSubmit}
-          >
-            <Row gutter={30}>
-              <Col lg={12} md={12} sm={24}>
-                <Form.Item
-                  label="Password"
-                  name="password"
-                  rules={[
-                    {
-                      whitespace: true,
-                      required: true,
-                      message: "Please enter password",
-                    },
-                  ]}
-                  hasFeedback
-                >
-                  <Input.Password
-                    autoComplete="off"
-                    name="password"
-                    style={{ marginBottom: "0.5rem" }}
-                    placeholder="Enter Password"
-                  />
-                </Form.Item>
-              </Col>
-              <Col lg={12} md={12} sm={24}>
-                <Form.Item
-                  label="Confirm Password"
-                  name="confirmPassword"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please confirm your password",
-                    },
-                    ({ getFieldValue }) => ({
-                      validator(_, value) {
-                        if (!value || getFieldValue("password") === value) {
-                          return Promise.resolve();
-                        }
-                        return Promise.reject(
-                          new Error(
-                            "The two passwords that you entered do not match!"
-                          )
-                        );
-                      },
-                    }),
-                  ]}
-                  dependencies={["password"]}
-                  hasFeedback
-                >
-                  <Input.Password
-                    autoComplete="off"
-                    name="confirmPassword"
-                    style={{ marginBottom: "0.5rem" }}
-                    placeholder="Enter Confirm Password"
-                  />
-                </Form.Item>
-              </Col>
-              <Col lg={24} md={24} sm={24} className="justify-end">
-                <Button type="primary" onClick={handlePrevStep}>
-                  Previous
-                </Button>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  style={{ marginLeft: "10px" }}
-                >
-                  Next
-                </Button>
-              </Col>
-            </Row>
-          </Form>
-        )} */}
+
           {currentStep === 2 && (
             <Form
               labelCol={{
@@ -849,6 +784,7 @@ const AddInstitution = () => {
               </Row>
             </Form>
           )}
+          
           {currentStep === 3 && (
             <Form
               labelCol={{
@@ -895,6 +831,7 @@ const AddInstitution = () => {
               </Row>
             </Form>
           )}
+
           {currentStep === 4 && (
             <Form
               labelCol={{
@@ -911,7 +848,6 @@ const AddInstitution = () => {
                   <Form.Item
                     label="Choose Radiologist"
                     name="radiologist"
-                    // className="category-select"
                     rules={[
                       {
                         required: false,
@@ -960,6 +896,7 @@ const AddInstitution = () => {
               </Row>
             </Form>
           )}
+
           {currentStep === 5 && (
             <Form
               labelCol={{
@@ -1014,8 +951,11 @@ const AddInstitution = () => {
               </Row>
             </Form>
           )}
+
         </Spin>
-      </Card>
+      
+      </Card>   
+      
       <Modal
         centered
         title="Confirmation"
@@ -1026,6 +966,33 @@ const AddInstitution = () => {
       >
         <p>Are you sure you want to update this details?</p>
       </Modal>
+
+      <Modal
+        centered
+        title="Institution report setting"
+        open={open}
+        onOk={handleOk}
+        confirmLoading={confirmLoading}
+        onCancel={handleCancel}
+        className="Report-setting-modal"
+      >
+
+        <div className="Report-setting-option">
+            <div className="Report-setting-particular-option-div">
+                    
+              <Typography.Title level={5} style={{ margin: 0 }}>
+                Institution report option
+              </Typography.Title>
+
+            </div>
+            <div className="Report-setting-particular-option-div">
+              <Typography.Title level={5} style={{ margin: 0 }}>
+                Institution report option
+              </Typography.Title>
+            </div>
+        </div>
+      </Modal>
+    
     </div>
   );
 };

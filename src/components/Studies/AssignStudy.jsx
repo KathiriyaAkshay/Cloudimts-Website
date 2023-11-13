@@ -1,12 +1,9 @@
 import {
-  Button,
-  Col,
   Form,
   Input,
   List,
   Modal,
   Radio,
-  Row,
   Select,
   Spin,
   Tag,
@@ -23,7 +20,8 @@ import {
 import UploadImage from "../UploadImage";
 import { omit } from "lodash";
 import NotificationMessage from "../NotificationMessage";
-import { descriptionOptions } from "../../helpers/utils";
+import { descriptionOptions } from "../../helpers/utils"; 
+import APIHandler from "../../apis/apiHandler";
 
 const AssignStudy = ({
   isAssignModalOpen,
@@ -86,7 +84,6 @@ const AssignStudy = ({
   useEffect(() => {
     if (studyID && isAssignModalOpen) {
       retrieveStudyData();
-      retrieveRadiologistData();
       retrieveAssignStudyDetails();
     }
   }, [studyID]);
@@ -109,21 +106,7 @@ const AssignStudy = ({
     setIsLoading(false);
   };
 
-  const retrieveRadiologistData = () => {
-    getRadiologistList({
-      role_id: localStorage.getItem("role_id"),
-    })
-      .then((res) => {
-        const resData = res.data.data.map((data) => ({
-          label: data.name,
-          value: data.id,
-        }));
-        setOptions(resData);
-      })
-      .catch((err) => console.log(err));
-  };
-
-  const retrieveStudyData = () => {
+  const retrieveStudyData = async () => {
     setIsLoading(true);
     getStudyData({ id: studyID })
       .then((res) => {
@@ -157,10 +140,6 @@ const AssignStudy = ({
             name: "Gender",
             value: resData?.Gender,
           },
-          // {
-          //   name: "Count",
-          //   value: "",
-          // },
           {
             name: "Date of birth",
             value: resData?.DOB,
@@ -169,10 +148,6 @@ const AssignStudy = ({
             name: "Study Description",
             value: resData?.Study_description,
           },
-          // {
-          //   name: "Age Group",
-          //   value: "",
-          // },
           {
             name: "Patient's comments",
             value: resData?.Patient_comments,
@@ -194,7 +169,29 @@ const AssignStudy = ({
             value: resData?.assigned_study_data,
           },
         ];
+
         setModalData(modifiedData);
+
+        // Fetch radiologist name based on Institution id 
+
+        const FetchRadiologist = async () => {
+
+          let requestPayload = {
+            institution_id: resData?.institution_id,
+          };
+
+          let responseData = await APIHandler("POST", requestPayload, 'studies/v1/fetch-institution-radiologist');
+
+          if (responseData['status'] === true){
+            const resData = responseData.data.map((data) => ({
+              label: data.name,
+              value: data.id,
+            }));
+            setOptions(resData);
+          }
+        };
+
+        FetchRadiologist() ; 
       })
       .catch((err) => console.log(err));
     setIsLoading(false);
@@ -212,7 +209,7 @@ const AssignStudy = ({
         setIsAssignModalOpen(false);
         form.resetFields();
       }}
-      width={1200}
+      width={1300}
       style={{
         top: 20,
       }}
@@ -237,13 +234,14 @@ const AssignStudy = ({
               ?.urgent_case && <Tag color="error">Urgent</Tag>}
           </div>
         </div>
+
         <List
-          style={{ marginTop: "8px" }}
+          style={{ marginTop: "8px"}}
           grid={{
             gutter: 5,
-            column: 3,
+            column: 2,
           }}
-          className="assign-queue-status-list"
+          className="assign-queue-status-list study-modal-patient-info-layout"
           dataSource={modalData?.filter((data) => data.name !== "urgent_case")}
           renderItem={(item) => (
             <List.Item className="queue-number-list">
@@ -256,7 +254,9 @@ const AssignStudy = ({
                 item.name === "Study UID" ||
                 item.name === "Institution Name" ||
                 item.name === "Series UID" ? (
-                  <Tag color="#87d068">{item.value}</Tag>
+                  <Tag color="#87d068" className="Assign-study-info-tag">
+                    {item.value}
+                  </Tag>
                 ) : (
                   <Typography style={{ fontWeight: "400" }}>
                     {item.value}
@@ -266,7 +266,7 @@ const AssignStudy = ({
             </List.Item>
           )}
         />
-        <div>
+        <div className="Study-modal-input-option-division">
           <Form
             labelCol={{
               span: 24,
@@ -278,8 +278,8 @@ const AssignStudy = ({
             onFinish={handleSubmit}
             className="mt"
           >
-            <Row gutter={30}>
-              <Col lg={12} md={12} sm={12}>
+            <div className="Assign-study-upload-option-input-layout">
+              <div className="Assign-study-specific-option">
                 <Form.Item
                   label="Choose Radiologist"
                   name="radiologist"
@@ -294,18 +294,15 @@ const AssignStudy = ({
                   <Select
                     placeholder="Select Radiologist"
                     options={options}
-                    // mode="multiple"
                     showSearch
                     filterSort={(optionA, optionB) =>
                       (optionA?.label ?? "")
                         .toLowerCase()
                         .localeCompare((optionB?.label ?? "").toLowerCase())
                     }
-                    // onChange={appliedOnChangeHandler}
                   />
                 </Form.Item>
-              </Col>
-              <Col xs={24} sm={12} md={12} lg={12}>
+
                 <Form.Item
                   name="study_description"
                   label="Modality Study Description"
@@ -327,11 +324,9 @@ const AssignStudy = ({
                         .toLowerCase()
                         .localeCompare((optionB?.label ?? "").toLowerCase())
                     }
-                    // onChange={appliedOnChangeHandler}
                   />
                 </Form.Item>
-              </Col>
-              <Col xs={24} sm={12} md={12} lg={12}>
+
                 <Form.Item
                   name="study_history"
                   label="Clinical History"
@@ -345,6 +340,9 @@ const AssignStudy = ({
                 >
                   <Input.TextArea placeholder="Enter Clinical History" />
                 </Form.Item>
+              </div>
+
+              <div className="Assign-study-specific-option">
                 <Form.Item
                   name="urgent_case"
                   label="Report Required"
@@ -360,8 +358,7 @@ const AssignStudy = ({
                     <Radio value={true}>Urgent</Radio>
                   </Radio.Group>
                 </Form.Item>
-              </Col>
-              <Col xs={24} sm={12} md={12} lg={12}>
+
                 <UploadImage
                   multipleImage={true}
                   multipleImageFile={multipleImageFile}
@@ -370,9 +367,8 @@ const AssignStudy = ({
                   imageFile={imageFile}
                   setImageFile={setImageFile}
                 />
-              </Col>
-              <Col xs={24} sm={12} md={12} lg={12}></Col>
-            </Row>
+              </div>
+            </div>
           </Form>
         </div>
       </Spin>

@@ -268,12 +268,6 @@ const BasicLayout = ({ children }) => {
                     </Breadcrumb.Item>
                   ))}
               </Breadcrumb>
-              {/* <Menu
-                mode="horizontal"
-                theme="dark"
-                items={menuItems}
-                className="header-menu"
-              /> */}
               <UserProfile />
             </div>
           </Header>
@@ -305,29 +299,6 @@ const BasicLayout = ({ children }) => {
             {window.location.pathname !== "/chats" &&
               window.location.pathname !== "/dashboard" && (
                 <div className="breadcrumb-div">
-                  {/* <Breadcrumb
-                    separator="|"
-                    style={{
-                      fontSize: "18px",
-                      fontWeight: 500,
-                      color: "#FFF",
-                      justifyContent: "center",
-                    }}
-                    className="header-breadcrumb"
-                  >
-                    {breadCrumbs.length > 0 &&
-                      breadCrumbs.map((crumb, index) => (
-                        <Breadcrumb.Item key={index}>
-                          {crumb.to ? (
-                            <Link to={crumb.to} title={crumb.name}>
-                              {crumb.name}
-                            </Link>
-                          ) : (
-                            crumb.name
-                          )}
-                        </Breadcrumb.Item>
-                      ))}
-                  </Breadcrumb> */}
                   <HeaderButton
                     setIsModalOpen={setIsModalOpen}
                     id={id}
@@ -347,7 +318,6 @@ const BasicLayout = ({ children }) => {
             >
               {children}
             </div>
-            {/* <Outlet /> */}
           </Content>
         </Layout>
       </Layout>
