@@ -266,6 +266,7 @@ const AssignStudy = ({
             </List.Item>
           )}
         />
+
         <div className="Study-modal-input-option-division">
           <Form
             labelCol={{
@@ -371,6 +372,7 @@ const AssignStudy = ({
             </div>
           </Form>
         </div>
+      
       </Spin>
     </Modal>
   );

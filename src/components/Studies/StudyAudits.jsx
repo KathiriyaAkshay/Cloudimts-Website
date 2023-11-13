@@ -49,10 +49,6 @@ const StudyAudits = ({ isModalOpen, setIsModalOpen, studyID, setStudyID }) => {
             name: "Gender",
             value: resData?.Gender,
           },
-          // {
-          //   name: "Count",
-          //   value: "",
-          // },
           {
             name: "Date of birth",
             value: resData?.DOB,
@@ -61,10 +57,6 @@ const StudyAudits = ({ isModalOpen, setIsModalOpen, studyID, setStudyID }) => {
             name: "Study Description",
             value: resData?.Study_description,
           },
-          // {
-          //   name: "Age Group",
-          //   value: "",
-          // },
           {
             name: "Patient's comments",
             value: resData?.Patient_comments,
@@ -93,7 +85,7 @@ const StudyAudits = ({ isModalOpen, setIsModalOpen, studyID, setStudyID }) => {
               ...data,
               perform_user: data.perform_user.username,
             }));
-            setAuditData(resData);
+            setAuditData([...resData, ...resData, ...resData, ...resData, ...resData, ...resData, ...resData, ...resData, ...resData, ...resData, ...resData, ...resData]);
           })
           .catch((err) => console.log(err));
       })
@@ -106,7 +98,6 @@ const StudyAudits = ({ isModalOpen, setIsModalOpen, studyID, setStudyID }) => {
       title: "Event Type",
       dataIndex: "event_display",
       sorter: (a, b) => a.event_display.localeCompare(b.event_display),
-      // editable: true,
       render: (text) => (
         <Tag
           color={
@@ -146,225 +137,38 @@ const StudyAudits = ({ isModalOpen, setIsModalOpen, studyID, setStudyID }) => {
       title: "Performed Type",
       dataIndex: "time",
       sorter: (a, b) => moment(a.time).diff(b.time),
-      // editable: true,
     },
     {
       title: "Performed User",
       dataIndex: "perform_user",
       sorter: (a, b) => a?.perform_user?.localeCompare(b?.perform_user),
-      // editable: true,
     },
     {
       title: "Target User",
       dataIndex: "target_user",
-      // sorter: (a, b) => a?.target_user?.localeCompare(b?.target_user),
-      // editable: true,
     },
   ];
 
   return (
     <Modal
+      className="study-auditing-modal"
       title="Study Audit Entries"
       open={isModalOpen}
+      
       onOk={() => {
         setStudyID(null);
         setIsModalOpen(false);
       }}
+
       onCancel={() => {
         setStudyID(null);
         setIsModalOpen(false);
       }}
       width={1000}
       centered
-      // footer={[
-      //   <Button key="back">
-      //     OHIF Viewer
-      //   </Button>,
-      //   <Button key="back">
-      //   Web Report
-      // </Button>,
-      //    <Button key="submit" type="primary">
-      //    Simplified Report
-      //  </Button>,
-      //   <Button key="submit" type="primary">
-      //     File Report
-      //   </Button>,
-      //   <Button
-      //     key="link"
-      //     href="https://google.com"
-      //     type="primary"
-      //     // loading={loading}
-      //     // onClick={handleOk}
-      //   >
-      //     Advanced File Report
-      //   </Button>,
-      // ]}
+      footer={null}
     >
-      {/* <Form
-      labelCol={{
-        span: 24,
-      }}
-      wrapperCol={{
-        span: 24,
-      }}
-      form={form}
-      onFinish={handleSubmit}
-      className="mt"
-    >
-      <Row gutter={15}>
-        <Col lg={12}>
-          <Form.Item
-            name="country"
-            label="Patient's Id"
-            rules={[
-              {
-                required: true,
-                whitespace: true,
-                message: "Please enter Patient's Id",
-              },
-            ]}
-          >
-            <Input placeholder="Enter Patient's Id" />
-          </Form.Item>
-        </Col>
-        <Col lg={12}>
-          <Form.Item
-            name="country"
-            label="Patient's Name"
-            rules={[
-              {
-                required: true,
-                whitespace: true,
-                message: "Please enter Patient's Name",
-              },
-            ]}
-          >
-            <Input placeholder="Enter Patient's Name" />
-          </Form.Item>
-        </Col>
-        <Col lg={12}>
-          <Form.Item
-            name="country"
-            label="Accession Number"
-            rules={[
-              {
-                required: true,
-                whitespace: true,
-                message: "Please enter Accession Number",
-              },
-            ]}
-          >
-            <Input placeholder="Enter Accession Number" />
-          </Form.Item>
-        </Col>
-        <Col lg={12}>
-          <Form.Item
-            name="country"
-            label="Date of Birth"
-            rules={[
-              {
-                required: true,
-                whitespace: true,
-                message: "Please enter country",
-              },
-            ]}
-          >
-            <DatePicker />
-          </Form.Item>
-        </Col>
-        <Col lg={12}>
-          <Form.Item
-            name="country"
-            label="Description"
-            rules={[
-              {
-                required: true,
-                whitespace: true,
-                message: "Please enter Description",
-              },
-            ]}
-          >
-            <Input placeholder="Enter Description" />
-          </Form.Item>
-        </Col>
-        <Col lg={12}>
-          <Form.Item
-            name="country"
-            label="Gender"
-            rules={[
-              {
-                required: true,
-                whitespace: true,
-                message: "Please enter Gender",
-              },
-            ]}
-          >
-            <Input placeholder="Enter Gender" />
-          </Form.Item>
-        </Col>
-        <Col lg={12}>
-          <Form.Item
-            name="country"
-            label="Referring Physician"
-            rules={[
-              {
-                required: true,
-                whitespace: true,
-                message: "Please enter Referring Physician",
-              },
-            ]}
-          >
-            <Input placeholder="Enter Referring Physician" />
-          </Form.Item>
-        </Col>
-        <Col lg={12}>
-          <Form.Item
-            name="country"
-            label="Study Series Count"
-            rules={[
-              {
-                required: true,
-                whitespace: true,
-                message: "Please enter Study Series Count",
-              },
-            ]}
-          >
-            <Input placeholder="Enter Study Series Count" />
-          </Form.Item>
-        </Col>
-        <Col lg={12}>
-          <Form.Item
-            name="country"
-            label="Operator Name"
-            rules={[
-              {
-                required: true,
-                whitespace: true,
-                message: "Please enter Operator Name",
-              },
-            ]}
-          >
-            <Input placeholder="Enter Operator Name" />
-          </Form.Item>
-        </Col>
-        <Col lg={12}>
-          <Form.Item
-            name="country"
-            label="Institution Name"
-            rules={[
-              {
-                required: true,
-                whitespace: true,
-                message: "Please enter Institution Name",
-              },
-            ]}
-          >
-            <Input placeholder="Enter Institution Name" />
-          </Form.Item>
-        </Col>
-      </Row>
-    </Form> */}
-      <Spin spinning={isLoading}>
+      <Spin spinning={isLoading} >
         <div
           style={{
             background: "#ebf7fd",
@@ -383,13 +187,14 @@ const StudyAudits = ({ isModalOpen, setIsModalOpen, studyID, setStudyID }) => {
               ?.urgent_case && <Tag color="error">Urgent</Tag>}
           </div>
         </div>
+
         <List
           style={{ marginTop: "8px" }}
           grid={{
             gutter: 5,
             column: 2,
           }}
-          className="queue-status-list"
+          className="queue-status-list study-modal-patient-info-layout"
           dataSource={modalData?.filter((data) => data.name !== "urgent_case")}
           renderItem={(item) => (
             <List.Item className="queue-number-list">
@@ -412,8 +217,19 @@ const StudyAudits = ({ isModalOpen, setIsModalOpen, studyID, setStudyID }) => {
             </List.Item>
           )}
         />
-        <TableWithFilter tableColumns={auditColumns} tableData={auditData} />
+
+        <div className="Study-auditing-modal-table-data">
+          
+          <TableWithFilter 
+            tableColumns={auditColumns} 
+            tableData={auditData} 
+          />
+          
+        </div>
+
+
       </Spin>
+      
     </Modal>
   );
 };
