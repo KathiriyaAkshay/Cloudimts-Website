@@ -5,8 +5,7 @@ import ChatBox from "./ChatBox";
 const ChatMain = (props) => {
   const location = useLocation();
   const { state } = location;
-  const [openMenu, setOpenMenu] = useState(false);
-  const [value, setValue] = useState("1");
+  
   const [chatList, setChatList] = useState({
     chatListData: [],
     searchInputShow: false,
@@ -14,22 +13,17 @@ const ChatMain = (props) => {
   const [loading, setLoading] = useState(false);
   const [searchValue, setSearchValue] = useState("");
 
-  useEffect(() => {
-    if (searchValue) {
-      setChatList({
-        ...chatList,
-        chatListData: [...(chatList?.chatListData || [])].filter((item) => {
-          if (item?.chatType === "group") {
-            return item?.group_name.includes(searchValue);
-          } else {
-            return item?.user?.nickname.includes(searchValue);
-          }
-        }),
-      });
-    } else {
-      value === "1" && handleChatListData();
-    }
-  }, [searchValue, state]);
+  console.log("UserId information =========>");
+  console.log(props.userId);
+
+  console.log("OrderId information ==========>");
+  console.log(props.orderId);
+
+  console.log("Searching value information ==========>");
+  console.log(searchValue);
+
+  console.log("State information ==========>");
+  console.log(state);
 
   const handleChatListData = () => {};
 

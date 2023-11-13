@@ -22,6 +22,9 @@ const Chats = () => {
   console.log("Person name information ==========>");
   console.log(personName);
 
+  console.log("Messages information =========>");
+  console.log(messages);
+
   useEffect(() => {
     changeBreadcrumbs([{ name: "Chats" }]);
   }, []);

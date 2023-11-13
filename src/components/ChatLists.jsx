@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import ProfileImage from "../assets/images/ProfileImg.png";
 import UrgentCase from "../assets/images/urgentCase.png" ; 
 import NormalCase from "../assets/images/normalCase.png"
-import { Badge, Divider, Tag, Typography } from "antd";
+import { Divider,  Typography } from "antd";
 import { getAllChatList } from "../apis/studiesApi";
 
 const ChatLists = ({ setSeriesId, setStudyId, setPersonName, studyId }) => {
@@ -13,9 +13,10 @@ const ChatLists = ({ setSeriesId, setStudyId, setPersonName, studyId }) => {
     retrieveChatListData();
   }, []);
 
+  // Fetch all chat information 
+  
   const retrieveChatListData = () => {
   
-    // Fetch all chat information 
     getAllChatList({
       current_timestamp: Date.now()
     })
