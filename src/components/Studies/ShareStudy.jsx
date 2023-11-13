@@ -4,7 +4,6 @@ import {
   Button,
   Col,
   Form,
-  Input,
   List,
   Modal,
   Row,
@@ -15,7 +14,8 @@ import {
   Typography,
 } from "antd";
 import { MdEmail } from "react-icons/md";
-import NotificationMessage from "../NotificationMessage";
+import NotificationMessage from "../NotificationMessage"; 
+import APIHandler from "../../apis/apiHandler";
 
 const ShareStudy = ({
   isShareStudyModalOpen,
@@ -23,8 +23,11 @@ const ShareStudy = ({
   studyID,
   setStudyID,
 }) => {
+
   const [modalData, setModalData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isEmailSending, setIsEmailSending] = useState(false) ; 
+
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
   const [emailOptions, setEmailOptions] = useState([]);
   const [form] = Form.useForm();
@@ -59,6 +62,10 @@ const ShareStudy = ({
     getStudyData({ id: studyID })
       .then((res) => {
         const resData = res.data.data;
+
+        console.log("Studydata information ===========>");
+        console.log(resData);
+        
         const modifiedData = [
           {
             name: "Patient's id",
@@ -88,10 +95,6 @@ const ShareStudy = ({
             name: "Gender",
             value: resData?.Gender,
           },
-          // {
-          //   name: "Count",
-          //   value: "",
-          // },
           {
             name: "Date of birth",
             value: resData?.DOB,
@@ -100,10 +103,6 @@ const ShareStudy = ({
             name: "Study Description",
             value: resData?.Study_description,
           },
-          // {
-          //   name: "Age Group",
-          //   value: "",
-          // },
           {
             name: "Patient's comments",
             value: resData?.Patient_comments,
@@ -129,23 +128,32 @@ const ShareStudy = ({
   };
 
   const handleSubmit = async (values) => {
-    await sendEmail({
-      patient_name: studyData?.Patient_name,
-      institution_name: studyData?.institution?.Institution_name,
-      patient_id: studyData?.Patient_id,
-      study_date: studyData?.date,
-      modality: studyData?.Modality,
-      sender_email: values?.email,
-      attach_dicom: values?.attach_dicom,
-      series_id: studyData?.Series_UID,
-    })
-      .then((res) => {
-        NotificationMessage("success", "Email Send Successfully");
-        setIsEmailModalOpen(false);
-      })
-      .catch((err) =>
-        NotificationMessage("warning", err.response.data.message)
-      );
+
+    setIsEmailSending(true)  ; 
+
+    let requestPayload = {
+      'sender_email': values?.email, 
+      "attach_dicom": values?.attach_dicom, 
+      "study_id": studyID
+    }
+
+    let responseData = await APIHandler("POST", requestPayload, 'email/v1/email-share-option') ; 
+    
+    setIsEmailSending(false) ; 
+    setIsEmailModalOpen(false) ; 
+
+    if (responseData === false){
+    
+      NotificationMessage("warning", "Network request failed") ; 
+    
+    } else if (responseData['status'] === true){
+
+      NotificationMessage("success", "Email send successfully") ; 
+    
+    } else {
+
+      NotificationMessage("warning", responseData['message']) ; 
+    }
   };
 
   const modalHeader = (
@@ -170,6 +178,9 @@ const ShareStudy = ({
 
   return (
     <>
+      
+      {/* ==== Email deails modal ====  */}
+
       <Modal
         title={modalHeader}
         open={isShareStudyModalOpen}
@@ -183,17 +194,6 @@ const ShareStudy = ({
         }}
         width={1000}
         centered
-        // footer={[
-        //   <Button
-        //     key="back"
-        //     onClick={() => {
-        //       setStudyID(null);
-        //       setIsShareStudyModalOpen(false);
-        //     }}
-        //   >
-        //     Cancel
-        //   </Button>,
-        // ]}
         footer={null}
         className="share-study-modal"
       >
@@ -246,6 +246,9 @@ const ShareStudy = ({
           />
         </Spin>
       </Modal>
+      
+      {/* ==== Share Email modal ====  */}
+
       <Modal
         title="Email Report"
         centered
@@ -257,55 +260,56 @@ const ShareStudy = ({
         okText="Send"
         onOk={() => form.submit()}
       >
-        <Form
-          labelCol={{
-            span: 24,
-          }}
-          wrapperCol={{
-            span: 24,
-          }}
-          form={form}
-          onFinish={handleSubmit}
-          className="mt"
-        >
-          <Row gutter={15}>
-            <Col xs={24} sm={24} md={24} lg={24}>
-              <Form.Item
-                name="email"
-                label="Email Address"
-                className="category-select"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please enter valid email address",
-                  },
-                ]}
-              >
-                <Select
-                  placeholder="Select Email"
-                  options={emailOptions}
-                  showSearch
-                  filterSort={(optionA, optionB) =>
-                    (optionA?.label ?? "")
-                      .toLowerCase()
-                      .localeCompare((optionB?.label ?? "").toLowerCase())
-                  }
-                  // onChange={appliedOnChangeHandler}
-                />
-              </Form.Item>
-            </Col>
-            <Col xs={24}>
-              <Form.Item
-                name="attach_dicom"
-                label="Attach Dicom Images"
-                valuePropName="checked"
-                initialValue={false}
-              >
-                <Switch />
-              </Form.Item>
-            </Col>
-          </Row>
-        </Form>
+        <Spin spinning = {isEmailSending}>
+          <Form
+            labelCol={{
+              span: 24,
+            }}
+            wrapperCol={{
+              span: 24,
+            }}
+            form={form}
+            onFinish={handleSubmit}
+            className="mt"
+          >
+            <Row gutter={15}>
+              <Col xs={24} sm={24} md={24} lg={24}>
+                <Form.Item
+                  name="email"
+                  label="Email Address"
+                  className="category-select"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please enter valid email address",
+                    },
+                  ]}
+                >
+                  <Select
+                    placeholder="Select Email"
+                    options={emailOptions}
+                    showSearch
+                    filterSort={(optionA, optionB) =>
+                      (optionA?.label ?? "")
+                        .toLowerCase()
+                        .localeCompare((optionB?.label ?? "").toLowerCase())
+                    }
+                  />
+                </Form.Item>
+              </Col>
+              <Col xs={24}>
+                <Form.Item
+                  name="attach_dicom"
+                  label="Attach Dicom Images"
+                  valuePropName="checked"
+                  initialValue={false}
+                >
+                  <Switch />
+                </Form.Item>
+              </Col>
+            </Row>
+          </Form>
+        </Spin>
       </Modal>
     </>
   );

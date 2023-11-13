@@ -58,6 +58,7 @@ const Dicom = () => {
   const [personName, setPersonName] = useState(null);
   const { permissionData } = useContext(UserPermissionContext);
   
+
   const {
     studyData,
     setStudyData,
@@ -83,13 +84,14 @@ const Dicom = () => {
   const [quickFilterPayload, setQuickFilterPayload] = useState({});
   const [advanceSearchPayload, setAdvanceSearchPayload] = useState({});
 
+
   useEffect(() => {
     setSystemFilterPayload({});
     setStudyDataPayload({});
   }, []);
 
   useEffect(() => {
-    setPagi(Pagination);
+    setPagi(Pagination) ; 
     if (
       !isFilterSelected &&
       Object.keys(systemFilterPayload).length === 0 &&
@@ -221,6 +223,11 @@ const Dicom = () => {
     }
   };
 
+  const PageNumberHandler = () => {
+    let currentPageLimit = pagi?.limit ; 
+    localStorage.setItem("paginationLimit", currentPageLimit)  ;   
+  }
+
   const studyCloseHandler = async () => {
     await closeStudy({ id: studyID })
       .then((res) => {
@@ -230,6 +237,7 @@ const Dicom = () => {
       })
       .catch((err) => console.log(err));
   };
+
 
   const deleteParticularStudy = async (id) => {
     await deleteStudy({ id: [id] })
@@ -325,20 +333,10 @@ const Dicom = () => {
     {
       title: "Modality",
       dataIndex: "modality",
-      // className: `${
-      //   checkPermissionStatus("View Institution name")
-      //     ? ""
-      //     : "column-display-none"
-      // }`,
     },
     {
       title: "Date Time",
       dataIndex: "created_at",
-      // className: `${
-      //   checkPermissionStatus("View Institution name")
-      //     ? ""
-      //     : "column-display-none"
-      // }`,
     },
     checkPermissionStatus("View Institution name") && {
       title: "Institution",
@@ -385,6 +383,9 @@ const Dicom = () => {
       width: window.innerWidth < 650 ? "1%" : "10%",
       render: (_, record) => (
         <Space style={{ display: "flex", justifyContent: "space-evenly" }}>
+          
+          {/* ==== Clinical History option ====  */}
+
           {checkPermissionStatus("Study clinical history option") && (
             <Tooltip title="Clinical History">
               <MdOutlineHistory
@@ -396,6 +397,9 @@ const Dicom = () => {
               />
             </Tooltip>
           )}
+
+          {/* ==== Study report option ====  */}
+          
           {checkPermissionStatus("Study data option") && (
             <Tooltip title={"Study Report"}>
               <IoIosDocument
@@ -408,6 +412,9 @@ const Dicom = () => {
               />
             </Tooltip>
           )}
+
+          {/* ==== Study more details option ====  */}
+          
           {checkPermissionStatus("Study more details option") && (
             <Tooltip title={"More Details"}>
               <BsEyeFill
@@ -419,22 +426,32 @@ const Dicom = () => {
               />
             </Tooltip>
           )}
+
+          {/* ==== Study edit option ====  */}
+          
           {checkPermissionStatus("Study edit option") && (
             <EditActionIcon
               editActionHandler={() => editActionHandler(record.id)}
             />
           )}
+
+          {/* ==== Study share option ====  */}
+          
           {checkPermissionStatus("Study share option") && (
             <Tooltip title="Share Study">
               <IoIosShareAlt
                 className="action-icon action-icon-primary"
                 onClick={() => {
                   setStudyID(record.id);
+                  setSeriesID(record.series_id) ; 
                   setIsShareStudyModalOpen(true);
                 }}
               />
             </Tooltip>
           )}
+
+          {/* ==== Study logs option ====  */}
+          
           {checkPermissionStatus("Study logs option") && (
             <Tooltip title="Auditing">
               <AuditOutlined
@@ -446,11 +463,15 @@ const Dicom = () => {
               />
             </Tooltip>
           )}
+
+          {/* ==== Study delete option ====  */}
+          
           {checkPermissionStatus("Study delete option") && (
             <DeleteActionIcon
               deleteActionHandler={() => deleteParticularStudy(record?.id)}
             />
           )}
+        
         </Space>
       ),
     },
@@ -593,6 +614,7 @@ const Dicom = () => {
         setStudyStatus={setStudyStatus}
         studyStatusHandler={studyStatusHandler}
         studyCloseHandler={studyCloseHandler}
+        pageNumberHandler={PageNumberHandler}
       />
       
       <PatientDetails
@@ -607,6 +629,7 @@ const Dicom = () => {
         setIsShareStudyModalOpen={setIsShareStudyModalOpen}
         studyID={studyID}
         setStudyID={setStudyID}
+        seriesId={seriesID}
       />
       
       <Drawer

@@ -38,6 +38,7 @@ const StudyReports = ({
   setStudyStatus,
   studyStatusHandler,
   studyCloseHandler,
+  pageNumberHandler 
 }) => {
   const [modalData, setModalData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -317,6 +318,7 @@ const StudyReports = ({
                   className="secondary-btn Report-modal-option-button"
                   onClick={async () => {
                     await studyStatusHandler();
+                    pageNumberHandler() ; 
                     navigate(`/reports/${studyID}`);
                   }}
                 >
