@@ -335,11 +335,13 @@ const StudyReports = ({
                   fontWeight: "600",
                   padding: "10px 24px",
                   paddingRight: "0px", 
-                  borderRadius: "0px",
+                  borderRadius  : "0px",
                   margin: "0 -24px",
                   display: "flex",
                   justifyContent: "space-between",
-                  alignItems: "center"
+                  alignItems: "center",
+                  width: "100%", 
+                  paddingRight: "10px"
                 }}
               >
                 <div>Patient Info</div>
@@ -349,7 +351,7 @@ const StudyReports = ({
                   {modalData.find((data) => data.name === "urgent_case")?.value
                     ?.urgent_case && <Tag color="error">Urgent</Tag>}
                   {studyImages?.length > 0 && (
-                    <Button type="primary" onClick={() => setShow(true)}>
+                    <Button type="primary" onClick={() => setShow(true)} style={{marginRight: "10px"}}>
                       Study Images
                     </Button>
                   )}
@@ -388,9 +390,12 @@ const StudyReports = ({
                 )}
               />
 
-              {tableData?.length > 0 && (
-                <TableWithFilter tableColumns={columns} tableData={tableData} />
-              )}
+              <div style={{paddingRight: "1rem"}}>
+                {tableData?.length > 0 && (
+                  <TableWithFilter tableColumns={columns} tableData={tableData} />
+                )}
+              </div>
+
 
             </div>
           </div>
