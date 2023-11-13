@@ -123,6 +123,7 @@ const PatientDetails = ({
       }}
       width={1000}
       centered
+      footer = {null}
     >
       <Spin spinning={isLoading}>
         <div
