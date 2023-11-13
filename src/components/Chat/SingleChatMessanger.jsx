@@ -12,7 +12,6 @@ const SingleChatMessanger = (props) => {
     classNames,
     emojiClick,
     messages,
-    // ownProfileDataId,
     handleSettingPopup,
     description,
     chatSettingData,
@@ -22,7 +21,6 @@ const SingleChatMessanger = (props) => {
     searchIndex,
   } = props || {};
 
-  const toDate = moment(new Date()).format("DD-MMM-YYYY")
 
   const ownProfileDataId = localStorage.getItem("userID")
 
@@ -32,9 +30,6 @@ const SingleChatMessanger = (props) => {
         }`}
       style={emojiClick ? { height: "40vh", marginBottom: "10px" } : {}}
     >
-      {/* <div className="userchat-date">
-        <span>{toDate}</span>
-      </div> */}
        {messages &&
         messages?.map((messageData) => (
           <div
@@ -104,32 +99,6 @@ const SingleChatMessanger = (props) => {
             })}
           </div>
         ))}
-        {/* {messages &&
-        messages?.map((item, index) => 
-
-            <>
-              <div
-                className={chatSearchedResults &&
-                  item?.uni_key && item?.uni_key ==
-                  chatSearchedResults[searchIndex - 1]?.uni_key ? "userchat-container black-color" : "userchat-container color-test"}
-              >
-                <MessageComp
-                  item={item}
-                  description={description}
-                  handleSettingPopup={handleSettingPopup}
-                  chatSettingData={chatSettingData}
-                  ownMessages={true}
-                  tickImage={white_double}
-                  colonImage={Col}
-                  groupRecieve={false}
-                  searchedMessages={searchedMessages}
-                  chatSearchedResults={chatSearchedResults}
-                  handleGalleryPopUp={handleGalleryPopUp}
-                  searchIndex={searchIndex}
-                />
-              </div>
-            </>
-          )} */}
     </div>
   );
 };

@@ -17,13 +17,14 @@ const Chats = () => {
 
   return (
     <div className="chat-module-div">
+      
       <ChatLists
         setSeriesId={setSeriesId}
         setStudyId={setStudyId}
         setPersonName={setPersonName}
         studyId={studyId}
       />
-      
+
       <div className="chat-data-div">
         {seriesId ? (
           <ChatMain

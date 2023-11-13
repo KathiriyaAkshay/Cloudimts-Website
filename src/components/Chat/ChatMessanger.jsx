@@ -513,39 +513,13 @@ const ChatMessanger = (props) => {
     }
   };
 
-  // const handleUnReadMessage = () => {
-  //   let payload
-  //   chatDetails?.chatType === "user" ?
-  //     payload = {
-  //       room: messages[messages?.length - 1]?.room,
-  //       time: messages[messages?.length - 1]?.date_added,
-  //     } : payload = {
-  //       group_id: roomId,
-  //       time: messages[messages?.length - 1]?.created_at ? messages[messages?.length - 1]?.created_at : messages[messages?.length - 1]?.date_added,
-  //     }
-  //   sendUnseenMessages(payload)
-  //     .then((res) => {
-  //       isHousemateChat ?
-  //         navigate('/chat/housemate', { state: { countValue1: true } })
-  //         :
-  //         navigate('/chat', { state: { countValue: true } })
-  //     })
-  //     .catch();
-  // }
 
   return (
     <Spin spinning={loading}>
-      <div
-        className="modal fade show bgColor modal-scroll p-0"
-        aria-modal="true"
-        style={{
-          display: "block",
-          background: "transparent",
-          borderBottom: "1px solid #00000030",
-        }}
-      >
-        <div
-        >
+      <div className="Main-chat-data-division">
+        <div style={{height: '86vh', overflowY: 'hidden'}}>
+
+          {/* ==== Chat Header ====  */}
           <ChatHeader
             imgIcon={whiteback}
             background="#6D7993"
@@ -585,12 +559,9 @@ const ChatMessanger = (props) => {
             restaurantName={restaurantName}
             isChatModule={isChatModule}
           />
-          <div
-            className={`modal-content modal-chat-issue ${
-              isChatModule && "modal-chat-position"
-            }`}
-            style={!isChatModule ? { height: "90vh" } : {}}
-          >
+
+          <div>
+
             <SingleChatMessanger
               emojiClick={emojiClick}
               messages={messages}
@@ -604,7 +575,7 @@ const ChatMessanger = (props) => {
               handleGalleryPopUp={handleGalleryPopUp}
               searchIndex={forwardMessage?.searchIndex}
             />
-            {/* <div id={messages[messages?.length - 1]?.uni_key}></div> */}
+
             {forwardMessage?.quoted && (
               <div
                 style={QuoteStyle}
@@ -613,9 +584,6 @@ const ChatMessanger = (props) => {
                 }`}
               >
                 <div className="quoted-details">
-                  {/* <h3 className="quotedMessage-name">
-                    {forwardMessage?.quotedMessage?.user_name}
-                  </h3> */}
                   <span className="quotedMessage-message">
                     {forwardMessage?.quotedMessage?.content}
                   </span>
@@ -647,16 +615,12 @@ const ChatMessanger = (props) => {
               isChatModule={isChatModule}
             />
 
-            {openMenu && (
-              <SettingPopup
-                popupMenus={chatSettingPopUp}
-                width={"106px"}
-                handleMenu={handleMenu}
-              />
-            )}
           </div>
+
         </div>
+
       </div>
+
     </Spin>
   );
 };

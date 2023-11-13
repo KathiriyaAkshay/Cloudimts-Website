@@ -13,28 +13,13 @@ const style = {
 
 const ChatHeader = (props) => {
   const {
-    onClick,
-    crossRight,
-    background,
-    time,
-    handleGroupChatIcon,
-    imgIcon2,
     userDetail,
     originated,
     chatType,
     chatDetails,
     handleChatDetailsPopUp,
     value,
-    chatSearch,
-    chatSearchValue,
-    handleSearchValue,
-    chatSearchedResults,
-    handleSearchedMessageArrow,
-    searchIndex,
-    chatConnected,
-    onLineStatus,
     restaurantName,
-    isChatModule,
   } = props;
 
   const profile_image =

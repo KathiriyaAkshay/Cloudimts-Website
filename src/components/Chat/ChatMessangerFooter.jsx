@@ -44,12 +44,7 @@ const ChatMessangerFooter = (props) => {
 
   return (
     <>
-      <div
-        className={`social-chatmessanger ${
-          emojiClick && "emoji-chatmessanger"
-        }`}
-        style={!isChatModule ? { paddingLeft: "0px" } : {}}
-      >
+      <div>
         <div className="social-chatmessanger-wrap">
           <img
             src={smily}
@@ -75,7 +70,6 @@ const ChatMessangerFooter = (props) => {
                 >
                   <input
                     type="file"
-                    // accept="application/pdf"
                     id="myfile"
                     name="myfile"
                     onChange={(e) => handleFileStore(e)}
@@ -103,7 +97,6 @@ const ChatMessangerFooter = (props) => {
                     type="file"
                     id="myfile"
                     name="myfile"
-                    // accept="application/pdf"
                     onChange={(e) => handleFileStore(e)}
                     multiple="multiple"
                     className="w-100 start-0"
@@ -178,6 +171,7 @@ const ChatMessangerFooter = (props) => {
             ""
           )}
         </div>
+
         {imageStore?.length ? null : (
           <ChatFileUploader
             chatData={chatData}
@@ -189,6 +183,7 @@ const ChatMessangerFooter = (props) => {
             handleFileStore={handleFileStore}
           />
         )}
+
         {fileStore?.length ? null : (
           <ChatCameraUploader
             chatData={chatData}
@@ -201,6 +196,7 @@ const ChatMessangerFooter = (props) => {
           />
         )}
       </div>
+
       {emojiClick && (
         <div
           className="emoji-container"
