@@ -222,7 +222,7 @@
   height: 82vh;
   position: fixed;
   margin-top: 5px;
-  width: -webkit-fill-available;
+  width: 70%;
 }
 
 .userchat-main {
@@ -771,7 +771,6 @@
 }
 .chat-data-div {
   width: -webkit-fill-available;
-  position: relative;
 }
 
 .chat-list-div {
@@ -1285,7 +1284,7 @@
 }
 
 .chat-data-div{
-  height: 86vh !important;
+  height: 85vh !important;
   max-height: 86vh !important;
   background-color: transparent !important;
 }
@@ -1336,4 +1335,20 @@
 .particular-study-chat-description{
   font-weight: bold;
   margin-top: 5px;
+}
+
+.Chatbox-container{
+  margin-left: 2%;
+}
+
+.Chatbox-header{
+  background-color: #FFFFFF;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+
+.Chat-user-image{
+  height: 24px;
+  width: 24px;
 }

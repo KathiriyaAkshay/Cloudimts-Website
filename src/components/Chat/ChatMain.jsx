@@ -35,8 +35,7 @@ const ChatMain = (props) => {
 
   return (
     <>
-      <div className="main-section header-padding footer-paddding fix-dektop-issue">
-        <div className="wrap_tabbing">
+      <div className="Chatbox-container">
           <ChatBox
             chatList={chatList}
             loading={loading}
@@ -48,7 +47,6 @@ const ChatMain = (props) => {
             setMessages={props.setMessages}
             isChatModule={props.isChatModule}
           />
-        </div>
       </div>
     </>
   );

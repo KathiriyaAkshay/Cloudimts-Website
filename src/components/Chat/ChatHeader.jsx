@@ -34,103 +34,38 @@ const ChatHeader = (props) => {
     chatConnected,
     onLineStatus,
     restaurantName,
-    isChatModule
+    isChatModule,
   } = props;
 
   const profile_image =
     originated === "profile"
       ? userDetail?.profile_image
       : chatType === "group"
-        ? chatDetails?.groupChat?.img
-        : userDetail?.profile_image || "";
+      ? chatDetails?.groupChat?.img
+      : userDetail?.profile_image || "";
   const name =
     originated === "profile"
       ? userDetail?.name
       : chatType === "group"
-        ? chatDetails?.groupChat?.group_name
-        : userDetail?.nickname || "";
+      ? chatDetails?.groupChat?.group_name
+      : userDetail?.nickname || "";
 
   return (
-    <div>
-      <header
-        style={
-          background
-            ? { backgroundColor: "transparent", display: "flex", alignItems: "center", justifyContent: "space-between", height: "70px"}
-            : { backgroundColor: "white" }
-        }
-      >
-        <div className="container-fluid">
-          {chatSearch ? (
-            <>
-              <div className="chatList-searchBox messanger-search">
-                <div className="search-box-outer search-box-outer2">
-                  <div className="search-box-inner">
-                    <img src={search_icon} alt="searchicon" />
-                    <div className="base-inner">
-                      <Input
-                        type="search" allowClear
-                        placeholder="Search"
-                        onChange={(e) => {
-                          handleSearchValue(e?.target?.value);
-                        }}
-                        value={chatSearchValue}
-                      />
-                      {searchIndex}/{chatSearchedResults?.length}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </>
-          ) : (
-            <div
-              className="header-user"
-              onClick={() => {
-                value !== "2" && handleChatDetailsPopUp();
-              }}
-            >
-              <img
-                src={profile_image ? `${profile_image}` : ProfileImg}
-                alt="person"
-              ></img>
-              <div className="header-user-info">
-                <span>{restaurantName}</span>
-                {/* <p>
-                  {chatType === "group"
-                    ? "Tap to view more info" : onLineStatus ?
-                      <div className="online-status-data">
-                        <div className="online-status"></div>
-                        <p>online</p>
-                      </div>
-                      : time ? `Last Seen at ${time}` : ''}
-                </p> */}
-              </div>
-            </div>
-          )}
-        </div>
-        {chatSearch && (
-          <div className="chat-search-dropDown">
-            <MdArrowDropUp
-              style={style}
-              onClick={() => handleSearchedMessageArrow("up")}
-            />
-            <MdArrowDropDown
-              style={style}
-              onClick={() =>
-                searchIndex > 0 && handleSearchedMessageArrow("down")
-              }
-            />
-          </div>
-        )}
-        {/* <div className="chat-group-dropdown" style={{cursor: "pointer"}}>
-          <img
-            src={imgIcon2}
-            alt="menuicon"
-            onClick={() => {
-            handleGroupChatIcon();
-            }}
-          />
-        </div> */}
-      </header>
+    <div
+      className="Chatbox-header"
+      onClick={() => {
+        value !== "2" && handleChatDetailsPopUp();
+      }}
+    >
+      <img
+        src={profile_image ? `${profile_image}` : ProfileImg}
+        alt="person"
+        className="Chat-user-image"
+      ></img>
+
+      <div className="header-user-info">
+        <span>{restaurantName}</span>
+      </div>
     </div>
   );
 };

@@ -545,9 +545,6 @@ const ChatMessanger = (props) => {
         }}
       >
         <div
-          className={`modal-dialog-centered chatfilewrap  ${
-            isChatModule && "chat-module-width"
-          }`}
         >
           <ChatHeader
             imgIcon={whiteback}
