@@ -28,8 +28,6 @@ import { useNavigate } from "react-router-dom";
 import { UserPermissionContext } from "../../hooks/userPermissionContext";
 import { html2pdf } from "html2pdf.js";
 import jsPDF from "jspdf";
-// import jsPDF from "jspdf";
-// import html2canvas from "html2canvas";
 
 const StudyReports = ({
   isReportModalOpen,
@@ -230,10 +228,6 @@ const StudyReports = ({
             name: "Gender",
             value: resData?.Gender,
           },
-          // {
-          //   name: "Count",
-          //   value: "",
-          // },
           {
             name: "Date of birth",
             value: resData?.DOB,
@@ -242,10 +236,7 @@ const StudyReports = ({
             name: "Study Description",
             value: resData?.Study_description,
           },
-          // {
-          //   name: "Age Group",
-          //   value: "",
-          // },
+
           {
             name: "Patient's comments",
             value: resData?.Patient_comments,
@@ -280,6 +271,7 @@ const StudyReports = ({
   return (
     <>
       <Modal
+        className="Study-report-modal"
         title="Study Reports"
         open={isReportModalOpen}
         onOk={() => {
@@ -291,114 +283,127 @@ const StudyReports = ({
           setStudyStatus("");
           setIsReportModalOpen(false);
         }}
-        width={1200}
+        width={1300}
         centered
-        footer={[
-          checkPermissionStatus("Close study") && (
-            <Button
-              key="back"
-              className="error-btn"
-              onClick={studyCloseHandler}
-            >
-              Close Study
-            </Button>
-          ),
-          <Button key="back">OHIF Viewer</Button>,
-          <Button key="back">Web Report</Button>,
-          checkPermissionStatus("Report study") && (
-            <Button
-              key="submit"
-              type="primary"
-              className="secondary-btn"
-              onClick={async () => {
-                await studyStatusHandler();
-                setIsFileReportModalOpen(true);
-              }}
-            >
-              Simplified Report
-            </Button>
-          ),
-          checkPermissionStatus("Report study") && (
-            <Button
-              key="link"
-              type="primary"
-              onClick={async () => {
-                await studyStatusHandler();
-                navigate(`/reports/${studyID}`);
-              }}
-            >
-              Advanced File Report
-            </Button>
-          ),
-        ].filter(Boolean)}
+        footer={null}
       >
         <Spin spinning={isLoading}>
-          <div
-            style={{
-              background: "#ebf7fd",
-              fontWeight: "600",
-              padding: "10px 24px",
-              borderRadius: "0px",
-              margin: "0 -24px",
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <div>Patient Info</div>
-            <div style={{ display: "flex", gap: "20px", alignItems: "center" }}>
-              {modalData.find((data) => data.name === "urgent_case")?.value
-                ?.urgent_case && <Tag color="error">Urgent</Tag>}
-              {studyImages?.length > 0 && (
-                <Button type="primary" onClick={() => setShow(true)}>
-                  Study Images
+          <div className="Assign-study-upload-option-input-layout">
+
+            <div className="Report-modal-all-option-div">
+
+              <Button key="back" className="Report-modal-option-button">OHIF Viewer</Button>
+              
+              <Button key="back" className="Report-modal-option-button">Web Report</Button>
+              
+              {checkPermissionStatus("Report study") && (
+                <Button
+                  key="submit"
+                  type="primary"
+                  className="secondary-btn Report-modal-option-button"
+                  onClick={async () => {
+                    await studyStatusHandler();
+                    setIsFileReportModalOpen(true);
+                  }}
+                >
+                  Simplified Report
                 </Button>
               )}
+              
+              {checkPermissionStatus("Report study") && (
+                <Button
+                  key="link"
+                  type="primary"
+                  className="secondary-btn Report-modal-option-button"
+                  onClick={async () => {
+                    await studyStatusHandler();
+                    navigate(`/reports/${studyID}`);
+                  }}
+                >
+                  Advanced File Report
+                </Button>
+              )}
+              
+            </div>
+
+            <div className="Report-modal-patient-data">
+              <div
+                style={{
+                  background: "#ebf7fd",
+                  fontWeight: "600",
+                  padding: "10px 24px",
+                  paddingRight: "0px", 
+                  borderRadius: "0px",
+                  margin: "0 -24px",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center"
+                }}
+              >
+                <div>Patient Info</div>
+                <div
+                  style={{ display: "flex", gap: "20px", alignItems: "center" }}
+                >
+                  {modalData.find((data) => data.name === "urgent_case")?.value
+                    ?.urgent_case && <Tag color="error">Urgent</Tag>}
+                  {studyImages?.length > 0 && (
+                    <Button type="primary" onClick={() => setShow(true)}>
+                      Study Images
+                    </Button>
+                  )}
+                </div>
+              </div>
+
+              <List
+                style={{ marginTop: "8px" }}
+                grid={{
+                  gutter: 5,
+                  column: 2,
+                }}
+                className="queue-status-list"
+                dataSource={modalData?.filter(
+                  (data) => data.name !== "urgent_case"
+                )}
+                renderItem={(item) => (
+                  <List.Item className="queue-number-list">
+                    <Typography
+                      style={{ display: "flex", gap: "4px", fontWeight: "600" }}
+                    >
+                      {item.name}:
+                      {item.name === "Patient's id" ||
+                      item.name === "Patient's Name" ||
+                      item.name === "Study UID" ||
+                      item.name === "Institution Name" ||
+                      item.name === "Series UID" ? (
+                        <Tag color="#87d068">{item.value}</Tag>
+                      ) : (
+                        <Typography style={{ fontWeight: "400" }}>
+                          {item.value}
+                        </Typography>
+                      )}
+                    </Typography>
+                  </List.Item>
+                )}
+              />
+
+              {tableData?.length > 0 && (
+                <TableWithFilter tableColumns={columns} tableData={tableData} />
+              )}
+
             </div>
           </div>
-          <List
-            style={{ marginTop: "8px" }}
-            grid={{
-              gutter: 5,
-              column: 2,
-            }}
-            className="queue-status-list"
-            dataSource={modalData?.filter(
-              (data) => data.name !== "urgent_case"
-            )}
-            renderItem={(item) => (
-              <List.Item className="queue-number-list">
-                <Typography
-                  style={{ display: "flex", gap: "4px", fontWeight: "600" }}
-                >
-                  {item.name}:
-                  {item.name === "Patient's id" ||
-                  item.name === "Patient's Name" ||
-                  item.name === "Study UID" ||
-                  item.name === "Institution Name" ||
-                  item.name === "Series UID" ? (
-                    <Tag color="#87d068">{item.value}</Tag>
-                  ) : (
-                    <Typography style={{ fontWeight: "400" }}>
-                      {item.value}
-                    </Typography>
-                  )}
-                </Typography>
-              </List.Item>
-            )}
-          />
-          {tableData?.length > 0 && (
-            <TableWithFilter tableColumns={columns} tableData={tableData} />
-          )}
         </Spin>
       </Modal>
+
       <FileReport
         isFileReportModalOpen={isFileReportModalOpen}
         setIsFileReportModalOpen={setIsFileReportModalOpen}
         studyID={studyID}
         modalData={modalData}
       />
+
       <ImageCarousel studyImages={studyImages} show={show} setShow={setShow} />
+
       <ImageCarousel
         studyImages={normalReportImages}
         show={isViewReportModalOpen}

@@ -1208,3 +1208,32 @@
 .assign-study-modal{
   height: 95vh !important;
 }
+
+.Report-modal-all-option-div{
+  width: 18vw;
+  border-right: 1px solid #00a0e3;
+}
+
+.Report-modal-option-button{
+  width: 80%;
+  margin-top: 0.50rem;
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.4rem;
+  margin-left: 10%;
+}
+
+.Report-modal-option-button span{
+  font-size: 0.90rem;
+}
+
+.Report-modal-patient-data{
+  padding-left: 1rem;
+  border-left: 1px solid #f6f6f6;
+  width: 80vw ;
+  overflow-x: hidden;
+}
+
+.Study-report-modal .ant-modal-body{
+  padding-left: 0rem !important;
+  padding-right: 0rem !important;
+}
