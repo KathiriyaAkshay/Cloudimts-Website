@@ -37,6 +37,7 @@ import { FilterSelectedContext } from "../../hooks/filterSelectedContext";
 import AdvancedSearchModal from "../../components/AdvancedSearchModal";
 import DeleteActionIcon from "../../components/DeleteActionIcon";
 import NotificationMessage from "../../components/NotificationMessage";
+import APIHandler from "../../apis/apiHandler";
 
 const Dicom = () => {
 
@@ -57,7 +58,6 @@ const Dicom = () => {
   const [seriesID, setSeriesID] = useState(null);
   const [personName, setPersonName] = useState(null);
   const { permissionData } = useContext(UserPermissionContext);
-  
 
   const {
     studyData,
@@ -84,7 +84,8 @@ const Dicom = () => {
   const [quickFilterPayload, setQuickFilterPayload] = useState({});
   const [advanceSearchPayload, setAdvanceSearchPayload] = useState({});
 
-
+  const [seriesIdList, setSeriesIdList] = useState([]) ; 
+ 
   useEffect(() => {
     setSystemFilterPayload({});
     setStudyDataPayload({});
@@ -106,10 +107,6 @@ const Dicom = () => {
     setLimit(pageSize);
     if (Object.keys(studyDataPayload).length > 0) {
     } else if (Object.keys(systemFilterPayload).length > 0) {
-      // applySystemFilter(
-      //   { ...systemFilterPayload, page_number: current, page_size: pageSize },
-      //   setStudyData
-      // );
     } else {
       setPagination((prev) => ({ ...prev, page: current, limit: pageSize }));
     }
@@ -121,11 +118,18 @@ const Dicom = () => {
     setStudyIdArray([]);
   }, []);
 
+  useEffect(() => {
+    setTimeout(() => {
+        FetchSeriesCountInformation() ; 
+    }, 5000);
+}, [])
+
   const retrieveStudyData = (pagination, values = {}) => {
     setIsLoading(true);
     const currentPagination = pagination || pagi;
+    
+    console.log("Call reterive study data function =============>");
     getAllStudyData({
-      // filter: values,
       page_size: currentPagination.limit || 10,
       page_number: currentPagination.page,
       all_premission_id: JSON.parse(localStorage.getItem("all_permission_id")),
@@ -134,20 +138,55 @@ const Dicom = () => {
       deleted_skip: true,
     })
       .then((res) => {
-        const resData = res.data.data.map((data) => ({
-          ...data,
-          name: data.study.patient_name,
-          institution: data.institution.name,
-          patient_id: data?.study?.patient_id,
-          study_id: data?.study?.id,
-          key: data.id,
-        }));
-        setStudyData(resData);
+        
+        const modifiedData = res.data.data.map(data => {
+          return {
+            ...data,
+            name: data.study.patient_name,
+            institution: data.institution.name,
+            patient_id: data?.study?.patient_id,
+            study_id: data?.study?.id,
+            key: data.id,
+            count: 0  
+          };
+        });
+        
+        // Extract series_id into temp array
+        const temp = res.data.data.map(data => data?.series_id).filter(Boolean);
+
+        setStudyData(modifiedData);
         setTotalPages(res.data.total_object);
+        setSeriesIdList([...temp]) ; 
+
       })
       .catch((err) => console.log(err));
     setIsLoading(false);
   };
+
+  const FetchSeriesCountInformation = async () => {
+
+    let requestPayload  = {
+      "series_list": seriesIdList
+    } ; 
+
+    let responseData = await APIHandler("POST", requestPayload, "studies/v1/series_instance_count") ; 
+
+    if (responseData === false){
+    
+    } else if (responseData['status'] === true){
+
+      setStudyData((prev) => {
+        return prev.map((element) => {
+          let series_id = element.series_id ; 
+          let foundSeriesData = responseData['data'].find(serisData => serisData.series_id === series_id);
+          if (foundSeriesData) {
+            return { ...element, count: foundSeriesData.series_instance };
+        }
+        return element;
+        })
+      })
+    }
+  }
 
   const quickFilterStudyData = (pagination, values = {}) => {
     setIsLoading(true);
@@ -296,17 +335,12 @@ const Dicom = () => {
       title: "Study Id",
       dataIndex: "study_id",
       className: `${
-        checkPermissionStatus("Study id") ? "" : "column-display-none"
+        checkPermissionStatus("Study id") ? "Study-count-column" : "column-display-none"
       }`,
     },
     {
       title: "Status",
       dataIndex: "status",
-      // className: `${
-      //   checkPermissionStatus("View Institution name")
-      //     ? ""
-      //     : "column-display-none"
-      // }`,
       render: (text, record) => (
         <Tag
           color={
@@ -333,6 +367,7 @@ const Dicom = () => {
     {
       title: "Modality",
       dataIndex: "modality",
+      className: "Study-count-column"
     },
     {
       title: "Date Time",
@@ -343,7 +378,7 @@ const Dicom = () => {
       dataIndex: "institution",
       className: `${
         checkPermissionStatus("View Institution name")
-          ? ""
+          ? "Study-count-column"
           : "column-display-none"
       }`,
     },
@@ -355,6 +390,11 @@ const Dicom = () => {
           ? ""
           : "column-display-none"
       }`,
+    },
+    {
+      title: "Count",
+      dataIndex: "count",
+      className: "Study-count-column"
     },
     checkPermissionStatus("Study chat option") && {
       title: "Chat",
@@ -533,6 +573,7 @@ const Dicom = () => {
   return (
     <>
       <Table
+        className="Study-table"
         dataSource={studyData}
         columns={columns}
         expandable={{
