@@ -1381,6 +1381,7 @@
   border-top-right-radius: 5px;
   border-bottom-left-radius: 5px;
   border-bottom-right-radius: 5px;
+  padding-bottom: 0rem;
 }
 
 .userchat-date{
@@ -1400,4 +1401,16 @@
   padding-bottom: 0.4rem;
   margin-top: 0.4rem;
   border-radius: 5px;
+}
+
+.social-chatmessanger-wrap{
+  padding-top: 1.3rem;
+  padding-bottom: 1rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.Chat-message-input{
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
 }

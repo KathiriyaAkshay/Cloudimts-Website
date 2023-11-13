@@ -2,9 +2,8 @@ import React, { useState } from "react";
 import ChatMessanger from "./ChatMessanger";
 
 const ChatBox = (props) => {
+  
   const {
-    chatList,
-    loading,
     handleChatListData,
     userId,
     orderId,
@@ -13,7 +12,7 @@ const ChatBox = (props) => {
     setMessages,
     isChatModule,
   } = props || {};
-  const [onLineStatus, setOnlineStatus] = useState("");
+  
   const [chatPopUp, setChatPopUp] = useState({
     popUp: false,
     data: {},
@@ -27,7 +26,6 @@ const ChatBox = (props) => {
     <>
       <ChatMessanger
         chatDataInfo={chatPopUp?.data}
-        onlineStatus={onLineStatus}
         originated={"chat"}
         handleChatPopUp={handleChatPopUp}
         userProfileData={chatPopUp?.data?.user}

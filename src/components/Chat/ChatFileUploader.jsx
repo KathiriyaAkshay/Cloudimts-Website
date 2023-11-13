@@ -8,10 +8,8 @@ import { MdOutlineClear } from "react-icons/md";
 const ChatFileUploader = (props) => {
   const {
     handleUploadData,
-    chatData,
     fileStore,
     setFileStore,
-    handleFileStore,
   } = props || {};
 
   useEffect(() => {
@@ -19,10 +17,6 @@ const ChatFileUploader = (props) => {
       handleUploadData(fileStore, "file");
     }
   }, [fileStore]);
-
-  // const handleFileStore = (e) => {
-  //   setFileStore((prev) => [...e.target.files, ...prev]);
-  // };
 
   const clickedPhotoIndex = (image) => {
     setFileStore((oldState) =>
@@ -231,26 +225,6 @@ const ChatFileUploader = (props) => {
       ) : (
         ""
       )}
-      {/* {fileStore?.length ? (
-        <div
-          className={`chat-upload-images ${
-            fileStore?.length > 6 && "handle-scroll"
-          }`}
-        >
-          {fileStore?.map((image, index) => (
-            <div className="File-iconwrap">
-              <img className="Img_store" alt="pdf" src={Pdf} />
-              <span>{image?.name.slice(0, 10)}..</span>
-              <ClearRoundedIcon
-                className="collectionNameCrossBtn filecross-btn"
-                onClick={() => clickedPhotoIndex(image)}
-              />
-            </div>
-          ))}
-        </div>
-      ) : (
-        ""
-      )} */}
     </>
   );
 };

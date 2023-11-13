@@ -8,7 +8,6 @@ import Col from "../../assets/images/whitcol.svg";
 import ChatHeader from "./ChatHeader";
 import { Spin } from "antd";
 import { chatSettingPopUp, getElapsedTime } from "../../helpers/utils";
-import SettingPopup from "./SettingPopup";
 import axios from "axios";
 import {
   deleteChatMessage,
@@ -33,6 +32,9 @@ const ChatMessanger = (props) => {
     setMessages,
     isChatModule,
   } = props || {};
+
+  console.log("Is Chat module information =============>");
+  console.log(isChatModule);
 
   const userDetail = userProfileData;
   const [openMenu, setOpenMenu] = useState(false);
@@ -328,54 +330,6 @@ const ChatMessanger = (props) => {
       setImageStore([]);
       setFileStore([]);
     }
-    // let formData = new FormData();
-    // if (imageStore?.length || fileStore?.length) {
-    //   formData.append("uni_key", uni_key);
-    //   imageStore?.length &&
-    //     imageStore?.forEach((image) => {
-    //       formData.append(`media_file`, image);
-    //     });
-    //   fileStore?.length &&
-    //     fileStore?.forEach((docs) => {
-    //       formData.append(`media_file`, docs);
-    //     });
-
-    //   if (chatDetails?.chatType === "group") {
-    //     formData.append("group_message", true);
-    //     formData.append("group_id", chatDataInfo?.group_id);
-    //   } else {
-    //     formData.append("chat_message", true);
-    //     formData.append("room_name", chatDataInfo?.room);
-    //   }
-    //   // chatDetails?.chatType === "group"
-    //   //   ? formData.append("group_message", true)
-    //   //   formData.append("room_name", chatDataInfo?.room)
-    //   //   : formData.append("chat_message", true)
-    //   //   formData.append("room_name", chatDataInfo?.room)
-    //   //   ;
-    //   sendMediaOnMessage(formData)
-    //     .then((res) => {
-    //       const intialData = chatDetails;
-    //       setImageStore([]);
-    //       setFileStore([]);
-    //       // getChatHistory(roomName)
-    //       //   .then((res) => {
-    //       //     setMessages(res?.data?.data);
-    //       //     setLastSeen(res?.data?.last_seen);
-    //       //     setChatDetails({
-    //       //       ...intialData,
-    //       //       singleChat: res?.data?.data[0]?.room,
-    //       //     });
-    //       //   })
-    //       // setTimeout(() => {
-    //       //   handleAllChatHistory(false);
-    //       // }, [1000]);
-    //     })
-    //     .catch((err) => {
-    //       setImageStore([]);
-    //       setFileStore([]);
-    //     });
-    // }
   };
 
   const onEmojiClick = (data) => {
@@ -467,14 +421,6 @@ const ChatMessanger = (props) => {
     });
   };
 
-  // useEffect(() => {
-  //   if(state?.chatPopUp) {
-  //     setChatDetails({
-  //       ...chatDetails,
-  //       detailPopUp: !chatDetails?.detailPopUp,
-  //     });
-  //   }
-  // },[state?.chatPopUp])
 
   const handleSearchValue = (value) => {
     setForwardMessage({
@@ -524,7 +470,6 @@ const ChatMessanger = (props) => {
             imgIcon={whiteback}
             background="#6D7993"
             colors="white"
-            onLineStatus={props?.onlineStatus}
             time={
               lastSeen
                 ? getElapsedTime(new Date(lastSeen))
@@ -535,7 +480,6 @@ const ChatMessanger = (props) => {
             handleGroupChatIcon={handleGroupChatIcon}
             onClick={() => {
               ws.current?.close();
-              // handleUnReadMessage()
               setGallery({
                 ...gallery,
                 chatConnected: false,
@@ -548,7 +492,6 @@ const ChatMessanger = (props) => {
             originated={originated}
             handleChatDetailsPopUp={handleChatDetailsPopUp}
             chatSearch={forwardMessage?.searchInput}
-            // chatSearch={true}
             chatSearchValue={forwardMessage?.chatSearchValue}
             handleSearchValue={handleSearchValue}
             value={value}
