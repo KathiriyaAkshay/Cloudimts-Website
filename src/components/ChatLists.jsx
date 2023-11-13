@@ -6,18 +6,27 @@ import { Badge, Divider, Tag, Typography } from "antd";
 import { getAllChatList } from "../apis/studiesApi";
 
 const ChatLists = ({ setSeriesId, setStudyId, setPersonName, studyId }) => {
+
   const [chatListData, setChatListData] = useState([]);
+  
   useEffect(() => {
     retrieveChatListData();
   }, []);
 
   const retrieveChatListData = () => {
+  
+    // Fetch all chat information 
     getAllChatList({
-      current_timestamp: Date.now(),
-      page_number: 1,
-      page_size: 10,
+      current_timestamp: Date.now()
     })
       .then((res) => {
+
+        // Configure Room ChatTimestamp 
+        const chatLatestTime = {} ; 
+        res['data']['room_timestamp'].forEach(timeStampInfo => {
+            chatLatestTime[timeStampInfo.room_id] = timeStampInfo.latest_timestamp ; 
+        }) ; 
+
         const resData = res.data.data.map((data) => ({
           ...data,
           room_id: data.room.id,
@@ -28,12 +37,12 @@ const ChatLists = ({ setSeriesId, setStudyId, setPersonName, studyId }) => {
           study_id: data.room.study.id,
           series_id: data.room.study.series_id,
           profile: ProfileImage,
+          latest_timestamp: chatLatestTime[data.room.id] || null
         }));
 
-        console.log("Chat response data information ==========>");
-        console.log(resData);
+        setChatListData([...resData]);
 
-        setChatListData([...resData, ...resData]);
+
       })
       .catch((err) => console.log(err));
   };
@@ -100,13 +109,18 @@ const ChatLists = ({ setSeriesId, setStudyId, setPersonName, studyId }) => {
 
                     </Typography>
 
-                    <Typography
-                      className="particular-study-chat-description"
-                      style={{ fontSize: "12px" }}
-                    >
-                      <span style={{color: "#A6A6A6", fontWeight: 600}}>Latest chat - </span>{data.status}
+                    {data.latest_timestamp !== null?<>
+                      <div className="Latest-timestamp-info-layout">
+                        <Typography
+                          className="particular-study-chat-description"
+                          style={{ fontSize: "12px" }}
+                        >
+                          <span style={{color: "#A6A6A6", fontWeight: 600}}>Latest chat - </span>{data.latest_timestamp}
 
-                    </Typography>
+                        </Typography>
+                      </div>
+                    </>:<></>}
+                    
                                   
                   </div>
                 
