@@ -11,28 +11,14 @@ import chatFileImg from "../../assets/images/chat-file-icon.svg";
 import Word from "../../assets/images/microsoft-word-icon.svg";
 const MessageComp = (props) => {
   const navigate = useNavigate();
-  const {
-    item,
-    description,
-    handleSettingPopup,
-    chatSettingData,
-    ownMessages,
-    tickImage,
-    colonImage,
-    randomColor,
-    groupRecieve,
-    handleGalleryPopUp,
-    chatSearchedResults,
-    searchIndex,
-  } = props;
+
+  const { item, chatSettingData, ownMessages, colonImage, groupRecieve } =
+    props;
   const id = item?.id;
   const { media } = item || [];
-  useEffect(() => {
-    // chatSearchedResults?.length &&
-    //   document
-    //     ?.getElementById(chatSearchedResults[searchIndex - 1]?.uni_key)
-    //     .scrollIntoView();
-  }, [searchIndex]);
+
+  console.log("Ownmessage information ==========>");
+  console.log(ownMessages);
 
   const handleCustomSlider = (mainData = "") => {
     return (
@@ -133,15 +119,6 @@ const MessageComp = (props) => {
             mainData?.includes("avif") ? (
             <div className="userchat-container mt-3">
               <img src={`${mainData}`} />
-              {/* <Slider
-                          imageData={mainData}
-                          numberShowMargin={true}
-                          handleGalleryPopUp={handleGalleryPopUp}
-                          isMessageGallery={true}
-                          extensionName={extensionName}
-                          fileName={fileName}
-                          files={files}
-                        /> */}
             </div>
           ) : mainData?.includes(".mp4") ||
             mainData?.includes(".mov") ||
@@ -196,7 +173,6 @@ const MessageComp = (props) => {
             const blob = new Blob([response?.data], {
               type: "text/plain",
             });
-            // saveAs(blob, "house-rules.pdf")
           })
           .catch((error) => {
             console.log("err", error);
@@ -277,108 +253,61 @@ const MessageComp = (props) => {
         ) : (
           <></>
         )}
-        {item?.is_forwarded && !item?.is_post ? (
-          <div className="forwardChat-data">
-            <span>
-              <i>Forwarded:</i>
-            </span>
-            <img
-              alt="img"
-              src={colonImage}
-              style={{ cursor: "pointer" }}
-              onClick={() => chatSettingData(id)}
-            ></img>
-          </div>
-        ) : (
-          ""
-        )}
+
         {!groupRecieve ? (
           <>
-            <div className="userchat-data">
-              <div style={{ flex: "1" }}>
-                {item?.media_option &&
-                  handleCustomSlider(
-                    item?.is_forwarded ? item?.file_url : media
-                  )}
-                <span id={id} className="text-break">
-                  {item?.is_internal_doc
-                    ? handleInternalDocMsg(item?.content, item?.is_internal_doc)
-                    : item?.is_post
-                    ? handleSocialPostMsg(
-                        item?.content,
-                        item?.content?.split("="),
-                        item?.plateform_type
-                      )
-                    : item?.content}
-                </span>
+            <div>
+              <div className="Chat-username-information">KeyurVaghasiya</div>
+
+              <div className="userchat-data">
+                <div style={{ flex: "1" }}>
+                  {item?.media_option &&
+                    handleCustomSlider(
+                      item?.is_forwarded ? item?.file_url : media
+                    )}
+
+                  {/* ===== Message content information =====  */}
+
+                  <span id={id} className="text-break">
+                    {item?.is_internal_doc
+                      ? handleInternalDocMsg(
+                          item?.content,
+                          item?.is_internal_doc
+                        )
+                      : item?.is_post
+                      ? handleSocialPostMsg(
+                          item?.content,
+                          item?.content?.split("="),
+                          item?.plateform_type
+                        )
+                      : item?.content}
+                  </span>
+                </div>
+
+                {!item?.is_forwarded && !item?.is_quoted ? (
+                  <img
+                    alt="img"
+                    src={colonImage}
+                    style={{ cursor: "pointer" }}
+                    className="option-menu-image"
+                    onClick={() => chatSettingData(id)}
+                  ></img>
+                ) : (
+                  ""
+                )}
               </div>
-              {!item?.is_forwarded && !item?.is_quoted ? (
-                <img
-                  alt="img"
-                  src={colonImage}
-                  style={{ cursor: "pointer" }}
-                  onClick={() => chatSettingData(id)}
-                ></img>
-              ) : (
-                ""
-              )}
             </div>
+
+            {/* ===== Chat timestamp information ======  */}
+
             <div className="userchat-time">
               <span>
                 {moment(item?.timestamp || item?.timestamp).format("hh:mm")}
               </span>
-              <img alt="img" src={tickImage}></img>
             </div>
-            {description?.includes(id) && (
-              <div className="chat-setting">
-                <ChatSettingPop
-                  type="personal"
-                  handleSettingPopup={handleSettingPopup}
-                  messageId={id}
-                  ownMessages={ownMessages}
-                  messageData={item}
-                />
-              </div>
-            )}
           </>
         ) : (
-          <>
-            <div className="userchat-data">
-              <span style={{ fontWeight: "1000", color: randomColor }}>
-                {item?.user_name}:
-              </span>
-              {!item?.is_forwarded && !item?.is_quoted ? (
-                <img
-                  alt="img"
-                  src={colonImage}
-                  style={{ cursor: "pointer" }}
-                  onClick={() => chatSettingData(id)}
-                ></img>
-              ) : (
-                ""
-              )}
-            </div>
-            <div className="userchat-data group-chat-user-chat">
-              {item?.media_option &&
-                handleCustomSlider(item?.is_forwarded ? item?.file_url : media)}
-              <span>{item?.content}</span>
-            </div>
-            <div className="userchat-time">
-              <span>{moment(item?.timestamp).format("hh:mm")}</span>
-              <img alt="img" src={tickImage}></img>
-            </div>
-            {description?.includes(id) && (
-              <div className="chat-setting">
-                <ChatSettingPop
-                  type="personal"
-                  handleSettingPopup={handleSettingPopup}
-                  messageId={id}
-                  ownMessages={false}
-                  messageData={item}
-                />
-              </div>
-            )}
-          </>
+          <></>
         )}
       </div>
     </>

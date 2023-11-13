@@ -117,8 +117,9 @@ const ChatMessanger = (props) => {
   }, [forwardMessage?.chatSearchValue]);
 
   useEffect(() => {
+    
     if (orderId) {
-      // handleAllChatHistory(true);
+
       const ws = new WebSocket(`ws://127.0.0.1:8000/ws/personal/${roomName}/`);
 
       ws.onopen = () => {
@@ -126,9 +127,10 @@ const ChatMessanger = (props) => {
       };
 
       ws.onmessage = (event) => {
-        console.log("Received message:", JSON.parse(event.data).id);
+
         (JSON.parse(event.data).id != null ||
-          JSON.parse(event.data).id != undefined) &&
+        
+        JSON.parse(event.data).id != undefined) &&
           localStorage.setItem("roomID", JSON.parse(event.data).id);
         setRoomID((prev) =>
           JSON.parse(event.data).id != null ||
@@ -166,20 +168,15 @@ const ChatMessanger = (props) => {
         room_id,
       })
         .then((data) => {
-          // setMessages(data.data?.chat);
           groupMessagesByDate(data.data?.chat);
-          // setLastSeen(data?.last_seen);
-          // setChatDetails({
-          //   ...intialData,
-          //   singleChat: res?.data?.data[0]?.room,
-          // });
           setLoading(false);
         })
         .catch((err) => console.log(err));
+
     } else if (!roomData) {
       if (chatData.payload.status == "new_chat") {
-        const timestamp = chatData.payload.data.timestamp.split(" ")[0];
 
+        const timestamp = chatData.payload.data.timestamp.split(" ")[0];
         const newMessage = messages.map((data) => {
           if (data.date == timestamp) {
             return {
@@ -192,7 +189,6 @@ const ChatMessanger = (props) => {
             };
           }
         });
-        console.log(newMessage, messages);
         setMessages((prev) => {
           const currentDate = moment().format("YYYY-MM-DD");
           const existingData = prev.find((data) => data.date === timestamp);
@@ -235,7 +231,7 @@ const ChatMessanger = (props) => {
 
   function groupMessagesByDate(data) {
     const groupedMessages = data?.reduce((acc, message) => {
-      const timestamp = message?.timestamp.split(" ")[0]; // Extract date part
+      const timestamp = message?.timestamp.split(" ")[0]; 
       if (!acc[timestamp]) {
         acc[timestamp] = [];
       }
@@ -385,50 +381,10 @@ const ChatMessanger = (props) => {
     }
   };
 
-  const handleSettingPopup = async (type, messageId, messageData) => {
-    if (type === "Remove") {
-      deleteChatMessage({ chat_id: messageId, room_name: orderId })
-        .then((res) =>
-          setMessages((prev) =>
-            prev
-              .map((data) => ({
-                ...data,
-                messages: data.messages.filter(
-                  (message) => message.id != messageId
-                ),
-              }))
-              .filter((item) => item.messages.length > 0)
-          )
-        )
-        .catch((err) => console.log(err));
-    } else if (type === "Forward") {
-      setForwardMessage({
-        popUp: true,
-        forwardMessage: messageData?.message,
-        media_file: messageData?.file,
-      });
-    } else if (type === "Quote") {
-      setForwardMessage({ quotedMessage: messageData, quoted: true });
-    } else if (type === "Copy") {
-      setChatData(messageData?.content);
-    }
-    const add = [...description];
-    const removed = add.filter((item) => item !== messageId);
-    setDescription(removed);
-  };
-
   const handleChatDetailsPopUp = () => {
     setChatDetails({
       ...chatDetails,
       detailPopUp: !chatDetails?.detailPopUp,
-    });
-  };
-
-
-  const handleSearchValue = (value) => {
-    setForwardMessage({
-      ...forwardMessage,
-      chatSearchValue: value,
     });
   };
 
@@ -496,7 +452,6 @@ const ChatMessanger = (props) => {
             handleChatDetailsPopUp={handleChatDetailsPopUp}
             chatSearch={forwardMessage?.searchInput}
             chatSearchValue={forwardMessage?.chatSearchValue}
-            handleSearchValue={handleSearchValue}
             value={value}
             chatSearchedResults={forwardMessage?.chatSearchedResults}
             handleSearchedMessageArrow={handleSearchedMessageArrow}
@@ -511,7 +466,6 @@ const ChatMessanger = (props) => {
                 emojiClick={emojiClick}
                 messages={messages}
                 ownProfileDataId={userId}
-                handleSettingPopup={handleSettingPopup}
                 description={description}
                 chatSettingData={chatSettingData}
                 classNames={isHousemateChat ? "isHousemateChat" : ""}
