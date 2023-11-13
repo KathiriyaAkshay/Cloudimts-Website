@@ -104,8 +104,6 @@ const BasicLayout = ({ children }) => {
     return permission;
   };
 
-  console.log(permissionData);
-
   const menuItems = [
     checkPermissionStatus("Show Option - Institution option") && {
       label: menuLabel("Institution"),
@@ -193,10 +191,13 @@ const BasicLayout = ({ children }) => {
       style={{ paddingLeft: "5px" }}
     >
       <Link to="/home">
+
         <div className="logo sidebar-logo">
           <img src={logo} alt="Logo" />
         </div>
+      
       </Link>
+      
       <div className="sidebar-menu-wrap" style={{ overflow: "hidden" }}>
         <Menu
           mode="inline"
@@ -205,6 +206,7 @@ const BasicLayout = ({ children }) => {
           className="header-menu"
         />
       </div>
+    
     </Sider>
   );
 

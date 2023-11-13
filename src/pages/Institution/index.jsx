@@ -22,7 +22,8 @@ import {
   getInstitutionLogs,
 } from "../../apis/studiesApi";
 import { UserPermissionContext } from "../../hooks/userPermissionContext";
-import NotificationMessage from "../../components/NotificationMessage";
+import NotificationMessage from "../../components/NotificationMessage"; 
+import APIHandler from "../../apis/apiHandler";
 
 const Institution = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -38,13 +39,14 @@ const Institution = () => {
 
   useEffect(() => {
     changeBreadcrumbs([{ name: "Institution" }]);
-    // setRole(localStorage.getItem("role"))
     retrieveInstitutionData();
   }, []);
 
   const retrieveInstitutionData = async (pagination, values = {}) => {
     setIsLoading(true);
+
     const currentPagination = pagination || pagi;
+    
     filterInstitutionData({
       filter: values,
       condition: "and",
@@ -63,7 +65,28 @@ const Institution = () => {
     navigate(`/institutions/${id}/edit`);
   };
 
-  const deleteActionHandler = () => {};
+  const deleteActionHandler = async (element) => {
+    setIsLoading(true) ;
+    
+    let requestPayload = {
+      "id": element.id
+    } ; 
+
+    let responseData = await APIHandler("POST", requestPayload, 'institute/v1/institution-delete') ; 
+
+    if (responseData === false){
+
+    } else if (responseData['status'] === true){
+
+      NotificationMessage(
+        "success",
+        "Institution delete successfully"
+      );
+      retrieveInstitutionData() ; 
+    } 
+
+    setIsLoading(false) ; 
+  };
 
   const retrieveLogsData = (id) => {
     getInstitutionLogs({ id: id })
@@ -138,6 +161,7 @@ const Institution = () => {
           : "column-display-none"
       }`,
     },
+
     checkPermissionStatus("View Institution email") && {
       title: "Email",
       dataIndex: "email",
@@ -147,6 +171,7 @@ const Institution = () => {
           : "column-display-none"
       }`,
     },
+
     checkPermissionStatus("View Institution contact number") && {
       title: "Contact Number",
       dataIndex: "contact",
@@ -156,6 +181,7 @@ const Institution = () => {
           : "column-display-none"
       }`,
     },
+
     checkPermissionStatus("View Institution City") && {
       title: "City",
       dataIndex: "city",
@@ -177,16 +203,12 @@ const Institution = () => {
     {
       title: "Country",
       dataIndex: "country",
-      // className: `${
-      //   checkPermissionStatus("View Username") ? "" : "column-display-none"
-      // }`,
+
     },
     {
       title: "Allocated Storage",
       dataIndex: "allocated_storage",
-      // className: `${
-      //   checkPermissionStatus("View Username") ? "" : "column-display-none"
-      // }`,
+      
     },
     checkPermissionStatus("View Institution space usage") && {
       title: "Usage",
@@ -198,6 +220,7 @@ const Institution = () => {
       }`,
       render: (text, record) => <Progress percent={text} />,
     },
+
     checkPermissionStatus("View Institution created at") && {
       title: "Created At",
       dataIndex: "created_at",
@@ -207,6 +230,7 @@ const Institution = () => {
           : "column-display-none"
       }`,
     },
+    
     checkPermissionStatus("View Institution last updated at") && {
       title: "Updated At",
       dataIndex: "updated_at",
@@ -216,6 +240,7 @@ const Institution = () => {
           : "column-display-none"
       }`,
     },
+    
     checkPermissionStatus("View Disable/Enable Institution option") && {
       title: "Status",
       dataIndex: "status",
@@ -229,9 +254,6 @@ const Institution = () => {
               <Switch
                 checkedChildren="Enable"
                 checked={!record?.disable}
-                // onChange={(state) => {
-                //   changeStatus(record.id, state);
-                // }}
                 unCheckedChildren="Disable"
                 className="table-switch"
               />
@@ -240,6 +262,7 @@ const Institution = () => {
         };
       },
     },
+
     checkPermissionStatus("Actions option access") && {
       title: "Actions",
       dataIndex: "actions",
@@ -249,6 +272,7 @@ const Institution = () => {
           ? ""
           : "column-display-none"
       }`,
+
       width: window.innerWidth < 650 ? "1%" : "10%",
       render: (_, record) => (
         <Space style={{ display: "flex", justifyContent: "space-evenly" }}>
@@ -261,9 +285,9 @@ const Institution = () => {
               onClick={() => retrieveLogsData(record.id)}
             />
           </Tooltip>
-          {/* <DeleteActionIcon
+          <DeleteActionIcon
             deleteActionHandler={() => deleteActionHandler(record)}
-          /> */}
+          />
         </Space>
       ),
     },
@@ -319,20 +343,18 @@ const Institution = () => {
       <TableWithFilter
         tableData={institutionData}
         tableColumns={columns}
-        // onAddClick={() => navigate("/institutions/add")}
-        // addButtonTitle="Add Institution"
-        // addButtonIcon={<PlusOutlined />}
-        // rowSelection={rowSelection}
         setPagi={setPagi}
         totalRecords={totalPages}
         onPaginationChange={retrieveInstitutionData}
         loadingTableData={isLoading}
       />
+
       <FilterModal
         name="Institution Filter"
         setInstitutionData={setInstitutionData}
         retrieveInstitutionData={retrieveInstitutionData}
       />
+      
       <Drawer
         title="Institution Logs"
         placement="right"
@@ -340,8 +362,11 @@ const Institution = () => {
         open={isDrawerOpen}
         width={800}
       >
+
         <TableWithFilter tableData={logsData} tableColumns={logsColumn} />
+      
       </Drawer>
+
     </>
   );
 };

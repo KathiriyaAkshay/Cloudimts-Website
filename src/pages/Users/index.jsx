@@ -257,9 +257,9 @@ const Users = () => {
             />
           </Tooltip>
 
-          {/* <DeleteActionIcon
+          <DeleteActionIcon
             deleteActionHandler={() => deleteActionHandler(record)}
-          /> */}
+          />
         </Space>
       ),
     },

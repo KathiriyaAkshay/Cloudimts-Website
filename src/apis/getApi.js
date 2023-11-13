@@ -8,34 +8,6 @@ const API = axios.create({
   },
 });
 
-// API.interceptors.request.use(
-//   (config) => {
-//     const authToken = Storage.loadToken();
-//     if (authToken) {
-//       config.headers.Authorization = `Bearer ${authToken}`;
-//     }
-//     return config;
-//   },
-//   (err) => Promise.reject(err)
-// );
-
-// API.interceptors.response.use(
-//   (res) => {
-//     return res;
-//   },
-//   (err) => {
-//     if (err?.response?.status === 401) {
-//       NotificationMessage("warning","You've been signed out")
-//       localStorage.removeItem("token");
-//       window.location.href = "/sign-in";
-//     }else if(err?.response?.status === 403){
-//       NotificationMessage("warning","Request forbidden")
-//       window.location.href = "/sign-in";
-//     }
-//     throw err;
-//   }
-// );
-
 export const getAPIParams = async (data) => {
   let passingData = data.data === undefined ? {} : data.data;
   return await getAPICall(data.url, passingData);
