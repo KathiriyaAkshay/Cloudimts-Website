@@ -23,6 +23,7 @@ const Chats = () => {
         setPersonName={setPersonName}
         studyId={studyId}
       />
+      
       <div className="chat-data-div">
         {seriesId ? (
           <ChatMain

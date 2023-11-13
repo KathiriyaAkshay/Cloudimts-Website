@@ -1266,3 +1266,74 @@
 .Study-table table td{
   text-align: center;
 }
+
+// ========= Chat Module css ============ // 
+
+.chat-module-div{
+  padding: 1rem;
+}
+
+.chat-list-main-div{
+  width: 30%;
+  max-height: 86vh !important;
+  height: 86vh !important;
+  border-radius: 5px;
+  border-right: 0px;
+  padding: 0px;
+  box-shadow: 3px 3px 8px 0px rgba(210, 210, 210, 0.5);
+  overflow-y: hidden;
+}
+
+.chat-data-div{
+  height: 86vh !important;
+  max-height: 86vh !important;
+  background-color: transparent !important;
+}
+
+.empty-chat-div{
+  height: 86vh !important ;
+  background-color: transparent !important;
+}
+
+.chat-list-title-div{
+  border-bottom: 1px solid #C4C4C4;
+  padding: 10px;
+  padding-left: 14px;
+  padding-right: 14px;
+  background-color: #00a0e3;
+}
+
+.empty-chat-div{
+  padding-top: 200px !important;
+}
+
+.all-chat-list{
+  height: 80vh !important;
+  overflow-y: auto;
+}
+
+.study-chat-userdata{
+  display: flex;
+  flex-direction: row;
+  padding: 8px;
+  border-bottom: 1px solid #e8e8e8;
+  width: 100%;
+  overflow-x: hidden;
+  padding-top: 12px ; 
+  padding-bottom: 12px;
+}
+
+.study-chat-image{
+  height: 24px;
+  width: 24px;
+  border-radius: 50px;
+}
+
+.study-chat-data{
+  margin-left: 8px;
+}
+
+.particular-study-chat-description{
+  font-weight: bold;
+  margin-top: 5px;
+}
