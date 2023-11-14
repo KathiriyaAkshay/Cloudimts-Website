@@ -353,6 +353,9 @@ export const handleExport = (tableData) => {
   const workbook = XLSX.utils.book_new();
   const sheetName = "BillingData";
 
+  console.log("Table data ==========>");
+  console.log(tableData);
+
   // Convert your data to worksheet
   const worksheet = XLSX.utils.json_to_sheet(tableData);
 
