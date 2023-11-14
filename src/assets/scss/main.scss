@@ -1515,3 +1515,13 @@
 .Billing-search-modal .ant-btn-default{
   display: none;
 }
+
+.Study-export-option-modal .ant-form-item-control-input-content{
+  width: 95% !important;
+  float: right;
+}
+
+.Study-export-option-modal .ant-picker{ 
+  width: 90% !important;
+  float: right;
+}

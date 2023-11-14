@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Drawer, Space, Table, Tag, Tooltip, Typography } from "antd";
+import { Drawer, Modal, Space, Table, Tag, Tooltip, Form, DatePicker, Row, Col, Select } from "antd";
 import { useBreadcrumbs } from "../../hooks/useBreadcrumbs";
 import ChatMain from "../../components/Chat/ChatMain";
 import DicomViewer from "../../components/DicomViewer";
@@ -58,6 +58,7 @@ const Dicom = () => {
   const [seriesID, setSeriesID] = useState(null);
   const [personName, setPersonName] = useState(null);
   const { permissionData } = useContext(UserPermissionContext);
+  const [studyExportOptionModal, setStudyExportOptionModal] = useState(true) ; 
 
   const {
     studyData,
@@ -574,6 +575,8 @@ const Dicom = () => {
     // }
   };
 
+  const [form] = Form.useForm();
+
   return (
     <>
       <Table
@@ -712,6 +715,64 @@ const Dicom = () => {
         retrieveStudyData={retrieveStudyData}
         advanceSearchFilterData={advanceSearchFilterData}
       />
+
+      <Modal title="Study Export" 
+        centered
+        open={studyExportOptionModal} 
+        onOk={() => console.log("Callthig ")} 
+        onCancel={() => setStudyExportOptionModal(false)}
+        className="Study-export-option-modal"
+        >
+        
+        <Form
+          form = {form}
+          onFinish = {() => console.log("Submit form =============>")}
+        >
+          <Row gutter={15}>
+
+            <Col xs={24} lg={24} style={{marginTop: "20px"}}>
+
+              {/* ===== Study export from date selection ======= */}
+            
+              <Form.Item
+                name="from_date"
+                label="From Date"
+                rules={[
+                  {
+                    required: false,
+                    message: "Please enter From Date",
+                  },
+                ]}
+              >
+                <DatePicker format={"YYYY-MM-DD"} />
+            
+              </Form.Item>
+            
+            </Col>
+
+            {/* ==== Study export to date selection ====  */}
+
+            <Col xs={24} lg={24}>
+              <Form.Item
+                name="to_date"
+                label="To Date"
+                rules={[
+                  {
+                    required: false,
+                    message: "Please enter to date",
+                  },
+                ]}
+              >
+                <DatePicker format={"YYYY-MM-DD"} />
+              
+              </Form.Item>
+            
+            </Col>
+          
+          </Row>
+
+        </Form>
+      </Modal>
       
     </>
   );
