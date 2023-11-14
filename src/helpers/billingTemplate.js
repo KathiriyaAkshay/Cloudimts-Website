@@ -2,12 +2,21 @@ import { saveAs } from "file-saver";
 import * as XLSX from "xlsx";
 
 export const handleDownloadPDF = (billingData) => {
-  
+
+  let ReportingData = {} ; 
+
   for(let i = 0; i<billingData.length; i++){
     let studyData = billingData[i] ; 
 
-    let reportingCharge = parseInt(studyData['reporting_charge']) ; 
+    console.log("Study data object information ==========>");
+    console.log(studyData);
 
+    let reportingCharge = parseInt(studyData['reporting_charge']) ;
+    let communicationCharge = parseInt(studyData['modality_communication_charge']) ; 
+    let midnightCharge = parseInt(studyData['midnight_charge']) ; 
+    let modality = studyData['modality'] ; 
+
+    // if (ReportingData)
   }
 
   // ===== Get Filter data information 
