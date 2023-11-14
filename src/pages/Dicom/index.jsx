@@ -169,6 +169,9 @@ const Dicom = () => {
       "series_list": seriesIdList
     } ; 
 
+    console.log("Fetch series count information =======>");
+    console.log(requestPayload);
+
     let responseData = await APIHandler("POST", requestPayload, "studies/v1/series_instance_count") ; 
 
     if (responseData === false){

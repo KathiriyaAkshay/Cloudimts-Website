@@ -822,7 +822,6 @@
 
 .billing-main-div {
   margin-top: 20px;
-  width: 50%;
   .billing-sub-div {
     display: grid;
     justify-content: space-evenly;
@@ -1477,4 +1476,30 @@
 
 .userchat-time{
   margin-top: 12px;
+}
+
+
+.Billing-table table td{
+  text-align: center;
+}
+
+.Billing-table table thead th{
+  text-align: center;
+}
+
+.Billing-information-div{
+  width: 100%;
+  border-top: 1px solid #d0d0d0;
+  margin-top: 1rem;
+  padding-top: 1rem;
+}
+
+.Billing-report-information{
+  margin-bottom: 0.80rem;
+}
+
+.Billing-sub-total-info-div{
+  padding: 1rem;
+  background-color: #efefef;
+  border-radius: 5px;
 }

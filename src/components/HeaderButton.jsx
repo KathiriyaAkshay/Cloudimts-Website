@@ -657,6 +657,9 @@ const HeaderButton = ({
       {window.location.pathname === "/billing" && (
         <div className="iod-setting-div">
           {permissionData["Other option permission"] &&
+            
+            // ==== Download to excel option ==== 
+
             permissionData["Other option permission"].find(
               (data) =>
                 data.permission === "Show Billing - export to excel option"
@@ -669,20 +672,22 @@ const HeaderButton = ({
                 <SiMicrosoftexcel style={{ fontWeight: "500" }} /> Export Excel
               </Button>
             )}
-          <Button
-            type="primary"
-            className="btn-icon-div"
-            onClick={() => handleDownloadPDF(billingFilterData)}
-          >
-            <DownloadOutlined /> Download Bill
-          </Button>
-          <Button
-            type="primary"
-            className="btn-icon-div"
-            onClick={() => setIsBillingFilterModalOpen(true)}
-          >
-            <SearchOutlined style={{ fontWeight: "500" }} /> Search Billing
-          </Button>
+
+            <Button
+              type="primary"
+              className="btn-icon-div"
+              onClick={() => handleDownloadPDF(billingFilterData)}
+            >
+              <DownloadOutlined /> Download Bill
+            </Button>
+          
+            <Button
+              type="primary"
+              className="btn-icon-div"
+              onClick={() => setIsBillingFilterModalOpen(true)}
+            >
+              <SearchOutlined style={{ fontWeight: "500" }} /> Search Billing
+            </Button>
         </div>
       )}
       {window.location.pathname === "/support" && (

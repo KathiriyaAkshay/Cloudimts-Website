@@ -11,8 +11,10 @@ import { BillingDataContext } from "../hooks/billingDataContext";
 const BillingModal = ({ setBillingData, setIsLoading, setCharges }) => {
   const { isBillingFilterModalOpen, setIsBillingFilterModalOpen } =
     useContext(filterDataContext);
+
   const { billingFilterData, setBillingFilterData } =
     useContext(BillingDataContext);
+  
   const [institutionOptions, setInstitutionOptions] = useState([]);
   const [radiologistOptions, setRadiologistOptions] = useState([]);
   const [statusOptions, setStatusOptions] = useState([
@@ -49,6 +51,8 @@ const BillingModal = ({ setBillingData, setIsLoading, setCharges }) => {
       value: "Reported",
     },
   ]);
+
+  
 
   useEffect(() => {
     retrieveInstitutionData();
@@ -97,20 +101,21 @@ const BillingModal = ({ setBillingData, setIsLoading, setCharges }) => {
     }
   };
 
-  // const handleStatusSelectChange = (value) => {
-  //   if (value.includes("all")) {
-  //     form.setFieldsValue({ study_status: ["all"] });
-  //   } else {
-  //     form.setFieldsValue({
-  //       study_status: value.filter((val) => val !== "all"),
-  //     });
-  //   }
-  // };
-
   const [form] = Form.useForm();
 
   const submitHandler = (values) => {
+
     setIsLoading(true);
+
+    // Set Userinput selection in localStorage 
+    let FilterValues = {
+      'fromdate': values?.from_date?.format("YYYY-MM-DD"), 
+      "todate": values?.to_date?.format("YYYY-MM-DD"), 
+      "institution": values?.institution_list   
+    }; 
+
+    localStorage.setItem("BillingFilterValues", JSON.stringify(FilterValues)) ; 
+
     const modifiedObj = {
       ...values,
       from_date: values?.from_date?.format("YYYY-MM-DD"),
@@ -170,6 +175,9 @@ const BillingModal = ({ setBillingData, setIsLoading, setCharges }) => {
           autoComplete={"off"}
         >
           <Row gutter={15}>
+            
+            {/* ===== Institution selection option =====  */}
+
             <Col xs={24} lg={12}>
               <Form.Item
                 name="institution_list"
@@ -196,6 +204,9 @@ const BillingModal = ({ setBillingData, setIsLoading, setCharges }) => {
                 />
               </Form.Item>
             </Col>
+
+            {/* ==== Radioligist selection option ====  */}
+
             <Col xs={24} lg={12}>
               <Form.Item
                 name="user"
@@ -222,6 +233,9 @@ const BillingModal = ({ setBillingData, setIsLoading, setCharges }) => {
                 />
               </Form.Item>
             </Col>
+
+            {/* ==== From date selection option =====  */}
+
             <Col xs={24} lg={12}>
               <Form.Item
                 name="from_date"
@@ -236,6 +250,9 @@ const BillingModal = ({ setBillingData, setIsLoading, setCharges }) => {
                 <DatePicker format={"YYYY-MM-DD"} />
               </Form.Item>
             </Col>
+
+            {/* ==== To date selection option ====  */}
+
             <Col xs={24} lg={12}>
               <Form.Item
                 name="to_date"
@@ -250,6 +267,9 @@ const BillingModal = ({ setBillingData, setIsLoading, setCharges }) => {
                 <DatePicker format={"YYYY-MM-DD"} />
               </Form.Item>
             </Col>
+
+            {/* ==== Study status selection option ====  */}
+
             <Col xs={24} lg={12}>
               <Form.Item
                 name="study_status"
@@ -266,20 +286,22 @@ const BillingModal = ({ setBillingData, setIsLoading, setCharges }) => {
                   placeholder="Select Status"
                   options={statusOptions}
                   showSearch
-                  // onChange={handleStatusSelectChange}
-                  // mode="multiple"
+
                   filterSort={(optionA, optionB) =>
                     (optionA?.label ?? "")
                       .toLowerCase()
                       .localeCompare((optionB?.label ?? "").toLowerCase())
                   }
-                  // onChange={appliedOnChangeHandler}
                 />
               </Form.Item>
             </Col>
+
           </Row>
+
         </Form>
+
       </Modal>
+    
     </div>
   );
 };
