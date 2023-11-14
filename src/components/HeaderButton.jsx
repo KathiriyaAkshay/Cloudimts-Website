@@ -97,7 +97,6 @@ const HeaderButton = ({
 
   const fetchSystemFilter = async () => {
     const response = await retrieveSystemFilters();
-    console.log(response);
     const modifiedOptions = response.map((data) => ({
       label: data.name,
       value: `${data?.filter_data?.option} ${data?.filter_data?.filter?.status__icontains}`,
@@ -176,23 +175,17 @@ const HeaderButton = ({
     <Collapse
       bordered={true}
       expandIconPosition="end"
-      // expandIcon={({ isActive }) => <CaretRightOutlined rotate={isActive ? 90 : 0} />}
       className="setting-main-div"
-      // style={{
-      //   position: "absolute",
-      //   top: "100%",
-      //   zIndex: "999",
-      //   width: "200px",
-      // }}
       accordion
     >
       <Collapse.Panel
-        header="Main Filter"
+        header="Filters"
         key="1"
-        className="setting-panel mb-0"
+        className="setting-panel mb-0 admin-panel-filter-option-list"
       >
         {filterOptions?.map((data) => (
           <div>
+
             <Checkbox
               name={data?.label}
               key={data?.key}
@@ -238,26 +231,36 @@ const HeaderButton = ({
             >
               {data?.label}
             </Checkbox>
+          
           </div>
         ))}
-        <Divider style={{ margin: "10px 0px" }} />
-        <div
-          onClick={() => setIsAddFilterModalOpen(true)}
-          style={{
-            cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            gap: "4px",
-            fontWeight: "500",
-          }}
-        >
-          <AiOutlinePlus /> Add Filter
-        </div>
+
+        {
+          checkPermissionStatus("Show Filter option") && (
+            <>
+              <Divider style={{ margin: "10px 0px" }} />
+              <div
+                onClick={() => setIsAddFilterModalOpen(true)}
+                style={{
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "4px",
+                  fontWeight: "500",
+                }}
+              >
+                <AiOutlinePlus /> Add Filter
+              </div>
+            </>
+          )
+        }
+
       </Collapse.Panel>
+
       <Collapse.Panel
-        header="System Filter"
+        header="Normmal filter"
         key="2"
-        className="setting-panel mb-0"
+        className="setting-panel mb-0  normal-filter-option-list"
       >
         {systemFilters?.map((data) => (
           <div>
@@ -465,7 +468,7 @@ const HeaderButton = ({
           >
             Delete Studies
           </Button>
-          
+
           <Button
             type="primary"
             onClick={() => setIsStudyExportModalOpen(true)}

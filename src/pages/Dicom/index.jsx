@@ -782,6 +782,8 @@ const Dicom = () => {
         advanceSearchFilterData={advanceSearchFilterData} 
       />
 
+      {/* ===== Study Export option modal ======  */}
+
       <Modal title="Study Export" 
         centered
         open={isStudyExportModalOpen} 

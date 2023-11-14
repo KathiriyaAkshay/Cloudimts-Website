@@ -1545,3 +1545,29 @@
 .Quick-filter-modal-button{
   background-color: #064f32 !important;
 }
+
+.setting-main-div{
+  border: 0px !important;
+  border-radius: 0px !important;
+}
+
+.normal-filter-option-list .ant-collapse-header{
+  border-radius:  5px !important;
+  margin-top: 0.40rem;
+}
+
+.normal-filter-option-list .ant-collapse-header-text{
+  font-weight: bold !important;
+}
+
+.admin-panel-filter-option-list .ant-collapse-header{
+  border-radius: 5px !important;
+}
+
+.admin-panel-filter-option-list {
+  border-bottom-width: 0px !important;
+}
+
+.admin-panel-filter-option-list .ant-collapse-header-text{
+  font-weight:  bold !important;
+}
