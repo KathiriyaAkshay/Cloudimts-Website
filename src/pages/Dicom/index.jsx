@@ -28,11 +28,11 @@ import EditActionIcon from "../../components/EditActionIcon";
 import { UserPermissionContext } from "../../hooks/userPermissionContext";
 import { StudyDataContext } from "../../hooks/studyDataContext";
 import { StudyIdContext } from "../../hooks/studyIdContext";
+import { filterDataContext } from "../../hooks/filterDataContext";
 import {
   applyMainFilter,
   applySystemFilter,
 } from "../../helpers/studyDataFilter";
-import { set } from "lodash";
 import { FilterSelectedContext } from "../../hooks/filterSelectedContext";
 import AdvancedSearchModal from "../../components/AdvancedSearchModal";
 import DeleteActionIcon from "../../components/DeleteActionIcon";
@@ -59,6 +59,7 @@ const Dicom = () => {
   const [personName, setPersonName] = useState(null);
   const { permissionData } = useContext(UserPermissionContext);
   const [studyExportOptionModal, setStudyExportOptionModal] = useState(true) ; 
+  const {isStudyExportModalOpen, setIsStudyExportModalOpen} = useContext(filterDataContext) ; 
 
   const {
     studyData,
@@ -718,9 +719,9 @@ const Dicom = () => {
 
       <Modal title="Study Export" 
         centered
-        open={studyExportOptionModal} 
+        open={isStudyExportModalOpen} 
         onOk={() => console.log("Callthig ")} 
-        onCancel={() => setStudyExportOptionModal(false)}
+        onCancel={() => setIsStudyExportModalOpen(false)}
         className="Study-export-option-modal"
         >
         
