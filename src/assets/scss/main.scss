@@ -1503,3 +1503,15 @@
   background-color: #efefef;
   border-radius: 5px;
 }
+
+.Billing-search-modal{
+  width: 70% !important;
+}
+
+.Billing-search-modal .ant-modal-body{
+  padding-top: 1rem !important;
+}
+
+.Billing-search-modal .ant-btn-default{
+  display: none;
+}

@@ -183,7 +183,9 @@ const index = () => {
           </div>
 
           <Divider style={{ margin: "12px 0", borderWidth: "0" }} />
+
         </div>
+      
       </Modal>
     </div>
   );

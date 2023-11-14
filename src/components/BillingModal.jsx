@@ -9,6 +9,7 @@ import { filterDataContext } from "../hooks/filterDataContext";
 import { BillingDataContext } from "../hooks/billingDataContext";
 
 const BillingModal = ({ setBillingData, setIsLoading, setCharges }) => {
+  
   const { isBillingFilterModalOpen, setIsBillingFilterModalOpen } =
     useContext(filterDataContext);
 
@@ -157,11 +158,11 @@ const BillingModal = ({ setBillingData, setIsLoading, setCharges }) => {
     <div>
       <Modal
         title="Search Billing"
-        width={"50%"}
         centered
         open={isBillingFilterModalOpen}
         onOk={() => form.submit()}
         onCancel={() => setIsBillingFilterModalOpen(false)}
+        className="Billing-search-modal"
       >
         <Form
           labelCol={{

@@ -321,11 +321,13 @@ const BasicLayout = ({ children }) => {
           </Content>
         </Layout>
       </Layout>
+
       <StudyFilterModal
         isFilterModalOpen={isFilterModalOpen}
         setIsFilterModalOpen={setIsFilterModalOpen}
         retrieveFilterOptions={retrieveFilterOptions}
       />
+      
     </>
   );
 };
