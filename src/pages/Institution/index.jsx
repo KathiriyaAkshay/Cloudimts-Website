@@ -170,6 +170,7 @@ const Institution = () => {
           ? ""
           : "column-display-none"
       }`,
+      width: 200
     },
 
     checkPermissionStatus("View Institution contact number") && {

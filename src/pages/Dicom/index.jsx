@@ -74,6 +74,8 @@ const Dicom = () => {
   );
   const [studyStatus, setStudyStatus] = useState("");
   const [limit, setLimit] = useState(10);
+
+  // ==== Study Pagination 
   const [Pagination, setPagination] = useState({
     page: 1,
     limit: limit,
@@ -91,6 +93,8 @@ const Dicom = () => {
     setStudyDataPayload({});
   }, []);
 
+  // Pagination Handler 
+
   useEffect(() => {
     setPagi(Pagination) ; 
     if (
@@ -103,6 +107,18 @@ const Dicom = () => {
     }
   }, [Pagination, isFilterSelected, studyDataPayload, systemFilterPayload]);
 
+  
+  useEffect(() => {
+    changeBreadcrumbs([{ name: "Study Data" }]);
+    setStudyIdArray([]);
+  }, []);
+
+  useEffect(() => {
+    setTimeout(() => {
+      FetchSeriesCountInformation() ; 
+    }, 5000);
+  }, [])
+  
   const onShowSizeChange = (current, pageSize) => {
     setLimit(pageSize);
     if (Object.keys(studyDataPayload).length > 0) {
@@ -112,23 +128,9 @@ const Dicom = () => {
     }
   };
 
-  useEffect(() => {
-    changeBreadcrumbs([{ name: "Study Data" }]);
-    // retrieveStudyData();
-    setStudyIdArray([]);
-  }, []);
-
-  useEffect(() => {
-    setTimeout(() => {
-        FetchSeriesCountInformation() ; 
-    }, 5000);
-}, [])
-
   const retrieveStudyData = (pagination, values = {}) => {
     setIsLoading(true);
     const currentPagination = pagination || pagi;
-    
-    console.log("Call reterive study data function =============>");
     getAllStudyData({
       page_size: currentPagination.limit || 10,
       page_number: currentPagination.page,
@@ -279,7 +281,6 @@ const Dicom = () => {
       })
       .catch((err) => console.log(err));
   };
-
 
   const deleteParticularStudy = async (id) => {
     await deleteStudy({ id: [id] })
