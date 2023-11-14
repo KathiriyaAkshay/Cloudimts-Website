@@ -654,7 +654,6 @@ const Dicom = () => {
           expandedRowRender: (record) => (
             <p style={{ margin: 0 }}>
               <DicomViewer dicomUrl={record?.study?.study_original_id} />
-              {/* {retrieveStudyInstance(record?.study?.study_original_id)} */}
             </p>
           ),
         }}
@@ -780,7 +779,7 @@ const Dicom = () => {
       <AdvancedSearchModal
         name={"Advance Search"}
         retrieveStudyData={retrieveStudyData}
-        advanceSearchFilterData={advanceSearchFilterData}
+        advanceSearchFilterData={advanceSearchFilterData} 
       />
 
       <Modal title="Study Export" 
