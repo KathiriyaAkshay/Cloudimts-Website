@@ -15,8 +15,10 @@ import image from "../assets/images/backgroundImg.jpg";
 import Slider from "react-slick";
 import NotificationMessage from "./NotificationMessage";
 import { useNavigate } from "react-router-dom";
+import APIHandler from "../apis/apiHandler";
 
 const Editor = ({ id }) => {
+
   const [editorData, setEditorData] = useState("");
   const [cardDetails, setCardDetails] = useState({});
   const [isLoading, setIsLoading] = useState(false);
@@ -34,6 +36,7 @@ const Editor = ({ id }) => {
   ] = useState(false);
   const [isStudyDescriptionInserted, setIsStudyDescriptionInserted] =
     useState(false);
+  const [institutionReport, setInstitutionReport] = useState({}) ; 
 
   useEffect(() => {
     setSelectedItem((prev) => ({
@@ -56,6 +59,8 @@ const Editor = ({ id }) => {
     }
   }, [selectedItem?.templateId]);
 
+  // ==== Fetch All templates names list 
+
   const retrieveTemplateData = async () => {
     await fetchTemplate({ id: selectedItem?.templateId })
       .then((res) => {
@@ -64,8 +69,12 @@ const Editor = ({ id }) => {
       .catch((err) => console.log(err));
   };
 
+  // ==== Fetch radiologist signature information  
+
   const retrieveUserSignature = async () => {
+
     setIsLoading(true);
+    
     await fetchUserSignature({ id: user_id })
       .then((res) => {
         setUsername(res?.data?.data?.user__username);
@@ -74,8 +83,11 @@ const Editor = ({ id }) => {
       .catch((err) =>
         NotificationMessage("warning", err.response.data.message)
       );
-    setIsLoading(false);
+    
+      setIsLoading(false);
   };
+
+  // ==== Fetch Patient details informatioin 
 
   const retrievePatientDetails = async () => {
     setIsLoading(true);
@@ -99,11 +111,34 @@ const Editor = ({ id }) => {
       })
       .catch((err) => {
         setIsLoading(false);
-        console.log(err);
       });
-  };
 
-  const retrieveDicomImages = () => {};
+    let studyRequestPaylod = {"id": id} ; 
+    
+    let responseData = await APIHandler("POST", studyRequestPaylod, "studies/v1/fetch_particular_study") ; 
+
+    if (responseData === false){
+      NotificationMessage("warning", "Network request failed") ; 
+    
+    } else if (responseData['status'] === true){
+
+      let Institution_id = responseData['data']['institution_id'] ; 
+
+      let institutionReportPayload = {
+        "institution_id": Institution_id, 
+        "study_id": id 
+      } ; 
+
+      let reportResponseData = await APIHandler("POST", institutionReportPayload, 'institute/v1/institution-report-details') ; 
+
+      console.log(reportResponseData);
+
+      if (reportResponseData['status'] === true){
+        setInstitutionReport({...reportResponseData['data']}) ; 
+      }
+    }
+  
+  };
 
   const convertPatientDataToTable = () => {
     const data =
@@ -190,6 +225,7 @@ const Editor = ({ id }) => {
         ? `${data}${prev}`
         : `${prev}${data}`
     );
+
     selectedItem.isPatientSelected && setIsPatientInformationInserted(true);
     selectedItem.isInstitutionSelected &&
       setIsInstitutionInformationInserted(true);
@@ -236,69 +272,39 @@ const Editor = ({ id }) => {
           <Spin spinning={isLoading}>
             <Row gutter={30}>
               <Col xs={24} sm={12} md={12}>
+              
                 <div className="report-details-div">
+                  
+                  {/* ==== Show Patient details ====  */}
+
                   {selectedItem?.isPatientSelected && (
                     <>
                       <Typography className="card-heading">
                         Patient Information
                       </Typography>
-                      <div>
-                        <Divider />
-                        <div className="report-main-div">
-                          <Typography className="report-text-primary">
-                            Patient ID:
-                          </Typography>
-                          <Typography>{cardDetails?.patient_id}</Typography>
-                        </div>
-                        <div className="report-main-div">
-                          <Typography className="report-text-primary">
-                            Patient Name:
-                          </Typography>
-                          <Typography>{cardDetails?.patient_name}</Typography>
-                        </div>
-                        <div className="report-main-div">
-                          <Typography className="report-text-primary">
-                            Gender:
-                          </Typography>
-                          <Typography>{cardDetails?.gender}</Typography>
-                        </div>
-                        <div className="report-main-div">
-                          <Typography className="report-text-primary">
-                            Date of Birth:
-                          </Typography>
-                          <Typography>{cardDetails?.dob}</Typography>
-                        </div>
-                        <div className="report-main-div">
-                          <Typography className="report-text-primary">
-                            Age:
-                          </Typography>
-                          <Typography>{cardDetails?.Age}</Typography>
-                        </div>
-                        <div className="report-main-div">
-                          <Typography className="report-text-primary">
-                            Accession Number:
-                          </Typography>
-                          <Typography>
-                            {cardDetails?.accession_number}
-                          </Typography>
-                        </div>
-                        <div className="report-main-div">
-                          <Typography className="report-text-primary">
-                            Modality:
-                          </Typography>
-                          <Typography>{cardDetails?.Modality}</Typography>
-                        </div>
-                        <div className="report-main-div">
-                          <Typography className="report-text-primary">
-                            Patient Comment:
-                          </Typography>
-                          <Typography>
-                            {cardDetails?.Patient_comments}
-                          </Typography>
-                        </div>
-                      </div>
+
+                        <table className="Report-info-table">
+                          <thead>
+                            <tr>
+                              <th>Name</th>
+                              <th>Information</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+
+                            {institutionReport.hasOwnProperty("patient_details") && Object.entries(institutionReport?.patient_details).map(([key, value]) => (
+                              <tr key={key}>
+                                <td>{key}</td>
+                                <td>{value}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
                     </>
                   )}
+
+                  {/* ==== Show Institution details ====  */}
+                  
                   {selectedItem?.isInstitutionSelected && (
                     <>
                       <Typography className="card-heading">
@@ -349,6 +355,9 @@ const Editor = ({ id }) => {
                       </div>
                     </>
                   )}
+
+                  {/* ==== Show Study description ====  */}
+                  
                   {selectedItem?.isStudyDescriptionSelected && (
                     <>
                       <Typography className="card-heading">
@@ -367,6 +376,9 @@ const Editor = ({ id }) => {
                       </div>
                     </>
                   )}
+
+                  {/* ==== Show Image slider information ====  */}
+                  
                   {selectedItem?.isImagesSelected && (
                     <>
                       <Typography className="card-heading">
@@ -394,24 +406,20 @@ const Editor = ({ id }) => {
                       </div>
                     </>
                   )}
-                  <div className="btn-div">
+
+                  <div className="btn-div insert-report-details-option">
                     <Button type="primary" onClick={convertPatientDataToTable}>
                       Insert
                     </Button>
                   </div>
                 </div>
+              
               </Col>
+
               <Col xs={24} sm={12} md={12} className="report-editor-div">
                 <CKEditor
                   editor={ClassicEditor}
                   data={editorData}
-                  // onReady={(editor) => {
-                  //   editor.plugins.get("FileRepository").createUploadAdapter = (
-                  //     loader
-                  //   ) => {
-                  //     return new UploadAdapter(loader);
-                  //   };
-                  // }}
                   onChange={(event, editor) => {
                     const data = editor.getData();
                     setEditorData(data);
@@ -435,10 +443,6 @@ const Editor = ({ id }) => {
           </Button>
         </div>
       </div>
-      {/* <div>
-        <h3>Editor Output:</h3>
-        <div dangerouslySetInnerHTML={{ __html: editorData }} />
-      </div> */}
     </>
   );
 };

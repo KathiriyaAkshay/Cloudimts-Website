@@ -189,7 +189,6 @@ const StudyReports = ({
               <WhatsAppOutlined className="action-icon" />
             </Tooltip>
           )}
-          {/* <DeleteActionIcon /> */}
         </Space>
       ),
     },

@@ -852,7 +852,6 @@
   align-items: center;
 }
 .report-details-div {
-  // position: relative;
   min-height: calc(100vh - 250px);
 }
 .btn-div {
@@ -1570,4 +1569,25 @@
 
 .admin-panel-filter-option-list .ant-collapse-header-text{
   font-weight:  bold !important;
+}
+
+.Report-info-table{
+  border: 1px solid #c4c4c4;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.Report-info-table th, td{
+  border: 1px solid #c4c4c4;
+  padding: 0.50rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.report-details-div{
+  border-right: 1px solid #c4c4c4;
+}
+
+.insert-report-details-option{
+  margin-right: 20px;
 }
