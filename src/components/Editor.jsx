@@ -311,48 +311,25 @@ const Editor = ({ id }) => {
                         Institution Information
                       </Typography>
                       <div>
-                        <Divider />
-                        <div className="report-main-div">
-                          <Typography className="report-text-primary">
-                            Institution Name:
-                          </Typography>
-                          <Typography>
-                            {cardDetails?.institution_name}
-                          </Typography>
-                        </div>
-                        <div className="report-main-div">
-                          <Typography className="report-text-primary">
-                            Institution Address:
-                          </Typography>
-                          <Typography>
-                            {cardDetails?.institution?.Institution_address}
-                          </Typography>
-                        </div>
-                        <div className="report-main-div">
-                          <Typography className="report-text-primary">
-                            Institution City:
-                          </Typography>
-                          <Typography>
-                            {cardDetails?.institution?.Institution_city}
-                          </Typography>
-                        </div>
-                        <div className="report-main-div">
-                          <Typography className="report-text-primary">
-                            Institution Contact:
-                          </Typography>
-                          <Typography>
-                            {cardDetails?.institution?.Institution_contact}
-                          </Typography>
-                        </div>
-                        <div className="report-main-div">
-                          <Typography className="report-text-primary">
-                            Institution Email:
-                          </Typography>
-                          <Typography>
-                            {cardDetails?.institution?.Institution_email}
-                          </Typography>
-                        </div>
-                      </div>
+
+                      <table className="Report-info-table">
+                        <thead>
+                          <tr>
+                            <th>Name</th>
+                              <th>Information</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {institutionReport.hasOwnProperty("institution_details") && Object.entries(institutionReport?.institution_details).map(([key, value]) => (
+                            <tr key={key}>
+                              <td>{key}</td>
+                              <td>{value}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+
+                    </div>
                     </>
                   )}
 
