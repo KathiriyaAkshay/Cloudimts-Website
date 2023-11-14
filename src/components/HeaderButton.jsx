@@ -680,14 +680,7 @@ const HeaderButton = ({
             >
               <DownloadOutlined /> Download Bill
             </Button>
-          
-            <Button
-              type="primary"
-              className="btn-icon-div"
-              onClick={() => setIsBillingFilterModalOpen(true)}
-            >
-              <SearchOutlined style={{ fontWeight: "500" }} /> Search Billing
-            </Button>
+     
         </div>
       )}
       {window.location.pathname === "/support" && (
