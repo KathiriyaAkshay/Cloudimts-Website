@@ -26,11 +26,9 @@ import {
   MailOutlined,
   WhatsAppOutlined,
 } from "@ant-design/icons";
-import DeleteActionIcon from "../DeleteActionIcon";
 import ImageCarousel from "./ImageCarousel";
 import { useNavigate } from "react-router-dom";
 import { UserPermissionContext } from "../../hooks/userPermissionContext";
-import { html2pdf } from "html2pdf.js";
 import jsPDF from "jspdf";
 
 const StudyReports = ({
@@ -43,7 +41,9 @@ const StudyReports = ({
   studyStatusHandler,
   pageNumberHandler , 
   isEmailShareModalOpen , 
-  setEmailReportId
+  setEmailReportId, 
+  patientId, 
+  patientName
 }) => {
   const [modalData, setModalData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -73,50 +73,22 @@ const StudyReports = ({
   };
 
   const downloadReport = async (id) => {
+
     await downloadAdvancedFileReport({ id })
       .then((res) => {
-        // setEditorData(res.data.data.report);
-        const pdfOptions = {
-          margin: 10,
-          filename: "document.pdf",
-          image: { type: "jpeg", quality: 0.98 },
-          html2canvas: { scale: 2 },
-          jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-        };
-
-        // html2pdf()
-        //   .from(res?.data?.data?.report)
-        //   .set(pdfOptions)
-        //   .outputPdf((pdf) => {
-        //     console.log(pdf);
-        //     const blob = pdf.output("blob");
-        //     const url = URL.createObjectURL(blob);
-        //     const link = document.createElement("a");
-        //     link.href = url;
-        //     link.download = "document.pdf";
-        //     link.click();
-        //     URL.revokeObjectURL(url);
-        //   });
-        // const pdf = new jsPDF();
-
-        // html2canvas(res?.data?.data?.report)
-        //   .then((canvas) => {
-        //     const imgData = canvas.toDataURL("image/jpeg");
-        //     pdf.addImage(imgData, "JPEG", 10, 10, 190, 277);
-        //     pdf.save("document.pdf");
-        //   })
-        //   .catch((err) => console.log(err));
         const doc = new jsPDF({
           format: "a4",
           unit: "px",
         });
 
+        var reportPatientName = patientName.replace(/ /g, '-');
+      
         // Adding the fonts.
         doc.setFont("Inter-Regular", "normal");
 
         doc.html(res?.data?.data?.report, {
           async callback(doc) {
-            await doc.save("report");
+            await doc.save(`${patientId}-${reportPatientName}-report`);
           },
           margin: [10, 10, 10, 10],
           autoPaging: "text",

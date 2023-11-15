@@ -62,6 +62,8 @@ const Dicom = () => {
   const { permissionData } = useContext(UserPermissionContext);
   const {isStudyExportModalOpen, setIsStudyExportModalOpen} = useContext(filterDataContext) ; 
   const [studyExportLoading, setStudyExportLoading] = useState(false) ; 
+  const [patientId, setPatientId] = useState("") ; 
+  const [patientName, setPatientName] = useState("") ; 
 
   const {
     studyData,
@@ -174,9 +176,6 @@ const Dicom = () => {
     let requestPayload  = {
       "series_list": seriesIdList
     } ; 
-
-    console.log("Fetch series count information =======>");
-    console.log(requestPayload);
 
     let responseData = await APIHandler("POST", requestPayload, "studies/v1/series_instance_count") ; 
 
@@ -465,9 +464,12 @@ const Dicom = () => {
               <IoIosDocument
                 className="action-icon"
                 onClick={() => {
+                  console.log(record);
                   setStudyID(record.id);
                   setStudyStatus(record.status);
                   setIsReportModalOpen(true);
+                  setPatientId(record.patient_id) ; 
+                  setPatientName(record.name) ; 
                 }}
               />
             </Tooltip>
@@ -770,6 +772,8 @@ const Dicom = () => {
         pageNumberHandler={PageNumberHandler}
         isEmailShareModalOpen={setIsEmailModalOpen}
         setEmailReportId = {setEmailReportId}
+        patientId = {patientId}
+        patientName = {patientName}
       />
       
       <PatientDetails
