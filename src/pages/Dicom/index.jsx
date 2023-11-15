@@ -264,6 +264,9 @@ const Dicom = () => {
   };
 
   const studyStatusHandler = async () => {
+    
+    // Call API When study status Viewed or Assigned 
+
     if (studyStatus === "Viewed" || studyStatus === "Assigned") {
       await updateStudyStatusReported({ id: studyID })
         .then((res) => {})
@@ -569,7 +572,7 @@ const Dicom = () => {
   });
 
   const handleCellDoubleClick = (record) => {
-    
+
     if (record.status === "Assigned" || record.status === "Reporting") {
       updateStudyStatus({ id: record.id })
         .then((res) => {

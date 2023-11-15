@@ -106,7 +106,9 @@ const StudyNotificationProvider = ({ children }) => {
 
       
       } else if (eventData.payload.status === "Reporting") {
+        
         const updatedData = studyData.map((data) => {
+        
           if (data.id === eventData.payload.data.id)
             return {
               ...data,
@@ -115,12 +117,8 @@ const StudyNotificationProvider = ({ children }) => {
             };
           else return data;
         });
-        setStudyData(updatedData);
-        NotificationMessage(
-          "success",
-          `Status has been updated for Study #${eventData.payload.data.id}`
-        );
-      
+
+        setStudyData(updatedData);      
       } else if (eventData.payload.status === "Reported") {
         const updatedData = studyData.map((data) => {
           if (data.id === eventData.payload.data.id)
