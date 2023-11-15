@@ -17,11 +17,7 @@ const index = () => {
   const { isBillingFilterModalOpen, setIsBillingFilterModalOpen } =
     useContext(filterDataContext);
 
-  console.log("Calling billing page information ================>");
-  console.log(isBillingFilterModalOpen);
 
-  console.log("Billing data information ===========>");
-  console.log(billingData);
 
   useEffect(() => setIsBillingFilterModalOpen(true), []);
 
@@ -30,8 +26,7 @@ const index = () => {
   const columns = [
     {
       title: "Patient ID",
-      dataIndex: "patient_id",
-      fixed: 'left',
+      dataIndex: "patient_id"
     },
     {
       title: "Patient Name",
@@ -82,14 +77,17 @@ const index = () => {
     {
       title: "Reporting Charge",
       dataIndex: "reporting_charge",
+      fixed: 'right'
     },
     {
-      title: "Communication Charge",
+      title: "Comu -Charge",
       dataIndex: "comunication_charge",
+      fixed: 'right'
     },
     {
       title: "Midnight Charge",
       dataIndex: "midnight_charge",
+      fixed: 'right'
     },
   ];
 
@@ -120,8 +118,8 @@ const index = () => {
             loading={isLoading}
             className="Billing-table"
             scroll={{
-              x: 1000,
-              y:475
+              x: 2000,
+              y:"45vh"
             }}
           />
         </div>

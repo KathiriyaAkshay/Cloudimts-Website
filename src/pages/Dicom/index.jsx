@@ -388,7 +388,7 @@ const Dicom = () => {
     },
 
     {
-      title: "Study update at",
+      title: "Update at",
       dataIndex: "updated_at",
     },
 
