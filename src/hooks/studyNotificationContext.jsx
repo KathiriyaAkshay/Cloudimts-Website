@@ -120,7 +120,7 @@ const StudyNotificationProvider = ({ children }) => {
 
         setStudyData(updatedData);      
       } else if (eventData.payload.status === "Reported") {
-        
+
         const updatedData = studyData.map((data) => {
           if (data.id === eventData.payload.data.id)
             return {
@@ -140,6 +140,7 @@ const StudyNotificationProvider = ({ children }) => {
         );
       
       } else if (eventData.payload.status === "ViewReport") {
+
         const updatedData = studyData.map((data) => {
           if (data.id === eventData.payload.data.id)
             return {
@@ -150,12 +151,9 @@ const StudyNotificationProvider = ({ children }) => {
           else return data;
         });
         setStudyData(updatedData);
-        NotificationMessage(
-          "success",
-          `Status has been updated for Study #${eventData.payload.data.id}`
-        );
       
       } else if (eventData.payload.status === "ClosedStudy") {
+
         const updatedData = studyData.map((data) => {
           if (data.id === eventData.payload.data.id)
             return {
@@ -165,11 +163,8 @@ const StudyNotificationProvider = ({ children }) => {
             };
           else return data;
         });
+      
         setStudyData(updatedData);
-        NotificationMessage(
-          "success",
-          `Status has been updated for Study #${eventData.payload.data.id}`
-        );
       
       }
     };

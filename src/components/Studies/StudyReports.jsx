@@ -50,7 +50,7 @@ const StudyReports = ({
   const { permissionData } = useContext(UserPermissionContext);
   const [isViewReportModalOpen, setIsViewReportModalOpen] = useState(false);
   const [normalReportImages, setNormalReportImages] = useState([]);
-  const [normalReportModalData, setNormalReportModalData] = useState({});
+  const [normalReportModalData, setNormalReportModalData] = useState({}); 
 
   useEffect(() => {
     if (studyID && isReportModalOpen) {
@@ -126,9 +126,12 @@ const StudyReports = ({
   };
 
   const handleStudyStatus = async () => {
-    await viewReported({ id: studyID })
-      .then((res) => {})
-      .catch((err) => console.log(err));
+
+    if (studyStatus === "Reported"){
+      await viewReported({ id: studyID })
+        .then((res) => {})
+        .catch((err) => console.log(err));
+    }
   };
 
   const columns = [
@@ -136,19 +139,23 @@ const StudyReports = ({
       title: "Report Type",
       dataIndex: "report_type",
     },
+
     {
       title: "Report Time",
       dataIndex: "reporting_time",
     },
+    
     {
       title: "Report By",
       dataIndex: "report_by",
       render: (text, record) => record?.report_by?.username,
     },
+    
     {
       title: "Study Description",
       dataIndex: "study_description",
     },
+    
     {
       title: "Actions",
       dataIndex: "actions",
@@ -156,11 +163,15 @@ const StudyReports = ({
       width: window.innerWidth < 650 ? "1%" : "20%",
       render: (text, record) => (
         <Space style={{ display: "flex", justifyContent: "space-evenly" }}>
+          
+         {/* ===== View report option ======   */}
+
           <Tooltip title={"View"}>
+
             <BsEyeFill
               className="action-icon"
-              onClick={async () => {
-                await handleStudyStatus();
+              onClick={
+                async () => { await handleStudyStatus();
                 record.report_type === "Advanced report" &&
                   navigate(`/reports/${record.id}/view`);
                 if (record.report_type === "Normal report") {
@@ -172,23 +183,34 @@ const StudyReports = ({
                 }
               }}
             />
+
           </Tooltip>
+
+          {/* ==== Download report option =====  */}
+          
           <Tooltip title={"Download"}>
             <DownloadOutlined
               className="action-icon"
               onClick={() => downloadReport(record.id)}
             />
           </Tooltip>
+
+          {/* ===== Email share option ====== */}
+          
           {record.report_type === "Advanced report" && (
             <Tooltip title={"Email"}>
               <MailOutlined className="action-icon" />
             </Tooltip>
           )}
+
+          {/* ==== Whatsapp share option ====  */}
+          
           {record.report_type === "Advanced report" && (
             <Tooltip title={"Whatsapp"}>
               <WhatsAppOutlined className="action-icon" />
             </Tooltip>
           )}
+        
         </Space>
       ),
     },
@@ -328,6 +350,7 @@ const StudyReports = ({
             </div>
 
             <div className="Report-modal-patient-data">
+
               <div
                 style={{
                   background: "#ebf7fd",
