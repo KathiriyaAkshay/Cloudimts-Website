@@ -2,15 +2,53 @@ import { saveAs } from "file-saver";
 import * as XLSX from "xlsx";
 
 export const handleDownloadPDF = (billingData) => {
+
+  let ReportingData = {};
+
+  for (let i = 0; i < billingData.length; i++) {
+    let {
+      reporting_charge,
+      modality_communication_charge,
+      midnight_charge,
+      modality,
+    } = billingData[i];
   
-  for(let i = 0; i<billingData.length; i++){
-    let studyData = billingData[i] ; 
+    let reportingCharge = parseInt(reporting_charge);
+    let communicationCharge = parseInt(modality_communication_charge);
+    let midnightCharge = parseInt(midnight_charge);
+  
+    if (reportingCharge !== 0) {
+      if (modality in ReportingData) {
 
-    let reportingCharge = parseInt(studyData['reporting_charge']) ; 
+        ReportingData[modality] = {
+        
+          total_object: ReportingData[modality].total_object + 1,
+          total_report_charge:
+            ReportingData[modality].total_report_charge +
+            reportingCharge +
+            communicationCharge,
+          total_midnight_charge:
+            ReportingData[modality].total_midnight_charge + midnightCharge
+        };
+      } else {
 
+        ReportingData[modality] = {
+          total_object: 1,
+          total_report_charge: reportingCharge + communicationCharge,
+          total_midnight_charge: midnightCharge
+        };
+        
+      }
+
+      // ReportingData[modality]['total_amount']
+    }
   }
 
+  console.log("Reporting charges information ========>");
+  console.log(ReportingData);
+
   // ===== Get Filter data information 
+
   let FilterData = localStorage.getItem("BillingFilterValues") ; 
   FilterData = JSON.parse(FilterData) ;
   
@@ -31,11 +69,10 @@ export const handleDownloadPDF = (billingData) => {
     const formattedBillingEndDate = BillingEndDate.toISOString().split('T')[0];
     formattedFutureDate = futureDate.toISOString().split('T')[0];
     
-    console.log(formattedFutureDate);
   } 
 
   // Create an HTML template with billing data and company logo
-  const htmlContent = `
+  let htmlContent = `
     <html>
     <head>
       <title>Billing</title>
@@ -231,20 +268,30 @@ export const handleDownloadPDF = (billingData) => {
                   <table class="table border-bottom border-gray-200 mt-3">
                       <thead>
                         <tr>
-                            <th scope="col" class="fs-sm text-dark text-uppercase-bold-sm px-0">Institution</th>
-                            <th scope="col" class="fs-sm text-dark text-uppercase-bold-sm px-0">Description</th>
+                            <th scope="col" class="fs-sm text-dark text-uppercase-bold-sm px-0" style = "width: 30%;">Description</th>
+                            <th scope="col" class="fs-sm text-dark text-uppercase-bold-sm px-0">No Of Cases</th>
                             <th scope="col" class="fs-sm text-dark text-uppercase-bold-sm px-0">Reporting charge</th>
-                            <th scope="col" class="fs-sm text-dark text-uppercase-bold-sm text-end px-0">Midnight charge</th>
-                            <th scope="col" class="fs-sm text-dark text-uppercase-bold-sm text-end px-0">Total</th>
+                            <th scope="col" class="fs-sm text-dark text-uppercase-bold-sm px-0">Midnight <br>charge</th>
+                            <th scope="col" class="fs-sm text-dark text-uppercase-bold-sm px-0">Total</th>
                         </tr>
                       </thead>
                       <tbody>
-                        <tr>
-                            <td class="px-0">Theme customization</td>
-                            <td class="px-0">0</td>
-                            <td class="px-0">200</td>
-                            <td class="text-end px-0">$60.00</td>
-                        </tr>
+    `
+    Object.keys(ReportingData).forEach(key  => {
+      let reportStudyData = ReportingData[key] ; 
+      htmlContent = htmlContent + `
+        <tr>
+          <td class="px-0" style = "width: 30%;">${key} reporting charges repoting charges </td>
+          <td class="px-0" style = "text-align: center;">${reportStudyData['total_object']}</td>
+          <td class="px-0" style = "text-align: center;">${reportStudyData['total_report_charge']}</td>
+          <td class="px-0" style = "text-align: center;">${reportStudyData['total_midnight_charge']}</td>
+          <td class="px-0" style = "text-align: center; font-weight: bold;">$60.00</td>
+        </tr>
+      `
+
+    })
+    htmlContent = htmlContent + `
+               
                       </tbody>
                   </table>
                   <div className='d-flex col justify-content-between'>
@@ -295,16 +342,19 @@ export const handleDownloadPDF = (billingData) => {
   `;
 
   // Create a new window/tab to display the HTML content
-  // const newWindow = window.open("", "_blank");
-  // newWindow.document.open();
-  // newWindow.document.write(htmlContent);
-  // newWindow.document.close();
+  const newWindow = window.open("", "_blank");
+  newWindow.document.open();
+  newWindow.document.write(htmlContent);
+  newWindow.document.close();
 };
 
 export const handleExport = (tableData) => {
   // Create a new workbook
   const workbook = XLSX.utils.book_new();
   const sheetName = "BillingData";
+
+  console.log("Table data ==========>");
+  console.log(tableData);
 
   // Convert your data to worksheet
   const worksheet = XLSX.utils.json_to_sheet(tableData);

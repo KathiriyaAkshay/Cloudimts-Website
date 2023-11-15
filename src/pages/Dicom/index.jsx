@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Drawer, Space, Table, Tag, Tooltip, Typography } from "antd";
+import { Drawer, Modal, Space, Table, Tag, Tooltip, Form, DatePicker, Row, Col, Select, Spin } from "antd";
 import { useBreadcrumbs } from "../../hooks/useBreadcrumbs";
 import ChatMain from "../../components/Chat/ChatMain";
 import DicomViewer from "../../components/DicomViewer";
@@ -28,16 +28,18 @@ import EditActionIcon from "../../components/EditActionIcon";
 import { UserPermissionContext } from "../../hooks/userPermissionContext";
 import { StudyDataContext } from "../../hooks/studyDataContext";
 import { StudyIdContext } from "../../hooks/studyIdContext";
+import { filterDataContext } from "../../hooks/filterDataContext";
 import {
   applyMainFilter,
   applySystemFilter,
 } from "../../helpers/studyDataFilter";
-import { set } from "lodash";
 import { FilterSelectedContext } from "../../hooks/filterSelectedContext";
 import AdvancedSearchModal from "../../components/AdvancedSearchModal";
 import DeleteActionIcon from "../../components/DeleteActionIcon";
 import NotificationMessage from "../../components/NotificationMessage";
 import APIHandler from "../../apis/apiHandler";
+import { saveAs } from "file-saver";
+import * as XLSX from "xlsx";
 
 const Dicom = () => {
 
@@ -58,6 +60,8 @@ const Dicom = () => {
   const [seriesID, setSeriesID] = useState(null);
   const [personName, setPersonName] = useState(null);
   const { permissionData } = useContext(UserPermissionContext);
+  const {isStudyExportModalOpen, setIsStudyExportModalOpen} = useContext(filterDataContext) ; 
+  const [studyExportLoading, setStudyExportLoading] = useState(false) ; 
 
   const {
     studyData,
@@ -152,7 +156,7 @@ const Dicom = () => {
             count: 0  
           };
         });
-        
+
         // Extract series_id into temp array
         const temp = res.data.data.map(data => data?.series_id).filter(Boolean);
 
@@ -260,6 +264,9 @@ const Dicom = () => {
   };
 
   const studyStatusHandler = async () => {
+    
+    // Call API When study status Viewed or Assigned 
+
     if (studyStatus === "Viewed" || studyStatus === "Assigned") {
       await updateStudyStatusReported({ id: studyID })
         .then((res) => {})
@@ -342,6 +349,7 @@ const Dicom = () => {
         checkPermissionStatus("Study id") ? "Study-count-column" : "column-display-none"
       }`,
     },
+
     {
       title: "Status",
       dataIndex: "status",
@@ -368,15 +376,23 @@ const Dicom = () => {
         </Tag>
       ),
     },
+
     {
       title: "Modality",
       dataIndex: "modality",
       className: "Study-count-column"
     },
+
     {
-      title: "Date Time",
+      title: "Study date",
       dataIndex: "created_at",
     },
+
+    {
+      title: "Study update at",
+      dataIndex: "updated_at",
+    },
+
     checkPermissionStatus("View Institution name") && {
       title: "Institution",
       dataIndex: "institution",
@@ -556,23 +572,82 @@ const Dicom = () => {
   });
 
   const handleCellDoubleClick = (record) => {
-    // if (record.status === "New" || record.status === "Assigned") {
-    //   updateStudyStatus({ id: record.id })
-    //     .then((res) => {})
-    //     .catch((err) => console.log(err));
-    //   const newTableData = studyData.map((data) => {
-    //     if (data.id == record.id) {
-    //       return {
-    //         ...data,
-    //         status: "Viewed",
-    //       };
-    //     } else {
-    //       return data;
-    //     }
-    //   });
-    //   setStudyData(newTableData);
-    // }
+
+    if (record.status === "Assigned" || record.status === "Reporting") {
+      updateStudyStatus({ id: record.id })
+        .then((res) => {
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    }
   };
+  
+  const StudyExportOptionHandler = async (values) => {
+    let from_date = values?.from_date?.format("YYYY-MM-DD") ; 
+    let to_date = values?.to_date?.format("YYYY-MM-DD") ; 
+
+    setStudyExportLoading(true) ; 
+
+    let requestPayload = {
+      "start_date": from_date, 
+      "end_date": to_date, 
+      "all_premission_id": JSON.parse(localStorage.getItem("all_permission_id")), 
+      "all_assign_id": JSON.parse(localStorage.getItem("all_assign_id"))
+    }
+
+    let responseData = await APIHandler("POST", requestPayload, "studies/v1/study-export") ; 
+
+
+    setStudyExportLoading(false) ;
+    setIsStudyExportModalOpen(false) ; 
+
+    if (responseData === false){
+      
+      NotificationMessage("warning", "Network request failed") ; 
+
+    } else if (responseData['status'] === true){
+      let studyExportArrayData = []
+
+      responseData['data'].map((element) => {
+        studyExportArrayData.push({
+          "Patient id": element?.study?.patient_id, 
+          "Patient name": element?.study?.patient_name, 
+          "Id": element?.id, 
+          "Modality": element?.modality, 
+          "Institution name": element?.institution?.name, 
+          "Status": element?.status, 
+          "Urgent case": element?.urgent_case, 
+          "Updated at": element?.updated_at
+        })
+      })
+
+      const workbook = XLSX.utils.book_new();
+      const sheetName = `Study-export-${to_date}`;
+    
+      // Convert your data to worksheet
+      const worksheet = XLSX.utils.json_to_sheet(studyExportArrayData);
+    
+      // Add the worksheet to the workbook
+      XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
+    
+      // Generate a blob from the workbook
+      const arrayBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+    
+      // Create a blob from the ArrayBuffer
+      const blob = new Blob([arrayBuffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+    
+      // Create a unique file name
+      const fileName = `Study-export-${from_date}-${to_date}.xlsx`;
+    
+      // Save the file using file-saver
+      saveAs(blob, fileName);
+    }
+  }
+
+  const [form] = Form.useForm();
 
   return (
     <>
@@ -584,7 +659,6 @@ const Dicom = () => {
           expandedRowRender: (record) => (
             <p style={{ margin: 0 }}>
               <DicomViewer dicomUrl={record?.study?.study_original_id} />
-              {/* {retrieveStudyInstance(record?.study?.study_original_id)} */}
             </p>
           ),
         }}
@@ -710,8 +784,72 @@ const Dicom = () => {
       <AdvancedSearchModal
         name={"Advance Search"}
         retrieveStudyData={retrieveStudyData}
-        advanceSearchFilterData={advanceSearchFilterData}
+        advanceSearchFilterData={advanceSearchFilterData} 
       />
+
+      {/* ===== Study Export option modal ======  */}
+
+      <Modal title="Study Export" 
+        centered
+        open={isStudyExportModalOpen} 
+        onOk={() => form.submit()} 
+        onCancel={() => setIsStudyExportModalOpen(false)}
+        className="Study-export-option-modal"
+        >
+
+        <Spin spinning = {studyExportLoading}>
+
+          <Form
+            form = {form}
+            onFinish = {StudyExportOptionHandler}
+          >
+            <Row gutter={15}>
+
+              <Col xs={24} lg={24} style={{marginTop: "20px"}}>
+
+                {/* ===== Study export from date selection ======= */}
+              
+                <Form.Item
+                  name="from_date"
+                  label="From Date"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please enter From Date",
+                    },
+                  ]}
+                >
+                  <DatePicker format={"YYYY-MM-DD"} />
+              
+                </Form.Item>
+              
+              </Col>
+
+              {/* ==== Study export to date selection ====  */}
+
+              <Col xs={24} lg={24}>
+                <Form.Item
+                  name="to_date"
+                  label="To Date"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please enter to date",
+                    },
+                  ]}
+                >
+                  <DatePicker format={"YYYY-MM-DD"} />
+                
+                </Form.Item>
+              
+              </Col>
+            
+            </Row>
+
+          </Form>
+        </Spin>
+        
+      </Modal>
       
     </>
   );

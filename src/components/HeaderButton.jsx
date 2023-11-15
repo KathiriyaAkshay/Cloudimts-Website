@@ -63,6 +63,7 @@ const HeaderButton = ({
     setIsUserLogsFilterModalOpen,
     setIsSupportModalOpen,
     setIsAdvancedSearchModalOpen,
+    setIsStudyExportModalOpen
   } = useContext(filterDataContext);
   const { setSelectedItem } = useContext(ReportDataContext);
   const { billingFilterData, setBillingFilterData } =
@@ -96,7 +97,6 @@ const HeaderButton = ({
 
   const fetchSystemFilter = async () => {
     const response = await retrieveSystemFilters();
-    console.log(response);
     const modifiedOptions = response.map((data) => ({
       label: data.name,
       value: `${data?.filter_data?.option} ${data?.filter_data?.filter?.status__icontains}`,
@@ -175,23 +175,17 @@ const HeaderButton = ({
     <Collapse
       bordered={true}
       expandIconPosition="end"
-      // expandIcon={({ isActive }) => <CaretRightOutlined rotate={isActive ? 90 : 0} />}
       className="setting-main-div"
-      // style={{
-      //   position: "absolute",
-      //   top: "100%",
-      //   zIndex: "999",
-      //   width: "200px",
-      // }}
       accordion
     >
       <Collapse.Panel
-        header="Main Filter"
+        header="Filters"
         key="1"
-        className="setting-panel mb-0"
+        className="setting-panel mb-0 admin-panel-filter-option-list"
       >
         {filterOptions?.map((data) => (
           <div>
+
             <Checkbox
               name={data?.label}
               key={data?.key}
@@ -237,26 +231,36 @@ const HeaderButton = ({
             >
               {data?.label}
             </Checkbox>
+          
           </div>
         ))}
-        <Divider style={{ margin: "10px 0px" }} />
-        <div
-          onClick={() => setIsAddFilterModalOpen(true)}
-          style={{
-            cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            gap: "4px",
-            fontWeight: "500",
-          }}
-        >
-          <AiOutlinePlus /> Add Filter
-        </div>
+
+        {
+          checkPermissionStatus("Show Filter option") && (
+            <>
+              <Divider style={{ margin: "10px 0px" }} />
+              <div
+                onClick={() => setIsAddFilterModalOpen(true)}
+                style={{
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "4px",
+                  fontWeight: "500",
+                }}
+              >
+                <AiOutlinePlus /> Add Filter
+              </div>
+            </>
+          )
+        }
+
       </Collapse.Panel>
+
       <Collapse.Panel
-        header="System Filter"
+        header="Normmal filter"
         key="2"
-        className="setting-panel mb-0"
+        className="setting-panel mb-0  normal-filter-option-list"
       >
         {systemFilters?.map((data) => (
           <div>
@@ -456,6 +460,7 @@ const HeaderButton = ({
       )}
       {window.location.pathname === "/studies" && (
         <div className="iod-setting-div">
+
           <Button
             type="primary"
             className="error-btn-primary"
@@ -463,6 +468,14 @@ const HeaderButton = ({
           >
             Delete Studies
           </Button>
+
+          <Button
+            type="primary"
+            onClick={() => setIsStudyExportModalOpen(true)}
+          >
+            Study Export
+          </Button>
+          
           <Button
             type="primary"
             className={`btn-icon-div ${
@@ -473,6 +486,7 @@ const HeaderButton = ({
             <SearchOutlined style={{ fontWeight: "500" }} />
             Advance Search
           </Button>
+          
           <Button
             type="primary"
             onClick={() => setIsStudyFilterModalOpen(true)}
@@ -480,70 +494,7 @@ const HeaderButton = ({
           >
             <FilterOutlined style={{ fontWeight: "500" }} /> Quick Filter
           </Button>
-          {/* {checkPermissionStatus("Show Filter option") && (
-            <Menu
-              onClick={(e) => {
-                setStudyDataPayload({
-                  id: e.key,
-                  page_number: 1,
-                  page_size: 10,
-                  deleted_skip: false,
-                });
-                applyMainFilter(
-                  {
-                    id: e.key,
-                    page_number: 1,
-                    page_size: 10,
-                    deleted_skip: false,
-                  },
-                  setStudyData
-                );
-              }}
-              style={{
-                width: 100,
-                height: 32,
-                // padding: "0px 0px 4px 0px",
-              }}
-              mode="horizontal"
-              items={menuItems}
-              className="filter-menu"
-            />
-          )}
-          <Menu
-            onSelect={(e) => {
-              const option = e?.key?.split(" ")[0];
-              const filterOption = e?.key?.split(" ")[1];
-              setSystemFilterPayload({
-                option,
-                page_number: 1,
-                page_size: 10,
-                deleted_skip: false,
-                filter: {
-                  status__icontains: filterOption,
-                },
-              });
-              applySystemFilter(
-                {
-                  option,
-                  page_number: 1,
-                  page_size: 10,
-                  deleted_skip: false,
-                  filter: {
-                    status__icontains: filterOption,
-                  },
-                },
-                setStudyData
-              );
-            }}
-            style={{
-              width: 154,
-              height: 32,
-              // padding: "0px 0px 4px 0px",
-            }}
-            mode="horizontal"
-            items={systemsFilterMenu}
-            className="filter-menu"
-          /> */}
+       
           <div style={{ position: "relative" }}>
             <Popover
               content={content}
@@ -564,10 +515,13 @@ const HeaderButton = ({
                 <FilterOutlined style={{ fontWeight: "500" }} /> Filters
               </Button>
             </Popover>
+
           </div>
+          
           <Button type="primary" onClick={() => navigate("/study-logs")}>
             Study Logs
           </Button>
+        
         </div>
       )}
       {window.location.pathname === "/reports" && (
