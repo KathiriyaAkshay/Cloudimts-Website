@@ -157,6 +157,9 @@ const Dicom = () => {
           };
         });
         
+        console.log("Initial study data information ==========>");
+        console.log(modifiedData); 
+
         // Extract series_id into temp array
         const temp = res.data.data.map(data => data?.series_id).filter(Boolean);
 
@@ -346,6 +349,7 @@ const Dicom = () => {
         checkPermissionStatus("Study id") ? "Study-count-column" : "column-display-none"
       }`,
     },
+
     {
       title: "Status",
       dataIndex: "status",
@@ -372,15 +376,23 @@ const Dicom = () => {
         </Tag>
       ),
     },
+
     {
       title: "Modality",
       dataIndex: "modality",
       className: "Study-count-column"
     },
+
     {
-      title: "Date Time",
+      title: "Study date",
       dataIndex: "created_at",
     },
+
+    {
+      title: "Study update at",
+      dataIndex: "updated_at",
+    },
+
     checkPermissionStatus("View Institution name") && {
       title: "Institution",
       dataIndex: "institution",
