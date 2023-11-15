@@ -5,7 +5,6 @@ import { FilterSelectedContext } from "../hooks/filterSelectedContext";
 
 const QuickFilterModal = ({
   name,
-  setStudyData,
   retrieveStudyData,
   quickFilterStudyData,
 }) => {
@@ -35,22 +34,21 @@ const QuickFilterModal = ({
       title={name}
       open={isStudyFilterModalOpen}
       onOk={() => form.submit()}
+      className="Quick-filter-modal"
       onCancel={() => {
-        // form.resetFields();
         setIsStudyFilterModalOpen(false);
-        // retrieveStudyData();
       }}
       footer={[
+        
         <Button
           key="back"
           onClick={() => {
-            // form.resetFields();
             setIsStudyFilterModalOpen(false);
-            // retrieveStudyData();
           }}
         >
           Cancel
         </Button>,
+
         <Button
           key="submit"
           type="primary"
@@ -63,6 +61,7 @@ const QuickFilterModal = ({
         >
           Clear Filter
         </Button>,
+        
         <Button key="submit" type="primary" onClick={() => form.submit()}>
           Apply
         </Button>,
@@ -80,6 +79,9 @@ const QuickFilterModal = ({
         autoComplete={"off"}
       >
         <Row gutter={15}>
+
+          {/* ===== Patient Name =====  */}
+
           <Col xs={24} lg={12}>
             <Form.Item
               name="study__patient_name__icontains"
@@ -95,6 +97,9 @@ const QuickFilterModal = ({
               <Input placeholder="Enter Patient Name" />
             </Form.Item>
           </Col>
+
+          {/* ===== Patient id =====  */}
+
           <Col xs={24} lg={12}>
             <Form.Item
               name="study__patient_id__icontains"
@@ -110,6 +115,9 @@ const QuickFilterModal = ({
               <Input placeholder="Enter Patient Id" />
             </Form.Item>
           </Col>
+
+          {/* ==== Modality =====  */}
+
           <Col xs={24} lg={12}>
             <Form.Item
               name="modality__icontains"
@@ -125,6 +133,9 @@ const QuickFilterModal = ({
               <Input placeholder="Enter Modality" />
             </Form.Item>
           </Col>
+
+          {/* ===== Status =====  */}
+
           <Col xs={24} lg={12}>
             <Form.Item
               name="status"
@@ -140,6 +151,9 @@ const QuickFilterModal = ({
               <Input placeholder="Enter Status" />
             </Form.Item>
           </Col>
+
+          {/* ===== Institution name ======  */}
+
           <Col xs={24} lg={12}>
             <Form.Item
               name="institution__name__icontains"
@@ -155,10 +169,13 @@ const QuickFilterModal = ({
               <Input placeholder="Enter Institution Name" />
             </Form.Item>
           </Col>
+
+          {/* ===== Study date option =====  */}
+
           <Col xs={24} lg={12}>
             <Form.Item
               name="created_at__startswith"
-              label="Created At"
+              label="Study date"
               rules={[
                 {
                   required: false,

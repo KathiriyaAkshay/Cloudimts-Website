@@ -17,6 +17,12 @@ const index = () => {
   const { isBillingFilterModalOpen, setIsBillingFilterModalOpen } =
     useContext(filterDataContext);
 
+  console.log("Calling billing page information ================>");
+  console.log(isBillingFilterModalOpen);
+
+  console.log("Billing data information ===========>");
+  console.log(billingData);
+
   useEffect(() => setIsBillingFilterModalOpen(true), []);
 
   const [isModalOpen, setIsModalOpen] = useState(false) ; 
@@ -94,11 +100,18 @@ const index = () => {
   return (
     <div>
       <Card style={{ marginTop: "30px" }}>
-        <div className="Billing-report-information">
-          <Button type="primary" onClick={() => setIsModalOpen(true)}>
-            View Billing information
-          </Button>
-        </div>
+        
+        {billingData.length !== 0 && 
+        
+          <div className="Billing-report-information">
+
+            <Button type="primary" onClick={() => setIsModalOpen(true)} 
+              style = {{backgroundColor: "#f5f5f5", color: "#212121 !important"}}>
+              View Billing information
+            </Button>
+          
+          </div>
+        }
 
         <div>
           <Table
@@ -184,7 +197,9 @@ const index = () => {
           </div>
 
           <Divider style={{ margin: "12px 0", borderWidth: "0" }} />
+
         </div>
+      
       </Modal>
     </div>
   );
