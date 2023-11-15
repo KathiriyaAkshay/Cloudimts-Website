@@ -424,7 +424,7 @@ const Dicom = () => {
       title: "Actions",
       dataIndex: "actions",
       fixed: "right",
-      width: window.innerWidth < 650 ? "1%" : "10%",
+      width: window.innerWidth < 650 ? "1%" : "15%",
       render: (_, record) => (
         <Space style={{ display: "flex", justifyContent: "space-evenly" }}>
           
@@ -580,6 +580,8 @@ const Dicom = () => {
         className="Study-table"
         dataSource={studyData}
         columns={columns}
+         scroll={{ y: 475,x:false}}
+
         expandable={{
           expandedRowRender: (record) => (
             <p style={{ margin: 0 }}>
@@ -625,6 +627,7 @@ const Dicom = () => {
             }
             setPagination({ ...Pagination, page, limit: pageSize });
           },
+          
           onShowSizeChange: onShowSizeChange,
         }}
       />

@@ -108,6 +108,7 @@ const index = () => {
             className="Billing-table"
             scroll={{
               x: 1000,
+              y:475
             }}
           />
         </div>
