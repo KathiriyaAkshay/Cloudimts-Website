@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+  import React, { useContext, useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   Drawer,
@@ -170,7 +170,10 @@ const Institution = () => {
           ? ""
           : "column-display-none"
       }`,
-      width: 200
+      width: 200,
+    //    ellipsis: true, // Enable ellipsis to truncate and show tooltip for extra text
+    // render: text => <div style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{text}</div>,
+  
     },
 
     checkPermissionStatus("View Institution contact number") && {

@@ -33,6 +33,7 @@ const TableWithFilter = ({
   dead,
   multiple,
   rowSelection,
+
 }) => {
   const navigate = useNavigate();
   const [limit, setLimit] = useState(10);
@@ -127,8 +128,8 @@ const TableWithFilter = ({
                   current: Pagination.page,
                   pageSize: limit,
                   total: totalRecords,
-                  pageSizeOptions: [10, 25, 50, 100, 200, 500],
-                  showSizeChanger: totalRecords > 10,
+                  pageSizeOptions: [5,10, 25, 50, 100, 200, 500],
+                  showSizeChanger: totalRecords >= 0,
                   onChange: (page = 1, pageSize = limit) => {
                     setPagination({ ...Pagination, page, limit: pageSize });
                   },
@@ -139,10 +140,11 @@ const TableWithFilter = ({
           scroll={
             !pagination
               ? window.screen.width < 1000
-                ? { x: 1000 }
-                : null
+                ? { x: 500 }
+                : {y:475}
               : { y: 375, x: window.screen.width < 1000 ? 1000 : null }
           }
+          // scroll={{y:100,x:500}}
           loading={loadingTableData}
           rowSelection={rowSelection && { type: "checkbox", ...rowSelection }}
           // onChange={(pagi, filters, sorter, extras) => {
