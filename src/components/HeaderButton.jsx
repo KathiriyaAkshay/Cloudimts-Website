@@ -20,6 +20,7 @@ import {
   FilterOutlined,
   PlusOutlined,
   SearchOutlined,
+  DeleteOutlined
 } from "@ant-design/icons";
 import { handleDownloadPDF, handleExport } from "../helpers/billingTemplate";
 import { BillingDataContext } from "../hooks/billingDataContext";
@@ -466,7 +467,7 @@ const HeaderButton = ({
             className="error-btn-primary"
             onClick={deleteStudyData}
           >
-            Delete Studies
+            <DeleteOutlined/>
           </Button>
 
           <Button
