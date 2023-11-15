@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Drawer, Modal, Space, Table, Tag, Tooltip, Form, DatePicker, Row, Col, Select, Spin } from "antd";
+import { Drawer, Modal, Space, Table, Tag, Tooltip, Form, DatePicker, Row, Col, Select, Spin, Input } from "antd";
 import { useBreadcrumbs } from "../../hooks/useBreadcrumbs";
 import ChatMain from "../../components/Chat/ChatMain";
 import DicomViewer from "../../components/DicomViewer";
@@ -649,6 +649,40 @@ const Dicom = () => {
 
   const [form] = Form.useForm();
 
+  const [isEmailModalOpen, setIsEmailModalOpen] = useState(false) ; 
+  const [emailShareLoading, setEmailShareLoading] = useState(false) ; 
+  const [emailReportId, setEmailReportId] = useState(null) ; 
+
+  const [emailFrom] = Form.useForm() ; 
+
+  const EmailShareHandler = async (values) => {
+    
+    setEmailShareLoading(true); 
+
+    let requestPayload = {
+      "sender_email": values?.email, 
+      "study_id": studyID , 
+      "report_id": emailReportId
+    } ; 
+
+    let responseData = await APIHandler("POST", requestPayload, 'email/v1/send-email') ; 
+    setEmailShareLoading(false) ; 
+    setIsEmailModalOpen(false) ; 
+
+    if (responseData === false){
+
+      NotificationMessage("warning", "Network request failed") ; 
+    
+    } else if (responseData['status'] === true){
+
+      NotificationMessage("success", "Email send successfully")
+    } else{
+
+      NotificationMessage("warning", responseData['message']) ; 
+
+    }
+  }
+
   return (
     <>
       <Table
@@ -734,6 +768,8 @@ const Dicom = () => {
         studyStatusHandler={studyStatusHandler}
         studyCloseHandler={studyCloseHandler}
         pageNumberHandler={PageNumberHandler}
+        isEmailShareModalOpen={setIsEmailModalOpen}
+        setEmailReportId = {setEmailReportId}
       />
       
       <PatientDetails
@@ -850,7 +886,49 @@ const Dicom = () => {
         </Spin>
         
       </Modal>
+
+      {/* ==== Report email share option modal ====  */}
       
+      <Modal title="Email share" 
+        open={isEmailModalOpen} 
+        onOk={() => emailFrom.submit()} 
+        onCancel={() => setIsEmailModalOpen(false)}
+        centered
+        style={{zIndex: 200}}
+        className="Report-email-share-option-modal"
+        >
+        <Spin spinning = {emailShareLoading}>
+            <Form
+              labelCol={{
+                span: 24,
+              }}
+              wrapperCol={{
+                span: 24,
+              }}
+              form={emailFrom}
+              onFinish={EmailShareHandler}
+            >
+              <Row gutter={15}>
+                <Col xs={24} lg={24} style={{marginTop: "20px"}}>
+                  <Form.Item
+                    name="email"
+                    label="Email"
+                    rules={[
+                      {
+                        type: "email",
+                        required: true,
+                        message: "Please enter email",
+                      },
+                    ]}
+                  >
+                    <Input placeholder="Enter Email address" />
+                  </Form.Item>
+                </Col>
+              </Row>
+            </Form>
+        </Spin>
+
+      </Modal>
     </>
   );
 };

@@ -7,6 +7,10 @@ import {
   Tag,
   Tooltip,
   Typography,
+  Form, 
+  Row, 
+  Col, 
+  Input
 } from "antd";
 import React, { useContext, useEffect, useState } from "react";
 import {
@@ -37,8 +41,9 @@ const StudyReports = ({
   studyStatus,
   setStudyStatus,
   studyStatusHandler,
-  studyCloseHandler,
-  pageNumberHandler 
+  pageNumberHandler , 
+  isEmailShareModalOpen , 
+  setEmailReportId
 }) => {
   const [modalData, setModalData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -51,6 +56,8 @@ const StudyReports = ({
   const [isViewReportModalOpen, setIsViewReportModalOpen] = useState(false);
   const [normalReportImages, setNormalReportImages] = useState([]);
   const [normalReportModalData, setNormalReportModalData] = useState({}); 
+
+
 
   useEffect(() => {
     if (studyID && isReportModalOpen) {
@@ -199,7 +206,8 @@ const StudyReports = ({
           
           {record.report_type === "Advanced report" && (
             <Tooltip title={"Email"}>
-              <MailOutlined className="action-icon" />
+              <MailOutlined className="action-icon" 
+              onClick={() => EmailShareModalOpen(record.id)}/>
             </Tooltip>
           )}
 
@@ -289,6 +297,11 @@ const StudyReports = ({
       .catch((err) => console.log(err));
     setIsLoading(false);
   };
+
+  const EmailShareModalOpen = (id) => {
+    setEmailReportId(id) ; 
+    isEmailShareModalOpen(true); 
+  }
 
   return (
     <>
@@ -414,7 +427,12 @@ const StudyReports = ({
 
               <div style={{paddingRight: "1rem"}}>
                 {tableData?.length > 0 && (
-                  <TableWithFilter tableColumns={columns} tableData={tableData} />
+                  
+                  <TableWithFilter 
+                    tableColumns={columns} 
+                    tableData={tableData} 
+                  />
+
                 )}
               </div>
 
@@ -431,7 +449,11 @@ const StudyReports = ({
         modalData={modalData}
       />
 
-      <ImageCarousel studyImages={studyImages} show={show} setShow={setShow} />
+      <ImageCarousel 
+        studyImages={studyImages} 
+        show={show} 
+        setShow={setShow} 
+      />
 
       <ImageCarousel
         studyImages={normalReportImages}
@@ -440,6 +462,8 @@ const StudyReports = ({
         showStudyData={true}
         studyData={normalReportModalData}
       />
+
+      
     </>
   );
 };
