@@ -47,7 +47,6 @@ const AssignStudy = ({
           const formData = {
             image: data?.originFileObj,
           };
-          console.log(formData);
 
           const res = await uploadImage(formData);
           images.push(res.data.image_url);
@@ -187,6 +186,8 @@ const AssignStudy = ({
               label: data.name,
               value: data.id,
             }));
+
+              
             setOptions(resData);
           }
         };

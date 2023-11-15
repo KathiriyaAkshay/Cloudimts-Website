@@ -156,9 +156,6 @@ const Dicom = () => {
             count: 0  
           };
         });
-        
-        console.log("Initial study data information ==========>");
-        console.log(modifiedData); 
 
         // Extract series_id into temp array
         const temp = res.data.data.map(data => data?.series_id).filter(Boolean);
@@ -572,24 +569,17 @@ const Dicom = () => {
   });
 
   const handleCellDoubleClick = (record) => {
-    // if (record.status === "New" || record.status === "Assigned") {
-    //   updateStudyStatus({ id: record.id })
-    //     .then((res) => {})
-    //     .catch((err) => console.log(err));
-    //   const newTableData = studyData.map((data) => {
-    //     if (data.id == record.id) {
-    //       return {
-    //         ...data,
-    //         status: "Viewed",
-    //       };
-    //     } else {
-    //       return data;
-    //     }
-    //   });
-    //   setStudyData(newTableData);
-    // }
+    
+    if (record.status === "Assigned" || record.status === "Reporting") {
+      updateStudyStatus({ id: record.id })
+        .then((res) => {
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    }
   };
-
+  
   const StudyExportOptionHandler = async (values) => {
     let from_date = values?.from_date?.format("YYYY-MM-DD") ; 
     let to_date = values?.to_date?.format("YYYY-MM-DD") ; 

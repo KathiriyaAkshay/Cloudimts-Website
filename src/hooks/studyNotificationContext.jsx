@@ -42,8 +42,7 @@ const StudyNotificationProvider = ({ children }) => {
       } else if (eventData.payload.status === "Viewed") {
 
         // Viewed Study status handler 
-        // Status 
-
+        // Previous status -- Assigned, Reporting   
         const updatedData = studyData.map((data) => {
           if (data.id === eventData.payload.data.id)
             return {
