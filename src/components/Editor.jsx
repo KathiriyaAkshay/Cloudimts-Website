@@ -37,6 +37,7 @@ const Editor = ({ id }) => {
   const [isStudyDescriptionInserted, setIsStudyDescriptionInserted] =
     useState(false);
   const [institutionReport, setInstitutionReport] = useState({}) ; 
+  const [referenceImageCount, setReferenceImageCount] = useState(1) ; 
 
   useEffect(() => {
     setSelectedItem((prev) => ({
@@ -51,6 +52,7 @@ const Editor = ({ id }) => {
   useEffect(() => {
     retrievePatientDetails();
     retrieveUserSignature();
+    FetchStudyImage() ; 
   }, []);
 
   useEffect(() => {
@@ -76,46 +78,28 @@ const Editor = ({ id }) => {
     setIsLoading(true);
     
     await fetchUserSignature({ id: user_id })
-      .then((res) => {
-        setUsername(res?.data?.data?.user__username);
-        setSignatureImage(res?.data?.data?.signature_image);
-      })
-      .catch((err) =>
-        NotificationMessage("warning", err.response.data.message)
-      );
-    
-      setIsLoading(false);
+    .then((res) => {
+      setUsername(res?.data?.data?.user__username);
+      setSignatureImage(res?.data?.data?.signature_image);
+    })
+    .catch((err) =>
+      NotificationMessage("warning", err.response.data.message)
+    );
+  
+    setIsLoading(false);
   };
 
   // ==== Fetch Patient details informatioin 
 
   const retrievePatientDetails = async () => {
+
     setIsLoading(true);
-    await getMoreDetails({ id })
-      .then((res) => {
-        const resData = {
-          ...res.data.data,
-          patient_id: res.data.data?.Patient_id,
-          patient_name: res.data?.data?.Patient_name,
-          gender: res.data?.data?.Gender,
-          dob: res.data?.data?.DOB,
-          accession_number: res.data?.data?.Accession_number,
-          modality: res.data.data?.Modality,
-          mainTags:
-            res.data.data?.information?.study__study_metadata?.MainDicomTags,
-          images: res.data.data?.information?.study_data?.images,
-          institution_name: res.data.data?.institution?.Institution_name,
-        };
-        setCardDetails(resData);
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        setIsLoading(false);
-      });
 
     let studyRequestPaylod = {"id": id} ; 
     
-    let responseData = await APIHandler("POST", studyRequestPaylod, "studies/v1/fetch_particular_study") ; 
+    let responseData = await APIHandler("POST", studyRequestPaylod, "studies/v1/fetch_particular_study") ;  
+
+    console.log(responseData);
 
     if (responseData === false){
       NotificationMessage("warning", "Network request failed") ; 
@@ -130,9 +114,6 @@ const Editor = ({ id }) => {
       } ; 
 
       let reportResponseData = await APIHandler("POST", institutionReportPayload, 'institute/v1/institution-report-details') ; 
-
-      console.log(reportResponseData);
-
       if (reportResponseData['status'] === true){
         setInstitutionReport({...reportResponseData['data']}) ; 
       }
@@ -140,86 +121,81 @@ const Editor = ({ id }) => {
   
   };
 
+  // ==== Fetch Study images 
+
+  const FetchStudyImage = async () => {
+
+    let requestPayload = {
+      "series_id": "7437fdce-47043c74-fd245ef0-355ffbc1-8fd74592"
+    }; 
+
+    let responseData = await APIHandler("POST", requestPayload, "studies/v1/studies_images") ; 
+
+    let ServerURL = import.meta.env.VITE_APP_BE_ENDPOINT; 
+    
+    if (responseData === false){
+      NotificationMessage("warning", "Network request failed") ; 
+    } else if (responseData['status'] === true){
+
+      let temp = [] ; 
+
+      responseData['data'].map((element) => {
+        temp.push({
+          url: `${ServerURL}studies/v1/fetch_instance_image/${element}`
+        })
+      })
+      setImageSlider([...temp]) ; 
+    }
+  }
+
   const convertPatientDataToTable = () => {
     const data =
       selectedItem.isPatientSelected && !isPatientInformationInserted
         ? `<div>
-        <h2>Patient Information</h2>
+        <h2 style = "text-align: center; ">Patient Information</h2>
         <table>
           <tbody>
-            <tr>
-              <td>Patient ID</td>
-              <td>${cardDetails?.patient_id}</td>
-            </tr>
-            <tr>
-              <td>Patient Name</td>
-              <td>${cardDetails?.patient_name}</td>
-            </tr>
-            <tr>
-              <td>Patient Sex</td>
-              <td>${cardDetails?.gender}</td>
-            </tr>
-            <tr>
-              <td>Patient Birth Date</td>
-              <td>${cardDetails?.dob}</td>
-            </tr>
-            <tr>
-              <td>Age</td>
-              <td>${cardDetails?.Age}</td>
-            </tr>
-            <tr>
-              <td>Accession Number</td>
-              <td>${cardDetails?.accession_number}</td>
-            </tr>
-            <tr>
-              <td>Modality</td>
-              <td>${cardDetails?.Modality}</td>
-            </tr>
-            <tr>
-              <td>Patient Comment</td>
-              <td>${cardDetails?.Patient_comments}</td>
-            </tr>
+            ${institutionReport.hasOwnProperty("patient_details") && Object.entries(institutionReport?.patient_details).map(([key, value]) => {
+              return `
+                <tr>
+                  <td>${key}</td>
+                  <td>${value}</td>
+                </tr>
+              `;
+            }).join('')}
           </tbody>
         </table>
+        </div>`
+          : selectedItem.isInstitutionSelected &&
+            !isInstitutionInformationInserted
+          ? `<div>
+              <h2 style = "text-align: center;">Institution Information</h2>
+              <table>
+                <tbody>
+                  ${institutionReport.hasOwnProperty("institution_details") && Object.entries(institutionReport?.institution_details).map(([key, value]) => {
+                    return `
+                  <tr>
+                    <td>${key}</td>
+                    <td>${value}</td>
+                  </tr>
+                `;
+                }).join('')}
+                </tbody>
+        </table>
       </div>`
-        : selectedItem.isInstitutionSelected &&
-          !isInstitutionInformationInserted
-        ? `<div>
-      <h2>Institution Information</h2>
-      <table>
-        <tbody>
-          <tr>
-            <td>Institution Name</td>
-            <td>${cardDetails?.institution_name}</td>
-          </tr>
-          <tr>
-            <td>Institution Address</td>
-            <td>${cardDetails?.institution?.Institution_address}</td>
-          </tr>
-          <tr>
-            <td>Institution City</td>
-            <td>${cardDetails?.institution?.Institution_city}</td>
-          </tr>
-          <tr>
-            <td>Institution Contact</td>
-            <td>${cardDetails?.institution?.Institution_contact}</td>
-          </tr>
-          <tr>
-            <td>Institution Email</td>
-            <td>${cardDetails?.institution?.Institution_email}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>`
         : selectedItem.isImagesSelected
-        ? `<figure class="image"><img src=${imageSlider[studyImageID]?.url} alt="study image" style="width:256px;height:200px"></figure>
-    `
+        ? `
+          <h3 style = "text-align:center;">Reference image ${referenceImageCount}</h3>
+          <figure class="image">
+          <img src="${imageSlider[studyImageID]?.url}" alt="study image" style="width: 256px; height: 200px;" class="Reference-image">
+          </figure>`
         : selectedItem.isStudyDescriptionSelected && !isStudyDescriptionInserted
         ? `<div>
-        <h2>Study Description</h2>
-        <p>${cardDetails?.Study_description}</p>
+        <h3 style = "text-align:center;">Study Description</h3>
+        <p style = "text-align: center ; ">${cardDetails?.Study_description}</p>
         </div>`
         : "";
+
     setEditorData((prev) =>
       selectedItem.isPatientSelected || selectedItem.isInstitutionSelected
         ? `${data}${prev}`
@@ -227,23 +203,12 @@ const Editor = ({ id }) => {
     );
 
     selectedItem.isPatientSelected && setIsPatientInformationInserted(true);
-    selectedItem.isInstitutionSelected &&
-      setIsInstitutionInformationInserted(true);
-    selectedItem.isStudyDescriptionSelected &&
-      setIsStudyDescriptionInserted(true);
+    selectedItem.isInstitutionSelected && setIsInstitutionInformationInserted(true);
+    selectedItem.isStudyDescriptionSelected &&  setIsStudyDescriptionInserted(true);
+    selectedItem.isImagesSelected && setReferenceImageCount((prev) => prev + 1) ; 
   };
 
-  const imageSlider = [
-    {
-      url: image,
-    },
-    {
-      url: image,
-    },
-    {
-      url: image,
-    },
-  ];
+  const [imageSlider, setImageSlider] = useState([]);
 
   const handleReportSave = async () => {
     setIsLoading(true);
@@ -356,7 +321,7 @@ const Editor = ({ id }) => {
 
                   {/* ==== Show Image slider information ====  */}
                   
-                  {selectedItem?.isImagesSelected && (
+                  {selectedItem?.isImagesSelected && imageSlider.length > 0 && (
                     <>
                       <Typography className="card-heading">
                         Study Images
@@ -364,22 +329,28 @@ const Editor = ({ id }) => {
                       <Divider />
 
                       <div className="menu-image-slider">
-                        <Slider
-                          dots={false}
-                          className="slider"
-                          slidesToShow={1}
-                          slidesToScroll={1}
-                          infinite={false}
-                          afterChange={(prev) => setStudyImageID(prev)}
-                        >
-                          {imageSlider.map((image) => (
-                            <img
-                              src={image.url}
-                              alt="image"
-                              className="slider-image"
-                            />
-                          ))}
-                        </Slider>
+                        
+                        {imageSlider.length > 0 && 
+                        
+                          <Slider
+                            dots={false}
+                            className="slider"
+                            slidesToShow={1}
+                            slidesToScroll={1}
+                            infinite={false}
+                            afterChange={(prev) => setStudyImageID(prev)}
+                          >
+                            {imageSlider.length > 0 && imageSlider.map((image) => (
+                              <img
+                                src={image.url}
+                                alt="image"
+                                className="slider-image"
+                                loading="lazy"
+                              />
+                            ))}
+                          </Slider>
+                        }
+
                       </div>
                     </>
                   )}
