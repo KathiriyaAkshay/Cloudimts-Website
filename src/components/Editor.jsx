@@ -254,8 +254,7 @@ const Editor = ({ id }) => {
                       <Typography className="card-heading">
                         Patient Information
                       </Typography>
-
-                        <table className="Report-info-table">
+                        <table className="Report-info-table" >
                           <thead>
                             <tr>
                               <th>Name</th>
@@ -263,7 +262,6 @@ const Editor = ({ id }) => {
                             </tr>
                           </thead>
                           <tbody>
-
                             {institutionReport.hasOwnProperty("patient_details") && Object.entries(institutionReport?.patient_details).map(([key, value]) => (
                               <tr key={key}>
                                 <td>{key}</td>
@@ -283,7 +281,6 @@ const Editor = ({ id }) => {
                         Institution Information
                       </Typography>
                       <div>
-
                       <table className="Report-info-table">
                         <thead>
                           <tr>

@@ -144,27 +144,8 @@ const TableWithFilter = ({
                 : {y:475}
               : { y: 375, x: window.screen.width < 1000 ? 1000 : null }
           }
-          // scroll={{y:100,x:500}}
           loading={loadingTableData}
           rowSelection={rowSelection && { type: "checkbox", ...rowSelection }}
-          // onChange={(pagi, filters, sorter, extras) => {
-          //   setPagination((prev) => ({
-          //     ...prev,
-          //     total: pagi.total,
-          //     page: pagi.current,
-          //     order:
-          //       sorter.order === "ascend"
-          //         ? "asc"
-          //         : sorter.order === "descend"
-          //         ? "desc"
-          //         : undefined,
-          //     sortBy: sorter.column?.dataIndex,
-          //     role: filters?.role?.join(","),
-          //     type: filters?.type?.join(","),
-          //     validity: filters?.validity?.join(","),
-          //     isPublished: filters?.isPublished?.join(","),
-          //   }));
-          // }}
           summary={summary ? summary : () => <></>}
         />
       </div>

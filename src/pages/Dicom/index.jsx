@@ -691,7 +691,7 @@ const Dicom = () => {
         className="Study-table"
         dataSource={studyData}
         columns={columns}
-         scroll={{ y: 475,x:false}}
+         scroll={{ y: 475,x:1500}}
 
         expandable={{
           expandedRowRender: (record) => (
