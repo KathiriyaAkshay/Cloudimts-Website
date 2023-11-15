@@ -38,6 +38,7 @@ const Editor = ({ id }) => {
     useState(false);
   const [institutionReport, setInstitutionReport] = useState({}) ; 
   const [referenceImageCount, setReferenceImageCount] = useState(1) ; 
+  const [seriesId, setSeriesId] = useState(null) ; 
 
   useEffect(() => {
     setSelectedItem((prev) => ({
@@ -52,7 +53,6 @@ const Editor = ({ id }) => {
   useEffect(() => {
     retrievePatientDetails();
     retrieveUserSignature();
-    FetchStudyImage() ; 
   }, []);
 
   useEffect(() => {
@@ -99,14 +99,15 @@ const Editor = ({ id }) => {
     
     let responseData = await APIHandler("POST", studyRequestPaylod, "studies/v1/fetch_particular_study") ;  
 
-    console.log(responseData);
-
     if (responseData === false){
       NotificationMessage("warning", "Network request failed") ; 
     
     } else if (responseData['status'] === true){
 
       let Institution_id = responseData['data']['institution_id'] ; 
+      let SeriesIdValue = responseData['data']['series_id'] ; 
+
+      setSeriesId(SeriesIdValue) ; 
 
       let institutionReportPayload = {
         "institution_id": Institution_id, 
@@ -126,7 +127,7 @@ const Editor = ({ id }) => {
   const FetchStudyImage = async () => {
 
     let requestPayload = {
-      "series_id": "7437fdce-47043c74-fd245ef0-355ffbc1-8fd74592"
+      "series_id": seriesId
     }; 
 
     let responseData = await APIHandler("POST", requestPayload, "studies/v1/studies_images") ; 
@@ -147,6 +148,12 @@ const Editor = ({ id }) => {
       setImageSlider([...temp]) ; 
     }
   }
+
+  useEffect(() => {
+    if (seriesId !== null){
+      FetchStudyImage() ; 
+    }
+  }, [seriesId])
 
   const convertPatientDataToTable = () => {
     const data =
