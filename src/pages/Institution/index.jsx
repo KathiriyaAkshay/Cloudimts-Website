@@ -24,6 +24,7 @@ import {
 import { UserPermissionContext } from "../../hooks/userPermissionContext";
 import NotificationMessage from "../../components/NotificationMessage"; 
 import APIHandler from "../../apis/apiHandler";
+import CustomReportHeaderGenerator from "./Popup";
 
 const Institution = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -370,6 +371,7 @@ const Institution = () => {
         <TableWithFilter tableData={logsData} tableColumns={logsColumn} />
       
       </Drawer>
+      <CustomReportHeaderGenerator/>
 
     </>
   );
