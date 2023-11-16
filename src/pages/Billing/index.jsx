@@ -17,6 +17,8 @@ const index = () => {
   const { isBillingFilterModalOpen, setIsBillingFilterModalOpen } =
     useContext(filterDataContext);
 
+
+
   useEffect(() => setIsBillingFilterModalOpen(true), []);
 
   const [isModalOpen, setIsModalOpen] = useState(false) ; 
@@ -24,8 +26,7 @@ const index = () => {
   const columns = [
     {
       title: "Patient ID",
-      dataIndex: "patient_id",
-      fixed: 'left',
+      dataIndex: "patient_id"
     },
     {
       title: "Patient Name",
@@ -76,14 +77,17 @@ const index = () => {
     {
       title: "Reporting Charge",
       dataIndex: "reporting_charge",
+      fixed: 'right'
     },
     {
-      title: "Communication Charge",
+      title: "Comu -Charge",
       dataIndex: "comunication_charge",
+      fixed: 'right'
     },
     {
       title: "Midnight Charge",
       dataIndex: "midnight_charge",
+      fixed: 'right'
     },
   ];
 
@@ -94,11 +98,18 @@ const index = () => {
   return (
     <div>
       <Card style={{ marginTop: "30px" }}>
-        <div className="Billing-report-information">
-          <Button type="primary" onClick={() => setIsModalOpen(true)}>
-            View Billing information
-          </Button>
-        </div>
+        
+        {billingData.length !== 0 && 
+        
+          <div className="Billing-report-information">
+
+            <Button type="primary" onClick={() => setIsModalOpen(true)} 
+              style = {{backgroundColor: "#f5f5f5", color: "#212121 !important"}}>
+              View Billing information
+            </Button>
+          
+          </div>
+        }
 
         <div>
           <Table
@@ -107,7 +118,8 @@ const index = () => {
             loading={isLoading}
             className="Billing-table"
             scroll={{
-              x: 1000,
+              x: 2000,
+              y:"45vh"
             }}
           />
         </div>
@@ -183,7 +195,9 @@ const index = () => {
           </div>
 
           <Divider style={{ margin: "12px 0", borderWidth: "0" }} />
+
         </div>
+      
       </Modal>
     </div>
   );

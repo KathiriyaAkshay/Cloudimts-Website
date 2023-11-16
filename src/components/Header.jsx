@@ -229,6 +229,7 @@ const BasicLayout = ({ children }) => {
                 display: "flex",
                 alignItems: "center",
                 gap: "1rem",
+                
               }}
               className="header-menu-icon"
             >
@@ -282,13 +283,13 @@ const BasicLayout = ({ children }) => {
                 ? {
                     padding: 0,
                     height: "calc(100vh - 75px)",
-                    overflow: "auto",
+                    overflow: "hidden",
                     overflowX: "hidden",
                     minHeight: 280,
                   }
                 : {
                     height: "calc(100vh - 75px)",
-                    overflow: "auto",
+                    overflow: "hidden",
                     overflowX: "hidden",
                     minHeight: 280,
                     paddingBottom: 20,
@@ -321,11 +322,13 @@ const BasicLayout = ({ children }) => {
           </Content>
         </Layout>
       </Layout>
+
       <StudyFilterModal
         isFilterModalOpen={isFilterModalOpen}
         setIsFilterModalOpen={setIsFilterModalOpen}
         retrieveFilterOptions={retrieveFilterOptions}
       />
+      
     </>
   );
 };

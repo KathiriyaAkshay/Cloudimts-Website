@@ -21,6 +21,8 @@ const FilterDataProvider = ({ children }) => {
   const [isAdvancedSearchModalOpen, setIsAdvancedSearchModalOpen] =
     useState(false);
 
+  const [isStudyExportModalOpen, setIsStudyExportModalOpen] = useState(false) ; 
+
   return (
     <filterDataContext.Provider
       value={{
@@ -44,6 +46,8 @@ const FilterDataProvider = ({ children }) => {
         setIsSupportModalOpen,
         isAdvancedSearchModalOpen,
         setIsAdvancedSearchModalOpen,
+        isStudyExportModalOpen, 
+        setIsStudyExportModalOpen
       }}
     >
       {children}
