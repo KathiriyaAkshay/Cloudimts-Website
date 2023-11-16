@@ -5,6 +5,8 @@ export const handleDownloadPDF = (billingData) => {
 
   let ReportingData = {};
 
+  // ====== Filtering data 
+
   for (let i = 0; i < billingData.length; i++) {
     let {
       reporting_charge,
@@ -23,10 +25,7 @@ export const handleDownloadPDF = (billingData) => {
         ReportingData[modality] = {
         
           total_object: ReportingData[modality].total_object + 1,
-          total_report_charge:
-            ReportingData[modality].total_report_charge +
-            reportingCharge +
-            communicationCharge,
+          total_report_charge: reportingCharge + communicationCharge,
           total_midnight_charge:
             ReportingData[modality].total_midnight_charge + midnightCharge
         };
@@ -40,17 +39,27 @@ export const handleDownloadPDF = (billingData) => {
         
       }
 
-      // ReportingData[modality]['total_amount']
     }
   }
 
-  console.log("Reporting charges information ========>");
-  console.log(ReportingData);
+  let bill_total_amount_information = 0 ; 
+  let bill_tax_amount_information = 400 ; 
+  let bill_all_amount_information = 0 ; 
+
+  Object.keys(ReportingData).forEach((key => {
+    ReportingData[key]['total_amount'] = parseInt(parseInt(ReportingData[key]['total_object'])*ReportingData[key]['total_report_charge']) + ReportingData[key]['total_midnight_charge']
+    bill_total_amount_information = bill_total_amount_information + ReportingData[key]['total_amount'] ; 
+  }))
+
+  bill_all_amount_information = bill_total_amount_information + bill_tax_amount_information ; 
 
   // ===== Get Filter data information 
 
   let FilterData = localStorage.getItem("BillingFilterValues") ; 
   FilterData = JSON.parse(FilterData) ;
+
+  console.log("Filter data information ==============>");
+  console.log(FilterData);
   
   let BillingStartDate = FilterData['fromdate'] ; 
   let BillingEndDate = FilterData['todate'] ; 
@@ -269,10 +278,10 @@ export const handleDownloadPDF = (billingData) => {
                       <thead>
                         <tr>
                             <th scope="col" class="fs-sm text-dark text-uppercase-bold-sm px-0" style = "width: 30%;">Description</th>
-                            <th scope="col" class="fs-sm text-dark text-uppercase-bold-sm px-0">No Of Cases</th>
-                            <th scope="col" class="fs-sm text-dark text-uppercase-bold-sm px-0">Reporting charge</th>
-                            <th scope="col" class="fs-sm text-dark text-uppercase-bold-sm px-0">Midnight <br>charge</th>
-                            <th scope="col" class="fs-sm text-dark text-uppercase-bold-sm px-0">Total</th>
+                            <th scope="col" class="fs-sm text-dark text-uppercase-bold-sm px-0" style = "text-align: center;">No Of <br>Cases</th>
+                            <th scope="col" class="fs-sm text-dark text-uppercase-bold-sm px-0" style = "text-align: center;">Reporting <br>charge</th>
+                            <th scope="col" class="fs-sm text-dark text-uppercase-bold-sm px-0" style = "text-align: center;">Total <br>Midnight <br>charge</th>
+                            <th scope="col" class="fs-sm text-dark text-uppercase-bold-sm px-0" style = "text-align: center;">Total</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -283,49 +292,29 @@ export const handleDownloadPDF = (billingData) => {
         <tr>
           <td class="px-0" style = "width: 30%;">${key} reporting charges repoting charges </td>
           <td class="px-0" style = "text-align: center;">${reportStudyData['total_object']}</td>
-          <td class="px-0" style = "text-align: center;">${reportStudyData['total_report_charge']}</td>
+          <td class="px-0" style = "text-align: center;">₹${reportStudyData['total_report_charge']}/-</td>
           <td class="px-0" style = "text-align: center;">${reportStudyData['total_midnight_charge']}</td>
-          <td class="px-0" style = "text-align: center; font-weight: bold;">$60.00</td>
+          <td class="px-0" style = "text-align: center; font-weight: bold;">₹${reportStudyData['total_amount']}/-</td>
         </tr>
       `
-
     })
     htmlContent = htmlContent + `
                
                       </tbody>
                   </table>
                   <div className='d-flex col justify-content-between'>
-                      <div className=''>
-                        that text
-                      </div>
                       <div class="mt-5">
                         <div class="d-flex justify-content-end">
-                            <p class="text-muted me-3">Subtotal:</p>
-                            <span>$390.00</span>
+                            <p class="text-muted me-3" style = "font-weight: bold ; ">Subtotal:</p>
+                            <span>₹${bill_total_amount_information}/-</span>
                         </div>
                         <div class="d-flex justify-content-end">
-                            <p class="text-muted me-3">Discount:</p>
-                            <span>-$40.00</span>
-                        </div>
-                        <div class="d-flex justify-content-end">
-                            <p class="text-muted me-3">Subtotal less discount:</p>
-                            <span>-$40.00</span>
-                        </div>
-                        <div class="d-flex justify-content-end">
-                            <p class="text-muted me-3">Tax Rate:</p>
-                            <span>-$40.00</span>
-                        </div>
-                        <div class="d-flex justify-content-end">
-                            <p class="text-muted me-3">Total Tax:</p>
-                            <span>-$40.00</span>
-                        </div>
-                        <div class="d-flex justify-content-end">
-                            <p class="text-muted me-3">Outstanding:</p>
-                            <span>-$40.00</span>
+                            <p class="text-muted me-3" style = "font-weight: bold; ">Tax:</p>
+                            <span>₹${bill_tax_amount_information}/-</span>
                         </div>
                         <div class="d-flex justify-content-end mt-3">
-                            <h5 class="me-3">Balance Due:</h5>
-                            <h5 class="text-success">$399.99 USD</h5>
+                            <h5 class="me-3">Due amount:</h5>
+                            <h5 class="text-success">₹${bill_all_amount_information}/-</h5>
                         </div>
                       </div>
                   </div>
@@ -346,6 +335,10 @@ export const handleDownloadPDF = (billingData) => {
   newWindow.document.open();
   newWindow.document.write(htmlContent);
   newWindow.document.close();
+
+  newWindow.onload = function() {
+    newWindow.print();
+  };
 };
 
 export const handleExport = (tableData) => {
