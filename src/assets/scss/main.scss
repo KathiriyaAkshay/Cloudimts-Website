@@ -1503,3 +1503,41 @@
   background-color: #efefef;
   border-radius: 5px;
 }
+.custom-header-wrapper{
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top:0px;
+  z-index: 999;
+  left:0px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.custom-header-inner{
+  height: 90%;
+  width: 80%;
+  padding:1rem;
+  background-color: rgb(239, 239, 239);
+}
+
+.pop-up-icons{
+  width: max-content;
+  display: flex;
+  align-items: flex-end;
+  flex-direction: row;
+}
+
+.pop-up-icons>button{
+  margin-left: 0.3rem;
+}
+
+.pop-up-header{
+  display: flex;
+  flex-direction: row;
+  justify-content:space-between;
+  align-items: center;
+}
