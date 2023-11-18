@@ -866,13 +866,16 @@
   }
 }
 .menu-image-slider {
+  display: flex;
+  flex-direction: column;
   margin: 20px 0;
   padding: 0 10px;
   position: relative;
   border-radius: 30px;
-
+  align-items: center;
   .slider {
     border-radius: 30px;
+    width:80%;
   }
 
   .slick-list {
