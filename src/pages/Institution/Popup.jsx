@@ -4,8 +4,9 @@ import { SearchOutlined,SaveOutlined,CloseOutlined, ReloadOutlined } from '@ant-
 const { Title } = Typography;
 const EditableContext = React.createContext(null);
 const { Option } = Select;
-import APIHandler from '../../../../DICOM-Sample/src/apis/apiHandler';
-import NotificationMessage from '../../../../DICOM-Sample/src/components/NotificationMessage';
+import NotificationMessage from "../../components/NotificationMessage"; 
+import APIHandler from "../../apis/apiHandler";
+
 
 const EditableRow = ({ index, ...props }) => {
     const [form] = Form.useForm();
