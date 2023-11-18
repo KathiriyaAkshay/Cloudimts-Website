@@ -1,9 +1,11 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { Button, Form, Input, Popconfirm, Table, Select, Typography, Tooltip } from 'antd';
-import { SearchOutlined,SaveOutlined,CloseOutlined } from '@ant-design/icons';
+import { Button, Form, Input, Popconfirm, Table, Select, Typography, Tooltip, Spin } from 'antd';
+import { SearchOutlined,SaveOutlined,CloseOutlined, ReloadOutlined } from '@ant-design/icons';
 const { Title } = Typography;
 const EditableContext = React.createContext(null);
 const { Option } = Select;
+import APIHandler from '../../../../DICOM-Sample/src/apis/apiHandler';
+import NotificationMessage from '../../../../DICOM-Sample/src/components/NotificationMessage';
 
 const EditableRow = ({ index, ...props }) => {
     const [form] = Form.useForm();
@@ -14,7 +16,9 @@ const EditableRow = ({ index, ...props }) => {
             </EditableContext.Provider>
         </Form>
     );
+
 };
+
 const EditableCell = ({
     title,
     editable,
@@ -81,7 +85,6 @@ const EditableCell = ({
     }
     return <td {...restProps}>{childNode}</td>;
 };
-
 
 const EditableCellSec = ({
     title,
@@ -150,30 +153,13 @@ const EditableCellSec = ({
     return <td {...restProps}>{childNode}</td>;
 };
 
-const CustomReportHeaderGenerator = () => {
-    const [dataSource, setDataSource] = useState([
-        {
-            key: '0',
-            columnName: 'Option 0',
-            customColumnName: 'London, Park Lane no. 0',
-        },
-        {
-            key: '1',
-            columnName: 'Option 0',
-            customColumnName: 'London, Park Lane no. 0',
-        },
-        {
-            key: '2',
-            columnName: 'Option 0',
-            customColumnName: 'London, Park Lane no. 0',
-        },
-        {
-            key: '3',
-            columnName: 'Option 0',
-            customColumnName: 'London, Park Lane no. 0',
-        },
-    ]);
+
+const CustomReportHeaderGenerator = ({institutionId, isModalOpen}) => {
+
+    const [dataSource, setDataSource] = useState([]);
+    
     const [count, setCount] = useState(2);
+    
     const handleDelete = (key) => {
         const newData = dataSource.filter((item) => item.key !== key);
         setDataSource(newData);
@@ -181,42 +167,25 @@ const CustomReportHeaderGenerator = () => {
 
 
     const handleSelectChange = (key, value) => {
-        // Find the index of the record in the data array
         const dataIndex = dataSource.findIndex((record) => record.key === key);
-
-        // Create a new copy of the data array
         const newData = [...dataSource];
-
-        // Update the selectMenu value for the specific record
         newData[dataIndex] = { ...newData[dataIndex], columnName: value };
 
-        // Update the state with the new data
-        setDataSource(newData);
-
-        // You can perform additional actions as needed
-        console.log(`Selected ${value} for record with key: ${key}`);
+        setDataSource(newData);;
     };
 
     const handleSelectChangeSec = (key, value) => {
-        // Find the index of the record in the data array
         const dataIndex = dataSourceSec.findIndex((record) => record.key === key);
-
-        // Create a new copy of the data array
         const newData = [...dataSourceSec];
-
-        // Update the selectMenu value for the specific record
         newData[dataIndex] = { ...newData[dataIndex], columnName: value };
 
-        // Update the state with the new data
         setDataSourceSec(newData);
-
-        // You can perform additional actions as needed
-        console.log(`Selected ${value} for record with key: ${key}`);
     };
 
     const defaultColumns = [
+
         {
-            title: 'columnName',
+            title: 'Patient Column-value',
             dataIndex: 'columnName',
             render: (text, record) => (
                 <CustomSelect
@@ -227,13 +196,14 @@ const CustomReportHeaderGenerator = () => {
         },
 
         {
-            title: 'customColumnName',
+            title: 'Patient Column-name',
             dataIndex: 'customColumnName',
             width: '30%',
             editable: true,
         },
+        
         {
-            title: 'operation',
+            title: 'Actions',
             dataIndex: 'operation',
             render: (_, record) =>
                 dataSource.length >= 1 ? (
@@ -243,15 +213,17 @@ const CustomReportHeaderGenerator = () => {
                 ) : null,
         },
     ];
+
     const handleAdd = () => {
         const newData = {
             key: count,
-            columnName: 'Option0',
-            customColumnName: `London, Park Lane no. ${count}`,
+            columnName: 'study__patient_name',
+            customColumnName: `Patient name`,
         };
         setDataSource([...dataSource, newData]);
         setCount(count + 1);
-    };
+    };  
+
     const handleSave = (row) => {
         const newData = [...dataSource];
         const index = newData.findIndex((item) => row.key === item.key);
@@ -262,12 +234,14 @@ const CustomReportHeaderGenerator = () => {
         });
         setDataSource(newData);
     };
+
     const components = {
         body: {
             row: EditableRow,
             cell: EditableCell,
         },
     };
+
     const columns = defaultColumns.map((col) => {
         if (!col.editable) {
             return col;
@@ -284,41 +258,21 @@ const CustomReportHeaderGenerator = () => {
         };
     });
 
-    // second table 
+    const [dataSourceSec, setDataSourceSec] = useState([]);
 
-    const [dataSourceSec, setDataSourceSec] = useState([
-        {
-            key: '0',
-            columnName: 'Option 0',
-            customColumnName: 'London, Park Lane no. 0',
-        },
-        {
-            key: '1',
-            columnName: 'Option 0',
-            customColumnName: 'London, Park Lane no. 0',
-        },
-        {
-            key: '2',
-            columnName: 'Option 0',
-            customColumnName: 'London, Park Lane no. 0',
-        },
-        {
-            key: '3',
-            columnName: 'Option 0',
-            customColumnName: 'London, Park Lane no. 0',
-        },
-    ]);
     const [countSec, setCountSec] = useState(2);
+    
     const handleDeleteSec = (key) => {
         const newData = dataSourceSec.filter((item) => item.key !== key);
         setDataSourceSec(newData);
     };
+    
     const defaultColumnsSec = [
         {
-            title: 'columnName',
+            title: 'Institution Column-name',
             dataIndex: 'columnName',
             render: (text, record) => (
-                <CustomSelect
+                <InstitutionCustomSelect
                     value={record.columnName}
                     onChange={(value) => handleSelectChangeSec(record.key, value)}
                 />
@@ -326,7 +280,7 @@ const CustomReportHeaderGenerator = () => {
         },
 
         {
-            title: 'customColumnName',
+            title: 'Institition Column-name',
             dataIndex: 'customColumnName',
             width: '30%',
             editable: true,
@@ -343,15 +297,17 @@ const CustomReportHeaderGenerator = () => {
                 ) : null,
         },
     ];
+
     const handleAddSec = () => {
         const newData = {
             key: countSec,
-            columnName: 'Option0',
-            customColumnName: `London, Park Lane no. ${countSec}`,
+            columnName: 'name',
+            customColumnName: `Institution name`,
         };
         setDataSourceSec([...dataSourceSec, newData]);
         setCountSec(countSec + 1);
     };
+    
     const handleSaveSec = (row) => {
         const newData = [...dataSourceSec];
         const index = newData.findIndex((item) => row.key === item.key);
@@ -363,6 +319,7 @@ const CustomReportHeaderGenerator = () => {
         setDataSourceSec(newData);
 
     };
+    
     const componentsSec = {
         body: {
             row: EditableRow,
@@ -385,12 +342,32 @@ const CustomReportHeaderGenerator = () => {
         };
     });
 
+    
+
+    const [patientReportColumn, setPatientReportColumn] = useState([]) ; 
+
     const CustomSelect = ({ value, onChange }) => {
         return (
-            <Select style={{ width: 120 }} value={value} onChange={onChange}>
-                <Option value="option1">Optionasddddddd 1</Option>
-                <Option value="option2">Option 2</Option>
-                <Option value="option3">Option 3</Option>
+            <Select style={{ width: 300, marginTop: "auto", marginBottom: "auto" }} value={value} onChange={onChange}>
+                {patientReportColumn.map((eleemnt) => { 
+                    return(
+                        <Option value="option1">{eleemnt}</Option>
+                    )
+                })}
+            </Select>
+        );
+    };
+
+    const [institutionReportColumn, setInstitutionReportColumn] = useState([]) ; 
+
+    const InstitutionCustomSelect = ({ value, onChange }) => {
+        return (
+            <Select style={{ width: 300, marginTop: "auto", marginBottom: "auto" }} value={value} onChange={onChange}>
+                {institutionReportColumn.map((eleemnt) => { 
+                    return(
+                        <Option value="option1">{eleemnt}</Option>
+                    )
+                })}
             </Select>
         );
     };
@@ -398,80 +375,377 @@ const CustomReportHeaderGenerator = () => {
 
     const closePopupDiv=()=>{
 
-        document.getElementById("popup-main").style.display="none"
+        isModalOpen(false) ; 
         
+    }
+
+    const FetchReportColumn = async () => {
+        
+        setIsLoading(true) ; 
+
+        let responseData = await APIHandler("POST", {}, 'institute/v1/fetch-report-columns') ; 
+
+        setIsLoading(false) ; 
+
+        if (responseData === false){
+
+            NotificationMessage("warning", "Network request failed") ; 
+        
+        }   else if (responseData['status']  === true){
+
+            let patientColumn = [] ; 
+            let institutionColumn = [] ; 
+
+            responseData['message'].map((element) => {
+                if (element.option === "Patient"){
+                    patientColumn.push(element.value) ; 
+                }   else{
+                    institutionColumn.push(element.value) ; 
+                }
+            })
+
+            setPatientReportColumn([...patientColumn])  ; 
+            setInstitutionReportColumn([...institutionColumn]) ; 
+        }
+    }
+
+    const [defaultPatientOption, setDefaultPatientOption] = useState([
+        {
+            'key': 0,
+            'columnName': "study__patient_name", 
+            "customColumnName": "Patient name"
+        },
+        {
+            'key': 1,
+            'columnName': "study__patient_id", 
+            "customColumnName": "Patient id"
+        },
+        {
+            'key': 2,
+            'columnName': "modality", 
+            "customColumnName": "Modality"
+        },
+        {
+            'key': 3,
+            'columnName': "gender", 
+            "customColumnName": "Gender"
+        },
+    ]) ; 
+
+    const [defaultInstitutionOption, setDefaultInstitutionOtion] = useState([
+        {
+            'key': 0,
+            'columnName': "name", 
+            "customColumnName": "Institution name"
+        }, 
+        {
+            'key':1,
+            'columnName': "address", 
+            "customColumnName": "Institution address"
+        }, 
+        {
+            'key': 2,
+            'columnName': "contact", 
+            "customColumnName": "Contact number"
+        }, 
+        {
+            'key': 4,
+            'columnName': "email", 
+            "customColumnName": "Email address"
+        }
+
+    ]) ; 
+
+    const FetchInstitutionReportSetting = async () => {
+
+        setIsLoading(true) ; 
+
+        let responseData = await APIHandler("POST", {"id": institutionId}, 'institute/v1/fetch-institution-report' ) ; 
+
+        setIsLoading(false); 
+
+        if (responseData === false){
+        
+            NotificationMessage("warning", "Network request failed") ;
+
+        }   else if (responseData['status'] === true){
+
+            let institutionReport = [] ; 
+            let institutionIndex = 0 ; 
+
+            Object.keys(responseData['data']?.institution_report_details).forEach(key => {
+                const value = responseData['data']?.institution_report_details[key];
+                institutionReport.push({
+                    'key': institutionIndex, 
+                    'columnName': key, 
+                    'customColumnName': value
+                })
+                institutionIndex += 1; 
+            });
+
+            setDataSourceSec([...institutionReport]) ; 
+
+            let patientReport = [] ; 
+            let patientReportIndex = 0 ; 
+
+            Object.keys(responseData['data']?.patient_report_details).forEach(key => {
+                const value = responseData['data']?.patient_report_details[key];
+                patientReport.push({
+                    'key': patientReportIndex, 
+                    'columnName': key, 
+                    'customColumnName': value
+                })
+                patientReportIndex += 1; 
+            });
+
+            setDataSource([...patientReport]) ; 
+
+
+        }   else {
+
+            NotificationMessage("warning", responseData['message']) ; 
+        }
+    }
+
+    const [isLoading, setIsLoading] = useState(false) ; 
+
+    const setReportDefaultData = () => {
+        setDataSource([
+            {
+                'key': 0,
+                'columnName': "study__patient_name", 
+                "customColumnName": "Patient name"
+            },
+            {
+                'key': 1,
+                'columnName': "study__patient_id", 
+                "customColumnName": "Patient id"
+            },
+            {
+                'key': 2,
+                'columnName': "modality", 
+                "customColumnName": "Modality"
+            },
+            {
+                'key': 3,
+                'columnName': "gender", 
+                "customColumnName": "Gender"
+            },
+        ]) ;
+
+        setDataSourceSec([
+            {
+                'key': 0,
+                'columnName': "name", 
+                "customColumnName": "Institution name"
+            }, 
+            {
+                'key':1,
+                'columnName': "address", 
+                "customColumnName": "Institution address"
+            }, 
+            {
+                'key': 2,
+                'columnName': "contact", 
+                "customColumnName": "Contact number"
+            }, 
+            {
+                'key': 4,
+                'columnName': "email", 
+                "customColumnName": "Email address"
+            }
+    
+        ])
+    }   
+
+    useEffect(() => {
+
+        FetchReportColumn() ; 
+
+        if (institutionId !== null){
+            FetchInstitutionReportSetting() ; 
+        }   else {
+            setReportDefaultData() ; 
+        }
+    }, []) ; 
+    
+    const ResetOptionHandle = () => {
+        setDataSource([...defaultPatientOption]) ; 
+        setDataSourceSec([...defaultInstitutionOption]) ; 
+    }
+
+    const SaveReportOptionHandle = async () => {
+
+        let savePatientdetails = {} ; 
+
+        dataSource.map((element) => {
+            savePatientdetails[element.columnName] = element.customColumnName ; 
+        })
+
+        let saveInstitutionDetails = {} ; 
+
+        dataSourceSec.map((element) => {
+            saveInstitutionDetails[element.columnName] = element.customColumnName ; 
+        })
+
+        if (institutionId !== null){
+
+            let requestPayload = {
+                "id": institutionId, 
+                "institution_report_details": saveInstitutionDetails, 
+                "patient_report_details": savePatientdetails
+            }; 
+
+            let responseData = await APIHandler("POST", requestPayload, "institute/v1/update-institution-report") ; 
+
+            if (responseData === false){
+            
+                NotificationMessage("warning", "Network request failed") ; 
+            
+            } else if (responseData['status'] === true){
+
+                NotificationMessage("success", "Institution report setting update successfully") ; 
+            
+            }   else {
+
+                NotificationMessage("warning", responseData['messgae']) ; 
+            }
+        }
     }
 
     return (
         <div className='custom-header-wrapper' id="popup-main">
-            <div className='custom-header-inner'>
-                <div className='pop-up-header   '>
-                    <Title level={4}>Custom Report Header Generator
-                    </Title>
-                        <div className='pop-up-icons'>
-                            <Tooltip title="save">
-                                <Button type="primary" shape="circle" icon={<SaveOutlined />} />
-                            </Tooltip>
-                            <Tooltip title="reset">
-                                <Button type="primary" shape="circle" icon={<SearchOutlined />} />
-                            </Tooltip>
-                            <Tooltip title="close">
-                                <Button type="primary" shape="circle" icon={<CloseOutlined />}  onClick={closePopupDiv}/>
-                            </Tooltip>
+            
+
+                <div className='custom-header-inner' style={{borderRadius: "5px", backgroundColor: "#FFFFFF"}}>
+
+                    <Spin spinning = {isLoading}>
+                        
+                        <div className='pop-up-header'>
+                        
+                            <Title level={4}>
+                                Report setting
+                            </Title>
+                        
+                            <div className='pop-up-icons'>
+                                
+                                <div style={{padding: "10px", paddingTop:"8px", paddingBottom: "8px"}}>
+                                    <Tooltip title="save">
+                                        <Button type="primary" shape="circle" icon={<SaveOutlined />} 
+                                            onClick={SaveReportOptionHandle}/>
+                                    </Tooltip>
+                                </div>
+
+                                <div style={{padding: "10px", paddingTop:"8px", paddingBottom: "8px"}}>
+                                    <Tooltip title="reset">
+                                        <Button type="primary" shape="circle" icon={<ReloadOutlined />} onClick={ResetOptionHandle}/>
+                                    </Tooltip>
+                                </div>
+
+                                <div style={{padding: "10px", paddingTop:"8px", paddingBottom: "8px"}}>
+                                    <Tooltip title="close">
+                                        <Button type="primary" shape="circle" icon={<CloseOutlined />}  
+                                        onClick={closePopupDiv}/>
+                                    </Tooltip>
+                                </div>                        
+
+                            </div>
 
                         </div>
 
-                 
+                        {/* ==== Patient report setting option handling ====  */}
+
+                        <div>
+
+                            <div className='Report-setting-option-title' style={{display: "flex", flexDirection: "row", marginBottom: "16px", marginTop: "8px"}}>
+                                
+                                <Button
+                                    onClick={handleAdd}
+                                    type="primary"
+                                    className='Report-option-add-button'
+                                    style={{
+                                        marginTop: "auto", 
+                                        marginBottom: "auto"
+                                    }}
+                                >
+                                    Add a row
+                                </Button>
+
+                                <div className='Report-option-title' 
+                                    style={
+                                        {
+                                            marginTop: "auto", 
+                                            marginBottom: "auto", 
+                                            fontSize: "16px", 
+                                            marginLeft: "16px"
+                                        }
+                                    }>
+                                    Patient report setting
+                                </div>
 
 
+                            </div>
+                            
+                            <Table
+                                components={components}
+                                rowClassName={() => 'editable-row'}
+                                dataSource={dataSource}
+                                columns={columns}
+                                scroll={{ y: 200 }}
+                                pagination={false}
+                                className='Insert-report-info-table'
+                            />
+
+                        </div>
+
+                        {/* ==== Instittuion report setting option handling =====  */}
+
+                        <div>
+                            <div className='Report-setting-option-title' style={{display: "flex", flexDirection: "row", marginBottom: "16px", marginTop: "16px"}}>
+                                
+                                <Button
+                                    onClick={handleAddSec}
+                                    type="primary"
+                                    className='Report-option-add-button'
+                                    style={{
+                                        marginTop: "auto", 
+                                        marginBottom: "auto"
+                                    }}
+                                >
+                                    Add a row
+                                </Button>
+
+                                <div className='Report-option-title' 
+                                    style={
+                                        {
+                                            marginTop: "auto", 
+                                            marginBottom: "auto", 
+                                            fontSize: "16px", 
+                                            marginLeft: "16px"
+                                        }
+                                    }>
+                                    Institution report setting
+                                </div>
+
+
+                            </div>
+                            <Table
+                                components={componentsSec}
+                                rowClassName={() => 'editable-row'} 
+                                dataSource={dataSourceSec}
+                                columns={columnsSec}
+                                scroll={{ y: 200 }}
+                                pagination={false}
+                            />
+                        </div>
+
+                    </Spin>
                 </div>
 
-                <div>
-                    <Button
-                        onClick={handleAdd}
-                        type="primary"
-                        style={{
-                            marginBottom: 16,
-                        }}
-                    >
-                        Add a row
-                    </Button>
-                    <Table
-                        components={components}
-                        rowClassName={() => 'editable-row'}
-                        // bordered
-                        dataSource={dataSource}
-                        columns={columns}
-                        scroll={{ y: 200 }}
-                        pagination={false}
-                    />
-
-                </div>
-
-                <div>
-                    <Button
-                        onClick={handleAddSec}
-                        type="primary"
-                        style={{
-                            marginBottom: 16,
-                            marginTop: 10
-                        }}
-                    >
-                        Add a row
-                    </Button>
-                    <Table
-                        components={componentsSec}
-                        rowClassName={() => 'editable-row'}
-                        // bordered
-                        dataSource={dataSourceSec}
-                        columns={columnsSec}
-                        scroll={{ y: 200 }}
-                        pagination={false}
-                    />
-                </div>
-            </div>
+            
         </div>
 
     );
 };
+
 export default CustomReportHeaderGenerator;
