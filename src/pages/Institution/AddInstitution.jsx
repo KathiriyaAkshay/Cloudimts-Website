@@ -415,37 +415,36 @@ const AddInstitution = () => {
   ];
 
   const reportTableData = [
-  
     {
       report_option: "Attach institution info to report header",
       report_option_value: false,
       value_field: "switch",
       report_value: "institution_info_header",
     },
-
     {
       report_option: "Attach QR Code to report",
       report_option_value: false,
       value_field: "switch",
       report_value: "attach_qr_code",
     },
-    
     {
       report_option: "Show patient info as",
       report_option_value: "",
       value_field: "select",
       report_value: "show_patient_info",
     },
-
-    {
-      report_option: "Report dataset",
-      report_option_value: false,
-      value_field: "edit-option",
-      report_value: "report_dataset_value",
-    },
-  
+    ...(institutionId !== null
+      ? [
+          {
+            report_option: "Report dataset",
+            report_option_value: false,
+            value_field: "edit-option",
+            report_value: "report_dataset_value",
+          },
+        ]
+      : []),
   ];
-
+  
   const uploadSettingsColumns = [
     {
       title: "Upload Option",
