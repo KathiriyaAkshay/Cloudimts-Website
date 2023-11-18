@@ -380,6 +380,8 @@ const AddUsers = () => {
             <Step title="Modality" />
           
           </Steps>
+
+          {/* ==== User basic details input information ====  */}
           
           {currentStep === 0 && (
           
@@ -393,26 +395,37 @@ const AddUsers = () => {
               form={form}
               onFinish={handleSubmit}
               className="mt"
+              style={{marginTop: "20px"}}
             >
               <Row gutter={15}>
                 <Col xs={4} sm={4} md={4} lg={2}>
+                
                   <Form.Item
                     name="allow"
                     label="Active"
                     valuePropName="checked"
                   >
+                
                     <Switch />
+                
                   </Form.Item>
+                
                 </Col>
+
                 <Col xs={4} sm={4} md={22} lg={22}>
+                
                   <Form.Item
                     name="allow_offline_download"
                     label="Allow Offline Download"
                     valuePropName="checked"
                   >
+                
                     <Switch />
+                
                   </Form.Item>
+                
                 </Col>
+
                 <Col xs={24} sm={12} md={12} lg={8}>
                   <Form.Item
                     name="username"
@@ -428,6 +441,7 @@ const AddUsers = () => {
                     <Input placeholder="Enter Username" />
                   </Form.Item>
                 </Col>
+
                 <Col xs={24} sm={12} md={12} lg={8}>
                   <Form.Item
                     name="email"
@@ -443,6 +457,8 @@ const AddUsers = () => {
                     <Input placeholder="Enter Email" />
                   </Form.Item>
                 </Col>
+
+
                 <Col xs={24} sm={12} md={12} lg={8}>
                   <Form.Item
                     name="contact"
@@ -458,51 +474,7 @@ const AddUsers = () => {
                     <Input placeholder="Enter Contact Number" />
                   </Form.Item>
                 </Col>
-                <Col xs={24} sm={12} md={12} lg={8}>
-                  <Form.Item
-                    name="city"
-                    label="City"
-                    rules={[
-                      {
-                        required: true,
-                        whitespace: true,
-                        message: "Please enter city",
-                      },
-                    ]}
-                  >
-                    <Input placeholder="Enter City" />
-                  </Form.Item>
-                </Col>
-                <Col xs={24} sm={12} md={12} lg={8}>
-                  <Form.Item
-                    name="state"
-                    label="State"
-                    rules={[
-                      {
-                        required: true,
-                        whitespace: true,
-                        message: "Please enter state",
-                      },
-                    ]}
-                  >
-                    <Input placeholder="Enter State" />
-                  </Form.Item>
-                </Col>
-                <Col xs={24} sm={12} md={12} lg={8}>
-                  <Form.Item
-                    name="country"
-                    label="Country"
-                    rules={[
-                      {
-                        required: true,
-                        whitespace: true,
-                        message: "Please enter country",
-                      },
-                    ]}
-                  >
-                    <Input placeholder="Enter Country" />
-                  </Form.Item>
-                </Col>
+                
                 <Col lg={8} md={12} sm={12}>
                   <Form.Item
                     label="Institution"
@@ -518,10 +490,11 @@ const AddUsers = () => {
                     <Select
                       placeholder="Select Institution"
                       options={institutionOptions}
-                      // onChange={appliedOnChangeHandler}
                     />
+
                   </Form.Item>
                 </Col>
+
                 <Col lg={8} md={12} sm={12}>
                   <Form.Item
                     label="Role"
@@ -539,7 +512,25 @@ const AddUsers = () => {
                       options={roleOptions}
                     />
                   </Form.Item>
+
                 </Col>
+                <Col xs={24} sm={12} md={12} lg={8}>
+                  <Form.Item
+                    name="city"
+                    label="City"
+                    rules={[
+                      {
+                        required: true,
+                        whitespace: true,
+                        message: "Please enter city",
+                      },
+                    ]}
+                  >
+                    <Input placeholder="Enter City" />
+                  </Form.Item>
+                  
+                </Col>
+                
                 <Col xs={24} sm={12} md={12} lg={8}>
                   <Form.Item
                     name="address"
@@ -548,13 +539,47 @@ const AddUsers = () => {
                       {
                         required: true,
                         whitespace: true,
-                        message: "Please enter address",
+                          message: "Please enter address",
+                        },
+                      ]}
+                    >
+                      <Input.TextArea placeholder="Enter Address" />
+                    </Form.Item>
+                  </Col>
+                
+                <Col xs={24} sm={12} md={12} lg={8}>
+                  <Form.Item
+                    name="state"
+                    label="State"
+                    rules={[
+                      {
+                        required: true,
+                        whitespace: true,
+                        message: "Please enter state",
                       },
                     ]}
                   >
-                    <Input.TextArea placeholder="Enter Address" />
+                    <Input placeholder="Enter State" />
                   </Form.Item>
                 </Col>
+                
+                <Col xs={24} sm={12} md={12} lg={8}>
+                  <Form.Item
+                    name="country"
+                    label="Country"
+                    rules={[
+                      {
+                        required: true,
+                        whitespace: true,
+                        message: "Please enter country",
+                      },
+                    ]}
+                  >
+                    <Input placeholder="Enter Country" />
+                  </Form.Item>
+                </Col>
+                
+                
 
                 {!id && (
                   <>
