@@ -2,13 +2,11 @@ import React, { useEffect, useState } from "react";
 import {
   Steps,
   Button,
-  message,
   Form,
   Input,
   Card,
   Row,
   Col,
-  DatePicker,
   Switch,
   Select,
   TimePicker,
@@ -25,9 +23,6 @@ import dayjs from "dayjs";
 import UploadImage from "../../components/UploadImage";
 import { uploadFile } from "react-s3";
 import { uploadImage } from "../../apis/studiesApi";
-const S3_BUCKET = import.meta.env.VITE_APP_AMAZON_S3_BUCKET_NAME;
-const accessKeyId = import.meta.env.VITE_APP_AMAZON_ACCESS_KEY;
-const secretAccessKey = import.meta.env.VITE_APP_AMAZON_SECRET_KEY;
 
 const { Step } = Steps;
 
@@ -359,14 +354,10 @@ const AddUsers = () => {
     {
       title: "Modality",
       dataIndex: "name",
-      // sorter: (a, b) => {},
-      // editable: true,
     },
     {
       title: "Allowed",
       dataIndex: "isAllowed",
-      // sorter: (a, b) => {},
-      // editable: true,
       render: (text, record) => (
         <Form.Item name={`${record.id}_isAllowed`} valuePropName="checked">
           <Checkbox />
@@ -379,14 +370,19 @@ const AddUsers = () => {
     <div className="secondary-table">
       <Card>
         <Spin spinning={isLoading}>
+
           <Steps current={currentStep} className="mb">
+          
             <Step title="Basic Info" />
             <Step title="Availability" />
             <Step title="Assigned Details" />
             <Step title="Upload Signature" />
             <Step title="Modality" />
+          
           </Steps>
+          
           {currentStep === 0 && (
+          
             <Form
               labelCol={{
                 span: 24,
@@ -541,7 +537,6 @@ const AddUsers = () => {
                     <Select
                       placeholder="Select Role"
                       options={roleOptions}
-                      // onChange={appliedOnChangeHandler}
                     />
                   </Form.Item>
                 </Col>
@@ -560,6 +555,7 @@ const AddUsers = () => {
                     <Input.TextArea placeholder="Enter Address" />
                   </Form.Item>
                 </Col>
+
                 {!id && (
                   <>
                     {" "}
@@ -624,7 +620,8 @@ const AddUsers = () => {
                 )}
 
                 <Col xs={24} sm={24} md={24} lg={24} className="justify-end">
-                  <Button
+                  
+                  {/* <Button
                     type="primary"
                     onClick={() => {
                       if (id) setIsModalOpen(true);
@@ -632,7 +629,8 @@ const AddUsers = () => {
                     }}
                   >
                     {id ? "Update" : "Next"}
-                  </Button>
+                  </Button> */}
+
                   {id && (
                     <Button
                       type="primary"
@@ -647,8 +645,11 @@ const AddUsers = () => {
                 </Col>
               </Row>
             </Form>
+          
           )}
+
           {currentStep === 2 && (
+          
             <Form
               labelCol={{
                 span: 24,
@@ -671,6 +672,7 @@ const AddUsers = () => {
                   <Button type="primary" onClick={handlePrevStep}>
                     Previous
                   </Button>
+                  
                   <Button
                     type="primary"
                     onClick={() => {
@@ -681,6 +683,7 @@ const AddUsers = () => {
                   >
                     {id ? "Update" : "Next"}
                   </Button>
+
                   {id && (
                     <Button
                       type="primary"
@@ -696,6 +699,7 @@ const AddUsers = () => {
               </Row>
             </Form>
           )}
+
           {currentStep === 1 && (
             <Form
               labelCol={{
@@ -756,6 +760,7 @@ const AddUsers = () => {
               </Row>
             </Form>
           )}
+
           {currentStep === 3 && (
             <Form
               labelCol={{
@@ -811,6 +816,7 @@ const AddUsers = () => {
               </Row>
             </Form>
           )}
+
           {currentStep === 4 && (
             <Form
               labelCol={{
@@ -845,6 +851,7 @@ const AddUsers = () => {
               </Row>
             </Form>
           )}
+
         </Spin>
       </Card>
       <Modal
