@@ -1,5 +1,8 @@
 import { saveAs } from "file-saver";
 import * as XLSX from "xlsx";
+import * as htmlToImage from 'html-to-image';
+import { toPng, toJpeg, toBlob, toPixelData, toSvg } from 'html-to-image';
+import { jsPDF } from "jspdf";
 
 export const handleDownloadPDF = (billingData) => {
 
@@ -211,10 +214,10 @@ export const handleDownloadPDF = (billingData) => {
     </head>
 
     <body>
-    <div class="container mt-6 mb-7">
+    <div id="Billing" class="container mt-6 mb-7">
       <div class="row justify-content-center">
           <div class="col-lg-12 col-xl-7">
-            <div class="card">
+            <div id="Billing-information-page" class="card">
                 <div class="card-body p-5">
                   <div className='d-flex col'>
                       <div className='w-75'>
@@ -336,8 +339,18 @@ export const handleDownloadPDF = (billingData) => {
   newWindow.document.write(htmlContent);
   newWindow.document.close();
 
-  newWindow.onload = function() {
-    newWindow.print();
+  newWindow.onload = function () {
+    htmlToImage.toPng(newWindow.document.getElementById('Billing-information-page'), { quality: 0.95 })
+      .then(function (dataUrl) {
+        var link = document.createElement('a');
+        link.download = 'my-image-name.jpeg';
+        const pdf = new jsPDF();
+        const imgProps = pdf.getImageProperties(dataUrl);
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+        pdf.addImage(dataUrl, 'PNG', 0, 0, pdfWidth, pdfHeight);
+        pdf.save("download.pdf");
+      });
   };
 };
 

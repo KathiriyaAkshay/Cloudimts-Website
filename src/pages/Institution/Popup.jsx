@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Button, Form, Input, Popconfirm, Table, Select, Typography, Tooltip } from 'antd';
 import { SearchOutlined,SaveOutlined,CloseOutlined } from '@ant-design/icons';
-// import { Typography } from 'antd';
 const { Title } = Typography;
 const EditableContext = React.createContext(null);
 const { Option } = Select;
@@ -150,6 +149,7 @@ const EditableCellSec = ({
     }
     return <td {...restProps}>{childNode}</td>;
 };
+
 const CustomReportHeaderGenerator = () => {
     const [dataSource, setDataSource] = useState([
         {
