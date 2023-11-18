@@ -401,40 +401,21 @@ const ChatMessanger = (props) => {
   return (
     <Spin spinning={loading}>
       <div className="Main-chat-data-division">
+      
         <div style={{height: isDrawerOpen?"99vh":"86vh", overflowY: 'hidden', overflowX: 'hidden'}}>
 
+          {/* ==== Chat header information ====  */}
+
           <ChatHeader
-            imgIcon={whiteback}
             background="#6D7993"
             colors="white"
-            time={
-              lastSeen
-                ? getElapsedTime(new Date(lastSeen))
-                : getElapsedTime(new Date(chatDataInfo?.last_seen))
-            }
             imgIcon2={Col}
-            chatType={chatDetails?.chatType}
             handleGroupChatIcon={handleGroupChatIcon}
-            onClick={() => {
-              ws.current?.close();
-              setGallery({
-                ...gallery,
-                chatConnected: false,
-              });
-              handleChatPopUp();
-              !isHousemateChat && handleChatListData();
-            }}
             userDetail={userDetail}
             chatDetails={chatDetails}
             originated={originated}
             handleChatDetailsPopUp={handleChatDetailsPopUp}
-            chatSearch={forwardMessage?.searchInput}
-            chatSearchValue={forwardMessage?.chatSearchValue}
             value={value}
-            chatSearchedResults={forwardMessage?.chatSearchedResults}
-            handleSearchedMessageArrow={handleSearchedMessageArrow}
-            searchIndex={forwardMessage?.searchIndex}
-            chatConnected={gallery?.chatConnected}
             restaurantName={restaurantName}
             isChatModule={isChatModule}
           />
@@ -480,6 +461,8 @@ const ChatMessanger = (props) => {
               )}
 
             </div>
+
+            {/* ==== Chat message footer ====  */}
 
             <ChatMessangerFooter
               handleEmoji={handleEmoji}
