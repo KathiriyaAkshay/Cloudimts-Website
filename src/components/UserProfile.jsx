@@ -1,274 +1,179 @@
 import {
   LogoutOutlined,
   MailOutlined,
-  PlusCircleOutlined,
-  PlusOutlined,
-  SafetyCertificateOutlined,
-  ShopOutlined,
-  UpCircleOutlined,
+  UserOutlined
 } from "@ant-design/icons";
 import {
   Avatar,
   Button,
-  Card,
-  Col,
   Drawer,
-  Form,
-  Input,
-  Modal,
   Row,
   Space,
-  Typography,
+  Spin
 } from "antd";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import API from "../apis/getApi";
 import { UserDetailsContext } from "../hooks/userDetailsContext";
-import { BsPinMapFill } from "react-icons/bs";
-import { omit } from "lodash";
-import NotificationMessage from "./NotificationMessage";
 import CustomerSupportModal from "./CustomerSupportModal";
 import { BiSupport } from "react-icons/bi";
+import APIHandler from "../apis/apiHandler";
+import NotificationMessage from "./NotificationMessage";
 
 const UserProfile = () => {
   const [showDrawer, setShowDrawer] = useState(false);
-  const [loggedUser, setLoggedUser] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [role, setRole] = useState("");
   const [userData, setUserData] = useState({});
   const { userDetails, changeUserDetails } = useContext(UserDetailsContext);
   const navigate = useNavigate();
-  const token = localStorage.getItem("token");
-  const [form] = Form.useForm();
   const [show, setShow] = useState(false);
-
-  // useEffect(() => {
-  //   setLoggedUser({
-  //     userName: localStorage.getItem("name"),
-  //     email: localStorage.getItem("email"),
-  //   });
-  //   API.get("/users/me", { headers: { Authorization: token } })
-  //     .then((res) => setUserData(res.data.data))
-  //     .catch((err) => console.log(err));
-  //   setRole(localStorage.getItem("role"));
-  // }, []);
-
-  const adminDataHandler = async (values) => {
-    const resData = omit(values, "confirmPassword");
-    await API.patch(
-      `/users/${userData.user.id}`,
-      { ...resData },
-      { headers: { Authorization: token } }
-    )
-      .then((res) => {
-        NotificationMessage("success", "Password Updated Successfully");
-        setIsModalOpen(false);
-        form.resetFields();
-      })
-      .catch((err) => console.log(err));
-  };
-
+  const [profileSpinner, setProfileSpinner] = useState(false) ; 
+  const [profileInformation, setProfileInformation] = useState({}) ; 
+  const [joinedDate, setJoinedDate] = useState(null) ; 
+ 
   const toggleProfileDrawer = (value) => {
     setShowDrawer((prev) => value);
   };
 
-  const logoutHandler = () => {
+  const logoutHandler = async () => {
+    
+    let requestPayload = {} ; 
+
+    let responseData = await APIHandler("POST", requestPayload, 'user/v1/user-logout'); 
+
+    if (responseData === false){
+    
+      NotificationMessage("warning", "Network request failed") ; 
+    
+    } else if (responseData['status'] === true){
+
+      NotificationMessage("success", "Logout successfully") ; 
+    
+    } else{
+
+      NotificationMessage("warning", responseData['message']) ; 
+    }
+
     changeUserDetails({});
+
     localStorage.clear();
+    
     navigate("/login");
+  
   };
 
-  const location = useLocation();
+  const ProfileInfomationOpener = async () => {
 
-  const drawerTitle = (
-    <Row>
-      <Col span={24} className="text-center drawer-column">
-        <Avatar
-          size={120}
-          style={{ fontSize: "48px", margin: "10px" }}
-          onClick={() => {
-            toggleProfileDrawer(true);
-          }}
-        >
-          {userData?.user?.first_name + " " + userData?.user?.last_name}
-        </Avatar>
-        <span className="usermeta heading">
-          {userData?.user?.first_name + " " + userData?.user?.last_name}
-        </span>
+    setShowDrawer(true) ; 
 
-        <span className="usermeta">
-          <Space>
-            <MailOutlined className="icon" />
-            {userData?.user?.email ? userData.user.email : "-"}
-          </Space>
-        </span>
-      </Col>
-    </Row>
-  );
+    setProfileSpinner(true) ; 
 
-  const handleOk = () => {
-    form.submit();
-  };
+    let responseData = await APIHandler("POST", {}, 'user/v1/user-profile') ; 
+  
+    setProfileSpinner(false) ; 
+
+    if (responseData === false){
+
+      NotificationMessage("warning", "Network request failed") ; 
+    
+    } else if (responseData['status'] === true){
+
+      setProfileInformation({...responseData['data']}) ; 
+
+      const originalDateString = responseData['data']?.joined_at;
+      const originalDate = new Date(originalDateString);
+
+      const year = originalDate.getFullYear();
+      const month = String(originalDate.getMonth() + 1).padStart(2, '0');
+      const day = String(originalDate.getDate()).padStart(2, '0');
+      const hours = String(originalDate.getHours()).padStart(2, '0');
+      const minutes = String(originalDate.getMinutes()).padStart(2, '0');
+      const seconds = String(originalDate.getSeconds()).padStart(2, '0');
+
+      const formattedDateString = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+
+      setJoinedDate(formattedDateString) ; 
+
+    } else {
+
+      NotificationMessage("warning", responseData['message']) ; 
+    }
+  }
 
   return (
-    <Row justify={"end"} align={"middle"} style={{ marginLeft: "auto" }}>
-      <Space size={15}>
-        <Button
-          onClick={() => logoutHandler()}
-          type="primary"
-          style={{ display: "flex", gap: "8px", alignItems: "center" }}
-        >
-          <LogoutOutlined />
-          <span>Log Out</span>
-        </Button>
-        <Button
-          onClick={() => setShow(true)}
-          type="primary"
-          style={{ display: "flex", gap: "8px", alignItems: "center" }}
-        >
-          <BiSupport />
-        </Button>
-        <Avatar
-          style={{ marginRight: "30px" }}
-          size="large"
-          className="avatar"
-          onClick={() => {
-            toggleProfileDrawer(true);
-          }}
-        >
-          user
-        </Avatar>
-      </Space>
+    <>
+      <Row justify={"end"} align={"middle"} style={{ marginLeft: "auto" }}>
+
+        {/* ==== User option ====  */}
+
+        <Space size={15}>
+
+          {/* ==== Support option icon ====  */}
+        
+          <Button
+            onClick={() => setShow(true)}
+            type="primary"
+            style={{ display: "flex", gap: "8px", alignItems: "center" }}
+          >
+            <BiSupport />
+          </Button>
+
+          {/* ==== User option icon ====  */}
+        
+          <Avatar
+            style={{ marginRight: "30px" }}
+            size="large"
+            className="avatar"
+            onClick={() => ProfileInfomationOpener()}
+          >
+        
+            <UserOutlined/>
+        
+          </Avatar>
+        
+        </Space>
+        
+
+        <CustomerSupportModal show={show} setShow={setShow} />
+      
+      </Row>
+
       <Drawer
-        title={drawerTitle}
+        title={"User information"}
         placement="right"
         open={showDrawer}
         onClose={() => toggleProfileDrawer(false)}
+        className="User-profile-drawer"
       >
-        <Button
-          type="primary"
-          className="view-profile-btn"
-          onClick={() => {
-            navigate("/merchant/edit");
-            toggleProfileDrawer(false);
-          }}
-        >
-          View Profile
-        </Button>
-        {role === "superadmin" && (
-          <Button
-            type="primary"
-            className="view-profile-btn mt"
-            onClick={() => {
-              setIsModalOpen(true);
-            }}
-          >
-            Change Password
-          </Button>
-        )}
-        {/* <Row>
-          
-          <Col xs={24} sm={24} md={24} lg={24} className="mt">
-           <Typography><ShopOutlined /> {userData?.restaurant?.restaurant_name}</Typography>
-          </Col>
-          <Col xs={24} sm={24} md={24} lg={24} className="mt">
-            <Typography><BsPinMapFill/>   {userData?.restaurant?.stall_address}</Typography>
-          
-          </Col>
-          <Col xs={24} sm={24} md={24} lg={24} className="mt">
-           <Typography><SafetyCertificateOutlined /> {userData?.restaurant?.uen_number}</Typography>
-          </Col>
-        
-        </Row> */}
-      </Drawer>
-      <Modal
-        title="Reset Password"
-        open={isModalOpen}
-        onOk={handleOk}
-        onCancel={() => {
-          setIsModalOpen(false);
-          form.resetFields();
-        }}
-      >
-        <Form
-          name="resetForm"
-          // labelCol={{ span: 24 }}
-          // wrapperCol={{ span: 24 }}
-          form={form}
-          onFinish={adminDataHandler}
-          layout="vertical"
-          className="newTaxForm"
-          onKeyPress={(event) => {
-            if (event.which === (13 | "Enter")) {
-              event.preventDefault();
-            }
-          }}
-          scrollToFirstError={{
-            behavior: "smooth",
-            scrollMode: "always",
-            block: "center",
-          }}
-        >
-          <Col lg={24} md={24} sm={24}>
-            <Form.Item
-              label="New Password"
-              name="password"
-              rules={[
-                {
-                  whitespace: true,
-                  required: true,
-                  message: "Please enter password",
-                },
-              ]}
-              hasFeedback
-            >
-              <Input.Password
-                autoComplete="off"
-                name="password"
-                style={{ marginBottom: "0.5rem" }}
-                placeholder="Enter New Password"
-              />
-            </Form.Item>
-          </Col>
 
-          <Col lg={24} md={24} sm={24}>
-            <Form.Item
-              label="Confirm New Password"
-              name="confirmPassword"
-              rules={[
-                {
-                  whitespace: true,
-                  required: true,
-                  message: "Please confirm your password",
-                },
-                ({ getFieldValue }) => ({
-                  validator(_, value) {
-                    if (!value || getFieldValue("password") === value) {
-                      return Promise.resolve();
-                    }
-                    return Promise.reject(
-                      new Error(
-                        "The two passwords that you entered do not match!"
-                      )
-                    );
-                  },
-                }),
-              ]}
-              dependencies={["password"]}
-              hasFeedback
-            >
-              <Input.Password
-                autoComplete="off"
-                name="confirmPassword"
-                style={{ marginBottom: "0.5rem" }}
-                placeholder="Enter Confirm Password"
-              />
-            </Form.Item>
-          </Col>
-        </Form>
-      </Modal>
-      <CustomerSupportModal show={show} setShow={setShow} />
-    </Row>
+        <Spin spinning = {profileSpinner}>
+
+          {/* ==== Logout option ====  */}
+
+          <Button
+            onClick={() => logoutHandler()}
+            type="primary"
+            style={{ display: "flex", gap: "8px", alignItems: "center" }}
+          >
+        
+            <LogoutOutlined />
+          
+          </Button>
+          
+          <span className="usermeta heading">
+            Username - {profileInformation?.username}
+          </span><br></br>
+
+          <span className="usermeta heading">
+            Email - {profileInformation?.email}
+          </span><br></br>
+
+          <span className="usermeta heading">
+            Joined at - {joinedDate}
+          </span>
+        
+        </Spin>
+
+      </Drawer>
+    </>
   );
 };
 

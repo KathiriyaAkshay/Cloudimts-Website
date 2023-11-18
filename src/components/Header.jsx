@@ -269,7 +269,7 @@ const BasicLayout = ({ children }) => {
               }}
               className="header-menu-icon"
             >
-              {/* <img src={logo} alt="log" className="company-logo" /> */}
+              
               {React.createElement(
                 collapsed ? MenuUnfoldOutlined : MenuFoldOutlined,
                 {
