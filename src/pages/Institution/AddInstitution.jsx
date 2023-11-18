@@ -14,7 +14,6 @@ import {
   Spin,
   InputNumber,
   Modal, 
-  Typography
 } from "antd";
 
 import { useNavigate, useParams } from "react-router-dom";
@@ -28,12 +27,16 @@ import {
   updateBlockUsers,
   updateInHouseUser,
 } from "../../apis/studiesApi";
+import CustomReportHeaderGenerator from "./Popup";
 
 const { Step } = Steps;
 
 const AddInstitution = () => {
   
   const { id } = useParams();
+  console.log("Institution id information =========>");
+  console.log(id);
+
   const { changeBreadcrumbs } = useBreadcrumbs();
   
   const [currentStep, setCurrentStep] = useState(0);
@@ -45,8 +48,9 @@ const AddInstitution = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [radiologistOptions, setRadiologistOptions] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [open, setOpen] = useState(false);
-  const [confirmLoading, setConfirmLoading] = useState(false);
+  
+  const [reportSettingModal, setReportSettingModal] = useState(false) ; 
+  const [institutionId, setInstitutionId] = useState(null) ; 
   
   useEffect(() => {
     const crumbs = [{ name: "Institution", to: "/institutions" }];
@@ -359,7 +363,9 @@ const AddInstitution = () => {
     {
       title: "Value for institution",
       dataIndex: "report_option_value",
+
       render: (text, record) => {
+      
         if (record.value_field === "switch") {
           return {
             children: (
@@ -381,6 +387,19 @@ const AddInstitution = () => {
               </Form.Item>
             ),
           };
+        } else if (record.value_field === "edit-option"){
+          return {
+            children: (
+              <Button 
+                type="primary" 
+                style={{backgroundColor: "#f5f5f5"}}
+                onClick={OpenInstitutionReportSettingModal}
+              >
+                Update
+              </Button>
+            ),
+          };
+        
         } else {
           return {
             children: (
@@ -414,13 +433,24 @@ const AddInstitution = () => {
       value_field: "select",
       report_value: "show_patient_info",
     },
+    ...(institutionId !== null
+      ? [
+          {
+            report_option: "Report dataset",
+            report_option_value: false,
+            value_field: "edit-option",
+            report_value: "report_dataset_value",
+          },
+        ]
+      : []),
   ];
-
+  
   const uploadSettingsColumns = [
     {
       title: "Upload Option",
       dataIndex: "upload_option",
     },
+
     {
       title: "Value",
       dataIndex: "value",
@@ -447,22 +477,11 @@ const AddInstitution = () => {
     }
   };
 
-  const handleOk = () => {
-  
-    setModalText('The modal will be closed after two seconds');
-    setConfirmLoading(true);
-    setTimeout(() => {
-      setOpen(false);
-      setConfirmLoading(false);
-    }, 2000);
-  
-  };
+  const OpenInstitutionReportSettingModal = () => {
+    setInstitutionId(id) ; 
+    setReportSettingModal(true)  ; 
+  }
 
-  const handleCancel = () => {
-  
-    console.log('Clicked cancel button');
-    setOpen(false);
-  };
 
   return (
     <div className="secondary-table">
@@ -786,17 +805,15 @@ const AddInstitution = () => {
           )}
           
           {currentStep === 3 && (
+
             <Form
-              labelCol={{
-                span: 24,
-              }}
-              wrapperCol={{
-                span: 24,
-              }}
+              labelCol={{ span: 24}}
+              wrapperCol={{span: 24}}
               form={form}
               onFinish={handleSubmit}
             >
               <Row gutter={30}>
+
                 <Col lg={24} md={24} sm={24}>
                   <TableWithFilter
                     tableColumns={uploadSettingsColumns}
@@ -804,10 +821,13 @@ const AddInstitution = () => {
                     pagination
                   />
                 </Col>
+              
                 <Col xs={24} sm={24} md={24} lg={24} className="justify-end mt">
+              
                   <Button type="primary" onClick={handlePrevStep}>
                     Previous
                   </Button>
+              
                   <Button
                     type="primary"
                     onClick={() => {
@@ -817,7 +837,9 @@ const AddInstitution = () => {
                     style={{ marginLeft: "10px" }}
                   >
                     {id ? "Update" : "Next"}
+              
                   </Button>
+              
                   {id && (
                     <Button
                       type="primary"
@@ -827,8 +849,11 @@ const AddInstitution = () => {
                       Next
                     </Button>
                   )}
+              
                 </Col>
+              
               </Row>
+            
             </Form>
           )}
 
@@ -865,7 +890,6 @@ const AddInstitution = () => {
                           .toLowerCase()
                           .localeCompare((optionB?.label ?? "").toLowerCase())
                       }
-                      // onChange={appliedOnChangeHandler}
                     />
                   </Form.Item>
                 </Col>
@@ -966,33 +990,14 @@ const AddInstitution = () => {
       >
         <p>Are you sure you want to update this details?</p>
       </Modal>
-
-      <Modal
-        centered
-        title="Institution report setting"
-        open={open}
-        onOk={handleOk}
-        confirmLoading={confirmLoading}
-        onCancel={handleCancel}
-        className="Report-setting-modal"
-      >
-
-        <div className="Report-setting-option">
-            <div className="Report-setting-particular-option-div">
-                    
-              <Typography.Title level={5} style={{ margin: 0 }}>
-                Institution report option
-              </Typography.Title>
-
-            </div>
-            <div className="Report-setting-particular-option-div">
-              <Typography.Title level={5} style={{ margin: 0 }}>
-                Institution report option
-              </Typography.Title>
-            </div>
-        </div>
-      </Modal>
-    
+      
+      {reportSettingModal && 
+      
+        <CustomReportHeaderGenerator
+          institutionId={institutionId}
+          isModalOpen = {setReportSettingModal}
+        />
+      }
     </div>
   );
 };

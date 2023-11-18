@@ -145,12 +145,9 @@ const Roles = () => {
       <TableWithFilter
         tableData={tableData}
         tableColumns={columns}
-        // onAddClick={() => setIsModalOpen(true)}
-        // addButtonTitle="Add Role"
-        // addButtonIcon={<PlusOutlined />}
-        // rowSelection={rowSelection}
         loadingTableData={isLoading}
       />
+
       <Modal
         title="Add New Role"
         centered
@@ -190,6 +187,7 @@ const Roles = () => {
           </Form.Item>
         </Form>
       </Modal>
+   
     </>
   );
 };

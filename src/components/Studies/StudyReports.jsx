@@ -7,6 +7,10 @@ import {
   Tag,
   Tooltip,
   Typography,
+  Form, 
+  Row, 
+  Col, 
+  Input
 } from "antd";
 import React, { useContext, useEffect, useState } from "react";
 import {
@@ -22,12 +26,11 @@ import {
   MailOutlined,
   WhatsAppOutlined,
 } from "@ant-design/icons";
-import DeleteActionIcon from "../DeleteActionIcon";
 import ImageCarousel from "./ImageCarousel";
 import { useNavigate } from "react-router-dom";
 import { UserPermissionContext } from "../../hooks/userPermissionContext";
-import { html2pdf } from "html2pdf.js";
 import jsPDF from "jspdf";
+import APIHandler from "../../apis/apiHandler";
 
 const StudyReports = ({
   isReportModalOpen,
@@ -37,8 +40,11 @@ const StudyReports = ({
   studyStatus,
   setStudyStatus,
   studyStatusHandler,
-  studyCloseHandler,
-  pageNumberHandler 
+  pageNumberHandler , 
+  isEmailShareModalOpen , 
+  setEmailReportId, 
+  patientId, 
+  patientName
 }) => {
   const [modalData, setModalData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -50,7 +56,9 @@ const StudyReports = ({
   const { permissionData } = useContext(UserPermissionContext);
   const [isViewReportModalOpen, setIsViewReportModalOpen] = useState(false);
   const [normalReportImages, setNormalReportImages] = useState([]);
-  const [normalReportModalData, setNormalReportModalData] = useState({});
+  const [normalReportModalData, setNormalReportModalData] = useState({}); 
+
+
 
   useEffect(() => {
     if (studyID && isReportModalOpen) {
@@ -65,51 +73,34 @@ const StudyReports = ({
     return permission;
   };
 
+  const CompleteStudyHandler = async () => {
+
+    let requestPayload = {
+      "id": studyID
+    }; 
+
+    await APIHandler("POST", requestPayload, 'studies/v1/complete-study') ; 
+    
+  }
+
   const downloadReport = async (id) => {
+    await CompleteStudyHandler() ; 
+
     await downloadAdvancedFileReport({ id })
       .then((res) => {
-        // setEditorData(res.data.data.report);
-        const pdfOptions = {
-          margin: 10,
-          filename: "document.pdf",
-          image: { type: "jpeg", quality: 0.98 },
-          html2canvas: { scale: 2 },
-          jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-        };
-
-        // html2pdf()
-        //   .from(res?.data?.data?.report)
-        //   .set(pdfOptions)
-        //   .outputPdf((pdf) => {
-        //     console.log(pdf);
-        //     const blob = pdf.output("blob");
-        //     const url = URL.createObjectURL(blob);
-        //     const link = document.createElement("a");
-        //     link.href = url;
-        //     link.download = "document.pdf";
-        //     link.click();
-        //     URL.revokeObjectURL(url);
-        //   });
-        // const pdf = new jsPDF();
-
-        // html2canvas(res?.data?.data?.report)
-        //   .then((canvas) => {
-        //     const imgData = canvas.toDataURL("image/jpeg");
-        //     pdf.addImage(imgData, "JPEG", 10, 10, 190, 277);
-        //     pdf.save("document.pdf");
-        //   })
-        //   .catch((err) => console.log(err));
         const doc = new jsPDF({
           format: "a4",
           unit: "px",
         });
 
+        var reportPatientName = patientName.replace(/ /g, '-');
+      
         // Adding the fonts.
         doc.setFont("Inter-Regular", "normal");
 
         doc.html(res?.data?.data?.report, {
           async callback(doc) {
-            await doc.save("report");
+            await doc.save(`${patientId}-${reportPatientName}-report`);
           },
           margin: [10, 10, 10, 10],
           autoPaging: "text",
@@ -126,9 +117,12 @@ const StudyReports = ({
   };
 
   const handleStudyStatus = async () => {
-    await viewReported({ id: studyID })
-      .then((res) => {})
-      .catch((err) => console.log(err));
+
+    if (studyStatus === "Reported"){
+      await viewReported({ id: studyID })
+        .then((res) => {})
+        .catch((err) => console.log(err));
+    }
   };
 
   const columns = [
@@ -136,19 +130,23 @@ const StudyReports = ({
       title: "Report Type",
       dataIndex: "report_type",
     },
+
     {
       title: "Report Time",
       dataIndex: "reporting_time",
     },
+    
     {
       title: "Report By",
       dataIndex: "report_by",
       render: (text, record) => record?.report_by?.username,
     },
+    
     {
       title: "Study Description",
       dataIndex: "study_description",
     },
+    
     {
       title: "Actions",
       dataIndex: "actions",
@@ -156,11 +154,15 @@ const StudyReports = ({
       width: window.innerWidth < 650 ? "1%" : "20%",
       render: (text, record) => (
         <Space style={{ display: "flex", justifyContent: "space-evenly" }}>
+          
+         {/* ===== View report option ======   */}
+
           <Tooltip title={"View"}>
+
             <BsEyeFill
               className="action-icon"
-              onClick={async () => {
-                await handleStudyStatus();
+              onClick={
+                async () => { await handleStudyStatus();
                 record.report_type === "Advanced report" &&
                   navigate(`/reports/${record.id}/view`);
                 if (record.report_type === "Normal report") {
@@ -172,24 +174,35 @@ const StudyReports = ({
                 }
               }}
             />
+
           </Tooltip>
+
+          {/* ==== Download report option =====  */}
+          
           <Tooltip title={"Download"}>
             <DownloadOutlined
               className="action-icon"
               onClick={() => downloadReport(record.id)}
             />
           </Tooltip>
+
+          {/* ===== Email share option ====== */}
+          
           {record.report_type === "Advanced report" && (
             <Tooltip title={"Email"}>
-              <MailOutlined className="action-icon" />
+              <MailOutlined className="action-icon" 
+              onClick={() => EmailShareModalOpen(record.id)}/>
             </Tooltip>
           )}
+
+          {/* ==== Whatsapp share option ====  */}
+          
           {record.report_type === "Advanced report" && (
             <Tooltip title={"Whatsapp"}>
               <WhatsAppOutlined className="action-icon" />
             </Tooltip>
           )}
-          {/* <DeleteActionIcon /> */}
+        
         </Space>
       ),
     },
@@ -269,6 +282,11 @@ const StudyReports = ({
     setIsLoading(false);
   };
 
+  const EmailShareModalOpen = (id) => {
+    setEmailReportId(id) ; 
+    isEmailShareModalOpen(true); 
+  }
+
   return (
     <>
       <Modal
@@ -329,6 +347,7 @@ const StudyReports = ({
             </div>
 
             <div className="Report-modal-patient-data">
+
               <div
                 style={{
                   background: "#ebf7fd",
@@ -392,7 +411,12 @@ const StudyReports = ({
 
               <div style={{paddingRight: "1rem"}}>
                 {tableData?.length > 0 && (
-                  <TableWithFilter tableColumns={columns} tableData={tableData} />
+                  
+                  <TableWithFilter 
+                    tableColumns={columns} 
+                    tableData={tableData} 
+                  />
+
                 )}
               </div>
 
@@ -409,7 +433,11 @@ const StudyReports = ({
         modalData={modalData}
       />
 
-      <ImageCarousel studyImages={studyImages} show={show} setShow={setShow} />
+      <ImageCarousel 
+        studyImages={studyImages} 
+        show={show} 
+        setShow={setShow} 
+      />
 
       <ImageCarousel
         studyImages={normalReportImages}
@@ -418,6 +446,8 @@ const StudyReports = ({
         showStudyData={true}
         studyData={normalReportModalData}
       />
+
+      
     </>
   );
 };

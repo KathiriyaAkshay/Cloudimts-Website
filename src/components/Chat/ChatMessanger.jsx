@@ -31,14 +31,20 @@ const ChatMessanger = (props) => {
     messages,
     setMessages,
     isChatModule,
+    isDrawerOpen
   } = props || {};
-
-  console.log("Is Chat module information =============>");
-  console.log(isChatModule);
 
   const userDetail = userProfileData;
 
-  const [layoutHeight, setLayoutHeight] = useState("71vh") ; 
+  const [layoutHeight, setLayoutHeight] = useState(null) ;
+  
+  useEffect(() => {
+    if (isDrawerOpen){
+      setLayoutHeight("83vh") ; 
+    } else{
+      setLayoutHeight("71vh") ; 
+    }
+  }, []) ; 
 
   const [openMenu, setOpenMenu] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -94,7 +100,6 @@ const ChatMessanger = (props) => {
 
   useEffect(() => {
     let id = messages?.length ? messages[messages?.length - 1]?.uni_key : 1;
-    // messages?.length && document.getElementById(id).scrollIntoView();
   }, [messages]);
 
   useEffect(() => {
@@ -249,7 +254,6 @@ const ChatMessanger = (props) => {
 
   const sendMessage = async () => {
     const uni_key = moment.utc(`${new Date().toJSON()}`) + "4";
-    // setForwardMessage({ quoted: false });
     if (chatData) {
       const modifiedObj = {
         content: chatData,
@@ -262,65 +266,38 @@ const ChatMessanger = (props) => {
         quoted_message: forwardMessage?.quoted
           ? forwardMessage?.quotedMessage?.content
           : "",
-        // uni_key: moment.utc(`${new Date().toJSON()}`) + 5,
-        // quoted_msg: forwardMessage?.quoted
-        //   ? forwardMessage?.quotedMessage?.message
-        //   : false,
-        // quoted_id: forwardMessage?.quoted
-        //   ? Number(forwardMessage?.quotedMessage?.uni_key)
-        //   : false,
-        // is_quoted: forwardMessage?.quoted ? true : false,
-        // is_file: imageStore?.length ? true : false,
-        // is_doc: fileStore?.length ? true : false,
       };
       sendChatMessage(modifiedObj)
         .then((res) => console.log(res))
         .catch((err) => console.log(err));
-      // ws1.send(JSON.stringify(modifiedObj));
       setChatData("");
       setForwardMessage({ ...forwardMessage, quoted: false });
     }
     let formData = {};
     if (imageStore?.length || fileStore?.length) {
       formData = { uni_key: uni_key };
-      // formData.append("uni_key", uni_key);
       imageStore?.length &&
         imageStore?.forEach((image) => {
-          // formData.append(`media_file`, image);
           formData = { ...formData, media: image };
         });
       fileStore?.length &&
         fileStore?.forEach((docs) => {
-          // formData.append(`media_file`, docs);
           formData = { ...formData, media: docs };
         });
 
-      if (chatDetails?.chatType === "group") {
-        // formData.append("group_message", true);
-        // formData.append("group_id", chatDataInfo?.group_id);
-      } else {
-        // formData.append("chat_message", true);
-        // formData.append("room_name", roomName);
-        formData = {
-          ...formData,
-          media_option: "True",
-          content: "None",
-          send_from_id: Number(user),
-          room_name: orderId,
-          room_id: roomID,
-          is_quoted: forwardMessage?.quoted ? true : "False",
-          quoted_message: forwardMessage?.quoted
-            ? forwardMessage?.quotedMessage?.content
-            : "None",
-        };
-      }
-      // chatDetails?.chatType === "group"
-      //   ? formData.append("group_message", true)
-      //   formData.append("room_name", chatDataInfo?.room)
-      //   : formData.append("chat_message", true)
-      //   formData.append("room_name", chatDataInfo?.room)
-      //   ;
-      console.log(formData);
+      formData = {
+        ...formData,
+        media_option: "True",
+        content: "None",
+        send_from_id: Number(user),
+        room_name: orderId,
+        room_id: roomID,
+        is_quoted: forwardMessage?.quoted ? true : "False",
+        quoted_message: forwardMessage?.quoted
+          ? forwardMessage?.quotedMessage?.content
+          : "None",
+      };
+
       sendMediaChat(formData)
         .then((res) => {
           handleAllChatHistory(false);
@@ -342,6 +319,7 @@ const ChatMessanger = (props) => {
   const handleGroupChatIcon = () => {
     setOpenMenu(!openMenu);
   };
+
   const handleMenu = async (name) => {
     setOpenMenu(false);
     if (name === "Clear History") {
@@ -361,6 +339,7 @@ const ChatMessanger = (props) => {
       });
     }
   };
+
   const handleEmoji = () => {
     setEmojiClick(!emojiClick);
   };
@@ -422,44 +401,25 @@ const ChatMessanger = (props) => {
   return (
     <Spin spinning={loading}>
       <div className="Main-chat-data-division">
-        <div style={{height: '86vh', overflowY: 'hidden'}}>
+      
+        <div style={{height: isDrawerOpen?"99vh":"86vh", overflowY: 'hidden', overflowX: 'hidden'}}>
 
-          {/* ==== Chat Header ====  */}
+          {/* ==== Chat header information ====  */}
+
           <ChatHeader
-            imgIcon={whiteback}
             background="#6D7993"
             colors="white"
-            time={
-              lastSeen
-                ? getElapsedTime(new Date(lastSeen))
-                : getElapsedTime(new Date(chatDataInfo?.last_seen))
-            }
             imgIcon2={Col}
-            chatType={chatDetails?.chatType}
             handleGroupChatIcon={handleGroupChatIcon}
-            onClick={() => {
-              ws.current?.close();
-              setGallery({
-                ...gallery,
-                chatConnected: false,
-              });
-              handleChatPopUp();
-              !isHousemateChat && handleChatListData();
-            }}
             userDetail={userDetail}
             chatDetails={chatDetails}
             originated={originated}
             handleChatDetailsPopUp={handleChatDetailsPopUp}
-            chatSearch={forwardMessage?.searchInput}
-            chatSearchValue={forwardMessage?.chatSearchValue}
             value={value}
-            chatSearchedResults={forwardMessage?.chatSearchedResults}
-            handleSearchedMessageArrow={handleSearchedMessageArrow}
-            searchIndex={forwardMessage?.searchIndex}
-            chatConnected={gallery?.chatConnected}
             restaurantName={restaurantName}
             isChatModule={isChatModule}
           />
+
             <div className="User-chat-messages-division" style={{height: layoutHeight}}>
 
               <SingleChatMessanger
@@ -501,6 +461,8 @@ const ChatMessanger = (props) => {
               )}
 
             </div>
+
+            {/* ==== Chat message footer ====  */}
 
             <ChatMessangerFooter
               handleEmoji={handleEmoji}

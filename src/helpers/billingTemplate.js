@@ -1,18 +1,68 @@
 import { saveAs } from "file-saver";
 import * as XLSX from "xlsx";
+import * as htmlToImage from 'html-to-image';
+import { toPng, toJpeg, toBlob, toPixelData, toSvg } from 'html-to-image';
+import { jsPDF } from "jspdf";
 
 export const handleDownloadPDF = (billingData) => {
+
+  let ReportingData = {};
+
+  // ====== Filtering data 
+
+  for (let i = 0; i < billingData.length; i++) {
+    let {
+      reporting_charge,
+      modality_communication_charge,
+      midnight_charge,
+      modality,
+    } = billingData[i];
   
-  for(let i = 0; i<billingData.length; i++){
-    let studyData = billingData[i] ; 
+    let reportingCharge = parseInt(reporting_charge);
+    let communicationCharge = parseInt(modality_communication_charge);
+    let midnightCharge = parseInt(midnight_charge);
+  
+    if (reportingCharge !== 0) {
+      if (modality in ReportingData) {
 
-    let reportingCharge = parseInt(studyData['reporting_charge']) ; 
+        ReportingData[modality] = {
+        
+          total_object: ReportingData[modality].total_object + 1,
+          total_report_charge: reportingCharge + communicationCharge,
+          total_midnight_charge:
+            ReportingData[modality].total_midnight_charge + midnightCharge
+        };
+      } else {
 
+        ReportingData[modality] = {
+          total_object: 1,
+          total_report_charge: reportingCharge + communicationCharge,
+          total_midnight_charge: midnightCharge
+        };
+        
+      }
+
+    }
   }
 
+  let bill_total_amount_information = 0 ; 
+  let bill_tax_amount_information = 400 ; 
+  let bill_all_amount_information = 0 ; 
+
+  Object.keys(ReportingData).forEach((key => {
+    ReportingData[key]['total_amount'] = parseInt(parseInt(ReportingData[key]['total_object'])*ReportingData[key]['total_report_charge']) + ReportingData[key]['total_midnight_charge']
+    bill_total_amount_information = bill_total_amount_information + ReportingData[key]['total_amount'] ; 
+  }))
+
+  bill_all_amount_information = bill_total_amount_information + bill_tax_amount_information ; 
+
   // ===== Get Filter data information 
+
   let FilterData = localStorage.getItem("BillingFilterValues") ; 
   FilterData = JSON.parse(FilterData) ;
+
+  console.log("Filter data information ==============>");
+  console.log(FilterData);
   
   let BillingStartDate = FilterData['fromdate'] ; 
   let BillingEndDate = FilterData['todate'] ; 
@@ -31,11 +81,10 @@ export const handleDownloadPDF = (billingData) => {
     const formattedBillingEndDate = BillingEndDate.toISOString().split('T')[0];
     formattedFutureDate = futureDate.toISOString().split('T')[0];
     
-    console.log(formattedFutureDate);
   } 
 
   // Create an HTML template with billing data and company logo
-  const htmlContent = `
+  let htmlContent = `
     <html>
     <head>
       <title>Billing</title>
@@ -165,10 +214,10 @@ export const handleDownloadPDF = (billingData) => {
     </head>
 
     <body>
-    <div class="container mt-6 mb-7">
+    <div id="Billing" class="container mt-6 mb-7">
       <div class="row justify-content-center">
           <div class="col-lg-12 col-xl-7">
-            <div class="card">
+            <div id="Billing-information-page" class="card">
                 <div class="card-body p-5">
                   <div className='d-flex col'>
                       <div className='w-75'>
@@ -231,54 +280,44 @@ export const handleDownloadPDF = (billingData) => {
                   <table class="table border-bottom border-gray-200 mt-3">
                       <thead>
                         <tr>
-                            <th scope="col" class="fs-sm text-dark text-uppercase-bold-sm px-0">Institution</th>
-                            <th scope="col" class="fs-sm text-dark text-uppercase-bold-sm px-0">Description</th>
-                            <th scope="col" class="fs-sm text-dark text-uppercase-bold-sm px-0">Reporting charge</th>
-                            <th scope="col" class="fs-sm text-dark text-uppercase-bold-sm text-end px-0">Midnight charge</th>
-                            <th scope="col" class="fs-sm text-dark text-uppercase-bold-sm text-end px-0">Total</th>
+                            <th scope="col" class="fs-sm text-dark text-uppercase-bold-sm px-0" style = "width: 30%;">Description</th>
+                            <th scope="col" class="fs-sm text-dark text-uppercase-bold-sm px-0" style = "text-align: center;">No Of <br>Cases</th>
+                            <th scope="col" class="fs-sm text-dark text-uppercase-bold-sm px-0" style = "text-align: center;">Reporting <br>charge</th>
+                            <th scope="col" class="fs-sm text-dark text-uppercase-bold-sm px-0" style = "text-align: center;">Total <br>Midnight <br>charge</th>
+                            <th scope="col" class="fs-sm text-dark text-uppercase-bold-sm px-0" style = "text-align: center;">Total</th>
                         </tr>
                       </thead>
                       <tbody>
-                        <tr>
-                            <td class="px-0">Theme customization</td>
-                            <td class="px-0">0</td>
-                            <td class="px-0">200</td>
-                            <td class="text-end px-0">$60.00</td>
-                        </tr>
+    `
+    Object.keys(ReportingData).forEach(key  => {
+      let reportStudyData = ReportingData[key] ; 
+      htmlContent = htmlContent + `
+        <tr>
+          <td class="px-0" style = "width: 30%;">${key} reporting charges repoting charges </td>
+          <td class="px-0" style = "text-align: center;">${reportStudyData['total_object']}</td>
+          <td class="px-0" style = "text-align: center;">₹${reportStudyData['total_report_charge']}/-</td>
+          <td class="px-0" style = "text-align: center;">${reportStudyData['total_midnight_charge']}</td>
+          <td class="px-0" style = "text-align: center; font-weight: bold;">₹${reportStudyData['total_amount']}/-</td>
+        </tr>
+      `
+    })
+    htmlContent = htmlContent + `
+               
                       </tbody>
                   </table>
                   <div className='d-flex col justify-content-between'>
-                      <div className=''>
-                        that text
-                      </div>
                       <div class="mt-5">
                         <div class="d-flex justify-content-end">
-                            <p class="text-muted me-3">Subtotal:</p>
-                            <span>$390.00</span>
+                            <p class="text-muted me-3" style = "font-weight: bold ; ">Subtotal:</p>
+                            <span>₹${bill_total_amount_information}/-</span>
                         </div>
                         <div class="d-flex justify-content-end">
-                            <p class="text-muted me-3">Discount:</p>
-                            <span>-$40.00</span>
-                        </div>
-                        <div class="d-flex justify-content-end">
-                            <p class="text-muted me-3">Subtotal less discount:</p>
-                            <span>-$40.00</span>
-                        </div>
-                        <div class="d-flex justify-content-end">
-                            <p class="text-muted me-3">Tax Rate:</p>
-                            <span>-$40.00</span>
-                        </div>
-                        <div class="d-flex justify-content-end">
-                            <p class="text-muted me-3">Total Tax:</p>
-                            <span>-$40.00</span>
-                        </div>
-                        <div class="d-flex justify-content-end">
-                            <p class="text-muted me-3">Outstanding:</p>
-                            <span>-$40.00</span>
+                            <p class="text-muted me-3" style = "font-weight: bold; ">Tax:</p>
+                            <span>₹${bill_tax_amount_information}/-</span>
                         </div>
                         <div class="d-flex justify-content-end mt-3">
-                            <h5 class="me-3">Balance Due:</h5>
-                            <h5 class="text-success">$399.99 USD</h5>
+                            <h5 class="me-3">Due amount:</h5>
+                            <h5 class="text-success">₹${bill_all_amount_information}/-</h5>
                         </div>
                       </div>
                   </div>
@@ -295,16 +334,33 @@ export const handleDownloadPDF = (billingData) => {
   `;
 
   // Create a new window/tab to display the HTML content
-  // const newWindow = window.open("", "_blank");
-  // newWindow.document.open();
-  // newWindow.document.write(htmlContent);
-  // newWindow.document.close();
+  const newWindow = window.open("", "_blank");
+  newWindow.document.open();
+  newWindow.document.write(htmlContent);
+  newWindow.document.close();
+
+  newWindow.onload = function () {
+    htmlToImage.toPng(newWindow.document.getElementById('Billing-information-page'), { quality: 0.95 })
+      .then(function (dataUrl) {
+        var link = document.createElement('a');
+        link.download = 'my-image-name.jpeg';
+        const pdf = new jsPDF();
+        const imgProps = pdf.getImageProperties(dataUrl);
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+        pdf.addImage(dataUrl, 'PNG', 0, 0, pdfWidth, pdfHeight);
+        pdf.save("download.pdf");
+      });
+  };
 };
 
 export const handleExport = (tableData) => {
   // Create a new workbook
   const workbook = XLSX.utils.book_new();
   const sheetName = "BillingData";
+
+  console.log("Table data ==========>");
+  console.log(tableData);
 
   // Convert your data to worksheet
   const worksheet = XLSX.utils.json_to_sheet(tableData);

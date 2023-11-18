@@ -2,13 +2,13 @@ import {
   AppstoreOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
+  WechatOutlined
 } from "@ant-design/icons";
 import { Breadcrumb, Button, Divider, Layout, Menu } from "antd";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import {
   Link,
   NavLink,
-  Outlet,
   useLocation,
   useNavigate,
   useParams,
@@ -19,9 +19,7 @@ import logo from "../assets/images/Imageinet-logo.png";
 import { MdDeleteSweep, MdOutlineHomeWork } from "react-icons/md";
 import {
   AiOutlineUserAdd,
-  AiOutlineDown,
   AiOutlineFilter,
-  AiOutlinePlus,
   AiOutlineFileSync,
   AiOutlineMail,
 } from "react-icons/ai";
@@ -105,11 +103,16 @@ const BasicLayout = ({ children }) => {
   };
 
   const menuItems = [
+
+    // Studies option 
+
     checkPermissionStatus("Show Studies option") && {
       label: <NavLink to={"/studies"}>Studies</NavLink>,
       key: "studies",
       icon: <AiOutlineFileSync color="red"/>,
     },
+
+    // Institution option 
 
     checkPermissionStatus("Show Option - Institution option") && {
       label: menuLabel("Institution"),
@@ -126,6 +129,9 @@ const BasicLayout = ({ children }) => {
         },
       ],
     },
+
+    // User option 
+
     checkPermissionStatus("Show Option - User option") && {
       label: menuLabel("Users"),
       key: "users",
@@ -141,31 +147,57 @@ const BasicLayout = ({ children }) => {
         },
       ],
     },
+
+    // Chat option 
+    checkPermissionStatus("Show Chat Option") && {
+      label: <NavLink to={"/chats"}>Chats</NavLink>,
+      key: "Chats",
+      icon: <WechatOutlined style={{height: "20px", width: "20px"}}/>,
+      className: "Chat-icon"
+    },
+
+    // Filter option 
+
     checkPermissionStatus("Show Default Filter list") && {
       label: <NavLink to={"/filters"}>Filters</NavLink>,
       key: "filters",
       icon: <AiOutlineFilter />,
     },
+
+    // Role option 
+
     checkPermissionStatus("Show Option - Role option") && {
       label: <NavLink to={"/users/roles"}>Roles</NavLink>,
       key: "roles",
       icon: <FaUserLock />,
     },
+
+    // Email option 
+
     checkPermissionStatus("Show Option - Email option") && {
       label: <NavLink to={"/users/email"}>Email</NavLink>,
       key: "email",
       icon: <AiOutlineMail />,
     },
+
+    // Billing option 
+
     checkPermissionStatus("Show Option - Billing option") && {
       label: <NavLink to={"/billing"}>Billing</NavLink>,
       key: "billing",
       icon: <FaMoneyBill />,
     },
+
+    // Template option 
+
     checkPermissionStatus("Show Option - Template option") && {
       label: <NavLink to={"/reports"}>Templates</NavLink>,
       key: "templates",
       icon: <CgTemplate />,
     },
+
+    // StudyTable option 
+
     userPermissionData["StudyTable view"]?.find(
       (data) => data.permission === "View Deleted studies"
     )?.permission_value && {
@@ -173,11 +205,15 @@ const BasicLayout = ({ children }) => {
       key: "deletedStudy",
       icon: <MdDeleteSweep />,
     },
+
+    // Support option 
+
     {
       label: <NavLink to={"/support"}>Support</NavLink>,
       key: "support",
       icon: <BiSupport />,
     },
+
   ].filter(Boolean);
 
   const menu = (
@@ -229,10 +265,11 @@ const BasicLayout = ({ children }) => {
                 display: "flex",
                 alignItems: "center",
                 gap: "1rem",
+                
               }}
               className="header-menu-icon"
             >
-              {/* <img src={logo} alt="log" className="company-logo" /> */}
+              
               {React.createElement(
                 collapsed ? MenuUnfoldOutlined : MenuFoldOutlined,
                 {
@@ -282,13 +319,13 @@ const BasicLayout = ({ children }) => {
                 ? {
                     padding: 0,
                     height: "calc(100vh - 75px)",
-                    overflow: "auto",
+                    overflow: "hidden",
                     overflowX: "hidden",
                     minHeight: 280,
                   }
                 : {
                     height: "calc(100vh - 75px)",
-                    overflow: "auto",
+                    overflow: "hidden",
                     overflowX: "hidden",
                     minHeight: 280,
                     paddingBottom: 20,
@@ -311,7 +348,8 @@ const BasicLayout = ({ children }) => {
               style={
                 window.location.pathname !== "/chats"
                   ? {
-                      padding: "0px 35px 35px 35px",
+                      paddingLeft: "12px", 
+                      paddingRight: "12px"
                     }
                   : { padding: "0px" }
               }
@@ -321,11 +359,13 @@ const BasicLayout = ({ children }) => {
           </Content>
         </Layout>
       </Layout>
+
       <StudyFilterModal
         isFilterModalOpen={isFilterModalOpen}
         setIsFilterModalOpen={setIsFilterModalOpen}
         retrieveFilterOptions={retrieveFilterOptions}
       />
+      
     </>
   );
 };

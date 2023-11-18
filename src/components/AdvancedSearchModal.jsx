@@ -4,13 +4,11 @@ import { filterDataContext } from "../hooks/filterDataContext";
 import { FilterSelectedContext } from "../hooks/filterSelectedContext";
 import { getModalityList, getRadiologistList } from "../apis/studiesApi";
 import API from "../apis/getApi";
-import { set } from "lodash";
 
 const AdvancedSearchModal = ({
   name,
-  setStudyData,
   retrieveStudyData,
-  advanceSearchFilterData,
+  advanceSearchFilterData
 }) => {
   const { isAdvancedSearchModalOpen, setIsAdvancedSearchModalOpen } =
     useContext(filterDataContext);
@@ -72,14 +70,12 @@ const AdvancedSearchModal = ({
       study_status: values?.study_status ? values?.study_status : [],
       patient_name: values?.patient_name ? values?.patient_name : "",
       patient_id: values?.patient_id ? values?.patient_id : "",
-      accession_number: values?.accession_number
-        ? values?.accession_number
-        : "",
       from_date: values?.from_date
         ? values?.from_date.format("YYYY-MM-DD")
         : "",
       to_date: values?.to_date ? values?.to_date.format("YYYY-MM-DD") : "",
     };
+
     advanceSearchFilterData({ page: 1 }, modifiedValues);
     setIsAdvancedSearchModalOpen(false);
     setIsFilterSelected(false);
@@ -134,21 +130,22 @@ const AdvancedSearchModal = ({
       open={isAdvancedSearchModalOpen}
       onOk={() => form.submit()}
       onCancel={() => {
-        // form.resetFields();
         setIsAdvancedSearchModalOpen(false);
-        // retrieveStudyData();
       }}
+      className="Advance-search-modal"
       footer={[
+
+        // Cancel option button 
         <Button
           key="back"
           onClick={() => {
-            // form.resetFields();
             setIsAdvancedSearchModalOpen(false);
-            // retrieveStudyData();
           }}
         >
           Cancel
         </Button>,
+        
+        // Clear filter option button 
         <Button
           key="submit"
           type="primary"
@@ -162,9 +159,12 @@ const AdvancedSearchModal = ({
         >
           Clear Filter
         </Button>,
+        
+        // Apply filter option button 
         <Button key="submit" type="primary" onClick={() => form.submit()}>
           Apply
         </Button>,
+      
       ]}
     >
       <Form
@@ -179,6 +179,9 @@ const AdvancedSearchModal = ({
         autoComplete={"off"}
       >
         <Row gutter={15}>
+
+          {/* ===== Patient name ====  */}
+
           <Col xs={24} lg={12}>
             <Form.Item
               name="patient_name"
@@ -194,6 +197,9 @@ const AdvancedSearchModal = ({
               <Input placeholder="Enter Patient Name" />
             </Form.Item>
           </Col>
+          
+          {/* ==== Patient id =====  */}
+
           <Col xs={24} lg={12}>
             <Form.Item
               name="patient_id"
@@ -209,6 +215,9 @@ const AdvancedSearchModal = ({
               <Input placeholder="Enter Patient Id" />
             </Form.Item>
           </Col>
+
+          {/* ===== Institution name =====  */}
+
           <Col xs={24} lg={12}>
             <Form.Item
               name="institution_name"
@@ -224,10 +233,12 @@ const AdvancedSearchModal = ({
                 placeholder="Select Institution"
                 options={institutionOptions}
                 mode="multiple"
-                // onChange={appliedOnChangeHandler}
               />
             </Form.Item>
           </Col>
+
+          {/* ===== Assigned user ======  */}
+          
           <Col xs={24} lg={12}>
             <Form.Item
               name="assigned_user"
@@ -243,10 +254,12 @@ const AdvancedSearchModal = ({
                 placeholder="Select Assigned User"
                 options={radiologistOptions}
                 mode="multiple"
-                // onChange={appliedOnChangeHandler}
               />
             </Form.Item>
           </Col>
+
+          {/* ===== Modality ======  */}
+
           <Col xs={24} lg={12}>
             <Form.Item
               name="modality"
@@ -262,10 +275,12 @@ const AdvancedSearchModal = ({
                 placeholder="Select Modality"
                 options={modalityOptions}
                 mode="multiple"
-                // onChange={appliedOnChangeHandler}
               />
             </Form.Item>
           </Col>
+
+          {/* ===== Study status =====  */}
+          
           <Col xs={24} lg={12}>
             <Form.Item
               name="study_status"
@@ -281,10 +296,12 @@ const AdvancedSearchModal = ({
                 placeholder="Select Status"
                 options={statusOptions}
                 mode="multiple"
-                // onChange={appliedOnChangeHandler}
               />
             </Form.Item>
           </Col>
+
+          {/* ===== From date =====  */}
+          
           <Col xs={24} lg={12}>
             <Form.Item
               name="from_date"
@@ -299,6 +316,9 @@ const AdvancedSearchModal = ({
               <DatePicker format={"YYYY-MM-DD"} />
             </Form.Item>
           </Col>
+
+          {/* ==== To date =====  */}
+          
           <Col xs={24} lg={12}>
             <Form.Item
               name="to_date"
@@ -313,23 +333,11 @@ const AdvancedSearchModal = ({
               <DatePicker format={"YYYY-MM-DD"} />
             </Form.Item>
           </Col>
-          <Col xs={24} lg={12}>
-            <Form.Item
-              name="accession_number"
-              label="Accession Number"
-              rules={[
-                {
-                  required: false,
-                  whitespace: true,
-                  message: "Please enter Accession Number",
-                },
-              ]}
-            >
-              <Input placeholder="Enter Accession Number" />
-            </Form.Item>
-          </Col>
+
         </Row>
+      
       </Form>
+    
     </Modal>
   );
 };
