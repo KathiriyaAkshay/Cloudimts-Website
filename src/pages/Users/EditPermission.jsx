@@ -90,6 +90,7 @@ function EditPermission() {
   };
 
   return (
+
     <Card className="edit-permission-card">
       <Spin spinning={isLoading}>
         <Collapse
@@ -98,6 +99,7 @@ function EditPermission() {
           className="setting-main-div"
         >
           {Object.keys(permissionData).map((key) => (
+         
             <Collapse.Panel header={key} key={key} className="setting-panel">
               <Table
                 dataSource={permissionData[key]}

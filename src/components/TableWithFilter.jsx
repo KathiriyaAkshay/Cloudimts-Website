@@ -118,7 +118,6 @@ const TableWithFilter = ({
       {showDivider && <Divider />}
       <div className="ant-table-wrapper">
         <Table
-          bordered
           dataSource={[...tableData]}
           columns={tableColumns}
           rowClassName="editable-row"

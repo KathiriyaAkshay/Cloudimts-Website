@@ -86,34 +86,34 @@ const StudyReports = ({
   const downloadReport = async (id) => {
     await CompleteStudyHandler() ; 
 
-    // await downloadAdvancedFileReport({ id })
-    //   .then((res) => {
-    //     const doc = new jsPDF({
-    //       format: "a4",
-    //       unit: "px",
-    //     });
+    await downloadAdvancedFileReport({ id })
+      .then((res) => {
+        const doc = new jsPDF({
+          format: "a4",
+          unit: "px",
+        });
 
-    //     var reportPatientName = patientName.replace(/ /g, '-');
+        var reportPatientName = patientName.replace(/ /g, '-');
       
-    //     // Adding the fonts.
-    //     doc.setFont("Inter-Regular", "normal");
+        // Adding the fonts.
+        doc.setFont("Inter-Regular", "normal");
 
-    //     doc.html(res?.data?.data?.report, {
-    //       async callback(doc) {
-    //         await doc.save(`${patientId}-${reportPatientName}-report`);
-    //       },
-    //       margin: [10, 10, 10, 10],
-    //       autoPaging: "text",
-    //       x: 0,
-    //       y: 0,
-    //       width: 190, //target width in the PDF document
-    //       windowWidth: 675, //window width in CSS pixels
-    //     });
-    //   })
-    //   .catch((err) => console.log(err))
-    //   .catch((err) =>
-    //     NotificationMessage("warning", err.response.data.message)
-    //   );
+        doc.html(res?.data?.data?.report, {
+          async callback(doc) {
+            await doc.save(`${patientId}-${reportPatientName}-report`);
+          },
+          margin: [10, 10, 10, 10],
+          autoPaging: "text",
+          x: 0,
+          y: 0,
+          width: 190, //target width in the PDF document
+          windowWidth: 675, //window width in CSS pixels
+        });
+      })
+      .catch((err) => console.log(err))
+      .catch((err) =>
+        NotificationMessage("warning", err.response.data.message)
+      );
   };
 
   const handleStudyStatus = async () => {

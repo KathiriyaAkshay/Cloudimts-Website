@@ -338,10 +338,12 @@ const Users = () => {
         onPaginationChange={retrieveUsersData}
         loadingTableData={isLoading}
       />
+
       <UserFilterModal
         retrieveUsersData={retrieveUsersData}
         name={"User Filter"}
       />
+      
       <Drawer
         title="Users Logs"
         placement="right"
@@ -351,6 +353,7 @@ const Users = () => {
       >
         <TableWithFilter tableData={logsData} tableColumns={logsColumn} />
       </Drawer>
+   
       <Modal
         width={500}
         title={"Reset Password"}
@@ -436,6 +439,7 @@ const Users = () => {
           </Row>
         </Form>
       </Modal>
+   
     </>
   );
 };
