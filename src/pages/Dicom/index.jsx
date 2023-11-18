@@ -155,7 +155,8 @@ const Dicom = () => {
             patient_id: data?.study?.patient_id,
             study_id: data?.study?.id,
             key: data.id,
-            count: 0  
+            count: 0  , 
+            institution_id: data.institution.id
           };
         });
 

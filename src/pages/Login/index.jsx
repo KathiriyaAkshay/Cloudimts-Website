@@ -26,42 +26,41 @@ const Login = () => {
   const [userData, setUserData] = useState([]);
   const { userDetails, changeUserDetails } = useContext(UserDetailsContext);
 
-  // useEffect(() => {
-  //   const disableBrowserNavigation = (event) => {
-  //     event.preventDefault();
-  //     event.returnValue = "";
-  //   };
-
-  //   // Disable back/forward navigation
-  //   window.history.pushState(null, null, window.location.href);
-  //   window.addEventListener("popstate", disableBrowserNavigation);
-
-  //   return () => {
-  //     // Enable back/forward navigation when leaving the "/login" route
-  //     window.removeEventListener("popstate", disableBrowserNavigation);
-  //   };
-  // }, []);
 
   const handleSubmit = async (values) => {
     setIsLoading(true);
     await API.post("/owner/v1/login", values)
       .then((res) => {
+        
+        console.log("Login data information ========>");
+        console.log(res.data.data);
+
         localStorage.setItem("token", res.data.data.accessToken);
+        
         localStorage.setItem(
           "all_permission_id",
           JSON.stringify(res.data.data.all_permission_institution_id)
         );
+        
         localStorage.setItem(
           "all_assign_id",
           JSON.stringify(
             res.data.data.all_assign_study_permission_institution_id
           )
         );
+
         localStorage.setItem("userID", res.data.data.user_id);
+        
         localStorage.setItem("role_id", res.data.data.rold_id);
+            
+        localStorage.setItem("custom_user_id", res.data.data.custom_user_id) ; 
+        
         NotificationMessage("success", "Successfully Log In");
+      
         loginForm.resetFields();
+
         navigate("/institutions");
+      
       })
       .catch((err) =>
         NotificationMessage("warning", err.response.data.message)

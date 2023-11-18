@@ -22,6 +22,10 @@ const StudyNotificationProvider = ({ children }) => {
 
     ws.onmessage = (event) => {
       const eventData = JSON.parse(event.data);
+
+      console.log("Event data information ============>");
+      console.log(eventData);
+      
       if (eventData.payload.status === "update-study") {
 
         // Update Study details handler 
@@ -166,6 +170,32 @@ const StudyNotificationProvider = ({ children }) => {
       
         setStudyData(updatedData);
       
+      } else if (eventData.payload.status === "RemoveAssign"){
+
+        let Custome_user_id = localStorage.getItem("custom_user_id") ; 
+        let StudyId = eventData.payload.data.id ; 
+        let UserId = eventData.payload.data.remove_user ; 
+
+        if (Custome_user_id == UserId){
+            const updatedData = studyData.map((data) => {
+            
+            if (data.id !== eventData.payload.data.id) {
+              return data;
+            
+            } else {
+
+              console.log("Match object information ========>");
+              console.log(data);
+              
+             }
+            return null; // or simply return null to exclude the item from the new array
+          }).filter((data) => data !== null);
+          
+          setStudyData(updatedData);
+        } else{
+          console.log("Not maching functionality ");
+        }
+
       }
     };
 
