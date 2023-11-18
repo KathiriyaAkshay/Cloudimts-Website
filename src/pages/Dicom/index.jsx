@@ -422,7 +422,11 @@ const Dicom = () => {
         checkPermissionStatus("Study chat option") ? "" : "column-display-none"
       }`,
       render: (text, record) => (
+
+        // Chat option
+
         <Tooltip title="Chat">
+
           <BsChat
             className="action-icon action-icon-primary"
             onClick={() => {
@@ -432,7 +436,9 @@ const Dicom = () => {
               setPersonName(`${record.study.patient_id} | ${record.name}`);
             }}
           />
+
         </Tooltip>
+      
       ),
     },
     {
@@ -808,13 +814,16 @@ const Dicom = () => {
         open={isDrawerOpen}
         className="chat-drawer"
       >
+
         <ChatMain
           userId={studyID}
           orderId={seriesID}
           restaurantName={personName}
           messages={messages}
           setMessages={setMessages}
+          drawerValue = {true}
         />
+
       </Drawer>
       
       <QuickFilterModal
