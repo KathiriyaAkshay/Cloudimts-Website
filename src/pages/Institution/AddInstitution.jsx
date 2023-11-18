@@ -34,8 +34,6 @@ const { Step } = Steps;
 const AddInstitution = () => {
   
   const { id } = useParams();
-  console.log("Institution id information =========>");
-  console.log(id);
 
   const { changeBreadcrumbs } = useBreadcrumbs();
   
@@ -433,7 +431,7 @@ const AddInstitution = () => {
       value_field: "select",
       report_value: "show_patient_info",
     },
-    ...(institutionId !== null
+    ...(id !== null
       ? [
           {
             report_option: "Report dataset",
