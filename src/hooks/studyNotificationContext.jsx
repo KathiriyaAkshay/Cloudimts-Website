@@ -11,7 +11,6 @@ const StudyNotificationProvider = ({ children }) => {
 
   useEffect(() => {
 
-    // Socket connection URL  
     const ws = new WebSocket(`${BASE_URL}studies/`);
     
     ws.onopen = () => {
@@ -188,7 +187,7 @@ const StudyNotificationProvider = ({ children }) => {
               console.log(data);
               
              }
-            return null; // or simply return null to exclude the item from the new array
+            return null; 
           }).filter((data) => data !== null);
           
           setStudyData(updatedData);
