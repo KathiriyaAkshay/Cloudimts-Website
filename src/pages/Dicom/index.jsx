@@ -40,7 +40,7 @@ import NotificationMessage from "../../components/NotificationMessage";
 import APIHandler from "../../apis/apiHandler";
 import { saveAs } from "file-saver";
 import * as XLSX from "xlsx";
-
+const BASE_URL = import.meta.env.VITE_APP_SOCKET_BASE_URL;
 const Dicom = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -113,10 +113,50 @@ const Dicom = () => {
     }
   }, [Pagination, isFilterSelected, studyDataPayload, systemFilterPayload]);
 
+  const SetupGenralChatNotification = () => {
+
+    const ws = new WebSocket(`${BASE_URL}genralChat/`);
+
+    ws.onopen = () => {
+      console.log("Chat Websocket connected");
+    };
+
+    ws.onmessage = (event) => {
+      try {
+        const eventData = JSON.parse(event.data) ;
+        
+        if (eventData.payload.status === "new-chat"){
+  
+          let ChatData = eventData.payload.data; 
+  
+          studyData.map((element) => {
+            if (element.series_id === ChatData.room_name){
+              console.log("Match");
+              NotificationMessage("success", "New chat message", `Message send by ${ChatData.sender_username} for Patient - ${element.name} and StudyId - ${element.id}`, 5) ;  
+            }
+          })
+        }
+        
+      } catch (error) {
+        console.log("Chat notification error message information ========>");
+        console.log(error);
+      }
+    }
+
+    ws.onclose = () => {
+      console.log("WebSocket connection closed");
+    };
+
+    return () => {
+      ws.close();
+    };
+
+  }
   
   useEffect(() => {
     changeBreadcrumbs([{ name: "Study Data" }]);
     setStudyIdArray([]);
+    SetupGenralChatNotification() ; 
   }, []);
 
   useEffect(() => {
@@ -691,6 +731,8 @@ const Dicom = () => {
 
     }
   }
+
+
 
   return (
     <>
