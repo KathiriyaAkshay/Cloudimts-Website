@@ -1,7 +1,8 @@
 import {
   LogoutOutlined,
   MailOutlined,
-  UserOutlined
+  UserOutlined,
+  SyncOutlined
 } from "@ant-design/icons";
 import {
   Avatar,
@@ -9,7 +10,8 @@ import {
   Drawer,
   Row,
   Space,
-  Spin
+  Spin,
+  Tooltip
 } from "antd";
 import { useContext, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -18,6 +20,7 @@ import CustomerSupportModal from "./CustomerSupportModal";
 import { BiSupport } from "react-icons/bi";
 import APIHandler from "../apis/apiHandler";
 import NotificationMessage from "./NotificationMessage";
+import UserImage from '../assets/images/ProfileImg.png';
 
 const UserProfile = () => {
   const [showDrawer, setShowDrawer] = useState(false);
@@ -25,58 +28,58 @@ const UserProfile = () => {
   const { userDetails, changeUserDetails } = useContext(UserDetailsContext);
   const navigate = useNavigate();
   const [show, setShow] = useState(false);
-  const [profileSpinner, setProfileSpinner] = useState(false) ; 
-  const [profileInformation, setProfileInformation] = useState({}) ; 
-  const [joinedDate, setJoinedDate] = useState(null) ; 
- 
+  const [profileSpinner, setProfileSpinner] = useState(false);
+  const [profileInformation, setProfileInformation] = useState({});
+  const [joinedDate, setJoinedDate] = useState(null);
+
   const toggleProfileDrawer = (value) => {
     setShowDrawer((prev) => value);
   };
 
   const logoutHandler = async () => {
-    
-    let requestPayload = {} ; 
 
-    let responseData = await APIHandler("POST", requestPayload, 'user/v1/user-logout'); 
+    let requestPayload = {};
 
-    if (responseData === false){
-    
-      NotificationMessage("warning", "Network request failed") ; 
-    
-    } else if (responseData['status'] === true){
+    let responseData = await APIHandler("POST", requestPayload, 'user/v1/user-logout');
 
-      NotificationMessage("success", "Logout successfully") ; 
-    
-    } else{
+    if (responseData === false) {
 
-      NotificationMessage("warning", responseData['message']) ; 
+      NotificationMessage("warning", "Network request failed");
+
+    } else if (responseData['status'] === true) {
+
+      NotificationMessage("success", "Logout successfully");
+
+    } else {
+
+      NotificationMessage("warning", responseData['message']);
     }
 
     changeUserDetails({});
 
     localStorage.clear();
-    
+
     navigate("/login");
-  
+
   };
 
   const ProfileInfomationOpener = async () => {
 
-    setShowDrawer(true) ; 
+    setShowDrawer(true);
 
-    setProfileSpinner(true) ; 
+    setProfileSpinner(true);
 
-    let responseData = await APIHandler("POST", {}, 'user/v1/user-profile') ; 
-  
-    setProfileSpinner(false) ; 
+    let responseData = await APIHandler("POST", {}, 'user/v1/user-profile');
 
-    if (responseData === false){
+    setProfileSpinner(false);
 
-      NotificationMessage("warning", "Network request failed") ; 
-    
-    } else if (responseData['status'] === true){
+    if (responseData === false) {
 
-      setProfileInformation({...responseData['data']}) ; 
+      NotificationMessage("warning", "Network request failed");
+
+    } else if (responseData['status'] === true) {
+
+      setProfileInformation({ ...responseData['data'] });
 
       const originalDateString = responseData['data']?.joined_at;
       const originalDate = new Date(originalDateString);
@@ -90,11 +93,11 @@ const UserProfile = () => {
 
       const formattedDateString = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 
-      setJoinedDate(formattedDateString) ; 
+      setJoinedDate(formattedDateString);
 
     } else {
 
-      NotificationMessage("warning", responseData['message']) ; 
+      NotificationMessage("warning", responseData['message']);
     }
   }
 
@@ -107,7 +110,7 @@ const UserProfile = () => {
         <Space size={15}>
 
           {/* ==== Support option icon ====  */}
-        
+
           <Button
             onClick={() => setShow(true)}
             type="primary"
@@ -117,23 +120,23 @@ const UserProfile = () => {
           </Button>
 
           {/* ==== User option icon ====  */}
-        
+
           <Avatar
             style={{ marginRight: "30px" }}
             size="large"
             className="avatar"
             onClick={() => ProfileInfomationOpener()}
           >
-        
-            <UserOutlined/>
-        
+
+            <UserOutlined />
+
           </Avatar>
-        
+
         </Space>
-        
+
 
         <CustomerSupportModal show={show} setShow={setShow} />
-      
+
       </Row>
 
       <Drawer
@@ -144,32 +147,45 @@ const UserProfile = () => {
         className="User-profile-drawer"
       >
 
-        <Spin spinning = {profileSpinner}>
+        <Spin spinning={profileSpinner}>  
 
           {/* ==== Logout option ====  */}
+          <div style={{ width: "100%", textAlign: "center" }}>
+            <img src={UserImage} alt="user_profile" width="100px" height="100px" />
 
+          </div>
+          <div className="usermeta heading user-profile-div-first" >
+              {profileInformation?.username}
+          </div>
+
+          <div className="usermeta heading user-profile-div-second" >
+          <MailOutlined style={{color:"black",fontSize:"1.2rem"}}/> <span>{profileInformation?.email}</span>
+
+          </div>
+          <div className="usermeta heading user-profile-div-second"  >
+          <Tooltip title="Joining Date">
+          <SyncOutlined style={{color:"black",fontSize:"1.2rem"}}/> 
+  </Tooltip>
+
+          <span>{joinedDate}</span>
+
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center",marginTop:"2rem"}}>
+
+            
           <Button
             onClick={() => logoutHandler()}
             type="primary"
-            style={{ display: "flex", gap: "8px", alignItems: "center" }}
+            style={{ display: "flex", gap: "8px", alignItems: "center", justifyContent: "center", width: "50%" }}
           >
-        
-            <LogoutOutlined />
-          
+
+            <LogoutOutlined />  
+            Logout
           </Button>
-          
-          <span className="usermeta heading">
-            Username - {profileInformation?.username}
-          </span><br></br>
 
-          <span className="usermeta heading">
-            Email - {profileInformation?.email}
-          </span><br></br>
+          </div>
 
-          <span className="usermeta heading">
-            Joined at - {joinedDate}
-          </span>
-        
         </Spin>
 
       </Drawer>
