@@ -1,8 +1,9 @@
-import { Col, DatePicker, Form, Input, Modal, Row, Spin } from "antd";
+import { Col, DatePicker, Form, Input, Modal, Row, Spin, Select } from "antd";
 import React, { useEffect, useState } from "react";
 import { getStudyData, updateStudyData } from "../../apis/studiesApi";
 import NotificationMessage from "../NotificationMessage";
 import dayjs from "dayjs";
+import { descriptionOptions } from "../../helpers/utils";
 
 const EditStudy = ({
   isEditModalOpen,
@@ -29,7 +30,7 @@ const EditStudy = ({
           patient_name: resData?.Patient_name,
           accession_number: resData?.Accession_number,
           study_description: resData?.Study_description,
-          dob: resData.DOB && dayjs(resData.DOB, "DD/MM/YYYY"),
+          dob: resData.DOB !== ""?resData.DOB && dayjs(resData.DOB, "DD/MM/YYYY"):"",
           gender: resData?.Gender,
           referring_physician: resData?.Referring_physician_name,
         };
@@ -40,11 +41,15 @@ const EditStudy = ({
   };
 
   const handleSubmit = (values) => {
+    console.log(values);
     const modifiedData = {
       ...values,
       id: studyID,
-      dob: values.dob.format("DD/MM/YYYY"),
+      dob: values.dob !== ""?values.dob.format("DD/MM/YYYY"):"",
+      study_history : values?.study_history == undefined?"":values?.study_history
     };
+
+
     updateStudyData(modifiedData)
       .then((res) => {
         NotificationMessage("success", "Study Updated Successfully");
@@ -54,6 +59,11 @@ const EditStudy = ({
       })
       .catch((err) => console.log(err));
   };
+
+  const GenderSelectionOption = [
+    { label: "Male", value: "Male"}, 
+    { label: "Female", value: "Female"}
+  ]
 
   return (
     <Modal
@@ -80,6 +90,9 @@ const EditStudy = ({
           className="mt"
         >
           <Row gutter={15}>
+
+            {/* ==== Patient id ====  */}
+
             <Col lg={12}>
               <Form.Item
                 name="patient_id"
@@ -95,6 +108,9 @@ const EditStudy = ({
                 <Input placeholder="Enter Patient's Id" disabled />
               </Form.Item>
             </Col>
+                
+            {/* ==== Patient name ====  */}
+
             <Col lg={12}>
               <Form.Item
                 name="patient_name"
@@ -110,6 +126,9 @@ const EditStudy = ({
                 <Input placeholder="Enter Patient's Name" />
               </Form.Item>
             </Col>
+
+            {/* ==== Accession number ====  */}
+
             <Col lg={12}>
               <Form.Item
                 name="accession_number"
@@ -125,13 +144,15 @@ const EditStudy = ({
                 <Input placeholder="Enter Accession Number" />
               </Form.Item>
             </Col>
+
+            {/* ==== Date of brith information ====  */}
+
             <Col lg={12}>
               <Form.Item
                 name="dob"
                 label="Date of Birth"
                 rules={[
                   {
-                    required: true,
                     message: "Please enter DOB",
                   },
                 ]}
@@ -139,43 +160,84 @@ const EditStudy = ({
                 <DatePicker format={"DD/MM/YYYY"} />
               </Form.Item>
             </Col>
+
+            {/* ==== Study description ====  */}
+
             <Col lg={12}>
               <Form.Item
                 name="study_description"
                 label="Description"
+                className="category-select"
                 rules={[
                   {
-                    required: true,
                     whitespace: true,
                     message: "Please enter Description",
                   },
                 ]}
               >
-                <Input placeholder="Enter Description" />
+                <Select
+                    placeholder="Select Study Description"
+                    options={descriptionOptions}
+                    showSearch
+                    filterSort={(optionA, optionB) =>
+                      (optionA?.label ?? "")
+                        .toLowerCase()
+                        .localeCompare((optionB?.label ?? "").toLowerCase())
+                    }
+                  />
               </Form.Item>
             </Col>
+
+            <Col lg={12}>
+              <Form.Item
+                name="study_history"
+                label="study History"
+                rules={[
+                  {
+                    whitespace: true,
+                    message: "Please, Enter Study History",
+                  },
+                ]}
+              >
+                <Input placeholder="Enter Study History" />
+              </Form.Item>
+            </Col>
+
+            {/* ==== Gender information ====  */}
+
             <Col lg={12}>
               <Form.Item
                 name="gender"
                 label="Gender"
                 rules={[
                   {
-                    required: true,
                     whitespace: true,
                     message: "Please enter Gender",
                   },
                 ]}
               >
-                <Input placeholder="Enter Gender" />
+                <Select
+                    placeholder="Select Gender"
+                    options={GenderSelectionOption}
+                    showSearch
+                    className="category-select"
+                    filterSort={(optionA, optionB) =>
+                      (optionA?.label ?? "")
+                        .toLowerCase()
+                        .localeCompare((optionB?.label ?? "").toLowerCase())
+                    }
+                  />
               </Form.Item>
             </Col>
+
+            {/* ==== Referring Physician information =====  */}
+
             <Col lg={12}>
               <Form.Item
                 name="referring_physician"
                 label="Referring Physician"
                 rules={[
                   {
-                    required: true,
                     whitespace: true,
                     message: "Please enter Referring Physician",
                   },
@@ -184,51 +246,7 @@ const EditStudy = ({
                 <Input placeholder="Enter Referring Physician" />
               </Form.Item>
             </Col>
-            {/* <Col lg={12}>
-              <Form.Item
-                name="country"
-                label="Study Series Count"
-                rules={[
-                  {
-                    required: true,
-                    whitespace: true,
-                    message: "Please enter Study Series Count",
-                  },
-                ]}
-              >
-                <Input placeholder="Enter Study Series Count" />
-              </Form.Item>
-            </Col> */}
-            {/* <Col lg={12}>
-              <Form.Item
-                name="country"
-                label="Operator Name"
-                rules={[
-                  {
-                    required: true,
-                    whitespace: true,
-                    message: "Please enter Operator Name",
-                  },
-                ]}
-              >
-                <Input placeholder="Enter Operator Name" />
-              </Form.Item>
-            </Col> */}
-            {/* <Col lg={12}>
-              <Form.Item
-                name="country"
-                label="Institution Name"
-                rules={[
-                  {
-                    required: true,
-                    whitespace: true,
-                    message: "Please enter Institution Name",
-                  },
-                ]}
-              >
-                <Input placeholder="Enter Institution Name" />
-              </Form.Item>
-            </Col> */}
+
           </Row>
         </Form>
       </Spin>

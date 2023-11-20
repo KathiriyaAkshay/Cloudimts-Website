@@ -22,10 +22,6 @@ const AdvancedSearchModal = ({
   const [modalityOptions, setModalityOptions] = useState([]);
   const [statusOptions, setStatusOptions] = useState([
     {
-      label: "Unassigned",
-      value: "Unassigned",
-    },
-    {
       label: "New",
       value: "New",
     },
@@ -38,16 +34,20 @@ const AdvancedSearchModal = ({
       value: "Assigned",
     },
     {
-      label: "In Reporting",
-      value: "In Reporting",
-    },
-    {
-      label: "Draft",
-      value: "Draft",
+      label: "Reporting",
+      value: "Reporting",
     },
     {
       label: "Reported",
       value: "Reported",
+    },
+    {
+      label: "ViewReport",
+      value: "ViewReport",
+    },
+    {
+      label: "ClosedStudy",
+      value: "ClosedStudy",
     },
   ]);
 

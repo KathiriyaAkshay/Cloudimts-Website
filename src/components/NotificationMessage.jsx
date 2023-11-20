@@ -4,7 +4,8 @@ const NotificationMessage = (
   alertType,
   alertMessage,
   description,
-  duration
+  duration, 
+  placement 
 ) => {
   const _className =
     alertType === "success"
@@ -19,7 +20,7 @@ const NotificationMessage = (
     className: _className,
     description,
     duration: duration === undefined ?3:duration,
-    placement : "bottomRight"
+    placement : placement === undefined ?"topRight": placement
   });
 };
 

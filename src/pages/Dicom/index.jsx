@@ -14,7 +14,6 @@ import {
   deleteStudy,
   filterStudyData,
   getAllStudyData,
-  getInstanceData,
   updateStudyStatus,
   updateStudyStatusReported,
 } from "../../apis/studiesApi";
@@ -43,27 +42,52 @@ import * as XLSX from "xlsx";
 const BASE_URL = import.meta.env.VITE_APP_SOCKET_BASE_URL;
 const Dicom = () => {
 
+  // Modal related useState 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isStudyModalOpen, setIsStudyModalOpen] = useState(false);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
   const [isShareStudyModalOpen, setIsShareStudyModalOpen] = useState(false);
+
+  // Breadcumbs information 
   const { changeBreadcrumbs } = useBreadcrumbs();
+  
+  // For Chatlayout 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [messages, setMessages] = useState([]);
-  const [expandedRows, setExpandedRows] = useState([]);
+
+  // Pagination and Total page information handling 
   const [pagi, setPagi] = useState({ page: 1, limit: 10 });
   const [totalPages, setTotalPages] = useState(0);
+  const [limit, setLimit] = useState(10);
+  const [Pagination, setPagination] = useState({
+    page: 1,
+    limit: limit,
+    total: totalPages,
+    search: "",
+    order: "desc",
+  });
+
+  // Loader 
   const [isLoading, setIsLoading] = useState(false);
+  
+  // Permission information context 
+  const { permissionData } = useContext(UserPermissionContext);
+  
+  const {isStudyExportModalOpen, setIsStudyExportModalOpen} = useContext(filterDataContext) ; 
+  
+  // Modal passing attributes information  
+
   const [studyID, setStudyID] = useState(null);
   const [seriesID, setSeriesID] = useState(null);
   const [personName, setPersonName] = useState(null);
-  const { permissionData } = useContext(UserPermissionContext);
-  const {isStudyExportModalOpen, setIsStudyExportModalOpen} = useContext(filterDataContext) ; 
   const [studyExportLoading, setStudyExportLoading] = useState(false) ; 
   const [patientId, setPatientId] = useState("") ; 
   const [patientName, setPatientName] = useState("") ; 
+  const [studyStatus, setStudyStatus] = useState("");
+
+  // Normal studies information, System filter and Main filter payload information  
 
   const {
     studyData,
@@ -78,40 +102,16 @@ const Dicom = () => {
   const { isFilterSelected, isAdvanceSearchSelected } = useContext(
     FilterSelectedContext
   );
-  const [studyStatus, setStudyStatus] = useState("");
-  const [limit, setLimit] = useState(10);
 
-  // ==== Study Pagination 
-  const [Pagination, setPagination] = useState({
-    page: 1,
-    limit: limit,
-    total: totalPages,
-    search: "",
-    order: "desc",
-  });
   const [quickFilterPayload, setQuickFilterPayload] = useState({});
+
   const [advanceSearchPayload, setAdvanceSearchPayload] = useState({});
 
+  // Series id list for Instance count information 
   const [seriesIdList, setSeriesIdList] = useState([]) ; 
- 
-  useEffect(() => {
-    setSystemFilterPayload({});
-    setStudyDataPayload({});
-  }, []);
+  const [previousSeriesResponse, setPreviousSeriesResponse] = useState(null) ; 
 
-  // Pagination Handler 
-
-  useEffect(() => {
-    setPagi(Pagination) ; 
-    if (
-      !isFilterSelected &&
-      Object.keys(systemFilterPayload).length === 0 &&
-      Object.keys(studyDataPayload).length === 0 &&
-      !isAdvanceSearchSelected
-    ) {
-      retrieveStudyData(Pagination);
-    }
-  }, [Pagination, isFilterSelected, studyDataPayload, systemFilterPayload]);
+  const [notificationValue, setNotificationValue] = useState(0); 
 
   const SetupGenralChatNotification = () => {
 
@@ -123,23 +123,25 @@ const Dicom = () => {
 
     ws.onmessage = (event) => {
       try {
-        const eventData = JSON.parse(event.data) ;
-        
+        const eventData = JSON.parse(event.data) ;        
         if (eventData.payload.status === "new-chat"){
   
           let ChatData = eventData.payload.data; 
+
+          console.log("Study data  information ========>");
+          console.log(studyData);
   
           studyData.map((element) => {
             if (element.series_id === ChatData.room_name){
-              console.log("Match");
-              NotificationMessage("success", "New chat message", `Message send by ${ChatData.sender_username} for Patient - ${element.name} and StudyId - ${element.id}`, 5) ;  
+              NotificationMessage("success", 
+              "New chat message", `Message send by ${ChatData.sender_username} for Patient - ${element.name} and StudyId - ${element.id}`, 
+              5, 
+              "bottomRight") ;  
             }
           })
         }
         
       } catch (error) {
-        console.log("Chat notification error message information ========>");
-        console.log(error);
       }
     }
 
@@ -152,38 +154,20 @@ const Dicom = () => {
     };
 
   }
-  
-  useEffect(() => {
-    changeBreadcrumbs([{ name: "Study Data" }]);
-    setStudyIdArray([]);
-    SetupGenralChatNotification() ; 
-  }, []);
 
-  useEffect(() => {
-    setTimeout(() => {
-      FetchSeriesCountInformation() ; 
-    }, 5000);
-  }, [])
-  
-  const onShowSizeChange = (current, pageSize) => {
-    setLimit(pageSize);
-    if (Object.keys(studyDataPayload).length > 0) {
-    } else if (Object.keys(systemFilterPayload).length > 0) {
-    } else {
-      setPagination((prev) => ({ ...prev, page: current, limit: pageSize }));
-    }
-  };
+  // APICall Reterive initial Studydata 
 
-  const retrieveStudyData = (pagination, values = {}) => {
+  const retrieveStudyData = (pagination) => {
+
     setIsLoading(true);
+    
     const currentPagination = pagination || pagi;
+    
     getAllStudyData({
       page_size: currentPagination.limit || 10,
       page_number: currentPagination.page,
       all_premission_id: JSON.parse(localStorage.getItem("all_permission_id")),
-      all_assign_id: JSON.parse(localStorage.getItem("all_assign_id")),
-      deleted: false,
-      deleted_skip: true,
+      all_assign_id: JSON.parse(localStorage.getItem("all_assign_id"))
     })
       .then((res) => {
         
@@ -200,18 +184,56 @@ const Dicom = () => {
           };
         });
 
-        // Extract series_id into temp array
         const temp = res.data.data.map(data => data?.series_id).filter(Boolean);
 
+        // Set StudyData 
         setStudyData(modifiedData);
         setTotalPages(res.data.total_object);
+        
+        // Set Studies series count for countinues Instance count 
         setSeriesIdList([...temp]) ; 
 
       })
       .catch((err) => console.log(err));
+
     setIsLoading(false);
   };
 
+  // ==== Setup Pagination and load initail study data ==== // 
+
+  useEffect(() => {
+
+    setPagi(Pagination) ; 
+
+    if ( !isFilterSelected && Object.keys(systemFilterPayload).length === 0 && Object.keys(studyDataPayload).length === 0 &&!isAdvanceSearchSelected ) {
+      
+      // If not selected any filter and Systemfilter, studyDatapayload length empty than call normal reterive stuydData API 
+      retrieveStudyData(Pagination);
+    }
+
+  }, [Pagination, isFilterSelected, studyDataPayload, systemFilterPayload]);
+
+  // ==== Setup Chat Notification socket connection ===== // 
+
+  useEffect(() => {
+
+    if (!isLoading && studyData.length !== 0 && notificationValue === 0) {
+      setNotificationValue(1);
+      SetupGenralChatNotification();
+    }
+
+  }, [isLoading, studyData, notificationValue]) ; 
+
+  useEffect(() => {
+    setSystemFilterPayload({});
+    setStudyDataPayload({});
+    changeBreadcrumbs([{ name: "Study Data" }]);
+    setStudyIdArray([]);
+  
+  }, []);
+
+  // ==== Setup Instance count API Calling ==== // 
+  
   const FetchSeriesCountInformation = async () => {
 
     let requestPayload  = {
@@ -223,6 +245,8 @@ const Dicom = () => {
     if (responseData === false){
     
     } else if (responseData['status'] === true){
+      
+      console.log(responseData['data']); 
 
       setStudyData((prev) => {
         return prev.map((element) => {
@@ -232,23 +256,55 @@ const Dicom = () => {
             return { ...element, count: foundSeriesData.series_instance };
         }
         return element;
+
         })
       })
+
+      if (previousSeriesResponse != JSON.stringify(responseData['data'])){
+        console.log("Not same response =========>");
+        setPreviousSeriesResponse(JSON.stringify(responseData['data'])) ; 
+        // await FetchSeriesCountInformation() ; 
+      } else {
+
+        console.log("Same response ==============>");
+      }
     }
   }
 
+  useEffect(() => {
+
+    if (!isLoading && studyData.length !== 0){
+      // FetchSeriesCountInformation() ; 
+    }
+  }, [isLoading, studyData])
+
+  // ==== Pagination number of page change handler ==== // 
+  
+  const onShowSizeChange = (current, pageSize) => {
+    setLimit(pageSize);
+  
+    if (Object.keys(studyDataPayload).length === 0 && Object.keys(systemFilterPayload).length === 0) {
+      setPagination((prev) => ({ ...prev, page: current, limit: pageSize }));
+    }
+  };
+  
   const quickFilterStudyData = (pagination, values = {}) => {
+    
     setIsLoading(true);
     setQuickFilterPayload(values);
+    
     filterStudyData({
       filter: values,
       page_size: pagination?.limit || 10,
       page_number: pagination?.page || 1,
       all_permission_id: JSON.parse(localStorage.getItem("all_permission_id")),
-      all_assign_id: JSON.parse(localStorage.getItem("all_assign_id")),
-      deleted_skip: true,
+      all_assign_id: JSON.parse(localStorage.getItem("all_assign_id")) , 
+      deleted_skip: false
     })
       .then((res) => {
+
+        setIsLoading(false) ; 
+
         const resData = res.data.data.map((data) => ({
           ...data,
           name: data.study.patient_name,
@@ -256,26 +312,38 @@ const Dicom = () => {
           patient_id: data?.study?.patient_id,
           study_id: data?.study?.id,
           key: data.id,
+          count: 0 ,
+          institution_id: data.institution.id
         }));
+
+        // Set Study data
         setStudyData(resData);
         setTotalPages(res.data.total_object);
+
+        const temp = res.data.data.map(data => data?.series_id).filter(Boolean);
+        setSeriesIdList([...temp]) ; 
+
       })
       .catch((err) => console.log(err));
     setIsLoading(false);
   };
 
   const advanceSearchFilterData = (pagination, values = {}) => {
+
     setIsLoading(true);
     setAdvanceSearchPayload(values);
+    
     advanceSearchFilter({
       ...values,
       page_size: pagination?.limit || 10,
       page_number: pagination?.page || 1,
       all_premission_id: JSON.parse(localStorage.getItem("all_permission_id")),
-      all_assign_id: JSON.parse(localStorage.getItem("all_assign_id")),
-      // deleted_skip: true,
+      all_assign_id: JSON.parse(localStorage.getItem("all_assign_id"))
     })
       .then((res) => {
+
+        setIsLoading(false) ; 
+
         const resData = res.data.data.map((data) => ({
           ...data,
           name: data.study.patient_name,
@@ -283,11 +351,23 @@ const Dicom = () => {
           patient_id: data?.study?.patient_id,
           study_id: data?.study?.id,
           key: data.id,
+          count: 0  , 
+          institution_id: data.institution.id
         }));
+    
+        console.log("Response data information ========>");
+        console.log(resData); 
+
+        // set StudyData
         setStudyData(resData);
         setTotalPages(res.data.total_object);
+        
+        const temp = res.data.data.map(data => data?.series_id).filter(Boolean);
+        setSeriesIdList([...temp]) ; 
+
       })
       .catch((err) => console.log(err));
+    
     setIsLoading(false);
   };
 
@@ -591,48 +671,15 @@ const Dicom = () => {
       setStudyIdArray((prev) => selectedRows?.map((data) => data.id));
     },
     getCheckboxProps: (record) => ({
-      // Column configuration not to be checked
       id: record.id,
     }),
   };
 
-  const handleRowClick = (record) => {
-    const isRowExpanded = expandedRows.includes(record.id);
 
-    if (isRowExpanded) {
-      setExpandedRows(expandedRows.filter((key) => key !== record.id));
-    } else {
-      setExpandedRows([...expandedRows, record.id]);
-    }
-  };
+  // ===== Study Export option Handling ====== // 
 
-  const expandableConfig = {
-    expandedRowRender: (record) => (
-      <p style={{ margin: 0 }}>
-        <DicomViewer dicomUrl={record?.study?.study_original_id} />
-        {/* {retrieveStudyInstance(record?.study?.study_original_id)} */}
-      </p>
-    ),
-  };
-
-  const onRow = (record) => ({
-    onClick: () => handleRowClick(record),
-    onDoubleClick: () => handleCellDoubleClick(record),
-  });
-
-  const handleCellDoubleClick = (record) => {
-
-    if (record.status === "Assigned" || record.status === "Reporting") {
-      updateStudyStatus({ id: record.id })
-        .then((res) => {
-        })
-        .catch((err) => {
-          console.error(err);
-        });
-    }
-  };
-  
   const StudyExportOptionHandler = async (values) => {
+
     let from_date = values?.from_date?.format("YYYY-MM-DD") ; 
     let to_date = values?.to_date?.format("YYYY-MM-DD") ; 
 
@@ -647,7 +694,6 @@ const Dicom = () => {
 
     let responseData = await APIHandler("POST", requestPayload, "studies/v1/study-export") ; 
 
-
     setStudyExportLoading(false) ;
     setIsStudyExportModalOpen(false) ; 
 
@@ -659,14 +705,17 @@ const Dicom = () => {
       let studyExportArrayData = []
 
       responseData['data'].map((element) => {
+
         studyExportArrayData.push({
           "Patient id": element?.study?.patient_id, 
           "Patient name": element?.study?.patient_name, 
           "Id": element?.id, 
           "Modality": element?.modality, 
+          "Study Description": element?.study_description,
           "Institution name": element?.institution?.name, 
           "Status": element?.status, 
           "Urgent case": element?.urgent_case, 
+          "Study date": element?.created_at,
           "Updated at": element?.updated_at
         })
       })
@@ -674,27 +723,22 @@ const Dicom = () => {
       const workbook = XLSX.utils.book_new();
       const sheetName = `Study-export-${to_date}`;
     
-      // Convert your data to worksheet
       const worksheet = XLSX.utils.json_to_sheet(studyExportArrayData);
-    
-      // Add the worksheet to the workbook
       XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
     
-      // Generate a blob from the workbook
       const arrayBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
     
-      // Create a blob from the ArrayBuffer
       const blob = new Blob([arrayBuffer], {
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       });
     
-      // Create a unique file name
       const fileName = `Study-export-${from_date}-${to_date}.xlsx`;
     
-      // Save the file using file-saver
       saveAs(blob, fileName);
     }
   }
+
+  // ==== Email Share option handling 
 
   const [form] = Form.useForm();
 
@@ -732,26 +776,49 @@ const Dicom = () => {
     }
   }
 
+  // Function === OnRow click handle 
 
+  const onRow = (record) => ({
+    onDoubleClick: () => handleCellDoubleClick(record),
+  });
+
+  // Function ==== onRow doubleClick handler  
+
+  const handleCellDoubleClick = (record) => {
+
+    if (record.status === "Assigned" || record.status === "Reporting") {
+      updateStudyStatus({ id: record.id })
+        .then((res) => {
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    }
+  };
+  
 
   return (
     <>
       <Table
+      
         className="Study-table"
         dataSource={studyData}
         columns={columns}
-         scroll={{ y: 475,x:1500}}
+        scroll={{ y: 475,x:1500}}
 
         expandable={{
           expandedRowRender: (record) => (
             <p style={{ margin: 0 }}>
               <DicomViewer dicomUrl={record?.study?.study_original_id} />
             </p>
-          ),
+          )
         }}
+      
         rowSelection={rowSelection}
         onRow={onRow}
         loading={isLoading}
+      
+        // Pagination handle 
         pagination={{
           current: Pagination.page,
           pageSize: limit,
@@ -786,10 +853,11 @@ const Dicom = () => {
             }
             setPagination({ ...Pagination, page, limit: pageSize });
           },
-          
           onShowSizeChange: onShowSizeChange,
         }}
       />
+
+      {/* ==== Edit study details option modal =====  */}
 
       <EditStudy
         isEditModalOpen={isEditModalOpen}
@@ -797,6 +865,8 @@ const Dicom = () => {
         studyID={studyID}
         setStudyID={setStudyID}
       />
+
+      {/* ==== Assign study option modal ====  */}
 
       <AssignStudy
         isAssignModalOpen={isAssignModalOpen}
@@ -869,12 +939,16 @@ const Dicom = () => {
 
       </Drawer>
       
+      {/* ==== Quick Filter option modal ====  */}
+
       <QuickFilterModal
         name={"Study Quick Filter"}
         retrieveStudyData={retrieveStudyData}
         setStudyData={setStudyData}
         quickFilterStudyData={quickFilterStudyData}
       />
+
+      {/* ==== Advance filter option modal =====  */}
       
       <AdvancedSearchModal
         name={"Advance Search"}

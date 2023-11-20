@@ -23,22 +23,58 @@ const StudyNotificationProvider = ({ children }) => {
       try {
         const eventData = JSON.parse(event.data);
   
-        if (eventData.payload.status === "update-study") {
-  
-          // Update Study details handler 
-  
-          const updatedData = studyData.map((data) => {
-            if (data.id === eventData.payload.data.id)
-              return eventData.payload.data;
-            else data;
-          });
-          
-          setStudyData(updatedData);
-          
-          NotificationMessage(
-            "success",
-            `Study #${eventData.payload.data.id} has been updated`
-          );
+        if (eventData.payload.status === "update-study") {  
+          try {
+            
+            const { id, study, institution } = eventData.payload.data;
+
+            setStudyData(prevStudyData => {
+              const updatedData = prevStudyData.map(data =>
+                data.id === id
+                  ? {
+                      ...data,
+                      name: study?.patient_name,
+                      institution: institution?.name,
+                      patient_id: study?.patient_id,
+                      study_id: study?.id,
+                      key: id,
+                      count: 0,
+                      institution_id: institution?.id
+                    }
+                  : data
+              );
+              return updatedData;
+            });
+
+          } catch (error) {
+            
+          }
+
+          // try {
+          //   console.log("Update studies details functionality call ==========>");
+          //   console.log(eventData.payload.data);
+    
+              
+          //   const updatedData = studyData.map((data) => {
+          //     if (data.id === eventData.payload.data.id){
+
+          //       // return {...StudyData,
+          //       //   name: StudyData.study.patient_name, 
+          //       //   institution: StudyData?.institution?.name, 
+          //       //   patient_id: StudyData?.study?.patient_id, 
+          //       //   study_id: StudyData?.study?.id, 
+          //       //   key: StudyData?.id,
+          //       //   count: 0, 
+          //       //   institution_id: StudyData?.institution?.id
+          //       // };
+          //     }
+          //     else data;
+          //   });
+            
+          //   setStudyData(updatedData);
+          // } catch (error) {
+            
+          // }
         
         } else if (eventData.payload.status === "Viewed") {
   
