@@ -141,11 +141,10 @@ const ReportSummary = () => {
 
     return (
         <>
-            <div className="report-summary-main">
                 <div className="report-summary-wrapper">
                     <div>logo</div>
                     <div className="report-summary-header">
-                        <div>Study Reports</div>
+                        <div style={{marginLeft:"0.4rem",fontWeight:"600"}}>Study Reports</div>
                         <div className="report-summary-buttons">
                             <Button className="primary-thin-button" onClick={toggleShowState} borderColorDisabled>
                                 + Patient Details
@@ -263,7 +262,7 @@ const ReportSummary = () => {
                         </Card>
                     </div>
                 </div>
-            </div>
+            
         </>
     )
 
