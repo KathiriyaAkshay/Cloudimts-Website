@@ -12,7 +12,6 @@ import {
 import React, { useEffect, useState } from "react";
 import {
   fetchAssignStudy,
-  getRadiologistList,
   getStudyData,
   postAssignStudy,
   uploadImage,
@@ -319,7 +318,6 @@ const AssignStudy = ({
                   <Select
                     placeholder="Select Study Description"
                     options={descriptionOptions}
-                    // mode="multiple"
                     showSearch
                     filterSort={(optionA, optionB) =>
                       (optionA?.label ?? "")
