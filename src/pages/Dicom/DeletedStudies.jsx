@@ -53,6 +53,7 @@ const DeletedStudies = () => {
       sort_option: false,
     })
       .then((res) => {
+         if (res.data.status) {
         const resData = res.data.data.map((data) => ({
           ...data,
           name: data.study.patient_name,
@@ -63,16 +64,33 @@ const DeletedStudies = () => {
         }));
         setStudyData(resData);
         setTotalPages(res.data.total_object);
+        } else {
+          NotificationMessage(
+            'warning',
+            'Network request failed',
+            res.data.message
+          )
+        }
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        NotificationMessage('warning', 'Network request failed')
+      });
     setIsLoading(false);
   };
 
   const backupStudyData = async (id) => {
     await backupStudy({ id })
       .then((res) => {
+         if (res.data.status) {
         NotificationMessage("success", "Study Backup Successfully");
         retrieveStudyData();
+        } else {
+          NotificationMessage(
+            'warning',
+            'Network request failed',
+            res.data.message
+          )
+        }
       })
       .catch((err) => NotificationMessage("error", err.response.data.message));
   };
