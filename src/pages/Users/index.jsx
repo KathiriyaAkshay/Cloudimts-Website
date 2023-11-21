@@ -31,11 +31,11 @@ import { UserPermissionContext } from '../../hooks/userPermissionContext'
 import NotificationMessage from '../../components/NotificationMessage'
 
 const Users = () => {
+  
   const [tableData, setTableData] = useState([])
   const [isLoading, setIsLoading] = useState(false)
   const [pagi, setPagi] = useState({ page: 1, limit: 10 })
   const [totalPages, setTotalPages] = useState(0)
-  const token = localStorage.getItem('token')
   const [logsData, setLogsData] = useState([])
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const { permissionData } = useContext(UserPermissionContext)

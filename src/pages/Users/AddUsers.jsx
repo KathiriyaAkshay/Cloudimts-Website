@@ -658,6 +658,7 @@ const AddUsers = () => {
                 {!id && (
                   <>
                     {' '}
+
                     <Col lg={8} md={12} sm={12}>
                       <Form.Item
                         label='Password'
@@ -679,6 +680,7 @@ const AddUsers = () => {
                         />
                       </Form.Item>
                     </Col>
+
                     <Col lg={8} md={12} sm={12}>
                       <Form.Item
                         label='Confirm Password'
@@ -720,17 +722,16 @@ const AddUsers = () => {
 
                 <Col xs={24} sm={24} md={24} lg={24} className="justify-end">
 
-                  {id && (
-                    <Button
-                      type='primary'
-                      onClick={() => {
-                        handleNextStep()
-                      }}
-                      style={{ marginLeft: '10px' }}
-                    >
-                      Next
-                    </Button>
-                  )}
+                  <Button
+                    type='primary'
+                    onClick={() => {
+                      handleNextStep()
+                    }}
+                    style={{ marginLeft: '10px' }}
+                  >
+                    Next
+                  </Button>
+                  
                 </Col>
 
               </Row>
