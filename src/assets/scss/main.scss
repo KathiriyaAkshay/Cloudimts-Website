@@ -1693,3 +1693,132 @@
   margin-top: 0.5rem;
   border-radius: 10px;
 }
+
+// .report-summary-main{
+//   width: 100%;
+//   height: 100vh;
+//   background-color: #f5f5f5;  
+//   display: flex;
+//   justify-content: center;
+//   align-items:center;
+// }
+
+.report-summary-wrapper{
+  // padding: 0.5rem;
+  width: 100%;
+  height: 100vh;
+  // backdrop-filter: blur(16px) saturate(135%);
+  // -webkit-backdrop-filter: blur(16px) saturate(135%);
+  background-color:rgba(238, 238, 238, 0.88);
+  border-radius: 10px;
+  box-shadow: 0 0 13px 1px rgba(0, 0, 0, 0.15);
+  display: flex;
+  justify-content:flex-start ;
+  align-items: center;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-bottom: 0.5rem;
+}
+
+.report-summary-wrapper>div{
+  margin-top: 0.5rem;
+}
+
+.report-summary-header{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 95%;
+  background-color: white;
+  font-size: 1.3rem;
+  padding:0.7rem 0;
+  border-radius: 10px;
+}
+
+.report-summary-header>button{
+  color: transparent;
+  color: white I !important;
+}
+
+.report-summary-buttons>button{
+   margin-right: 0.5rem;
+}
+.report-summary-patient-details{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items: center;
+  width: 100%;
+  height: max-content;
+}
+
+.report-summary-patient-details>div{
+  width: 50%;
+}
+
+.w-95{
+  width: 95%;
+}
+
+
+
+
+.bold-text{
+  font-weight: 600;
+}
+
+.red-color-button{
+  background-color: rgb(218, 0, 0) !important;
+}
+
+.primary-thin-button{
+  border-color: #1677ff;
+  color: #1677ff;
+  border-width:1px;
+}
+
+.Green-option-add-button{
+  border-color: rgb(1, 194, 14);
+  color: rgb(20, 194, 1);
+  border-width:2px;
+}
+
+.Green-option-add-button:hover{
+  background-color: rgb(15, 151, 0);
+  border-color: rgb(1, 194, 14) !important;
+  color: white !important;
+}
+
+
+.Danger-button{
+  border-color: rgb(227, 0, 0);
+  color: rgb(227, 0, 0);
+  border-width:1px;
+}
+
+.Danger-button:hover{
+  background-color: rgb(227, 0, 0);
+  border-color: rgb(227, 0, 0) !important;
+  color: white !important;
+}
+
+.Reset-button{
+  border-color: rgb(227, 140, 0);
+  color: rgb(227, 140, 0);
+  border-width:1px;
+}
+
+.Reset-button:hover{
+  background-color: rgb(227, 140, 0);
+  border-color: rgb(227, 140, 0) !important;
+  color: white !important;
+}
+
+thead>tr>th{
+ text-align: center !important;
+}
+
+.pt-1{
+  padding-top: 1rem;
+}

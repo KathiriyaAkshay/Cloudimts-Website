@@ -633,20 +633,20 @@ const CustomReportHeaderGenerator = ({institutionId, isModalOpen}) => {
                             
                             <div style={{padding: "10px", paddingTop:"8px", paddingBottom: "8px"}}>
                                 <Tooltip title="save">
-                                    <Button type="primary" shape="circle" icon={<SaveOutlined />} 
+                                    <Button className='Green-option-add-button' shape="circle" icon={<SaveOutlined />} 
                                         onClick={SaveReportOptionHandle}/>
                                 </Tooltip>
                             </div>
 
                             <div style={{padding: "10px", paddingTop:"8px", paddingBottom: "8px"}}>
                                 <Tooltip title="reset">
-                                    <Button type="primary" shape="circle" icon={<ReloadOutlined />} onClick={ResetOptionHandle}/>
+                                    <Button className="Reset-button" shape="circle" icon={<ReloadOutlined />} onClick={ResetOptionHandle}/>
                                 </Tooltip>
                             </div>
 
                             <div style={{padding: "10px", paddingTop:"8px", paddingBottom: "8px"}}>
                                 <Tooltip title="close">
-                                    <Button type="primary" shape="circle" icon={<CloseOutlined />}  
+                                    <Button shape="circle" className="Danger-button" icon={<CloseOutlined /> }  
                                     onClick={closePopupDiv}/>
                                 </Tooltip>
                             </div>                        
@@ -663,14 +663,13 @@ const CustomReportHeaderGenerator = ({institutionId, isModalOpen}) => {
                             
                             <Button
                                 onClick={handleAdd}
-                                type="primary"
-                                className='Report-option-add-button'
+                                className='Report-option-add-button Green-option-add-button'
                                 style={{
                                     marginTop: "auto", 
                                     marginBottom: "auto"
                                 }}
                             >
-                                Add a row
+                                + Add a row
                             </Button>
 
                             <div className='Report-option-title' 
@@ -714,14 +713,13 @@ const CustomReportHeaderGenerator = ({institutionId, isModalOpen}) => {
                             
                             <Button
                                 onClick={handleAddSec}
-                                type="primary"
-                                className='Report-option-add-button'
+                                className='Report-option-add-button Green-option-add-button'
                                 style={{
                                     marginTop: "auto", 
                                     marginBottom: "auto"
                                 }}
                             >
-                                Add a row
+                                + Add a row
                             </Button>
 
                             <div className='Report-option-title' 
