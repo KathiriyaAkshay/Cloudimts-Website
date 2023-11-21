@@ -373,7 +373,7 @@ const AddInstitution = () => {
       }))
       if (id) {
         updateInHouseUser({
-          id: id,
+          id: parseInt(id),
           in_house_radiologist: {
             data: values.house_radiologist ? values.house_radiologist : []
           }

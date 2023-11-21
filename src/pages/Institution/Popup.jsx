@@ -616,133 +616,140 @@ const CustomReportHeaderGenerator = ({institutionId, isModalOpen}) => {
 
     return (
         <div className='custom-header-wrapper' id="popup-main">
-            
+            <div className='custom-header-inner' style={{borderRadius: "5px", backgroundColor: "#FFFFFF"}}>
 
-                <div className='custom-header-inner' style={{borderRadius: "5px", backgroundColor: "#FFFFFF"}}>
-
-                    <Spin spinning = {isLoading}>
-                        
-                        <div className='pop-up-header'>
-                        
-                            <Title level={4}>
-                                Report setting
-                            </Title>
-                        
-                            <div className='pop-up-icons'>
-                                
-                                <div style={{padding: "10px", paddingTop:"8px", paddingBottom: "8px"}}>
-                                    <Tooltip title="save">
-                                        <Button type="primary" shape="circle" icon={<SaveOutlined />} 
-                                            onClick={SaveReportOptionHandle}/>
-                                    </Tooltip>
-                                </div>
-
-                                <div style={{padding: "10px", paddingTop:"8px", paddingBottom: "8px"}}>
-                                    <Tooltip title="reset">
-                                        <Button type="primary" shape="circle" icon={<ReloadOutlined />} onClick={ResetOptionHandle}/>
-                                    </Tooltip>
-                                </div>
-
-                                <div style={{padding: "10px", paddingTop:"8px", paddingBottom: "8px"}}>
-                                    <Tooltip title="close">
-                                        <Button type="primary" shape="circle" icon={<CloseOutlined />}  
-                                        onClick={closePopupDiv}/>
-                                    </Tooltip>
-                                </div>                        
-
-                            </div>
-
-                        </div>
-
-                        {/* ==== Patient report setting option handling ====  */}
-
-                        <div>
-
-                            <div className='Report-setting-option-title' style={{display: "flex", flexDirection: "row", marginBottom: "16px", marginTop: "8px"}}>
-                                
-                                <Button
-                                    onClick={handleAdd}
-                                    type="primary"
-                                    className='Report-option-add-button'
-                                    style={{
-                                        marginTop: "auto", 
-                                        marginBottom: "auto"
-                                    }}
-                                >
-                                    Add a row
-                                </Button>
-
-                                <div className='Report-option-title' 
-                                    style={
-                                        {
-                                            marginTop: "auto", 
-                                            marginBottom: "auto", 
-                                            fontSize: "16px", 
-                                            marginLeft: "16px"
-                                        }
-                                    }>
-                                    Patient report setting
-                                </div>
-
-
-                            </div>
+                <Spin spinning = {isLoading}>
+                    
+                    <div className='pop-up-header'>
+                    
+                        <Title level={4} className='Report-setting-option-header-info'>
+                            Report setting
+                        </Title>
+                    
+                        <div className='pop-up-icons'>
                             
-                            <Table
-                                components={components}
-                                rowClassName={() => 'editable-row'}
-                                dataSource={dataSource}
-                                columns={columns}
-                                scroll={{ y: 200 }}
-                                pagination={false}
-                                className='Insert-report-info-table'
-                            />
-
-                        </div>
-
-                        {/* ==== Instittuion report setting option handling =====  */}
-
-                        <div>
-                            <div className='Report-setting-option-title' style={{display: "flex", flexDirection: "row", marginBottom: "16px", marginTop: "16px"}}>
-                                
-                                <Button
-                                    onClick={handleAddSec}
-                                    type="primary"
-                                    className='Report-option-add-button'
-                                    style={{
-                                        marginTop: "auto", 
-                                        marginBottom: "auto"
-                                    }}
-                                >
-                                    Add a row
-                                </Button>
-
-                                <div className='Report-option-title' 
-                                    style={
-                                        {
-                                            marginTop: "auto", 
-                                            marginBottom: "auto", 
-                                            fontSize: "16px", 
-                                            marginLeft: "16px"
-                                        }
-                                    }>
-                                    Institution report setting
-                                </div>
-
-
+                            <div style={{padding: "10px", paddingTop:"8px", paddingBottom: "8px"}}>
+                                <Tooltip title="save">
+                                    <Button type="primary" shape="circle" icon={<SaveOutlined />} 
+                                        onClick={SaveReportOptionHandle}/>
+                                </Tooltip>
                             </div>
-                            <Table
-                                components={componentsSec}
-                                rowClassName={() => 'editable-row'} 
-                                dataSource={dataSourceSec}
-                                columns={columnsSec}
-                                scroll={{ y: 200 }}
-                                pagination={false}
-                            />
+
+                            <div style={{padding: "10px", paddingTop:"8px", paddingBottom: "8px"}}>
+                                <Tooltip title="reset">
+                                    <Button type="primary" shape="circle" icon={<ReloadOutlined />} onClick={ResetOptionHandle}/>
+                                </Tooltip>
+                            </div>
+
+                            <div style={{padding: "10px", paddingTop:"8px", paddingBottom: "8px"}}>
+                                <Tooltip title="close">
+                                    <Button type="primary" shape="circle" icon={<CloseOutlined />}  
+                                    onClick={closePopupDiv}/>
+                                </Tooltip>
+                            </div>                        
+
                         </div>
 
-                    </Spin>
-                </div>
+                    </div>
 
+                    {/* ==== Patient report setting option handling ====  */}
+
+                    <div style={{paddingLeft: "1rem", paddingRight: "1rem"}}>
+
+                        <div className='Report-setting-option-title' style={{display: "flex", flexDirection: "row", marginBottom: "16px", marginTop: "8px"}}>
+                            
+                            <Button
+                                onClick={handleAdd}
+                                type="primary"
+                                className='Report-option-add-button'
+                                style={{
+                                    marginTop: "auto", 
+                                    marginBottom: "auto"
+                                }}
+                            >
+                                Add a row
+                            </Button>
+
+                            <div className='Report-option-title' 
+                                style={
+                                    {
+                                        marginTop: "auto", 
+                                        marginBottom: "auto", 
+                                        fontSize: "16px", 
+                                        marginLeft: "16px", 
+                                        fontWeight: 600
+                                    }
+                                }>
+                                Patient report setting
+                            </div>
+
+
+                        </div>
+                        
+                        <Table
+                            components={components}
+                            rowClassName={() => 'editable-row'}
+                            dataSource={dataSource}
+                            columns={columns}
+                            scroll={{ y: 200 }}
+                            pagination={false}
+                            className='Insert-report-info-table'
+                        />
+
+                    </div>
+
+                    {/* ==== Instittuion report setting option handling =====  */}
+
+                    <div style={{
+                        paddingLeft: "1rem", 
+                        paddingRight: "1rem", 
+                        borderTopWidth: 1,
+                        borderTopColor: "#f5f5f5"
+                    }}>
+
+                        <div className='Report-setting-option-title' style={{display: "flex", flexDirection: "row", marginBottom: "16px", marginTop: "16px"}}>
+                            
+                            <Button
+                                onClick={handleAddSec}
+                                type="primary"
+                                className='Report-option-add-button'
+                                style={{
+                                    marginTop: "auto", 
+                                    marginBottom: "auto"
+                                }}
+                            >
+                                Add a row
+                            </Button>
+
+                            <div className='Report-option-title' 
+                                style={
+                                    {
+                                        marginTop: "auto", 
+                                        marginBottom: "auto", 
+                                        fontSize: "16px", 
+                                        marginLeft: "16px", 
+                                        fontWeight: 600 
+                                    }
+                                }>
+                                Institution report setting
+                            </div>
+
+
+                        </div>
+
+                        <Table
+                            components={componentsSec}
+                            rowClassName={() => 'editable-row'} 
+                            dataSource={dataSourceSec}
+                            columns={columnsSec}
+                            scroll={{ y: 200 }}
+                            pagination={false}
+                        />
+                    </div>
+
+                </Spin>
+
+            </div>
             
         </div>
 

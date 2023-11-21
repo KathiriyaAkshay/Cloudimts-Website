@@ -2,13 +2,11 @@ import React, { useEffect, useState } from "react";
 import {
   Steps,
   Button,
-  message,
   Form,
   Input,
   Card,
   Row,
   Col,
-  DatePicker,
   Switch,
   Select,
   TimePicker,
@@ -25,9 +23,6 @@ import dayjs from "dayjs";
 import UploadImage from "../../components/UploadImage";
 import { uploadFile } from "react-s3";
 import { uploadImage } from "../../apis/studiesApi";
-const S3_BUCKET = import.meta.env.VITE_APP_AMAZON_S3_BUCKET_NAME;
-const accessKeyId = import.meta.env.VITE_APP_AMAZON_ACCESS_KEY;
-const secretAccessKey = import.meta.env.VITE_APP_AMAZON_SECRET_KEY;
 
 const { Step } = Steps;
 
@@ -359,14 +354,10 @@ const AddUsers = () => {
     {
       title: "Modality",
       dataIndex: "name",
-      // sorter: (a, b) => {},
-      // editable: true,
     },
     {
       title: "Allowed",
       dataIndex: "isAllowed",
-      // sorter: (a, b) => {},
-      // editable: true,
       render: (text, record) => (
         <Form.Item name={`${record.id}_isAllowed`} valuePropName="checked">
           <Checkbox />
@@ -379,14 +370,21 @@ const AddUsers = () => {
     <div className="secondary-table">
       <Card>
         <Spin spinning={isLoading}>
+
           <Steps current={currentStep} className="mb">
+          
             <Step title="Basic Info" />
             <Step title="Availability" />
             <Step title="Assigned Details" />
             <Step title="Upload Signature" />
             <Step title="Modality" />
+          
           </Steps>
+
+          {/* ==== User basic details input information ====  */}
+          
           {currentStep === 0 && (
+          
             <Form
               labelCol={{
                 span: 24,
@@ -397,26 +395,37 @@ const AddUsers = () => {
               form={form}
               onFinish={handleSubmit}
               className="mt"
+              style={{marginTop: "20px"}}
             >
               <Row gutter={15}>
                 <Col xs={4} sm={4} md={4} lg={2}>
+                
                   <Form.Item
                     name="allow"
                     label="Active"
                     valuePropName="checked"
                   >
+                
                     <Switch />
+                
                   </Form.Item>
+                
                 </Col>
+
                 <Col xs={4} sm={4} md={22} lg={22}>
+                
                   <Form.Item
                     name="allow_offline_download"
                     label="Allow Offline Download"
                     valuePropName="checked"
                   >
+                
                     <Switch />
+                
                   </Form.Item>
+                
                 </Col>
+
                 <Col xs={24} sm={12} md={12} lg={8}>
                   <Form.Item
                     name="username"
@@ -432,6 +441,7 @@ const AddUsers = () => {
                     <Input placeholder="Enter Username" />
                   </Form.Item>
                 </Col>
+
                 <Col xs={24} sm={12} md={12} lg={8}>
                   <Form.Item
                     name="email"
@@ -447,6 +457,8 @@ const AddUsers = () => {
                     <Input placeholder="Enter Email" />
                   </Form.Item>
                 </Col>
+
+
                 <Col xs={24} sm={12} md={12} lg={8}>
                   <Form.Item
                     name="contact"
@@ -462,51 +474,7 @@ const AddUsers = () => {
                     <Input placeholder="Enter Contact Number" />
                   </Form.Item>
                 </Col>
-                <Col xs={24} sm={12} md={12} lg={8}>
-                  <Form.Item
-                    name="city"
-                    label="City"
-                    rules={[
-                      {
-                        required: true,
-                        whitespace: true,
-                        message: "Please enter city",
-                      },
-                    ]}
-                  >
-                    <Input placeholder="Enter City" />
-                  </Form.Item>
-                </Col>
-                <Col xs={24} sm={12} md={12} lg={8}>
-                  <Form.Item
-                    name="state"
-                    label="State"
-                    rules={[
-                      {
-                        required: true,
-                        whitespace: true,
-                        message: "Please enter state",
-                      },
-                    ]}
-                  >
-                    <Input placeholder="Enter State" />
-                  </Form.Item>
-                </Col>
-                <Col xs={24} sm={12} md={12} lg={8}>
-                  <Form.Item
-                    name="country"
-                    label="Country"
-                    rules={[
-                      {
-                        required: true,
-                        whitespace: true,
-                        message: "Please enter country",
-                      },
-                    ]}
-                  >
-                    <Input placeholder="Enter Country" />
-                  </Form.Item>
-                </Col>
+                
                 <Col lg={8} md={12} sm={12}>
                   <Form.Item
                     label="Institution"
@@ -522,10 +490,11 @@ const AddUsers = () => {
                     <Select
                       placeholder="Select Institution"
                       options={institutionOptions}
-                      // onChange={appliedOnChangeHandler}
                     />
+
                   </Form.Item>
                 </Col>
+
                 <Col lg={8} md={12} sm={12}>
                   <Form.Item
                     label="Role"
@@ -541,10 +510,27 @@ const AddUsers = () => {
                     <Select
                       placeholder="Select Role"
                       options={roleOptions}
-                      // onChange={appliedOnChangeHandler}
                     />
                   </Form.Item>
+
                 </Col>
+                <Col xs={24} sm={12} md={12} lg={8}>
+                  <Form.Item
+                    name="city"
+                    label="City"
+                    rules={[
+                      {
+                        required: true,
+                        whitespace: true,
+                        message: "Please enter city",
+                      },
+                    ]}
+                  >
+                    <Input placeholder="Enter City" />
+                  </Form.Item>
+                  
+                </Col>
+                
                 <Col xs={24} sm={12} md={12} lg={8}>
                   <Form.Item
                     name="address"
@@ -553,13 +539,48 @@ const AddUsers = () => {
                       {
                         required: true,
                         whitespace: true,
-                        message: "Please enter address",
+                          message: "Please enter address",
+                        },
+                      ]}
+                    >
+                      <Input.TextArea placeholder="Enter Address" />
+                    </Form.Item>
+                  </Col>
+                
+                <Col xs={24} sm={12} md={12} lg={8}>
+                  <Form.Item
+                    name="state"
+                    label="State"
+                    rules={[
+                      {
+                        required: true,
+                        whitespace: true,
+                        message: "Please enter state",
                       },
                     ]}
                   >
-                    <Input.TextArea placeholder="Enter Address" />
+                    <Input placeholder="Enter State" />
                   </Form.Item>
                 </Col>
+                
+                <Col xs={24} sm={12} md={12} lg={8}>
+                  <Form.Item
+                    name="country"
+                    label="Country"
+                    rules={[
+                      {
+                        required: true,
+                        whitespace: true,
+                        message: "Please enter country",
+                      },
+                    ]}
+                  >
+                    <Input placeholder="Enter Country" />
+                  </Form.Item>
+                </Col>
+                
+                
+
                 {!id && (
                   <>
                     {" "}
@@ -624,7 +645,8 @@ const AddUsers = () => {
                 )}
 
                 <Col xs={24} sm={24} md={24} lg={24} className="justify-end">
-                  <Button
+                  
+                  {/* <Button
                     type="primary"
                     onClick={() => {
                       if (id) setIsModalOpen(true);
@@ -632,7 +654,8 @@ const AddUsers = () => {
                     }}
                   >
                     {id ? "Update" : "Next"}
-                  </Button>
+                  </Button> */}
+
                   {id && (
                     <Button
                       type="primary"
@@ -647,8 +670,11 @@ const AddUsers = () => {
                 </Col>
               </Row>
             </Form>
+          
           )}
+
           {currentStep === 2 && (
+          
             <Form
               labelCol={{
                 span: 24,
@@ -671,6 +697,7 @@ const AddUsers = () => {
                   <Button type="primary" onClick={handlePrevStep}>
                     Previous
                   </Button>
+                  
                   <Button
                     type="primary"
                     onClick={() => {
@@ -681,6 +708,7 @@ const AddUsers = () => {
                   >
                     {id ? "Update" : "Next"}
                   </Button>
+
                   {id && (
                     <Button
                       type="primary"
@@ -696,6 +724,7 @@ const AddUsers = () => {
               </Row>
             </Form>
           )}
+
           {currentStep === 1 && (
             <Form
               labelCol={{
@@ -756,6 +785,7 @@ const AddUsers = () => {
               </Row>
             </Form>
           )}
+
           {currentStep === 3 && (
             <Form
               labelCol={{
@@ -811,6 +841,7 @@ const AddUsers = () => {
               </Row>
             </Form>
           )}
+
           {currentStep === 4 && (
             <Form
               labelCol={{
@@ -845,6 +876,7 @@ const AddUsers = () => {
               </Row>
             </Form>
           )}
+
         </Spin>
       </Card>
       <Modal

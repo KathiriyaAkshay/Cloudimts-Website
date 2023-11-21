@@ -18,17 +18,17 @@ import NotificationMessage from '../../components/NotificationMessage'
 import APIHandler from '../../apis/apiHandler'
 
 const Institution = () => {
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
-  const [institutionData, setInstitutionData] = useState([])
-  const [isLoading, setIsLoading] = useState(false)
-  const [pagi, setPagi] = useState({ page: 1, limit: 10 })
-  const [totalPages, setTotalPages] = useState(0)
-  const [logsData, setLogsData] = useState([])
-  const navigate = useNavigate()
-  const { permissionData } = useContext(UserPermissionContext)
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [institutionData, setInstitutionData] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [pagi, setPagi] = useState({ page: 1, limit: 10 });
+  const [totalPages, setTotalPages] = useState(0);
+  const [logsData, setLogsData] = useState([]);
+  const navigate = useNavigate();
+  const { permissionData } = useContext(UserPermissionContext);
+  const [institutionName, setInstitutionName] = useState("") ; 
 
-  // Breadcrumbs context usage
-  const { changeBreadcrumbs } = useBreadcrumbs()
+  const { changeBreadcrumbs } = useBreadcrumbs();
 
   useEffect(() => {
     // Set initial breadcrumb when the component mounts
@@ -95,7 +95,7 @@ const Institution = () => {
     setIsLoading(false)
   }
 
-  const retrieveLogsData = id => {
+  const retrieveLogsData = (id) => {
     getInstitutionLogs({ id: id })
       .then(res => {
         if (res.data.status) {
@@ -311,19 +311,21 @@ const Institution = () => {
 
       width: window.innerWidth < 650 ? '1%' : '10%',
       render: (_, record) => (
-        <Space style={{ display: 'flex', justifyContent: 'space-evenly' }}>
+        <Space style={{ display: "flex", justifyContent: "space-evenly" }}>
           <EditActionIcon
             editActionHandler={() => editActionHandler(record.id)}
           />
-          <Tooltip title={'View Logs'}>
+          <Tooltip title={"View Logs"}>
             <EyeFilled
-              className='action-icon action-icon-primary'
+              className="action-icon action-icon-primary"
               onClick={() => retrieveLogsData(record.id)}
             />
           </Tooltip>
+
           <DeleteActionIcon
             deleteActionHandler={() => deleteActionHandler(record)}
           />
+
         </Space>
       )
     }
@@ -332,12 +334,12 @@ const Institution = () => {
   // Columns definition for the logs table
   const logsColumn = [
     {
-      title: 'Institution Name',
-      dataIndex: 'institution'
+      title: "Institution Name",
+      dataIndex: "institution",
     },
     {
-      title: 'Username',
-      dataIndex: 'username'
+      title: "Username",
+      dataIndex: "username",
     },
     {
       title: 'Event',
@@ -393,8 +395,8 @@ const Institution = () => {
       />
 
       <Drawer
-        title='Institution Logs'
-        placement='right'
+        title="Institution Logs"
+        placement="right"
         onClose={() => setIsDrawerOpen(false)}
         open={isDrawerOpen}
         width={800}
