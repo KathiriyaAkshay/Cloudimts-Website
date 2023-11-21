@@ -8,13 +8,11 @@ const QuickFilterModal = ({
   retrieveStudyData,
   quickFilterStudyData,
 }) => {
-  const { isStudyFilterModalOpen, setIsStudyFilterModalOpen } =
-    useContext(filterDataContext);
+
+  const { isStudyFilterModalOpen, setIsStudyFilterModalOpen } =useContext(filterDataContext);
   const [form] = Form.useForm();
 
-  const { setIsFilterSelected, setIsAdvanceSearchSelected } = useContext(
-    FilterSelectedContext
-  );
+  const { setIsFilterSelected, setIsAdvanceSearchSelected, isFilterSelected, isAdvanceSearchSelected } = useContext(FilterSelectedContext);
 
   useEffect(() => {
     setIsFilterSelected(false);
@@ -39,6 +37,8 @@ const QuickFilterModal = ({
         setIsStudyFilterModalOpen(false);
       }}
       footer={[
+
+        // ==== Cancel option ==== 
         
         <Button
           key="back"
@@ -49,8 +49,9 @@ const QuickFilterModal = ({
           Cancel
         </Button>,
 
-        <Button
-          key="submit"
+        // ==== Clear filter option 
+
+        <Button key="submit"
           type="primary"
           onClick={() => {
             form.resetFields();
@@ -61,6 +62,8 @@ const QuickFilterModal = ({
         >
           Clear Filter
         </Button>,
+
+        // ==== Apply filter option 
         
         <Button key="submit" type="primary" onClick={() => form.submit()}>
           Apply
@@ -80,6 +83,24 @@ const QuickFilterModal = ({
       >
         <Row gutter={15}>
 
+          {/* ===== Patient id =====  */}
+
+          <Col xs={24} lg={12}>
+            <Form.Item
+              name="study__patient_id__icontains"
+              label="Patient Id"
+              rules={[
+                {
+                  required: false,
+                  whitespace: true,
+                  message: "Please enter Patient Id",
+                },
+              ]}
+            >
+              <Input placeholder="Enter Patient Id" />
+            </Form.Item>
+          </Col>
+
           {/* ===== Patient Name =====  */}
 
           <Col xs={24} lg={12}>
@@ -98,23 +119,6 @@ const QuickFilterModal = ({
             </Form.Item>
           </Col>
 
-          {/* ===== Patient id =====  */}
-
-          <Col xs={24} lg={12}>
-            <Form.Item
-              name="study__patient_id__icontains"
-              label="Patient Id"
-              rules={[
-                {
-                  required: false,
-                  whitespace: true,
-                  message: "Please enter Patient Id",
-                },
-              ]}
-            >
-              <Input placeholder="Enter Patient Id" />
-            </Form.Item>
-          </Col>
 
           {/* ==== Modality =====  */}
 
