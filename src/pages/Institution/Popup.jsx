@@ -407,6 +407,9 @@ const CustomReportHeaderGenerator = ({institutionId, isModalOpen}) => {
 
             setPatientReportColumn([...patientColumn])  ; 
             setInstitutionReportColumn([...institutionColumn]) ; 
+        }   else{
+
+            NotificationMessage("warning", "Network request failed", responseData['message']) ; 
         }
     }
 
@@ -504,7 +507,7 @@ const CustomReportHeaderGenerator = ({institutionId, isModalOpen}) => {
 
         }   else {
 
-            NotificationMessage("warning", responseData['message']) ; 
+            NotificationMessage("warning", "Network request failed" ,responseData['message']) ; 
         }
     }
 
@@ -609,7 +612,7 @@ const CustomReportHeaderGenerator = ({institutionId, isModalOpen}) => {
             
             }   else {
 
-                NotificationMessage("warning", responseData['messgae']) ; 
+                NotificationMessage("warning","Network request failed" ,responseData['messgae']) ; 
             }
         }
     }

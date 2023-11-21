@@ -95,7 +95,8 @@ const Institution = () => {
     setIsLoading(false)
   }
 
-  const retrieveLogsData = (id) => {
+  const retrieveLogsData = (id, name) => {
+    setInstitutionName(`${name} institution logs`)
     getInstitutionLogs({ id: id })
       .then(res => {
         if (res.data.status) {
@@ -206,8 +207,6 @@ const Institution = () => {
           : 'column-display-none'
       }`,
       width: 200
-      //    ellipsis: true, // Enable ellipsis to truncate and show tooltip for extra text
-      // render: text => <div style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{text}</div>,
     },
 
     checkPermissionStatus('View Institution contact number') && {
@@ -318,7 +317,7 @@ const Institution = () => {
           <Tooltip title={"View Logs"}>
             <EyeFilled
               className="action-icon action-icon-primary"
-              onClick={() => retrieveLogsData(record.id)}
+              onClick={() => retrieveLogsData(record.id, record.name)}
             />
           </Tooltip>
 
@@ -334,11 +333,7 @@ const Institution = () => {
   // Columns definition for the logs table
   const logsColumn = [
     {
-      title: "Institution Name",
-      dataIndex: "institution",
-    },
-    {
-      title: "Username",
+      title: "Perform User",
       dataIndex: "username",
     },
     {
@@ -395,7 +390,7 @@ const Institution = () => {
       />
 
       <Drawer
-        title="Institution Logs"
+        title={institutionName}
         placement="right"
         onClose={() => setIsDrawerOpen(false)}
         open={isDrawerOpen}
