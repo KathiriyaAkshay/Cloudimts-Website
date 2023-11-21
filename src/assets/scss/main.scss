@@ -1522,7 +1522,6 @@
 .custom-header-inner{
   height: 750;
   width: 80%;
-  padding:1rem;
   background-color: rgb(239, 239, 239);
   overflow-y: auto;
 }
@@ -1543,6 +1542,17 @@
   flex-direction: row;
   justify-content:space-between;
   align-items: center;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-top: 0.50rem;
+  padding-bottom: 0.50rem;
+  background-color: #33b3e9;
+}
+
+.Report-setting-option-header-info{
+  color: white !important;
+  margin-top: auto !important;
+  margin-bottom: auto !important;
 }
 
 .Billing-search-modal{
@@ -1575,7 +1585,7 @@
 }
 
 .Quick-filter-modal{
-  width: 60% !important;
+  width: 75% !important;
 }
 
 .Quick-filter-modal .ant-modal-body{
@@ -1649,6 +1659,16 @@
 .ant-drawer-content-wrapper{
   width: 600px;
 }
+
+.ant-steps-item-title{
+  font-weight: 600 !important;
+}
+
+
+.ant-steps-item-title{
+  font-weight: 600 !important;
+}
+
 
 .user-profile-div-first{
   font-size:1.4rem;

@@ -52,7 +52,6 @@ const ChatMessanger = (props) => {
   const [chatData, setChatData] = useState("");
   const [active, setActive] = useState("1.1");
   const [value, setValue] = useState("1");
-  const [lastSeen, setLastSeen] = useState("");
   const [chatDetails, setChatDetails] = useState({
     singleChat: "",
     groupChat: "",
@@ -359,7 +358,7 @@ const ChatMessanger = (props) => {
       setDescription(removed);
     }
   };
-
+` `
   const handleChatDetailsPopUp = () => {
     setChatDetails({
       ...chatDetails,
@@ -435,30 +434,30 @@ const ChatMessanger = (props) => {
                 searchIndex={forwardMessage?.searchIndex}
               />
 
-              {forwardMessage?.quoted && (
-                <div
-                  style={QuoteStyle}
-                  className={`quotedMessage-container isHousemateChat-quote ${
-                    isChatModule && "quotedMessage-container-position"
-                  }`}
-                >
-                  <div className="quoted-details">
-                    <span className="quotedMessage-message">
-                      {forwardMessage?.quotedMessage?.content}
-                    </span>
-                  </div>
-                  <div
-                    style={{
-                      fontWeight: "600",
-                      color: "rgb(109, 121, 147)",
-                      cursor: "pointer",
-                    }}
-                    onClick={() => setForwardMessage({ quoted: false })}
-                  >
-                    X
-                  </div>
+              <div
+                style={QuoteStyle}
+                className={`quotedMessage-container isHousemateChat-quote ${
+                  isChatModule && "quotedMessage-container-position"
+                }`}
+              >
+                <div className="quoted-details">
+                  <span className="quotedMessage-message">
+                    {forwardMessage?.quotedMessage?.content}
+                  </span>
                 </div>
-              )}
+                <div
+                  style={{
+                    fontWeight: "600",
+                    color: "rgb(109, 121, 147)",
+                    cursor: "pointer",
+                  }}
+                  onClick={() => setForwardMessage({ quoted: false })}
+                >
+                  X
+                </div>
+              </div>
+              {/* {forwardMessage?.quoted && (
+              )} */}
 
             </div>
 
