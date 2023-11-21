@@ -34,6 +34,7 @@ const Institution = () => {
   const [logsData, setLogsData] = useState([]);
   const navigate = useNavigate();
   const { permissionData } = useContext(UserPermissionContext);
+  const [institutionName, setInstitutionName] = useState("") ; 
 
   const { changeBreadcrumbs } = useBreadcrumbs();
 
@@ -88,7 +89,9 @@ const Institution = () => {
     setIsLoading(false) ; 
   };
 
-  const retrieveLogsData = (id) => {
+  const retrieveLogsData = (id, name) => {
+    setInstitutionName(`${name} institution logs`) ; 
+
     getInstitutionLogs({ id: id })
       .then((res) => {
         const resData = res.data.data.map((data) => ({
@@ -280,18 +283,22 @@ const Institution = () => {
       width: window.innerWidth < 650 ? "1%" : "10%",
       render: (_, record) => (
         <Space style={{ display: "flex", justifyContent: "space-evenly" }}>
+
           <EditActionIcon
             editActionHandler={() => editActionHandler(record.id)}
           />
+
           <Tooltip title={"View Logs"}>
             <EyeFilled
               className="action-icon action-icon-primary"
-              onClick={() => retrieveLogsData(record.id)}
+              onClick={() => retrieveLogsData(record.id, record.name)}
             />
           </Tooltip>
+
           <DeleteActionIcon
             deleteActionHandler={() => deleteActionHandler(record)}
           />
+
         </Space>
       ),
     },
@@ -299,11 +306,7 @@ const Institution = () => {
 
   const logsColumn = [
     {
-      title: "Institution Name",
-      dataIndex: "institution",
-    },
-    {
-      title: "Username",
+      title: "Perfrom user",
       dataIndex: "username",
     },
     {
@@ -360,7 +363,7 @@ const Institution = () => {
       />
       
       <Drawer
-        title="Institution Logs"
+        title= {institutionName}
         placement="right"
         onClose={() => setIsDrawerOpen(false)}
         open={isDrawerOpen}
