@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react'
 import {
   Steps,
   Button,
@@ -14,513 +14,590 @@ import {
   TimePicker,
   Checkbox,
   Modal,
-  Spin,
-} from "antd";
-import { useNavigate, useParams } from "react-router-dom";
-import { useBreadcrumbs } from "../../hooks/useBreadcrumbs";
-import TableWithFilter from "../../components/TableWithFilter";
-import API from "../../apis/getApi";
-import NotificationMessage from "../../components/NotificationMessage";
-import dayjs from "dayjs";
-import UploadImage from "../../components/UploadImage";
-import { uploadFile } from "react-s3";
-import { uploadImage } from "../../apis/studiesApi";
-const S3_BUCKET = import.meta.env.VITE_APP_AMAZON_S3_BUCKET_NAME;
-const accessKeyId = import.meta.env.VITE_APP_AMAZON_ACCESS_KEY;
-const secretAccessKey = import.meta.env.VITE_APP_AMAZON_SECRET_KEY;
+  Spin
+} from 'antd'
+import { useNavigate, useParams } from 'react-router-dom'
+import { useBreadcrumbs } from '../../hooks/useBreadcrumbs'
+import TableWithFilter from '../../components/TableWithFilter'
+import API from '../../apis/getApi'
+import NotificationMessage from '../../components/NotificationMessage'
+import dayjs from 'dayjs'
+import UploadImage from '../../components/UploadImage'
+import { uploadFile } from 'react-s3'
+import { uploadImage } from '../../apis/studiesApi'
 
-const { Step } = Steps;
+// Constants for AWS S3 bucket
+const S3_BUCKET = import.meta.env.VITE_APP_AMAZON_S3_BUCKET_NAME
+const accessKeyId = import.meta.env.VITE_APP_AMAZON_ACCESS_KEY
+const secretAccessKey = import.meta.env.VITE_APP_AMAZON_SECRET_KEY
+
+const { Step } = Steps
 
 const AddUsers = () => {
-  const [currentStep, setCurrentStep] = useState(0);
-  const [tableData, setTableData] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [roleOptions, setRoleOptions] = useState([]);
-  const [institutionOptions, setInstitutionOptions] = useState([]);
-  const [form] = Form.useForm();
-  const navigate = useNavigate();
-  const { changeBreadcrumbs } = useBreadcrumbs();
-  const token = localStorage.getItem("token");
-  const [payload, setPayload] = useState({});
-  const { id } = useParams();
-  const [imageFile, setImageFile] = useState(null);
-  const [imageURL, setImageURL] = useState(null);
+  const [currentStep, setCurrentStep] = useState(0)
+  const [tableData, setTableData] = useState([])
+  const [isLoading, setIsLoading] = useState(false)
+  const [roleOptions, setRoleOptions] = useState([])
+  const [institutionOptions, setInstitutionOptions] = useState([])
+  const [form] = Form.useForm()
+  const navigate = useNavigate()
+  const { changeBreadcrumbs } = useBreadcrumbs()
+  const token = localStorage.getItem('token')
+  const [payload, setPayload] = useState({})
+  const { id } = useParams()
+  const [imageFile, setImageFile] = useState(null)
+  const [imageURL, setImageURL] = useState(null)
   const [value, setValues] = useState({
-    url: undefined,
-  });
-  const [isModalOpen, setIsModalOpen] = useState(false);
+    url: undefined
+  })
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   useEffect(() => {
-    const crumbs = [{ name: "Users", to: "/users" }];
+    const crumbs = [{ name: 'Users', to: '/users' }]
     crumbs.push({
-      name: id ? "Edit" : "Add",
-    });
-    changeBreadcrumbs(crumbs);
-    retrieveInstitutionData();
-    retrieveRolesData();
-    retrieveModalityList();
+      name: id ? 'Edit' : 'Add'
+    })
+    changeBreadcrumbs(crumbs)
+    retrieveInstitutionData()
+    retrieveRolesData()
+    retrieveModalityList()
     if (id) {
-      retrieveUserData();
+      retrieveUserData()
     }
-  }, []);
+  }, [])
 
   const retrieveUserData = async () => {
     await API.post(
-      "/user/v1/particular-user-fetch",
+      '/user/v1/particular-user-fetch',
       { user_id: id },
       { headers: { Authorization: `Bearer ${token}` } }
     )
-      .then((res) => {
-        const instituteData = convertToInitialObject(
-          res.data.data.institution_details
-        );
-        const modalityData = convertToInitialModalityObject(
-          res.data.data.modality_details
-        );
-        const resData = {
-          ...res.data.data,
-          username: res.data.data.user.username,
-          email: res.data.data.user.email,
-          role_id: res.data.data.role.id,
-          institute_id: res.data.data.institute.id,
-          availability: [
-            dayjs(res.data.data.availability_start_time, "HH:mm:ss"),
-            dayjs(res.data.data.availability_end_time, "HH:mm:ss"),
-          ],
-          ...instituteData,
-          ...modalityData,
-        };
-        form.setFieldsValue(resData);
-        setImageURL(res.data.data.signature_image);
+      .then(res => {
+        if (res.data.status) {
+          const instituteData = convertToInitialObject(
+            res.data.data.institution_details
+          )
+          const modalityData = convertToInitialModalityObject(
+            res.data.data.modality_details
+          )
+          const resData = {
+            ...res.data.data,
+            username: res.data.data.user.username,
+            email: res.data.data.user.email,
+            role_id: res.data.data.role.id,
+            institute_id: res.data.data.institute.id,
+            availability: [
+              dayjs(res.data.data.availability_start_time, 'HH:mm:ss'),
+              dayjs(res.data.data.availability_end_time, 'HH:mm:ss')
+            ],
+            ...instituteData,
+            ...modalityData
+          }
+          form.setFieldsValue(resData)
+          setImageURL(res.data.data.signature_image)
+        } else {
+          NotificationMessage(
+            'warning',
+            'Network request failed',
+            res.data.message
+          )
+        }
       })
-      .catch((err) => console.log(err));
-  };
+      .catch(err => {
+        NotificationMessage('warning', 'Network request failed')
+      })
+  }
 
   const handleNextStep = () => {
-    setCurrentStep((prevStep) => prevStep + 1);
-  };
+    setCurrentStep(prevStep => prevStep + 1)
+  }
 
   const handlePrevStep = () => {
-    setCurrentStep((prevStep) => prevStep - 1);
-  };
+    setCurrentStep(prevStep => prevStep - 1)
+  }
 
-  const convertToInitialModalityObject = (data) => {
-    let initialObject = {};
+  const convertToInitialModalityObject = data => {
+    let initialObject = {}
     for (let i = 1; i <= Object.keys(data).length; i++) {
-      initialObject[`${i}_isAllowed`] = data[i].isAllowed;
+      initialObject[`${i}_isAllowed`] = data[i].isAllowed
     }
-    return initialObject;
-  };
+    return initialObject
+  }
 
-  const convertToInitialObject = (data) => {
-    let initialObject = {};
+  const convertToInitialObject = data => {
+    let initialObject = {}
     for (let i = 1; i <= Object.keys(data).length; i++) {
-      initialObject[`${i}_viewAssign`] = data[i]?.viewAssign;
-      initialObject[`${i}_viewAll`] = data[i]?.viewAll;
+      initialObject[`${i}_viewAssign`] = data[i]?.viewAssign
+      initialObject[`${i}_viewAll`] = data[i]?.viewAll
     }
-    return initialObject;
-  };
+    return initialObject
+  }
 
   const retrieveInstitutionData = async () => {
-    setIsLoading(true);
-    await API.get("/user/v1/fetch-institution-list", {
-      headers: { Authorization: `Bearer ${token}` },
+    setIsLoading(true)
+    await API.get('/user/v1/fetch-institution-list', {
+      headers: { Authorization: `Bearer ${token}` }
     })
-      .then((res) => {
-        const resData = res.data.data.map((item) => ({
-          ...item,
-          label: item.name,
-          value: item.id,
-        }));
-        setInstitutionOptions(resData);
+      .then(res => {
+        if (res.data.status) {
+          const resData = res.data.data.map(item => ({
+            ...item,
+            label: item.name,
+            value: item.id
+          }))
+          setInstitutionOptions(resData)
+        } else {
+          NotificationMessage(
+            'warning',
+            'Network request failed',
+            res.data.message
+          )
+        }
       })
-      .catch((err) => console.log(err));
-    setIsLoading(false);
-  };
+      .catch(err => {
+        NotificationMessage('warning', 'Network request failed')
+      })
+    setIsLoading(false)
+  }
 
   const retrieveRolesData = async () => {
-    setIsLoading(true);
-    await API.get("/user/v1/fetch-role-list", {
-      headers: { Authorization: `Bearer ${token}` },
+    setIsLoading(true)
+    await API.get('/user/v1/fetch-role-list', {
+      headers: { Authorization: `Bearer ${token}` }
     })
-      .then((res) => {
-        const resData = res.data.data.map((item) => ({
-          label: item.role_name,
-          value: item.id,
-        }));
-        setRoleOptions(resData);
+      .then(res => {
+        if (res.data.status) {
+          const resData = res.data.data.map(item => ({
+            label: item.role_name,
+            value: item.id
+          }))
+          setRoleOptions(resData)
+        } else {
+          NotificationMessage(
+            'warning',
+            'Network request failed',
+            res.data.message
+          )
+        }
       })
-      .catch((err) => console.log(err));
-    setIsLoading(false);
-  };
+      .catch(err => NotificationMessage('warning', 'Network request failed'))
+    setIsLoading(false)
+  }
 
+  // Fetch modality list data
   const retrieveModalityList = async () => {
-    setIsLoading(true);
-    await API.get("/user/v1/fetch-modality-list", {
-      headers: { Authorization: `Bearer ${token}` },
+    setIsLoading(true)
+    await API.get('/user/v1/fetch-modality-list', {
+      headers: { Authorization: `Bearer ${token}` }
     })
-      .then((res) => {
-        const resData = res.data.data.map((item) => ({
-          ...item,
-          isAllowed: false,
-        }));
-        setTableData(resData);
+      .then(res => {
+        if (res.data.status) {
+          const resData = res.data.data.map(item => ({
+            ...item,
+            isAllowed: false
+          }))
+          setTableData(resData)
+        } else {
+          NotificationMessage(
+            'warning',
+            'Network request failed',
+            res.data.message
+          )
+        }
       })
-      .catch((err) => console.log(err));
-    setIsLoading(false);
-  };
+      .catch(err => {
+        NotificationMessage('warning', 'Network request failed')
+      })
+    setIsLoading(false)
+  }
 
-  const convertToObject = (data) => {
-    let modifiedObject = { institution_details: {} };
+  const convertToObject = data => {
+    let modifiedObject = { institution_details: {} }
     for (let i = 1; i <= institutionOptions.length; i++) {
       modifiedObject.institution_details[i] = {
         viewAssign: data[`${i}_viewAssign`] ? data[`${i}_viewAssign`] : false,
-        viewAll: data[`${i}_viewAll`] ? data[`${i}_viewAll`] : false,
-      };
+        viewAll: data[`${i}_viewAll`] ? data[`${i}_viewAll`] : false
+      }
     }
-    return modifiedObject;
-  };
+    return modifiedObject
+  }
 
-  const convertModalityToObject = (data) => {
-    let modifiedObject = { modality_details: {} };
+  const convertModalityToObject = data => {
+    let modifiedObject = { modality_details: {} }
     for (let i = 1; i <= tableData.length; i++) {
       modifiedObject.modality_details[i] = {
-        isAllowed: data[`${i}_isAllowed`] ? data[`${i}_isAllowed`] : false,
-      };
+        isAllowed: data[`${i}_isAllowed`] ? data[`${i}_isAllowed`] : false
+      }
     }
-    return modifiedObject;
-  };
+    return modifiedObject
+  }
 
-  const handleSubmit = async (values) => {
-    setIsLoading(true);
+  const handleSubmit = async values => {
+    setIsLoading(true)
     if (currentStep === 0) {
       setPayload({
         ...values,
         allow_offline_download: values.allow_offline_download
           ? values.allow_offline_download
           : false,
-        allow: values.allow ? values.allow : false,
-      });
-      handleNextStep();
+        allow: values.allow ? values.allow : false
+      })
+      handleNextStep()
     } else if (currentStep === 1) {
-      setPayload((prev) => ({
+      setPayload(prev => ({
         ...prev,
-        start_time: values.availability[0].format("HH:mm:ss"),
-        end_time: values.availability[1].format("HH:mm:ss"),
-      }));
+        start_time: values.availability[0].format('HH:mm:ss'),
+        end_time: values.availability[1].format('HH:mm:ss')
+      }))
       if (id) {
-        setIsLoading(true);
+        setIsLoading(true)
         await API.post(
-          "/user/v1/user-update-basic-details",
+          '/user/v1/user-update-basic-details',
           {
             ...payload,
-            start_time: values.availability[0].format("HH:mm:ss"),
-            end_time: values.availability[1].format("HH:mm:ss"),
-            user_id: id,
+            start_time: values.availability[0].format('HH:mm:ss'),
+            end_time: values.availability[1].format('HH:mm:ss'),
+            user_id: id
           },
           { headers: { Authorization: `Bearer ${token}` } }
         )
-          .then((res) => console.log(res))
-          .catch((err) =>
-            NotificationMessage("warning", err.response.data.message)
-          );
-        setIsLoading(false);
+          .then(res => {
+            if (res.data.status) {
+              NotificationMessage('success', res.data.message)
+            } else {
+              NotificationMessage('warning', 'Network request failed')
+            }
+          })
+          .catch(err =>
+            NotificationMessage('warning', err.response.data.message)
+          )
+        setIsLoading(false)
       }
-      handleNextStep();
+      handleNextStep()
     } else if (currentStep === 2) {
-      setPayload((prev) => ({ ...prev, ...convertToObject(values) }));
+      setPayload(prev => ({ ...prev, ...convertToObject(values) }))
       if (id) {
-        setIsLoading(true);
+        setIsLoading(true)
         await API.post(
-          "/user/v1/user-update-institution-details",
+          '/user/v1/user-update-institution-details',
           {
             user_id: id,
             institution_update: {
-              ...convertToObject(values).institution_details,
-            },
+              ...convertToObject(values).institution_details
+            }
           },
           { headers: { Authorization: `Bearer ${token}` } }
         )
-          .then((res) => console.log(res))
-          .catch((err) =>
-            NotificationMessage("warning", err.response.data.message)
-          );
-        setIsLoading(false);
+          .then(res => {
+            if (res.data.status) {
+              NotificationMessage('success', res.data.message)
+            } else {
+              NotificationMessage('warning', 'Network request failed')
+            }
+          })
+          .catch(err =>
+            NotificationMessage('warning', err.response.data.message)
+          )
+        setIsLoading(false)
       }
-      handleNextStep();
+      handleNextStep()
     } else if (currentStep === 3) {
-      setIsLoading(true);
-      let signature_image = "";
+      setIsLoading(true)
+      let signature_image = ''
       if (values.url.file.originFileObj) {
         try {
           const formData = {
-            image: values.url.file.originFileObj,
-          };
-          const res = await uploadImage(formData);
-          signature_image = res.data.image_url;
-          setPayload((prev) => ({
+            image: values.url.file.originFileObj
+          }
+          const res = await uploadImage(formData)
+          signature_image = res.data.image_url
+          setPayload(prev => ({
             ...prev,
-            signature_image: res.data.image_url,
-          }));
+            signature_image: res.data.image_url
+          }))
         } catch (err) {
-          NotificationMessage("warning", err.response.data.message);
+          NotificationMessage('warning', err.response.data.message)
         }
       }
-      setPayload((prev) => ({ ...prev, signature_image }));
+      setPayload(prev => ({ ...prev, signature_image }))
       if (id) {
         await API.post(
-          "/user/v1/user-update-signature",
+          '/user/v1/user-update-signature',
           {
             id: id,
-            signature_image: signature_image,
+            signature_image: signature_image
           },
           { headers: { Authorization: `Bearer ${token}` } }
         )
-          .then((res) => {
-            setImageURL(signature_image);
-            setPayload((prev) => ({ ...prev, signature_image }));
+          .then(res => {
+            if (res.data.status) {
+              setImageURL(signature_image)
+              setPayload(prev => ({ ...prev, signature_image }))
+            } else {
+              NotificationMessage(
+                'warning',
+                'Network request failed',
+                res.data.message
+              )
+            }
           })
-          .catch((err) =>
-            NotificationMessage("warning", err.response.data.message)
-          );
+          .catch(err =>
+            NotificationMessage('warning', err.response.data.message)
+          )
       }
-      setIsLoading(false);
-      handleNextStep();
+      setIsLoading(false)
+      handleNextStep()
     } else if (currentStep === 4) {
-      setIsLoading(true);
-      const modalityData = { ...convertModalityToObject(values) };
-      setPayload((prev) => ({ ...prev, ...convertModalityToObject(values) }));
+      setIsLoading(true)
+      const modalityData = { ...convertModalityToObject(values) }
+      setPayload(prev => ({ ...prev, ...convertModalityToObject(values) }))
       if (id) {
         await API.post(
-          "/user/v1/user-update-modality-details",
+          '/user/v1/user-update-modality-details',
           {
             user_id: id,
             modality_update: {
-              ...convertModalityToObject(values).modality_details,
-            },
+              ...convertModalityToObject(values).modality_details
+            }
           },
           { headers: { Authorization: `Bearer ${token}` } }
         )
-          .then((res) => {
-            NotificationMessage("success", "User Updated Successfully");
-            form.resetFields();
-            navigate("/users");
+          .then(res => {
+            if (res.data.status) {
+              NotificationMessage('success', 'User Updated Successfully')
+              form.resetFields()
+              navigate('/users')
+            } else {
+              NotificationMessage(
+                'warning',
+                'Network request failed',
+                res.data.message
+              )
+            }
           })
-          .catch((err) =>
-            NotificationMessage("warning", err.response.data.message)
-          );
+          .catch(err =>
+            NotificationMessage('warning', err.response.data.message)
+          )
       } else {
         await API.post(
-          "/user/v1/create-user",
+          '/user/v1/create-user',
           { ...payload, ...modalityData },
           { headers: { Authorization: `Bearer ${token}` } }
         )
-          .then((res) => {
-            NotificationMessage("success", "User Created Successfully");
-            form.resetFields();
-            navigate("/users");
+          .then(res => {
+            if (res.data.status) {
+              NotificationMessage('success', 'User Created Successfully')
+              form.resetFields()
+              navigate('/users')
+            } else {
+              NotificationMessage(
+                'warning',
+                'Network request failed',
+                res.data.message
+              )
+            }
           })
-          .catch((err) =>
-            NotificationMessage("warning", err.response.data.message)
-          );
+          .catch(err =>
+            NotificationMessage('warning', err.response.data.message)
+          )
       }
-      setIsLoading(false);
+      setIsLoading(false)
     }
-    setIsLoading(false);
-    setIsModalOpen(false);
-  };
+    setIsLoading(false)
+    setIsModalOpen(false)
+  }
 
   const institutionColumn = [
     {
-      title: "Institution",
-      dataIndex: "name",
+      title: 'Institution',
+      dataIndex: 'name'
     },
     {
-      title: "View Assigned Studies",
-      dataIndex: "viewAssign",
+      title: 'View Assigned Studies',
+      dataIndex: 'viewAssign',
       render: (text, record) => (
-        <Form.Item name={`${record.id}_viewAssign`} valuePropName="checked">
+        <Form.Item name={`${record.id}_viewAssign`} valuePropName='checked'>
           <Checkbox />
         </Form.Item>
-      ),
+      )
     },
     {
-      title: "View All Studies",
-      dataIndex: "viewAll",
+      title: 'View All Studies',
+      dataIndex: 'viewAll',
       render: (text, record) => (
-        <Form.Item name={`${record.id}_viewAll`} valuePropName="checked">
+        <Form.Item name={`${record.id}_viewAll`} valuePropName='checked'>
           <Checkbox />
         </Form.Item>
-      ),
-    },
-  ];
+      )
+    }
+  ]
 
   const columns = [
     {
-      title: "Modality",
-      dataIndex: "name",
+      title: 'Modality',
+      dataIndex: 'name'
       // sorter: (a, b) => {},
       // editable: true,
     },
     {
-      title: "Allowed",
-      dataIndex: "isAllowed",
+      title: 'Allowed',
+      dataIndex: 'isAllowed',
       // sorter: (a, b) => {},
       // editable: true,
       render: (text, record) => (
-        <Form.Item name={`${record.id}_isAllowed`} valuePropName="checked">
+        <Form.Item name={`${record.id}_isAllowed`} valuePropName='checked'>
           <Checkbox />
         </Form.Item>
-      ),
-    },
-  ];
+      )
+    }
+  ]
 
   return (
-    <div className="secondary-table">
+    <div className='secondary-table'>
       <Card>
         <Spin spinning={isLoading}>
-          <Steps current={currentStep} className="mb">
-            <Step title="Basic Info" />
-            <Step title="Availability" />
-            <Step title="Assigned Details" />
-            <Step title="Upload Signature" />
-            <Step title="Modality" />
+          <Steps current={currentStep} className='mb'>
+            <Step title='Basic Info' />
+            <Step title='Availability' />
+            <Step title='Assigned Details' />
+            <Step title='Upload Signature' />
+            <Step title='Modality' />
           </Steps>
           {currentStep === 0 && (
             <Form
               labelCol={{
-                span: 24,
+                span: 24
               }}
               wrapperCol={{
-                span: 24,
+                span: 24
               }}
               form={form}
               onFinish={handleSubmit}
-              className="mt"
+              className='mt'
             >
               <Row gutter={15}>
                 <Col xs={4} sm={4} md={4} lg={2}>
                   <Form.Item
-                    name="allow"
-                    label="Active"
-                    valuePropName="checked"
+                    name='allow'
+                    label='Active'
+                    valuePropName='checked'
                   >
                     <Switch />
                   </Form.Item>
                 </Col>
                 <Col xs={4} sm={4} md={22} lg={22}>
                   <Form.Item
-                    name="allow_offline_download"
-                    label="Allow Offline Download"
-                    valuePropName="checked"
+                    name='allow_offline_download'
+                    label='Allow Offline Download'
+                    valuePropName='checked'
                   >
                     <Switch />
                   </Form.Item>
                 </Col>
                 <Col xs={24} sm={12} md={12} lg={8}>
                   <Form.Item
-                    name="username"
-                    label="Username"
+                    name='username'
+                    label='Username'
                     rules={[
                       {
                         whitespace: true,
                         required: true,
-                        message: "Please enter username",
-                      },
+                        message: 'Please enter username'
+                      }
                     ]}
                   >
-                    <Input placeholder="Enter Username" />
+                    <Input placeholder='Enter Username' />
                   </Form.Item>
                 </Col>
                 <Col xs={24} sm={12} md={12} lg={8}>
                   <Form.Item
-                    name="email"
-                    label="Email Address"
+                    name='email'
+                    label='Email Address'
                     rules={[
                       {
-                        type: "email",
+                        type: 'email',
                         required: true,
-                        message: "Please enter valid email",
-                      },
+                        message: 'Please enter valid email'
+                      }
                     ]}
                   >
-                    <Input placeholder="Enter Email" />
+                    <Input placeholder='Enter Email' />
                   </Form.Item>
                 </Col>
                 <Col xs={24} sm={12} md={12} lg={8}>
                   <Form.Item
-                    name="contact"
-                    label="Contact Number"
-                    rules={[
-                      {
-                        required: true,
-                        whitespace: true,
-                        message: "Please enter contact number",
-                      },
-                    ]}
-                  >
-                    <Input placeholder="Enter Contact Number" />
-                  </Form.Item>
-                </Col>
-                <Col xs={24} sm={12} md={12} lg={8}>
-                  <Form.Item
-                    name="city"
-                    label="City"
+                    name='contact'
+                    label='Contact Number'
                     rules={[
                       {
                         required: true,
                         whitespace: true,
-                        message: "Please enter city",
-                      },
+                        message: 'Please enter contact number'
+                      }
                     ]}
                   >
-                    <Input placeholder="Enter City" />
+                    <Input placeholder='Enter Contact Number' />
                   </Form.Item>
                 </Col>
                 <Col xs={24} sm={12} md={12} lg={8}>
                   <Form.Item
-                    name="state"
-                    label="State"
+                    name='city'
+                    label='City'
                     rules={[
                       {
                         required: true,
                         whitespace: true,
-                        message: "Please enter state",
-                      },
+                        message: 'Please enter city'
+                      }
                     ]}
                   >
-                    <Input placeholder="Enter State" />
+                    <Input placeholder='Enter City' />
                   </Form.Item>
                 </Col>
                 <Col xs={24} sm={12} md={12} lg={8}>
                   <Form.Item
-                    name="country"
-                    label="Country"
+                    name='state'
+                    label='State'
                     rules={[
                       {
                         required: true,
                         whitespace: true,
-                        message: "Please enter country",
-                      },
+                        message: 'Please enter state'
+                      }
                     ]}
                   >
-                    <Input placeholder="Enter Country" />
+                    <Input placeholder='Enter State' />
+                  </Form.Item>
+                </Col>
+                <Col xs={24} sm={12} md={12} lg={8}>
+                  <Form.Item
+                    name='country'
+                    label='Country'
+                    rules={[
+                      {
+                        required: true,
+                        whitespace: true,
+                        message: 'Please enter country'
+                      }
+                    ]}
+                  >
+                    <Input placeholder='Enter Country' />
                   </Form.Item>
                 </Col>
                 <Col lg={8} md={12} sm={12}>
                   <Form.Item
-                    label="Institution"
-                    name="institute_id"
-                    className="category-select"
+                    label='Institution'
+                    name='institute_id'
+                    className='category-select'
                     rules={[
                       {
                         required: true,
-                        message: "Please select Institution",
-                      },
+                        message: 'Please select Institution'
+                      }
                     ]}
                   >
                     <Select
-                      placeholder="Select Institution"
+                      placeholder='Select Institution'
                       options={institutionOptions}
                       // onChange={appliedOnChangeHandler}
                     />
@@ -528,18 +605,18 @@ const AddUsers = () => {
                 </Col>
                 <Col lg={8} md={12} sm={12}>
                   <Form.Item
-                    label="Role"
-                    name="role_id"
-                    className="category-select"
+                    label='Role'
+                    name='role_id'
+                    className='category-select'
                     rules={[
                       {
                         required: true,
-                        message: "Please select Role",
-                      },
+                        message: 'Please select Role'
+                      }
                     ]}
                   >
                     <Select
-                      placeholder="Select Role"
+                      placeholder='Select Role'
                       options={roleOptions}
                       // onChange={appliedOnChangeHandler}
                     />
@@ -547,99 +624,99 @@ const AddUsers = () => {
                 </Col>
                 <Col xs={24} sm={12} md={12} lg={8}>
                   <Form.Item
-                    name="address"
-                    label="Address"
+                    name='address'
+                    label='Address'
                     rules={[
                       {
                         required: true,
                         whitespace: true,
-                        message: "Please enter address",
-                      },
+                        message: 'Please enter address'
+                      }
                     ]}
                   >
-                    <Input.TextArea placeholder="Enter Address" />
+                    <Input.TextArea placeholder='Enter Address' />
                   </Form.Item>
                 </Col>
                 {!id && (
                   <>
-                    {" "}
+                    {' '}
                     <Col lg={8} md={12} sm={12}>
                       <Form.Item
-                        label="Password"
-                        name="password"
+                        label='Password'
+                        name='password'
                         rules={[
                           {
                             whitespace: true,
                             required: true,
-                            message: "Please enter password",
-                          },
+                            message: 'Please enter password'
+                          }
                         ]}
                         hasFeedback
                       >
                         <Input.Password
-                          autoComplete="off"
-                          name="password"
-                          style={{ marginBottom: "0.5rem" }}
-                          placeholder="Enter Password"
+                          autoComplete='off'
+                          name='password'
+                          style={{ marginBottom: '0.5rem' }}
+                          placeholder='Enter Password'
                         />
                       </Form.Item>
                     </Col>
                     <Col lg={8} md={12} sm={12}>
                       <Form.Item
-                        label="Confirm Password"
-                        name="confirmPassword"
+                        label='Confirm Password'
+                        name='confirmPassword'
                         rules={[
                           {
                             required: true,
-                            message: "Please confirm your password",
+                            message: 'Please confirm your password'
                           },
                           ({ getFieldValue }) => ({
-                            validator(_, value) {
+                            validator (_, value) {
                               if (
                                 !value ||
-                                getFieldValue("password") === value
+                                getFieldValue('password') === value
                               ) {
-                                return Promise.resolve();
+                                return Promise.resolve()
                               }
                               return Promise.reject(
                                 new Error(
-                                  "The two passwords that you entered do not match!"
+                                  'The two passwords that you entered do not match!'
                                 )
-                              );
-                            },
-                          }),
+                              )
+                            }
+                          })
                         ]}
-                        dependencies={["password"]}
+                        dependencies={['password']}
                         hasFeedback
                       >
                         <Input.Password
-                          autoComplete="off"
-                          name="confirmPassword"
-                          style={{ marginBottom: "0.5rem" }}
-                          placeholder="Enter Confirm Password"
+                          autoComplete='off'
+                          name='confirmPassword'
+                          style={{ marginBottom: '0.5rem' }}
+                          placeholder='Enter Confirm Password'
                         />
                       </Form.Item>
-                    </Col>{" "}
+                    </Col>{' '}
                   </>
                 )}
 
-                <Col xs={24} sm={24} md={24} lg={24} className="justify-end">
+                <Col xs={24} sm={24} md={24} lg={24} className='justify-end'>
                   <Button
-                    type="primary"
+                    type='primary'
                     onClick={() => {
-                      if (id) setIsModalOpen(true);
-                      else form.submit();
+                      if (id) setIsModalOpen(true)
+                      else form.submit()
                     }}
                   >
-                    {id ? "Update" : "Next"}
+                    {id ? 'Update' : 'Next'}
                   </Button>
                   {id && (
                     <Button
-                      type="primary"
+                      type='primary'
                       onClick={() => {
-                        handleNextStep();
+                        handleNextStep()
                       }}
-                      style={{ marginLeft: "10px" }}
+                      style={{ marginLeft: '10px' }}
                     >
                       Next
                     </Button>
@@ -651,10 +728,10 @@ const AddUsers = () => {
           {currentStep === 2 && (
             <Form
               labelCol={{
-                span: 24,
+                span: 24
               }}
               wrapperCol={{
-                span: 24,
+                span: 24
               }}
               form={form}
               onFinish={handleSubmit}
@@ -667,27 +744,27 @@ const AddUsers = () => {
                     pagination
                   />
                 </Col>
-                <Col xs={24} sm={24} md={24} lg={24} className="justify-end mt">
-                  <Button type="primary" onClick={handlePrevStep}>
+                <Col xs={24} sm={24} md={24} lg={24} className='justify-end mt'>
+                  <Button type='primary' onClick={handlePrevStep}>
                     Previous
                   </Button>
                   <Button
-                    type="primary"
+                    type='primary'
                     onClick={() => {
-                      if (id) setIsModalOpen(true);
-                      else form.submit();
+                      if (id) setIsModalOpen(true)
+                      else form.submit()
                     }}
-                    style={{ marginLeft: "10px" }}
+                    style={{ marginLeft: '10px' }}
                   >
-                    {id ? "Update" : "Next"}
+                    {id ? 'Update' : 'Next'}
                   </Button>
                   {id && (
                     <Button
-                      type="primary"
+                      type='primary'
                       onClick={() => {
-                        handleNextStep();
+                        handleNextStep()
                       }}
-                      style={{ marginLeft: "10px" }}
+                      style={{ marginLeft: '10px' }}
                     >
                       Next
                     </Button>
@@ -699,10 +776,10 @@ const AddUsers = () => {
           {currentStep === 1 && (
             <Form
               labelCol={{
-                span: 24,
+                span: 24
               }}
               wrapperCol={{
-                span: 24,
+                span: 24
               }}
               form={form}
               onFinish={handleSubmit}
@@ -710,13 +787,13 @@ const AddUsers = () => {
               <Row gutter={30}>
                 <Col lg={12} md={12} sm={24}>
                   <Form.Item
-                    label="Availability"
-                    name="availability"
+                    label='Availability'
+                    name='availability'
                     rules={[
                       {
                         required: true,
-                        message: "Please enter availability",
-                      },
+                        message: 'Please enter availability'
+                      }
                     ]}
                   >
                     <TimePicker.RangePicker />
@@ -726,28 +803,28 @@ const AddUsers = () => {
                   lg={24}
                   md={24}
                   sm={24}
-                  className="justify-end display-flex"
+                  className='justify-end display-flex'
                 >
-                  <Button type="primary" onClick={handlePrevStep}>
+                  <Button type='primary' onClick={handlePrevStep}>
                     Previous
                   </Button>
                   <Button
-                    type="primary"
+                    type='primary'
                     onClick={() => {
-                      if (id) setIsModalOpen(true);
-                      else form.submit();
+                      if (id) setIsModalOpen(true)
+                      else form.submit()
                     }}
-                    style={{ marginLeft: "10px" }}
+                    style={{ marginLeft: '10px' }}
                   >
-                    {id ? "Update" : "Next"}
+                    {id ? 'Update' : 'Next'}
                   </Button>
                   {id && (
                     <Button
-                      type="primary"
+                      type='primary'
                       onClick={() => {
-                        handleNextStep();
+                        handleNextStep()
                       }}
-                      style={{ marginLeft: "10px" }}
+                      style={{ marginLeft: '10px' }}
                     >
                       Next
                     </Button>
@@ -759,10 +836,10 @@ const AddUsers = () => {
           {currentStep === 3 && (
             <Form
               labelCol={{
-                span: 24,
+                span: 24
               }}
               wrapperCol={{
-                span: 24,
+                span: 24
               }}
               form={form}
               onFinish={handleSubmit}
@@ -781,28 +858,28 @@ const AddUsers = () => {
                   lg={24}
                   md={24}
                   sm={24}
-                  className="justify-end display-flex"
+                  className='justify-end display-flex'
                 >
-                  <Button type="primary" onClick={handlePrevStep}>
+                  <Button type='primary' onClick={handlePrevStep}>
                     Previous
                   </Button>
                   <Button
-                    type="primary"
+                    type='primary'
                     onClick={() => {
-                      if (id) setIsModalOpen(true);
-                      else form.submit();
+                      if (id) setIsModalOpen(true)
+                      else form.submit()
                     }}
-                    style={{ marginLeft: "10px" }}
+                    style={{ marginLeft: '10px' }}
                   >
-                    {id ? "Update" : "Next"}
+                    {id ? 'Update' : 'Next'}
                   </Button>
                   {id && (
                     <Button
-                      type="primary"
+                      type='primary'
                       onClick={() => {
-                        handleNextStep();
+                        handleNextStep()
                       }}
-                      style={{ marginLeft: "10px" }}
+                      style={{ marginLeft: '10px' }}
                     >
                       Next
                     </Button>
@@ -814,10 +891,10 @@ const AddUsers = () => {
           {currentStep === 4 && (
             <Form
               labelCol={{
-                span: 24,
+                span: 24
               }}
               wrapperCol={{
-                span: 24,
+                span: 24
               }}
               form={form}
               onFinish={handleSubmit}
@@ -830,16 +907,16 @@ const AddUsers = () => {
                     pagination
                   />
                 </Col>
-                <Col xs={24} sm={24} md={24} lg={24} className="justify-end mt">
+                <Col xs={24} sm={24} md={24} lg={24} className='justify-end mt'>
                   <Button
-                    type="primary"
+                    type='primary'
                     onClick={handlePrevStep}
-                    style={{ marginRight: "10px" }}
+                    style={{ marginRight: '10px' }}
                   >
                     Previous
                   </Button>
-                  <Button type="primary" htmlType="submit">
-                    {id ? "Update" : "Submit"}
+                  <Button type='primary' htmlType='submit'>
+                    {id ? 'Update' : 'Submit'}
                   </Button>
                 </Col>
               </Row>
@@ -849,18 +926,18 @@ const AddUsers = () => {
       </Card>
       <Modal
         centered
-        title="Confirmation"
+        title='Confirmation'
         open={isModalOpen}
         onOk={() => form.submit()}
         onCancel={() => setIsModalOpen(false)}
-        okText="Update & Next"
+        okText='Update & Next'
       >
         <Spin spinning={isLoading}>
           <p>Are you sure you want to update this details?</p>
         </Spin>
       </Modal>
     </div>
-  );
-};
+  )
+}
 
-export default AddUsers;
+export default AddUsers
