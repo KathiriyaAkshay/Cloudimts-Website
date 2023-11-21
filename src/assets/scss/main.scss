@@ -1777,3 +1777,48 @@
   color: #1677ff;
   border-width:1px;
 }
+
+.Green-option-add-button{
+  border-color: rgb(1, 194, 14);
+  color: rgb(20, 194, 1);
+  border-width:2px;
+}
+
+.Green-option-add-button:hover{
+  background-color: rgb(15, 151, 0);
+  border-color: rgb(1, 194, 14) !important;
+  color: white !important;
+}
+
+
+.Danger-button{
+  border-color: rgb(227, 0, 0);
+  color: rgb(227, 0, 0);
+  border-width:1px;
+}
+
+.Danger-button:hover{
+  background-color: rgb(227, 0, 0);
+  border-color: rgb(227, 0, 0) !important;
+  color: white !important;
+}
+
+.Reset-button{
+  border-color: rgb(227, 140, 0);
+  color: rgb(227, 140, 0);
+  border-width:1px;
+}
+
+.Reset-button:hover{
+  background-color: rgb(227, 140, 0);
+  border-color: rgb(227, 140, 0) !important;
+  color: white !important;
+}
+
+thead>tr>th{
+ text-align: center !important;
+}
+
+.pt-1{
+  padding-top: 1rem;
+}

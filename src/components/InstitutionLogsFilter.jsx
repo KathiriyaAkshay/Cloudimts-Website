@@ -132,6 +132,7 @@ const InstitutionLogsFilter = ({ name, retrieveRoleData, setFilterValues }) => {
         form={form}
         onFinish={handleSubmit}
         autoComplete={"off"}
+        className="pt-1"  
       >
         <Row gutter={15}>
           <Col xs={24} lg={12}>
