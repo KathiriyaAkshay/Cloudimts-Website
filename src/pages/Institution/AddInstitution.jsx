@@ -195,7 +195,9 @@ const AddInstitution = () => {
       }
       setPayload(resData)
       if (id) {
-        setIsLoading(true)
+
+        setIsLoading(true) ; 
+
         await API.post(
           '/institute/v1/institute-details-update',
           { ...resData, id: id },
@@ -204,8 +206,6 @@ const AddInstitution = () => {
           .then(res => {
             if (res.data.status) {
               NotificationMessage('success', res.data.message)
-
-              console.log(res)
             } else {
               NotificationMessage(
                 'warning',
@@ -215,13 +215,16 @@ const AddInstitution = () => {
             }
           })
           .catch(err =>
-            NotificationMessage('warning', 'Network request failed', err)
+            NotificationMessage('warning', 'Network request failed',err?.response?.data?.message)
           )
         setIsLoading(false)
       }
-      handleNextStep()
+
+      handleNextStep() ; 
+
     } else if (currentStep === 1) {
       setPayload(prev => ({ ...prev, ...convertToObject(values) }))
+      
       if (id) {
         setIsLoading(true)
         await API.post(
@@ -235,7 +238,6 @@ const AddInstitution = () => {
           .then(res => {
             if (res.data.status) {
               NotificationMessage('success', res.data.message)
-              console.log(res)
             } else {
               NotificationMessage(
                 'warning',
@@ -245,12 +247,15 @@ const AddInstitution = () => {
             }
           })
           .catch(err =>
-            NotificationMessage('warning', 'Network request failed')
+            NotificationMessage('warning', 'Network request failed', err?.response?.data?.message)
           )
         setIsLoading(false)
       }
+
       handleNextStep()
+
     } else if (currentStep === 2) {
+
       setPayload(prev => ({
         ...prev,
         report_setting: {
@@ -264,7 +269,9 @@ const AddInstitution = () => {
           }
         }
       }))
+
       if (id) {
+
         setIsLoading(true)
         await API.post(
           '/institute/v1/institute-report-setting-update',
@@ -293,11 +300,12 @@ const AddInstitution = () => {
             }
           })
           .catch(err => {
-            NotificationMessage('warning', 'Network request failed', err)
+            NotificationMessage('warning', 'Network request failed', err?.response?.data?.message)
           })
         setIsLoading(false)
       }
-      handleNextStep()
+      handleNextStep() ; 
+
     } else if (currentStep === 3) {
       setPayload(prev => ({
         ...prev,
@@ -331,7 +339,7 @@ const AddInstitution = () => {
             }
           })
           .catch(err => {
-            NotificationMessage('warning', 'Network request failed')
+            NotificationMessage('warning', 'Network request failed', err?.response?.data?.message)
           })
         setIsLoading(false)
       }
@@ -360,7 +368,7 @@ const AddInstitution = () => {
             }
           })
           .catch(err => {
-            NotificationMessage('warning', 'Network request failed')
+            NotificationMessage('warning', 'Network request failed', err?.response?.data?.message)
           })
       }
       handleNextStep()
@@ -372,6 +380,7 @@ const AddInstitution = () => {
         }
       }))
       if (id) {
+
         updateInHouseUser({
           id: parseInt(id),
           in_house_radiologist: {
@@ -390,8 +399,11 @@ const AddInstitution = () => {
               )
             }
           })
-          .catch(err => console.log(err))
-      } else {
+          .catch(err => {
+            NotificationMessage('warning', 'Network request failed', err?.response?.data?.message)
+          })
+      
+        } else {
         setIsLoading(true)
         await API.post(
           '/institute/v1/institute-create',
