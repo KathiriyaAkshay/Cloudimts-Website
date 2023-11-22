@@ -57,7 +57,11 @@ const Roles = () => {
         }
       })
       .catch(err => {
-        NotificationMessage('warning', 'Network request failed')
+        NotificationMessage(
+          'warning',
+          'Network request failed',
+          err.response.data.message
+        )
       })
     setIsLoading(false)
   }
@@ -126,7 +130,13 @@ const Roles = () => {
             )
           }
         })
-        .catch(err => NotificationMessage('warning', "Network request failed")) 
+        .catch(err =>
+          NotificationMessage(
+            'warning',
+            'Network request failed',
+            err.response.data.message
+          )
+        )
     } else if (roleID) {
 
       await API.post(
@@ -154,8 +164,11 @@ const Roles = () => {
           }
         })
         .catch(err => {
-          console.log("Call this function");
-          NotificationMessage('warning', "Network request failed")
+          NotificationMessage(
+            'warning',
+            'Network request failed',
+            err.response.data.message
+          )
         })
     }
     setIsLoading(false)
