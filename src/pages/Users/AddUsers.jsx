@@ -756,6 +756,7 @@ const AddUsers = () => {
                   <TableWithFilter
                     tableColumns={institutionColumn}
                     tableData={institutionOptions}
+                    className = "Institution-logs-table"
                     pagination
                   />
                 </Col>

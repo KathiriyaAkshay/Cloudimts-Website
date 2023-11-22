@@ -42,7 +42,9 @@ const Users = () => {
   const [userTablePermission, setUserTablePermission] = useState([])
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [form] = Form.useForm()
-  const [userID, setUserID] = useState(null)
+  const [userID, setUserID] = useState(null) 
+
+  const [logsUsername, setLogsUsername] = useState(null) ; 
 
   const navigate = useNavigate()
 
@@ -96,7 +98,10 @@ const Users = () => {
 
   const deleteActionHandler = () => {}
 
-  const retrieveLogsData = id => {
+  const retrieveLogsData = (id, username) => {
+
+    setLogsUsername(username) ; 
+
     getParticularUsersLogs({ id: id })
       .then(res => {
         if (res.data.status) {
@@ -187,6 +192,7 @@ const Users = () => {
         checkPermissionStatus('View Username') ? '' : 'column-display-none'
       }`
     },
+    
     checkPermissionStatus('View Email') && {
       title: 'Email',
       dataIndex: 'email',
@@ -194,6 +200,7 @@ const Users = () => {
         checkPermissionStatus('View Email') ? '' : 'column-display-none'
       }`
     },
+    
     checkPermissionStatus('View contact number') && {
       title: 'Contact Number',
       dataIndex: 'contact',
@@ -203,6 +210,7 @@ const Users = () => {
           : 'column-display-none'
       }`
     },
+    
     checkPermissionStatus('View Role name') && {
       title: 'Role',
       dataIndex: 'role_name',
@@ -210,6 +218,7 @@ const Users = () => {
         checkPermissionStatus('View Role name') ? '' : 'column-display-none'
       }`
     },
+    
     checkPermissionStatus('View Institution name') && {
       title: 'Institute',
       dataIndex: 'institute_name',
@@ -219,6 +228,7 @@ const Users = () => {
           : 'column-display-none'
       }`
     },
+    
     checkPermissionStatus('View Created time') && {
       title: 'Created At',
       dataIndex: 'created_at',
@@ -226,6 +236,7 @@ const Users = () => {
         checkPermissionStatus('View Created time') ? '' : 'column-display-none'
       }`
     },
+    
     checkPermissionStatus('View last updated time') && {
       title: 'Updated At',
       dataIndex: 'updated_at',
@@ -235,6 +246,7 @@ const Users = () => {
           : 'column-display-none'
       }`
     },
+    
     checkPermissionStatus('View Disable/Enable user option') && {
       title: 'Status',
       dataIndex: 'status',
@@ -258,6 +270,7 @@ const Users = () => {
         }
       }
     },
+    
     checkPermissionStatus('Actions option access') && {
       title: 'Actions',
       dataIndex: 'actions',
@@ -270,9 +283,11 @@ const Users = () => {
       width: window.innerWidth < 650 ? '1%' : '10%',
       render: (_, record) => (
         <Space style={{ display: 'flex', justifyContent: 'space-evenly' }}>
+
           <EditActionIcon
             editActionHandler={() => editActionHandler(record.id)}
           />
+          
           <Tooltip title={'Reset Password'}>
             <TbLockAccess
               className='action-icon'
@@ -283,10 +298,12 @@ const Users = () => {
               }}
             />
           </Tooltip>
+          
+
           <Tooltip title={'View Logs'}>
             <EyeFilled
               className='action-icon action-icon-primary'
-              onClick={() => retrieveLogsData(record.id)}
+              onClick={() => retrieveLogsData(record.id, record.username)}
             />
           </Tooltip>
 
@@ -301,15 +318,14 @@ const Users = () => {
   const logsColumn = [
     {
       title: 'Perform User',
-      dataIndex: 'perform_user'
+      dataIndex: 'perform_user', 
+      width: 30
     },
-    {
-      title: 'Target User',
-      dataIndex: 'target_user'
-    },
+
     {
       title: 'Event',
       dataIndex: 'logs_id',
+      width: 50, 
       render: text => (
         <Tag
           color={
@@ -339,7 +355,8 @@ const Users = () => {
     },
     {
       title: 'Time',
-      dataIndex: 'time'
+      dataIndex: 'time', 
+      width: 30
     }
   ]
 
@@ -384,13 +401,17 @@ const Users = () => {
       />
 
       <Drawer
-        title='Users Logs'
+        title= {`${logsUsername} user logs`}
         placement='right'
         onClose={() => setIsDrawerOpen(false)}
         open={isDrawerOpen}
         width={700}
       >
-        <TableWithFilter tableData={logsData} tableColumns={logsColumn} />
+        <TableWithFilter 
+          tableData={logsData} 
+          tableColumns={logsColumn} 
+        />
+      
       </Drawer>
 
       <Modal
