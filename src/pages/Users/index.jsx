@@ -250,9 +250,6 @@ const Users = () => {
               <Switch
                 checkedChildren='Enable'
                 checked={record?.user?.is_active}
-                // onChange={(state) => {
-                //   changeStatus(record.id, state);
-                // }}
                 unCheckedChildren='Disable'
                 className='table-switch'
               />
