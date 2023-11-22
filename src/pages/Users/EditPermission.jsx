@@ -39,7 +39,11 @@ function EditPermission () {
         }
       })
       .catch(err => {
-        NotificationMessage('warning', 'Network request failed')
+        NotificationMessage(
+          'warning',
+          'Network request failed',
+          err.response.data.message
+        )
       })
     setIsLoading(false)
   }
@@ -101,7 +105,13 @@ function EditPermission () {
           )
         }
       })
-      .catch(err => NotificationMessage('warning', err.response.data.message))
+      .catch(err =>
+        NotificationMessage(
+          'warning',
+          'Network request failed',
+          err.response.data.message
+        )
+      )
     setIsLoading(false)
   }
 

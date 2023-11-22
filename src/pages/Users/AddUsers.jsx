@@ -97,7 +97,7 @@ const AddUsers = () => {
         }
       })
       .catch(err => {
-        NotificationMessage('warning', 'Network request failed')
+        NotificationMessage('warning', 'Network request failed',  err?.response?.data?.message)
       })
   }
 
@@ -148,7 +148,7 @@ const AddUsers = () => {
         }
       })
       .catch(err => {
-        NotificationMessage('warning', 'Network request failed')
+        NotificationMessage('warning', 'Network request failed',  err?.response?.data?.message)
       })
     setIsLoading(false)
   }
@@ -173,7 +173,7 @@ const AddUsers = () => {
           )
         }
       })
-      .catch(err => NotificationMessage('warning', 'Network request failed'))
+      .catch(err => NotificationMessage('warning', 'Network request failed',  err?.response?.data?.message))
     setIsLoading(false)
   }
 
@@ -199,7 +199,7 @@ const AddUsers = () => {
         }
       })
       .catch(err => {
-        NotificationMessage('warning', 'Network request failed')
+        NotificationMessage('warning', 'Network request failed',  err?.response?.data?.message)
       })
     setIsLoading(false)
   }
@@ -225,18 +225,25 @@ const AddUsers = () => {
     return modifiedObject
   }
 
-  const handleSubmit = async values => {
+  const handleSubmit = async (values) => {
     setIsLoading(true)
+
     if (currentStep === 0) {
+
+      console.log(values);
+      setIsLoading(false) ; 
+      console.log("User step1 functioality call =========>");
       setPayload({
         ...values,
         allow_offline_download: values.allow_offline_download
           ? values.allow_offline_download
           : false,
         allow: values.allow ? values.allow : false
-      })
+      })  
       handleNextStep()
+      
     } else if (currentStep === 1) {
+    
       setPayload(prev => ({
         ...prev,
         start_time: values.availability[0].format('HH:mm:ss'),
@@ -262,7 +269,7 @@ const AddUsers = () => {
             }
           })
           .catch(err =>
-            NotificationMessage('warning', err.response.data.message)
+            NotificationMessage('warning','Network request failed' , err.response.data.message)
           )
         setIsLoading(false)
       }
@@ -289,7 +296,7 @@ const AddUsers = () => {
             }
           })
           .catch(err =>
-            NotificationMessage('warning', err.response.data.message)
+            NotificationMessage('warning', "Network request failed" ,err.response.data.message)
           )
         setIsLoading(false)
       }
@@ -309,7 +316,7 @@ const AddUsers = () => {
             signature_image: res.data.image_url
           }))
         } catch (err) {
-          NotificationMessage('warning', err.response.data.message)
+          NotificationMessage('warning',"Network request failed" ,err.response.data.message)
         }
       }
       setPayload(prev => ({ ...prev, signature_image }))
@@ -335,7 +342,7 @@ const AddUsers = () => {
             }
           })
           .catch(err =>
-            NotificationMessage('warning', err.response.data.message)
+            NotificationMessage('warning', "Network request failed", err.response.data.message)
           )
       }
       setIsLoading(false)
@@ -369,7 +376,7 @@ const AddUsers = () => {
             }
           })
           .catch(err =>
-            NotificationMessage('warning', err.response.data.message)
+            NotificationMessage('warning', "Network request failed" ,err.response.data.message)
           )
       } else {
         await API.post(
@@ -391,7 +398,7 @@ const AddUsers = () => {
             }
           })
           .catch(err =>
-            NotificationMessage('warning', err.response.data.message)
+            NotificationMessage('warning', "Network request failed" ,err.response.data.message)
           )
       }
       setIsLoading(false)
@@ -725,10 +732,9 @@ const AddUsers = () => {
                   <Button
                     type='primary'
                     onClick={() => {
-                      handleNextStep()
+                      handleSubmit() 
                     }}
-                    style={{ marginLeft: '10px' }}
-                  >
+                    style={{ marginLeft: '10px' }}>
                     Next
                   </Button>
                   
@@ -756,6 +762,7 @@ const AddUsers = () => {
                   <TableWithFilter
                     tableColumns={institutionColumn}
                     tableData={institutionOptions}
+                    className = "Institution-logs-table"
                     pagination
                   />
                 </Col>

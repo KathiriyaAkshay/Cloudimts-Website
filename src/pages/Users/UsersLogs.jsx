@@ -110,6 +110,7 @@ const UsersLogs = () => {
 
   return (
     <div>
+      
       <TableWithFilter
         tableData={tableData}
         tableColumns={columns}
@@ -118,6 +119,7 @@ const UsersLogs = () => {
         onPaginationChange={retrieveStudyData}
         loadingTableData={isLoading}
       />
+
       <UserLogsFilter
         name={'User Logs Filter'}
         retrieveRoleData={retrieveStudyData}

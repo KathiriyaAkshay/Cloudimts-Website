@@ -90,6 +90,17 @@ const ShareStudy = ({
               name: "Patient's Name",
               value: resData?.Patient_name
             },
+
+            {
+              name: "Assign study time", 
+              value: resData?.study_assign_time
+            }, 
+  
+            {
+              name:"Assign study username", 
+              value: resData?.study_assign_username
+            }, 
+            
             {
               name: 'Performing Physician Name',
               value: resData?.Performing_physician_name
@@ -140,6 +151,8 @@ const ShareStudy = ({
             res.data.message
           )
         }
+        setModalData(modifiedData);
+        setStudyData(resData);
       })
       .catch(err =>
         NotificationMessage(
@@ -252,10 +265,12 @@ const ShareStudy = ({
                   {item.name}:
                   {item.name === "Patient's id" ||
                   item.name === "Patient's Name" ||
-                  item.name === 'Study UID' ||
-                  item.name === 'Institution Name' ||
-                  item.name === 'Series UID' ? (
-                    <Tag color='#87d068'>{item.value}</Tag>
+                  item.name === "Study UID" ||
+                  item.name === "Institution Name" ||
+                  item.name === "Series UID" || 
+                  item.name === "Assign study time" || 
+                  item.name === "Assign study username"? (
+                    <Tag color="#87d068">{item.value}</Tag>
                   ) : (
                     <Typography style={{ fontWeight: '400' }}>
                       {item.value}

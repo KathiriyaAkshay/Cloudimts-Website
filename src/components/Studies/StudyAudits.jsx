@@ -244,10 +244,12 @@ const StudyAudits = ({ isModalOpen, setIsModalOpen, studyID, setStudyID }) => {
                 {item.name}:
                 {item.name === "Patient's id" ||
                 item.name === "Patient's Name" ||
-                item.name === 'Study UID' ||
-                item.name === 'Institution Name' ||
-                item.name === 'Series UID' ? (
-                  <Tag color='#87d068'>{item.value}</Tag>
+                item.name === "Study UID" ||
+                item.name === "Institution Name" ||
+                item.name === "Series UID" || 
+                item.name === "Assign study time" || 
+                item.name === "Assign study username"? (
+                  <Tag color="#87d068">{item.value}</Tag>
                 ) : (
                   <Typography style={{ fontWeight: '400' }}>
                     {item.value}

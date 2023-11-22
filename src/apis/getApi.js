@@ -30,4 +30,5 @@ export const getAPICall = async (url, params) => {
       return data;
     });
 };
+
 export default API;

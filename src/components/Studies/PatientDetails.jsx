@@ -44,6 +44,17 @@ const PatientDetails = ({
             name: "Previous Patient's Id",
             value: resData?.Previous_patient_id,
           },
+          
+          {
+            name: "Assign study time", 
+            value: resData?.study_assign_time
+          }, 
+
+          {
+            name: "Assign study username", 
+            value: resData?.study_assign_username
+          }, 
+
           {
             name: "Accession Number",
             value: resData?.Accession_number,
@@ -60,10 +71,7 @@ const PatientDetails = ({
             name: "Gender",
             value: resData?.Gender,
           },
-          // {
-          //   name: "Count",
-          //   value: "",
-          // },
+ 
           {
             name: "Date of birth",
             value: resData?.DOB,
@@ -176,7 +184,9 @@ const PatientDetails = ({
                 item.name === "Patient's Name" ||
                 item.name === "Study UID" ||
                 item.name === "Institution Name" ||
-                item.name === "Series UID" ? (
+                item.name === "Series UID" || 
+                item.name === "Assign study time" || 
+                item.name === "Assign study username"? (
                   <Tag color="#87d068">{item.value}</Tag>
                 ) : (
                   <Typography style={{ fontWeight: "400" }}>

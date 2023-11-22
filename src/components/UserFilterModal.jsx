@@ -29,22 +29,18 @@ const UserFilterModal = ({ name, setInstitutionData, retrieveUsersData }) => {
   return (
     <Modal
       centered
-      width={"50%"}
+      width={"70%"}
       title={name}
       open={isUserFilterModalOpen}
       onOk={() => form.submit()}
       onCancel={() => {
-        // form.resetFields();
         setIsUserFilterModalOpen(false);
-        // retrieveUsersData();
       }}
       footer={[
         <Button
           key="back"
           onClick={() => {
-            // form.resetFields();
             setIsUserFilterModalOpen(false);
-            // retrieveUsersData();
           }}
         >
           Cancel
@@ -76,6 +72,7 @@ const UserFilterModal = ({ name, setInstitutionData, retrieveUsersData }) => {
         form={form}
         onFinish={handleSubmit}
         autoComplete={"off"}
+        style={{marginTop: "12px"}}
       >
         <Row gutter={15}>
           <Col xs={24} lg={12}>
@@ -95,7 +92,7 @@ const UserFilterModal = ({ name, setInstitutionData, retrieveUsersData }) => {
           </Col>
           <Col xs={24} lg={12}>
             <Form.Item
-              name="email__icontains"
+              name="user__email__icontains"
               label="Email"
               rules={[
                 {
