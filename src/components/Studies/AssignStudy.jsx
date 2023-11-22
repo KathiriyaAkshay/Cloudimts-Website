@@ -122,6 +122,17 @@ const AssignStudy = ({
             name: "Patient's Name",
             value: resData?.Patient_name,
           },
+
+          {
+            name: "Assign study time", 
+            value: resData?.study_assign_time
+          },
+          
+          {
+            name: "Assign study username", 
+            value: resData?.study_assign_username
+          }, 
+
           {
             name: "Performing Physician Name",
             value: resData?.Performing_physician_name,

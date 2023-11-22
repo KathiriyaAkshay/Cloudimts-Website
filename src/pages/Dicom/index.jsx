@@ -111,7 +111,10 @@ const Dicom = () => {
   const [seriesIdList, setSeriesIdList] = useState([]) ; 
   const [previousSeriesResponse, setPreviousSeriesResponse] = useState(null) ; 
 
-  const [notificationValue, setNotificationValue] = useState(0); 
+  const [notificationValue, setNotificationValue] = useState(0);  
+
+  // Quick Assign Studies option 
+  const [quickAssignStudy, settQuickAssignStudy] = useState(false);
 
   const SetupGenralChatNotification = () => {
 
@@ -127,10 +130,6 @@ const Dicom = () => {
         if (eventData.payload.status === "new-chat"){
   
           let ChatData = eventData.payload.data; 
-
-          console.log("Study data  information ========>");
-          console.log(studyData);
-  
           studyData.map((element) => {
             if (element.series_id === ChatData.room_name){
               NotificationMessage("success", 
@@ -354,10 +353,7 @@ const Dicom = () => {
           count: 0  , 
           institution_id: data.institution.id
         }));
-    
-        console.log("Response data information ========>");
-        console.log(resData); 
-
+          
         // set StudyData
         setStudyData(resData);
         setTotalPages(res.data.total_object);
@@ -1060,6 +1056,14 @@ const Dicom = () => {
               </Row>
             </Form>
         </Spin>
+
+      </Modal>
+
+      {/* ==== Assign studies option modal ====  */}
+
+      <Modal title = "Assign study"
+       
+      >
 
       </Modal>
     </>
