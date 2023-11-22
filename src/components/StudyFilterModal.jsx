@@ -1,221 +1,289 @@
-import { Col, DatePicker, Form, Input, Modal, Row, Select } from "antd";
-import React, { useEffect, useState } from "react";
+import { Col, DatePicker, Form, Input, Modal, Row, Select } from 'antd'
+import React, { useEffect, useState } from 'react'
 import {
   createNewFilter,
   getInstitutionList,
   getModalityList,
   getParticularFilter,
   getRadiologistList,
-  updateFilterData,
-} from "../apis/studiesApi";
-import NotificationMessage from "./NotificationMessage";
-import dayjs from "dayjs";
+  updateFilterData
+} from '../apis/studiesApi'
+import NotificationMessage from './NotificationMessage'
+import dayjs from 'dayjs'
 
 const StudyFilterModal = ({
   isFilterModalOpen,
   setIsFilterModalOpen,
   filterID,
   setFilterID,
-  retrieveFilterOptions,
+  retrieveFilterOptions
 }) => {
-  const [institutionOptions, setInstitutionOptions] = useState([]);
-  const [radiologistOptions, setRadiologistOptions] = useState([]);
-  const [modalityOptions, setModalityOptions] = useState([]);
+  const [institutionOptions, setInstitutionOptions] = useState([])
+  const [radiologistOptions, setRadiologistOptions] = useState([])
+  const [modalityOptions, setModalityOptions] = useState([])
   const [statusOptions, setStatusOptions] = useState([
     {
-      label: "Unassigned",
-      value: "Unassigned",
+      label: 'Unassigned',
+      value: 'Unassigned'
     },
     {
-      label: "New",
-      value: "New",
+      label: 'New',
+      value: 'New'
     },
     {
-      label: "Viewed",
-      value: "Viewed",
+      label: 'Viewed',
+      value: 'Viewed'
     },
     {
-      label: "Assigned",
-      value: "Assigned",
+      label: 'Assigned',
+      value: 'Assigned'
     },
     {
-      label: "In Reporting",
-      value: "In Reporting",
+      label: 'In Reporting',
+      value: 'In Reporting'
     },
     {
-      label: "Draft",
-      value: "Draft",
+      label: 'Draft',
+      value: 'Draft'
     },
     {
-      label: "Reported",
-      value: "Reported",
-    },
-  ]);
-  const [form] = Form.useForm();
+      label: 'Reported',
+      value: 'Reported'
+    }
+  ])
+  const [form] = Form.useForm()
 
   useEffect(() => {
-    retrieveInstitutionData();
-    retrieveModalityData();
-    retrieveRadiologistData();
-  }, []);
+    retrieveInstitutionData()
+    retrieveModalityData()
+    retrieveRadiologistData()
+  }, [])
 
   useEffect(() => {
     if (filterID) {
-      retrieveFilterData(filterID);
+      retrieveFilterData(filterID)
     }
-  }, [filterID]);
+  }, [filterID])
 
-  const retrieveFilterData = (id) => {
+  const retrieveFilterData = id => {
     getParticularFilter({ id })
-      .then((res) => {
-        const resData = res.data.data.map((data) => ({
-          ...data,
-          institution_name: data?.institution_name?.data,
-          assigned_user: data?.assigned_user?.data,
-          modality: data?.modality?.data,
-          study_status: data?.study_status?.data,
-          from_date: data.from_date && dayjs(data.from_date, "YYYY-MM-DD"),
-          to_date: data.to_date && dayjs(data.to_date, "YYYY-MM-DD"),
-        }));
-        form.setFieldsValue(resData[0]);
+      .then(res => {
+        if (res.data.status) {
+          const resData = res.data.data.map(data => ({
+            ...data,
+            institution_name: data?.institution_name?.data,
+            assigned_user: data?.assigned_user?.data,
+            modality: data?.modality?.data,
+            study_status: data?.study_status?.data,
+            from_date: data.from_date && dayjs(data.from_date, 'YYYY-MM-DD'),
+            to_date: data.to_date && dayjs(data.to_date, 'YYYY-MM-DD')
+          }))
+          form.setFieldsValue(resData[0])
+        } else {
+          NotificationMessage(
+            'warning',
+            'Network request failed',
+            res.data.message
+          )
+        }
       })
-      .catch((err) => console.log(err));
-  };
+      .catch(err =>
+        NotificationMessage(
+          'warning',
+          'Network request failed',
+          err.response.data.message
+        )
+      )
+  }
 
   const retrieveInstitutionData = () => {
     getInstitutionList()
-      .then((res) => {
-        const resData = res.data.data.map((data) => ({
-          value: data.id,
-          label: data.name,
-        }));
-        setInstitutionOptions(resData);
+      .then(res => {
+        if (res.data.status) {
+          const resData = res.data.data.map(data => ({
+            value: data.id,
+            label: data.name
+          }))
+          setInstitutionOptions(resData)
+        } else {
+          NotificationMessage(
+            'warning',
+            'Network request failed',
+            res.data.message
+          )
+        }
       })
-      .catch((err) => console.log(err));
-  };
+      .catch(err =>
+        NotificationMessage(
+          'warning',
+          'Network request failed',
+          err.response.data.message
+        )
+      )
+  }
 
   const retrieveRadiologistData = () => {
-    getRadiologistList({ role_id: localStorage.getItem("role_id") })
-      .then((res) => {
-        const resData = res.data.data.map((data) => ({
-          label: data.name,
-          value: data.id,
-        }));
-        setRadiologistOptions(resData);
+    getRadiologistList({ role_id: localStorage.getItem('role_id') })
+      .then(res => {
+        if (res.data.status) {
+          const resData = res.data.data.map(data => ({
+            label: data.name,
+            value: data.id
+          }))
+          setRadiologistOptions(resData)
+        } else {
+          NotificationMessage(
+            'warning',
+            'Network request failed',
+            res.data.message
+          )
+        }
       })
-      .catch((err) => console.log(err));
-  };
+      .catch(err =>
+        cNotificationMessage(
+          'warning',
+          'Network request failed',
+          err.response.data.message
+        )
+      )
+  }
 
   const retrieveModalityData = () => {
     getModalityList()
-      .then((res) => {
-        const resData = res.data.data.map((data) => ({
-          label: data.name,
-          value: data.name,
-        }));
-        setModalityOptions(resData);
+      .then(res => {
+        if (res.data.status) {
+          const resData = res.data.data.map(data => ({
+            label: data.name,
+            value: data.name
+          }))
+          setModalityOptions(resData)
+        } else {
+          NotificationMessage(
+            'warning',
+            'Network request failed',
+            res.data.message
+          )
+        }
       })
-      .catch((err) => console.log(err));
-  };
+      .catch(err =>
+        NotificationMessage(
+          'warning',
+          'Network request failed',
+          err.response.data.message
+        )
+      )
+  }
 
-  const submitHandler = (values) => {
+  const submitHandler = values => {
     const modifiedObj = {
       ...values,
       from_date: values?.from_date
-        ? values?.from_date?.format("YYYY-MM-DD")
-        : "",
-      to_date: values?.to_date ? values?.to_date?.format("YYYY-MM-DD") : "",
+        ? values?.from_date?.format('YYYY-MM-DD')
+        : '',
+      to_date: values?.to_date ? values?.to_date?.format('YYYY-MM-DD') : '',
       study_status: values?.study_status ? values?.study_status : [],
-      patient_id: values?.patient_id ? values?.patient_id : "",
-      patient_name: values?.patient_name ? values?.patient_name : "",
+      patient_id: values?.patient_id ? values?.patient_id : '',
+      patient_name: values?.patient_name ? values?.patient_name : '',
       modality: values?.modality ? values?.modality : [],
       assigned_user: values?.assigned_user ? values?.assigned_user : [],
-      institution_name: values?.institution_name
-        ? values?.institution_name
-        : [],
-    };
+      institution_name: values?.institution_name ? values?.institution_name : []
+    }
     if (filterID) {
-      updateFilterData({ ...modifiedObj, id: filterID }).then((res) => {
-        NotificationMessage("success", "Filter Updated Successfully");
-        setIsFilterModalOpen(false);
-        form.resetFields();
-        setFilterID(null);
-        retrieveFilterOptions();
-      });
+      updateFilterData({ ...modifiedObj, id: filterID }).then(res => {
+        if (res.data.status) {
+          NotificationMessage('success', 'Filter Updated Successfully')
+          setIsFilterModalOpen(false)
+          form.resetFields()
+          setFilterID(null)
+          retrieveFilterOptions()
+        } else {
+          NotificationMessage(
+            'warning',
+            'Network request failed',
+            res.data.message
+          )
+        }
+      })
     } else {
       createNewFilter(modifiedObj)
-        .then((res) => {
-          NotificationMessage("success", "New Filter Created Successfully");
-          setIsFilterModalOpen(false);
-          form.resetFields();
-          retrieveFilterOptions();
+        .then(res => {
+          if (res.data.status) {
+            NotificationMessage('success', 'New Filter Created Successfully')
+            setIsFilterModalOpen(false)
+            form.resetFields()
+            retrieveFilterOptions()
+          } else {
+            NotificationMessage(
+              'warning',
+              'Network request failed',
+              res.data.message
+            )
+          }
         })
-        .catch((err) =>
-          NotificationMessage("warning", err.response.data.message)
-        );
+        .catch(err => NotificationMessage('warning', err.response.data.message))
     }
-  };
+  }
 
   return (
     <div>
       <Modal
         width={800}
-        title={filterID ? "Edit Filter" : "Add Filter"}
+        title={filterID ? 'Edit Filter' : 'Add Filter'}
         centered
         open={isFilterModalOpen}
         onOk={() => form.submit()}
         onCancel={() => {
-          form.resetFields();
-          setIsFilterModalOpen(false);
-          filterID && setFilterID(null);
+          form.resetFields()
+          setIsFilterModalOpen(false)
+          filterID && setFilterID(null)
         }}
       >
         <Form
           labelCol={{
-            span: 24,
+            span: 24
           }}
           wrapperCol={{
-            span: 24,
+            span: 24
           }}
           form={form}
           onFinish={submitHandler}
-          autoComplete={"off"}
+          autoComplete={'off'}
         >
           <Row gutter={15}>
             <Col xs={24} lg={12}>
               <Form.Item
-                name="filter_name"
-                label="Filter Name"
+                name='filter_name'
+                label='Filter Name'
                 rules={[
                   {
                     required: true,
                     whitespace: true,
-                    message: "Please enter Filter Name",
-                  },
+                    message: 'Please enter Filter Name'
+                  }
                 ]}
               >
-                <Input placeholder="Enter Filter Name" />
+                <Input placeholder='Enter Filter Name' />
               </Form.Item>
             </Col>
             <Col xs={24} lg={12}>
               <Form.Item
-                name="institution_name"
-                label="Institution Name"
+                name='institution_name'
+                label='Institution Name'
                 rules={[
                   {
                     required: false,
-                    message: "Please enter Institution Name",
-                  },
+                    message: 'Please enter Institution Name'
+                  }
                 ]}
               >
                 <Select
-                  placeholder="Select Institution"
+                  placeholder='Select Institution'
                   options={institutionOptions}
-                  mode="multiple"
+                  mode='multiple'
                   filterSort={(optionA, optionB) =>
-                    (optionA?.label ?? "")
+                    (optionA?.label ?? '')
                       .toLowerCase()
-                      .localeCompare((optionB?.label ?? "").toLowerCase())
+                      .localeCompare((optionB?.label ?? '').toLowerCase())
                   }
                   showSearch
                   // onChange={appliedOnChangeHandler}
@@ -224,24 +292,24 @@ const StudyFilterModal = ({
             </Col>
             <Col xs={24} lg={12}>
               <Form.Item
-                name="assigned_user"
-                label="Assigned User"
+                name='assigned_user'
+                label='Assigned User'
                 rules={[
                   {
                     required: false,
-                    message: "Please enter Assigned User",
-                  },
+                    message: 'Please enter Assigned User'
+                  }
                 ]}
               >
                 <Select
-                  placeholder="Select Radiologist"
+                  placeholder='Select Radiologist'
                   options={radiologistOptions}
                   showSearch
-                  mode="multiple"
+                  mode='multiple'
                   filterSort={(optionA, optionB) =>
-                    (optionA?.label ?? "")
+                    (optionA?.label ?? '')
                       .toLowerCase()
-                      .localeCompare((optionB?.label ?? "").toLowerCase())
+                      .localeCompare((optionB?.label ?? '').toLowerCase())
                   }
                   // onChange={appliedOnChangeHandler}
                 />
@@ -249,24 +317,24 @@ const StudyFilterModal = ({
             </Col>
             <Col xs={24} lg={12}>
               <Form.Item
-                name="modality"
-                label="Modality"
+                name='modality'
+                label='Modality'
                 rules={[
                   {
                     required: false,
-                    message: "Please enter modality",
-                  },
+                    message: 'Please enter modality'
+                  }
                 ]}
               >
                 <Select
-                  placeholder="Select modality"
+                  placeholder='Select modality'
                   options={modalityOptions}
                   showSearch
-                  mode="multiple"
+                  mode='multiple'
                   filterSort={(optionA, optionB) =>
-                    (optionA?.label ?? "")
+                    (optionA?.label ?? '')
                       .toLowerCase()
-                      .localeCompare((optionB?.label ?? "").toLowerCase())
+                      .localeCompare((optionB?.label ?? '').toLowerCase())
                   }
                   // onChange={appliedOnChangeHandler}
                 />
@@ -274,60 +342,60 @@ const StudyFilterModal = ({
             </Col>
             <Col xs={24} lg={12}>
               <Form.Item
-                name="from_date"
-                label="From Date"
+                name='from_date'
+                label='From Date'
                 rules={[
                   {
                     required: false,
-                    message: "Please enter From Date",
-                  },
+                    message: 'Please enter From Date'
+                  }
                 ]}
               >
-                <DatePicker format={"YYYY-MM-DD"} />
+                <DatePicker format={'YYYY-MM-DD'} />
               </Form.Item>
             </Col>
             <Col xs={24} lg={12}>
               <Form.Item
-                name="to_date"
-                label="To Date"
+                name='to_date'
+                label='To Date'
                 rules={[
                   {
                     required: false,
-                    message: "Please enter to date",
-                  },
+                    message: 'Please enter to date'
+                  }
                 ]}
               >
-                <DatePicker format={"YYYY-MM-DD"} />
+                <DatePicker format={'YYYY-MM-DD'} />
               </Form.Item>
             </Col>
             <Col xs={24} lg={12}>
               <Form.Item
-                name="patient_name"
-                label="Patient Name"
+                name='patient_name'
+                label='Patient Name'
                 rules={[
                   {
                     required: false,
                     whitespace: true,
-                    message: "Please enter Patient Name",
-                  },
+                    message: 'Please enter Patient Name'
+                  }
                 ]}
               >
-                <Input placeholder="Enter Patient Name" />
+                <Input placeholder='Enter Patient Name' />
               </Form.Item>
             </Col>
             <Col xs={24} lg={12}>
               <Form.Item
-                name="patient_id"
-                label="Patient ID"
+                name='patient_id'
+                label='Patient ID'
                 rules={[
                   {
                     required: false,
                     whitespace: true,
-                    message: "Please enter Patient ID",
-                  },
+                    message: 'Please enter Patient ID'
+                  }
                 ]}
               >
-                <Input placeholder="Enter Patient ID" />
+                <Input placeholder='Enter Patient ID' />
               </Form.Item>
             </Col>
             {/* <Col xs={24} lg={12}>
@@ -347,17 +415,17 @@ const StudyFilterModal = ({
             </Col> */}
             <Col xs={24} lg={12}>
               <Form.Item
-                name="study_description"
-                label="Study Description"
+                name='study_description'
+                label='Study Description'
                 rules={[
                   {
                     required: false,
                     whitespace: true,
-                    message: "Please enter Study Description",
-                  },
+                    message: 'Please enter Study Description'
+                  }
                 ]}
               >
-                <Input placeholder="Enter Study Description" />
+                <Input placeholder='Enter Study Description' />
               </Form.Item>
             </Col>
             {/* <Col xs={24} lg={12}>
@@ -392,24 +460,24 @@ const StudyFilterModal = ({
             </Col> */}
             <Col xs={24} lg={12}>
               <Form.Item
-                name="study_status"
-                label="Study Status"
+                name='study_status'
+                label='Study Status'
                 rules={[
                   {
                     required: false,
-                    message: "Please enter Study Status",
-                  },
+                    message: 'Please enter Study Status'
+                  }
                 ]}
               >
                 <Select
-                  placeholder="Select Status"
+                  placeholder='Select Status'
                   options={statusOptions}
                   showSearch
-                  mode="multiple"
+                  mode='multiple'
                   filterSort={(optionA, optionB) =>
-                    (optionA?.label ?? "")
+                    (optionA?.label ?? '')
                       .toLowerCase()
-                      .localeCompare((optionB?.label ?? "").toLowerCase())
+                      .localeCompare((optionB?.label ?? '').toLowerCase())
                   }
                   // onChange={appliedOnChangeHandler}
                 />
@@ -419,7 +487,7 @@ const StudyFilterModal = ({
         </Form>
       </Modal>
     </div>
-  );
-};
+  )
+}
 
-export default StudyFilterModal;
+export default StudyFilterModal

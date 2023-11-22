@@ -63,25 +63,51 @@ const BillingModal = ({ setBillingData, setIsLoading, setCharges }) => {
   const retrieveInstitutionData = () => {
     getInstitutionList()
       .then((res) => {
+         if (res.data.status) {
         const resData = res.data.data.map((data) => ({
           value: data.id,
           label: data.name,
         }));
         setInstitutionOptions([{ value: "all", label: "All" }, ...resData]);
+        } else {
+          NotificationMessage(
+            'warning',
+            'Network request failed',
+            res.data.message
+          )
+        }
       })
-      .catch((err) => console.log(err));
+      .catch((err) => NotificationMessage(
+  'warning',
+  'Network request failed',
+  err.response.data.message
+)
+);
   };
 
   const retrieveRadiologistData = () => {
     getRadiologistList({ role_id: localStorage.getItem("role_id") })
       .then((res) => {
+         if (res.data.status) {
         const resData = res.data.data.map((data) => ({
           label: data.name,
           value: data.id,
         }));
         setRadiologistOptions([{ value: "all", label: "All" }, ...resData]);
+        } else {
+          NotificationMessage(
+            'warning',
+            'Network request failed',
+            res.data.message
+          )
+        }
       })
-      .catch((err) => console.log(err));
+      .catch((err) => NotificationMessage(
+  'warning',
+  'Network request failed',
+  err.response.data.message
+)
+);
   };
 
   const handleInstitutionSelectChange = (value) => {
@@ -141,6 +167,7 @@ const BillingModal = ({ setBillingData, setIsLoading, setCharges }) => {
     
     getBillingData(modifiedObj)
       .then((res) => {
+         if (res.data.status) {
         setBillingData(res.data.data);
         setBillingFilterData(res.data.data);
         setCharges({
@@ -149,8 +176,15 @@ const BillingModal = ({ setBillingData, setIsLoading, setCharges }) => {
           total_midnight_charge: res.data.total_midnight_charge,
         });
         setIsBillingFilterModalOpen(false);
+        } else {
+          NotificationMessage(
+            'warning',
+            'Network request failed',
+            res.data.message
+          )
+        }
       })
-      .catch((err) => console.log(err));
+      .catch((err) =>  NotificationMessage('warning', 'Network request failed', err.response.data.message));
     setIsLoading(false);
   };
 

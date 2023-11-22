@@ -8,121 +8,135 @@ import {
   Row,
   Spin,
   Tag,
-  Typography,
-} from "antd";
-import React, { useEffect, useState } from "react";
+  Typography
+} from 'antd'
+import React, { useEffect, useState } from 'react'
 import {
   getMoreDetails,
   submitNormalReportFile,
-  uploadImage,
-} from "../../apis/studiesApi";
-import UploadImage from "../UploadImage";
-import NotificationMessage from "../NotificationMessage";
+  uploadImage
+} from '../../apis/studiesApi'
+import UploadImage from '../UploadImage'
+import NotificationMessage from '../NotificationMessage'
 
 const FileReport = ({
   isFileReportModalOpen,
   setIsFileReportModalOpen,
   studyID,
   setStudyID,
-  modalData,
+  modalData
 }) => {
   // const [modalData, setModalData] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [form] = Form.useForm();
-  const [imageFile, setImageFile] = useState(null);
-  const [imageURL, setImageURL] = useState(null);
+  const [isLoading, setIsLoading] = useState(false)
+  const [form] = Form.useForm()
+  const [imageFile, setImageFile] = useState(null)
+  const [imageURL, setImageURL] = useState(null)
   const [value, setValues] = useState({
-    url: undefined,
-  });
+    url: undefined
+  })
 
   const submitReport = async (values, report_attach_data = []) => {
     await submitNormalReportFile({
       id: studyID,
       report_type: values.report_type,
       report_study_description: values.report_study_description,
-      report_attach_data: report_attach_data,
+      report_attach_data: report_attach_data
     })
-      .then((res) => {
-        NotificationMessage("success", "File Report Submitted Successfully");
-        form.resetFields();
-        setIsFileReportModalOpen(false);
+      .then(res => {
+        if (res.data.status) {
+          NotificationMessage('success', 'File Report Submitted Successfully')
+          form.resetFields()
+          setIsFileReportModalOpen(false)
+        } else {
+          NotificationMessage(
+            'warning',
+            'Network request failed',
+            res.data.message
+          )
+        }
       })
-      .catch((err) => console.log(err));
-  };
+      .catch(err =>
+        NotificationMessage(
+          'warning',
+          'Network request failed',
+          err.response.data.message
+        )
+      )
+  }
 
-  const handleSubmit = async (values) => {
-    setIsLoading(true);
-    console.log(values);
-    const report_attach_data = [];
+  const handleSubmit = async values => {
+    setIsLoading(true)
+    console.log(values)
+    const report_attach_data = []
     for (const data of values.url.fileList) {
       try {
         const formData = {
-          image: data.originFileObj,
-        };
+          image: data.originFileObj
+        }
 
-        const res = await uploadImage(formData);
-        report_attach_data.push(res.data.image_url);
+        const res = await uploadImage(formData)
+        report_attach_data.push(res.data.image_url)
       } catch (err) {
-        console.error(err);
+        console.error(err)
       }
     }
     try {
-      await submitReport(values, report_attach_data);
+      await submitReport(values, report_attach_data)
     } catch (err) {
-      console.error(err);
+      console.error(err)
     }
-    setIsLoading(false);
-  };
+    setIsLoading(false)
+  }
 
   return (
     <Modal
-      title="Simplified Report"
+      title='Simplified Report'
       open={isFileReportModalOpen}
       onOk={() => {
         // setIsFileReportModalOpen(false);
-        form.submit();
+        form.submit()
       }}
       onCancel={() => {
-        setIsFileReportModalOpen(false);
+        setIsFileReportModalOpen(false)
       }}
       width={1000}
       centered
-      okText="Save Report"
+      okText='Save Report'
     >
       <Spin spinning={isLoading}>
         <div
           style={{
-            background: "#ebf7fd",
-            fontWeight: "600",
-            padding: "10px 24px",
-            borderRadius: "0px",
-            margin: "0 -24px",
+            background: '#ebf7fd',
+            fontWeight: '600',
+            padding: '10px 24px',
+            borderRadius: '0px',
+            margin: '0 -24px'
           }}
         >
           Patient Info
         </div>
         <List
-          style={{ marginTop: "8px" }}
+          style={{ marginTop: '8px' }}
           grid={{
             gutter: 5,
-            column: 2,
+            column: 2
           }}
-          className="queue-status-list"
-          dataSource={modalData?.filter((data) => data.name !== "urgent_case")}
-          renderItem={(item) => (
-            <List.Item className="queue-number-list">
+          className='queue-status-list'
+          dataSource={modalData?.filter(data => data.name !== 'urgent_case')}
+          renderItem={item => (
+            <List.Item className='queue-number-list'>
               <Typography
-                style={{ display: "flex", gap: "4px", fontWeight: "600" }}
+                style={{ display: 'flex', gap: '4px', fontWeight: '600' }}
               >
                 {item.name}:
                 {item.name === "Patient's id" ||
                 item.name === "Patient's Name" ||
-                item.name === "Study UID" ||
-                item.name === "Institution Name" ||
-                item.name === "Series UID" ? (
-                  <Tag color="#87d068">{item.value}</Tag>
+                item.name === 'Study UID' ||
+                item.name === 'Institution Name' ||
+                item.name === 'Series UID' ? (
+                  <Tag color='#87d068'>{item.value}</Tag>
                 ) : (
-                  <Typography style={{ fontWeight: "400" }}>
+                  <Typography style={{ fontWeight: '400' }}>
                     {item.value}
                   </Typography>
                 )}
@@ -132,25 +146,25 @@ const FileReport = ({
         />
         <Form
           labelCol={{
-            span: 24,
+            span: 24
           }}
           wrapperCol={{
-            span: 24,
+            span: 24
           }}
           form={form}
           onFinish={handleSubmit}
-          className="mt"
+          className='mt'
         >
           <Row gutter={15}>
             <Col xs={24} md={12}>
               <Form.Item
-                name="report_type"
-                label="Report Result"
+                name='report_type'
+                label='Report Result'
                 rules={[
                   {
                     required: true,
-                    message: "Please select report result",
-                  },
+                    message: 'Please select report result'
+                  }
                 ]}
               >
                 <Radio.Group>
@@ -161,17 +175,17 @@ const FileReport = ({
             </Col>
             <Col xs={24} md={12}>
               <Form.Item
-                name="report_study_description"
-                label="Modality Study Description"
+                name='report_study_description'
+                label='Modality Study Description'
                 rules={[
                   {
                     required: true,
                     whitespace: true,
-                    message: "Please enter modality study description",
-                  },
+                    message: 'Please enter modality study description'
+                  }
                 ]}
               >
-                <Input placeholder="Enter modality study description" />
+                <Input placeholder='Enter modality study description' />
               </Form.Item>
             </Col>
             <Col xs={24} md={12}>
@@ -188,7 +202,7 @@ const FileReport = ({
         </Form>
       </Spin>
     </Modal>
-  );
-};
+  )
+}
 
-export default FileReport;
+export default FileReport

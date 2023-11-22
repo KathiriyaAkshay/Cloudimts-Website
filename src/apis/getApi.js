@@ -21,7 +21,6 @@ export const getAPICall = async (url, params) => {
       return response;
     })
     .catch(function (error) {
-      console.error("Error in getAPICall gettRequest", error);
       let data = {
         status: error.response.status,
         success: false,
