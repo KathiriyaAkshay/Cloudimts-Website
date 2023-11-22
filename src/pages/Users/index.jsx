@@ -461,8 +461,10 @@ const Users = () => {
           form={form}
           onFinish={submitHandler}
           autoComplete={'off'}
+          style={{marginTop: "12px"}}
         >
           <Row gutter={15}>
+        
             <Col xs={24} lg={24}>
               <Form.Item
                 label='New Password'
@@ -484,6 +486,7 @@ const Users = () => {
                 />
               </Form.Item>
             </Col>
+        
             <Col xs={24} lg={24}>
               <Form.Item
                 label='Confirm Password'
@@ -520,7 +523,9 @@ const Users = () => {
                 />
               </Form.Item>
             </Col>
+
           </Row>
+        
         </Form>
       </Modal>
     </>
