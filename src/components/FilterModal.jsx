@@ -43,17 +43,13 @@ const FilterModal = ({ name, setInstitutionData, retrieveInstitutionData }) => {
       open={isFilterModalOpen}
       onOk={() => form.submit()}
       onCancel={() => {
-        // form.resetFields();
         setIsFilterModalOpen(false);
-        // retrieveInstitutionData();
       }}
       footer={[
         <Button
           key="back"
           onClick={() => {
-            // form.resetFields();
             setIsFilterModalOpen(false);
-            // retrieveInstitutionData();
           }}
         >
           Cancel

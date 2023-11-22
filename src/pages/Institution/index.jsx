@@ -64,8 +64,7 @@ const Institution = () => {
         }
       })
       .catch(err => {
-        // Display a warning notification for catch block
-        NotificationMessage('warning', 'Network request failed')
+        NotificationMessage('warning', 'Network request failed', err?.response?.data?.message)
       })
     setIsLoading(false)
   }
@@ -124,7 +123,7 @@ const Institution = () => {
         }
       })
       .catch(err => {
-        NotificationMessage('warning', 'Network request failed')
+        NotificationMessage('warning', 'Network request failed', err?.response?.data?.message)
       })
   }
 
@@ -154,7 +153,7 @@ const Institution = () => {
       }
         })
         .catch(err =>
-          NotificationMessage('warning', "Network reqeust failed")
+          NotificationMessage('warning', "Network reqeust failed", err?.response?.data?.message)
         )
     } else {
       await disableInstitution({ id })
@@ -174,7 +173,7 @@ const Institution = () => {
       }
         })
         .catch(err =>
-          NotificationMessage('warning', "Network request failed")
+          NotificationMessage('warning', "Network request failed", err?.response?.data?.message)
         )
   }
   }

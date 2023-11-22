@@ -22,7 +22,6 @@ const InstitutionLogs = () => {
       name: 'Institution Logs'
     })
     changeBreadcrumbs(crumbs)
-    // retrieveInstitutionData();
   }, [])
 
   const retrieveInstitutionData = async (
@@ -66,7 +65,7 @@ const InstitutionLogs = () => {
         }
       })
       .catch(err => {
-        NotificationMessage('warning', 'Network request failed', err)
+        NotificationMessage('warning', 'Network request failed',  err?.response?.data?.message)
 
       })
     setIsLoading(false)
