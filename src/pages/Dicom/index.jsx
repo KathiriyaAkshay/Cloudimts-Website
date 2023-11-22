@@ -125,7 +125,10 @@ const Dicom = () => {
   const [seriesIdList, setSeriesIdList] = useState([])
   const [previousSeriesResponse, setPreviousSeriesResponse] = useState(null)
 
-  const [notificationValue, setNotificationValue] = useState(0)
+  const [notificationValue, setNotificationValue] = useState(0);  
+
+  // Quick Assign Studies option 
+  const [quickAssignStudy, settQuickAssignStudy] = useState(false);
 
   const SetupGenralChatNotification = () => {
     const ws = new WebSocket(`${BASE_URL}genralChat/`)
@@ -136,18 +139,16 @@ const Dicom = () => {
 
     ws.onmessage = event => {
       try {
-        const eventData = JSON.parse(event.data)
-        if (eventData.payload.status === 'new-chat') {
-          let ChatData = eventData.payload.data
-          studyData.map(element => {
-            if (element.series_id === ChatData.room_name) {
-              NotificationMessage(
-                'success',
-                'New chat message',
-                `Message send by ${ChatData.sender_username} for Patient - ${element.name} and StudyId - ${element.id}`,
-                5,
-                'bottomRight'
-              )
+        const eventData = JSON.parse(event.data) ;        
+        if (eventData.payload.status === "new-chat"){
+  
+          let ChatData = eventData.payload.data; 
+          studyData.map((element) => {
+            if (element.series_id === ChatData.room_name){
+              NotificationMessage("success", 
+              "New chat message", `Message send by ${ChatData.sender_username} for Patient - ${element.name} and StudyId - ${element.id}`, 
+              5, 
+              "bottomRight") ;  
             }
           })
         }
@@ -378,16 +379,16 @@ const Dicom = () => {
             key: data.id,
             count: 0,
             institution_id: data.institution.id
-          }))
+          })) ; 
 
           // set StudyData
-          setStudyData(resData)
-          setTotalPages(res.data.total_object)
+          setStudyData(resData);
+          setTotalPages(res.data.total_object);
+        
+          const temp = res.data.data.map(data => data?.series_id).filter(Boolean);
+        
+          setSeriesIdList([...temp]) ; 
 
-          const temp = res.data.data
-            .map(data => data?.series_id)
-            .filter(Boolean)
-          setSeriesIdList([...temp])
         } else {
           NotificationMessage(
             'warning',
@@ -1098,6 +1099,14 @@ const Dicom = () => {
             </Row>
           </Form>
         </Spin>
+      </Modal>
+
+      {/* ==== Assign studies option modal ====  */}
+
+      <Modal title = "Assign study"
+       
+      >
+
       </Modal>
     </>
   )

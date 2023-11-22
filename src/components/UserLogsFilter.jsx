@@ -81,19 +81,13 @@ const UserLogsFilter = ({ name, retrieveRoleData, setFilterValues }) => {
       open={isUserLogsFilterModalOpen}
       onOk={() => form.submit()}
       onCancel={() => {
-        // setFilterValues({});
-        // form.resetFields();
         setIsUserLogsFilterModalOpen(false);
-        // retrieveRoleData({ page: 1 }, {}, true);
       }}
       footer={[
         <Button
           key="back"
           onClick={() => {
-            // setFilterValues({});
-            // form.resetFields();
             setIsUserLogsFilterModalOpen(false);
-            // retrieveRoleData({ page: 1 }, {}, true);
           }}
         >
           Cancel
@@ -126,6 +120,7 @@ const UserLogsFilter = ({ name, retrieveRoleData, setFilterValues }) => {
         form={form}
         onFinish={handleSubmit}
         autoComplete={"off"}
+        style={{marginTop: "12px"}}
       >
         <Row gutter={15}>
           <Col xs={24} lg={12}>

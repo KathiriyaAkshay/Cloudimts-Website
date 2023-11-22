@@ -56,20 +56,6 @@ const TableWithFilter = ({
     setPagination((prev) => ({ ...prev, page: current, limit: pageSize }));
   };
 
-  // const setFilter = (option) => {
-  //   if (option == "active") {
-  //     setPagination({ ...Pagination, status: "active", isDead: 0, page: 1 });
-  //   }
-  //   if (option == "inactive") {
-  //     setPagination({ ...Pagination, status: "inactive", isDead: 0, page: 1 });
-  //   }
-  //   if (option == "dead") {
-  //     setPagination({ ...omit(Pagination, ["status"]), isDead: 1, page: 1 });
-  //   }
-  //   if (option == "all") {
-  //     setPagination({ ...omit(Pagination, ["status", "isDead"]), page: 1 });
-  //   }
-  // };
 
   return (
     <>
@@ -140,7 +126,7 @@ const TableWithFilter = ({
             !pagination
               ? window.screen.width < 1000
                 ? { x: 500 }
-                : {y:475}
+                : {y:450}
               : { y: 375, x: window.screen.width < 1000 ? 1000 : null }
           }
           loading={loadingTableData}

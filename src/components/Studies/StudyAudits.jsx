@@ -33,6 +33,17 @@ const StudyAudits = ({ isModalOpen, setIsModalOpen, studyID, setStudyID }) => {
             name: "Patient's Name",
             value: resData?.Patient_name,
           },
+          
+          {
+            name: "Assign study time", 
+            value: resData?.study_assign_time
+          }, 
+
+          {
+            name: "Assign study username", 
+            value: resData?.study_assign_username 
+          }, 
+
           {
             name: "Performing Physician Name",
             value: resData?.Performing_physician_name,
@@ -206,7 +217,9 @@ const StudyAudits = ({ isModalOpen, setIsModalOpen, studyID, setStudyID }) => {
                 item.name === "Patient's Name" ||
                 item.name === "Study UID" ||
                 item.name === "Institution Name" ||
-                item.name === "Series UID" ? (
+                item.name === "Series UID" || 
+                item.name === "Assign study time" || 
+                item.name === "Assign study username"? (
                   <Tag color="#87d068">{item.value}</Tag>
                 ) : (
                   <Typography style={{ fontWeight: "400" }}>

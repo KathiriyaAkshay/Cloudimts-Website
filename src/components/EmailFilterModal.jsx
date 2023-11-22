@@ -33,17 +33,13 @@ const EmailFilterModal = ({ name, setInstitutionData, retrieveEmailData }) => {
       open={isEmailFilterModalOpen}
       onOk={() => form.submit()}
       onCancel={() => {
-        // form.resetFields();
         setIsEmailFilterModalOpen(false);
-        // retrieveEmailData();
       }}
       footer={[
         <Button
           key="back"
           onClick={() => {
-            // form.resetFields();
             setIsEmailFilterModalOpen(false);
-            // retrieveEmailData();
           }}
         >
           Cancel
@@ -75,6 +71,7 @@ const EmailFilterModal = ({ name, setInstitutionData, retrieveEmailData }) => {
         form={form}
         onFinish={handleSubmit}
         autoComplete={"off"}
+        style={{marginTop: "12px"}}
       >
         <Row gutter={15}>
           <Col xs={24} lg={12}>

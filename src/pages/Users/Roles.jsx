@@ -28,7 +28,6 @@ const Roles = () => {
 
   useEffect(() => {
     changeBreadcrumbs([{ name: 'Roles' }])
-    // setRole(localStorage.getItem("role"))
     retrieveRoleData()
   }, [])
 
@@ -38,7 +37,6 @@ const Roles = () => {
     setIsRoleModalOpen(true)
   }
 
-  const deleteActionHandler = () => {}
 
   const retrieveRoleData = async () => {
     setIsLoading(true)
@@ -69,18 +67,22 @@ const Roles = () => {
   }
 
   const columns = [
+
     {
       title: 'Role Name',
       dataIndex: 'role_name'
     },
+    
     {
       title: 'Created At',
       dataIndex: 'role_created_at'
     },
+    
     {
       title: 'Last Updated',
       dataIndex: 'role_updated_at'
     },
+    
     {
       title: 'Actions',
       dataIndex: 'actions',
@@ -88,7 +90,9 @@ const Roles = () => {
       width: window.innerWidth < 650 ? '1%' : '10%',
       render: (_, record) => (
         <Space style={{ display: 'flex', justifyContent: 'space-evenly' }}>
+
           <EditActionIcon editActionHandler={() => editActionHandler(record)} />
+    
           <Tooltip title={'Add Permissions'}>
             <TbLockAccess
               className='action-icon'
@@ -96,29 +100,18 @@ const Roles = () => {
               onClick={() => navigate(`/users/roles/${record.id}/permissions`)}
             />
           </Tooltip>
+    
         </Space>
       )
     }
   ]
 
-  const rowSelection = {
-    onChange: (selectedRowKeys, selectedRows) => {
-      console.log(
-        `selectedRowKeys: ${selectedRowKeys}`,
-        'selectedRows: ',
-        selectedRows
-      )
-    },
-    getCheckboxProps: record => ({
-      disabled: record.name === 'Disabled User',
-      // Column configuration not to be checked
-      name: record.email
-    })
-  }
-
   const handleSubmit = async values => {
+
     setIsLoading(true)
+    
     if (!roleID) {
+    
       await API.post('/role/v1/create_role', values, {
         headers: { Authorization: `Bearer ${token}` }
       })
@@ -145,6 +138,7 @@ const Roles = () => {
           )
         )
     } else if (roleID) {
+
       await API.post(
         '/role/v1/update_user_role_name',
         {
@@ -155,11 +149,12 @@ const Roles = () => {
       )
         .then(res => {
           if (res.data.status) {
+
             NotificationMessage('success', 'Role Updated Successfully')
             setIsRoleModalOpen(false)
-            form.resetFields()
-            retrieveRoleData()
-            setRoleID(null)
+            form.resetFields() ; 
+            retrieveRoleData() ; 
+            setRoleID(null) ; 
           } else {
             NotificationMessage(
               'warning',
@@ -187,6 +182,8 @@ const Roles = () => {
         loadingTableData={isLoading}
       />
 
+      {/* === Add new role option modal ===  */}
+
       <Modal
         title='Add New Role'
         centered
@@ -207,6 +204,7 @@ const Roles = () => {
           }}
           form={form}
           onFinish={handleSubmit}
+          style={{marginTop: "12px"}}
         >
           <Form.Item
             name='role_name'

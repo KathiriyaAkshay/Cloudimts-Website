@@ -43,17 +43,13 @@ const FilterModal = ({ name, setInstitutionData, retrieveInstitutionData }) => {
       open={isFilterModalOpen}
       onOk={() => form.submit()}
       onCancel={() => {
-        // form.resetFields();
         setIsFilterModalOpen(false);
-        // retrieveInstitutionData();
       }}
       footer={[
         <Button
           key="back"
           onClick={() => {
-            // form.resetFields();
             setIsFilterModalOpen(false);
-            // retrieveInstitutionData();
           }}
         >
           Cancel
@@ -85,6 +81,7 @@ const FilterModal = ({ name, setInstitutionData, retrieveInstitutionData }) => {
         form={form}
         onFinish={handleSubmit}
         autoComplete={"off"}
+        className="pt-1"
       >
         <Row gutter={15}>
           {checkPermissionStatus("View Institution name") && (
