@@ -59,7 +59,11 @@ const Roles = () => {
         }
       })
       .catch(err => {
-        NotificationMessage('warning', 'Network request failed')
+        NotificationMessage(
+          'warning',
+          'Network request failed',
+          err.response.data.message
+        )
       })
     setIsLoading(false)
   }
@@ -133,7 +137,13 @@ const Roles = () => {
             )
           }
         })
-        .catch(err => NotificationMessage('warning', err.response.data.message))
+        .catch(err =>
+          NotificationMessage(
+            'warning',
+            'Network request failed',
+            err.response.data.message
+          )
+        )
     } else if (roleID) {
       await API.post(
         '/role/v1/update_user_role_name',
@@ -159,7 +169,11 @@ const Roles = () => {
           }
         })
         .catch(err => {
-          NotificationMessage('warning', err.response.data.message)
+          NotificationMessage(
+            'warning',
+            'Network request failed',
+            err.response.data.message
+          )
         })
     }
     setIsLoading(false)

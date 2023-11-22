@@ -46,6 +46,12 @@ function Home () {
         }
       })
       .catch(err => {
+        NotificationMessage(
+          'warning',
+          'Network request failed',
+          err.response.data.message
+        )
+
         setIsLoading(false)
       })
   }
@@ -73,6 +79,12 @@ function Home () {
         }
       })
       .catch(err => {
+        NotificationMessage(
+          'warning',
+          'Network request failed',
+          err.response.data.message
+        )
+
         setIsLoading(false)
       })
   }

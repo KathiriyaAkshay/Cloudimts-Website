@@ -139,10 +139,6 @@ const Dicom = () => {
         const eventData = JSON.parse(event.data)
         if (eventData.payload.status === 'new-chat') {
           let ChatData = eventData.payload.data
-
-          console.log('Study data  information ========>')
-          console.log(studyData)
-
           studyData.map(element => {
             if (element.series_id === ChatData.room_name) {
               NotificationMessage(
