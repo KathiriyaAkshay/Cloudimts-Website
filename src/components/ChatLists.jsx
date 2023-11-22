@@ -1,73 +1,83 @@
-import React, { useEffect, useState } from "react";
-import ProfileImage from "../assets/images/ProfileImg.png";
-import UrgentCase from "../assets/images/urgentCase.png" ; 
-import NormalCase from "../assets/images/normalCase.png"
-import { Divider,  Typography } from "antd";
-import { getAllChatList } from "../apis/studiesApi";
+import React, { useEffect, useState } from 'react'
+import ProfileImage from '../assets/images/ProfileImg.png'
+import UrgentCase from '../assets/images/urgentCase.png'
+import NormalCase from '../assets/images/normalCase.png'
+import { Divider, Typography } from 'antd'
+import { getAllChatList } from '../apis/studiesApi'
 
 const ChatLists = ({ setSeriesId, setStudyId, setPersonName, studyId }) => {
+  const [chatListData, setChatListData] = useState([])
 
-  const [chatListData, setChatListData] = useState([]);
-  
   useEffect(() => {
-    retrieveChatListData();
-  }, []);
+    retrieveChatListData()
+  }, [])
 
-  // Fetch all chat information 
-  
+  // Fetch all chat information
+
   const retrieveChatListData = () => {
-  
     getAllChatList({
       current_timestamp: Date.now()
     })
-      .then((res) => {
+      .then(res => {
+        if (res.data.status) {
+          // Configure Room ChatTimestamp
+          const chatLatestTime = {}
+          res['data']['room_timestamp'].forEach(timeStampInfo => {
+            chatLatestTime[timeStampInfo.room_id] =
+              timeStampInfo.latest_timestamp
+          })
 
-        // Configure Room ChatTimestamp 
-        const chatLatestTime = {} ; 
-        res['data']['room_timestamp'].forEach(timeStampInfo => {
-            chatLatestTime[timeStampInfo.room_id] = timeStampInfo.latest_timestamp ; 
-        }) ; 
+          const resData = res.data.data.map(data => ({
+            ...data,
+            room_id: data.room.id,
+            name: `${data.room.study.patient.patient_id} | ${data.room.study.patient.patient_name}`,
+            modality: data.room.study.modality,
+            status: data.room.study.status,
+            urgent_case: data.room.study.urgent_case,
+            study_id: data.room.study.id,
+            series_id: data.room.study.series_id,
+            profile: ProfileImage,
+            latest_timestamp: chatLatestTime[data.room.id] || null
+          }))
 
-        const resData = res.data.data.map((data) => ({
-          ...data,
-          room_id: data.room.id,
-          name: `${data.room.study.patient.patient_id} | ${data.room.study.patient.patient_name}`,
-          modality: data.room.study.modality,
-          status: data.room.study.status,
-          urgent_case: data.room.study.urgent_case,
-          study_id: data.room.study.id,
-          series_id: data.room.study.series_id,
-          profile: ProfileImage,
-          latest_timestamp: chatLatestTime[data.room.id] || null
-        }));
-
-        setChatListData([...resData]);
-
-
+          setChatListData([...resData])
+        } else {
+          NotificationMessage(
+            'warning',
+            'Network request failed',
+            res.data.message
+          )
+        }
       })
-      .catch((err) => console.log(err));
-  };
+      .catch(err =>
+        NotificationMessage(
+          'warning',
+          'Network request failed',
+          err.response.data.message
+        )
+      )
+  }
 
   return (
-    <div className="chat-list-main-div">
+    <div className='chat-list-main-div'>
       <div>
-        <div className="chat-list-title-div">
+        <div className='chat-list-title-div'>
           <Typography
-            className="chat-list-name"
-            style={{ fontSize: "16px", color: "#FFFFFF" }}
+            className='chat-list-name'
+            style={{ fontSize: '16px', color: '#FFFFFF' }}
           >
             Chats
           </Typography>
         </div>
         <Divider
           style={{
-            margin: "0px 0px",
-            borderBlockStart: "1px solid rgba(255, 255, 255, 0.4)",
+            margin: '0px 0px',
+            borderBlockStart: '1px solid rgba(255, 255, 255, 0.4)'
           }}
         />
       </div>
-      <div className="all-chat-list">
-        {chatListData?.map((data) => (
+      <div className='all-chat-list'>
+        {chatListData?.map(data => (
           <>
             <div
               key={data.study_id}
@@ -75,66 +85,82 @@ const ChatLists = ({ setSeriesId, setStudyId, setPersonName, studyId }) => {
                 studyId == data.study_id && `chat-list-div-active`
               }`}
               onClick={() => {
-                setSeriesId(data.series_id);
-                setStudyId(data.study_id);
-                setPersonName(data.name);
+                setSeriesId(data.series_id)
+                setStudyId(data.study_id)
+                setPersonName(data.name)
               }}
             >
-              <div className="study-chat-userdata">
-                
-                {data.urgent_case ?<>
-                  <img src={UrgentCase} alt={data.name} className="study-chat-image"/>
-                </>:<>
-                  <img src={NormalCase} alt={data.name} className="study-chat-image"/>
-                </>}
-                
-                <div className="study-chat-data">
+              <div className='study-chat-userdata'>
+                {data.urgent_case ? (
+                  <>
+                    <img
+                      src={UrgentCase}
+                      alt={data.name}
+                      className='study-chat-image'
+                    />
+                  </>
+                ) : (
+                  <>
+                    <img
+                      src={NormalCase}
+                      alt={data.name}
+                      className='study-chat-image'
+                    />
+                  </>
+                )}
 
-                  <Typography className="chat-list-name">{data.name}</Typography>
+                <div className='study-chat-data'>
+                  <Typography className='chat-list-name'>
+                    {data.name}
+                  </Typography>
 
-                  <div className="study-description-data">
+                  <div className='study-description-data'>
+                    <Typography
+                      className='particular-study-chat-description'
+                      style={{ fontSize: '12px' }}
+                    >
+                      <span style={{ color: '#A6A6A6', fontWeight: 600 }}>
+                        Modality -{' '}
+                      </span>
+                      {data.modality}
+                    </Typography>
 
                     <Typography
-                      className="particular-study-chat-description"
-                      style={{ fontSize: "12px" }}
+                      className='particular-study-chat-description'
+                      style={{ fontSize: '12px' }}
                     >
-                      <span style={{color: "#A6A6A6", fontWeight: 600}}>Modality - </span>{data.modality}
-
-                    </Typography>
-                    
-                    <Typography
-                      className="particular-study-chat-description"
-                      style={{ fontSize: "12px" }}
-                    >
-                      <span style={{color: "#A6A6A6", fontWeight: 600}}>Status - </span>{data.status}
-
+                      <span style={{ color: '#A6A6A6', fontWeight: 600 }}>
+                        Status -{' '}
+                      </span>
+                      {data.status}
                     </Typography>
 
-                    {data.latest_timestamp !== null?<>
-                      <div className="Latest-timestamp-info-layout">
-                        <Typography
-                          className="particular-study-chat-description"
-                          style={{ fontSize: "12px" }}
-                        >
-                          <span style={{color: "#A6A6A6", fontWeight: 600}}>Latest chat - </span>{data.latest_timestamp}
-
-                        </Typography>
-                      </div>
-                    </>:<></>}
-                    
-                                  
+                    {data.latest_timestamp !== null ? (
+                      <>
+                        <div className='Latest-timestamp-info-layout'>
+                          <Typography
+                            className='particular-study-chat-description'
+                            style={{ fontSize: '12px' }}
+                          >
+                            <span style={{ color: '#A6A6A6', fontWeight: 600 }}>
+                              Latest chat -{' '}
+                            </span>
+                            {data.latest_timestamp}
+                          </Typography>
+                        </div>
+                      </>
+                    ) : (
+                      <></>
+                    )}
                   </div>
-                
                 </div>
-
               </div>
-
-            </div>  
+            </div>
           </>
         ))}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default ChatLists;
+export default ChatLists

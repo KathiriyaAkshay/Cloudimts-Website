@@ -21,6 +21,7 @@ const PatientDetails = ({
     setIsLoading(true);
     getMoreDetails({ id: studyID })
       .then((res) => {
+         if (res.data.status) {
         const resData = res.data.data;
         const modifiedData = [
           {
@@ -113,8 +114,20 @@ const PatientDetails = ({
           },
         ];
         setModalData(modifiedData);
+         } else {
+          NotificationMessage(
+            'warning',
+            'Network request failed',
+            res.data.message
+          )
+        }
       })
-      .catch((err) => console.log(err));
+      .catch((err) => NotificationMessage(
+  'warning',
+  'Network request failed',
+  err.response.data.message
+)
+);
     setIsLoading(false);
   };
   return (

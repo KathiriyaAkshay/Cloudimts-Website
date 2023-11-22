@@ -19,7 +19,7 @@ import {
 import UploadImage from "../UploadImage";
 import { omit } from "lodash";
 import NotificationMessage from "../NotificationMessage";
-import { descriptionOptions } from "../../helpers/utils"; 
+import { descriptionOptions } from "../../helpers/utils";
 import APIHandler from "../../apis/apiHandler";
 
 const AssignStudy = ({
@@ -65,16 +65,28 @@ const AssignStudy = ({
       };
       await postAssignStudy(modifiedPayload)
         .then((res) => {
-          NotificationMessage("success", "Study Assigned Successfully");
-          setIsAssignModalOpen(false);
-          setStudyID(null);
-          form.resetFields();
+          if (res.data.status) {
+            NotificationMessage("success", "Study Assigned Successfully");
+            setIsAssignModalOpen(false);
+            setStudyID(null);
+            form.resetFields();
+          } else {
+            NotificationMessage(
+              "warning",
+              "Network request failed",
+              res.data.message
+            );
+          }
         })
         .catch((err) =>
-          NotificationMessage("warning", err.response.data.message)
+          NotificationMessage(
+            "warning",
+            "Network request failed",
+            err.response.data.message
+          )
         );
     } catch (err) {
-      console.error(err);
+      NotificationMessage("warning", err);
     }
     setIsLoading(false);
   };
@@ -90,16 +102,28 @@ const AssignStudy = ({
     setIsLoading(true);
     await fetchAssignStudy({ id: studyID })
       .then((res) => {
-        form.setFieldsValue({
-          ...res.data?.data,
-          radiologist: res.data?.assign_user?.map(
-            (data) => data?.assign_user_id
-          )[0],
-        });
-        setMultipleImageFile(res.data.data?.study_data?.images);
+        if (res.data.status) {
+          form.setFieldsValue({
+            ...res.data?.data,
+            radiologist: res.data?.assign_user?.map(
+              (data) => data?.assign_user_id
+            )[0],
+          });
+          setMultipleImageFile(res.data.data?.study_data?.images);
+        } else {
+          NotificationMessage(
+            "warning",
+            "Network request failed",
+            res.data.message
+          );
+        }
       })
       .catch((err) =>
-        NotificationMessage("warning", err.response.data.message)
+        NotificationMessage(
+          "warning",
+          "Network request failed",
+          err.response.data.message
+        )
       );
     setIsLoading(false);
   };
@@ -108,103 +132,119 @@ const AssignStudy = ({
     setIsLoading(true);
     getStudyData({ id: studyID })
       .then((res) => {
-        const resData = res.data.data;
-        const modifiedData = [
-          {
-            name: "Patient's id",
-            value: resData?.Patient_id,
-          },
-          {
-            name: "Referring Physician Name",
-            value: resData?.Referring_physician_name,
-          },
-          {
-            name: "Patient's Name",
-            value: resData?.Patient_name,
-          },
+        if (res.data.status) {
+          const resData = res.data.data;
+          const modifiedData = [
+            {
+              name: "Patient's id",
+              value: resData?.Patient_id,
+            },
+            {
+              name: "Referring Physician Name",
+              value: resData?.Referring_physician_name,
+            },
+            {
+              name: "Patient's Name",
+              value: resData?.Patient_name,
+            },
 
-          {
-            name: "Assign study time", 
-            value: resData?.study_assign_time
-          },
-          
-          {
-            name: "Assign study username", 
-            value: resData?.study_assign_username
-          }, 
+            {
+              name: "Assign study time",
+              value: resData?.study_assign_time,
+            },
 
-          {
-            name: "Performing Physician Name",
-            value: resData?.Performing_physician_name,
-          },
-          {
-            name: "Accession Number",
-            value: resData?.Accession_number,
-          },
-          {
-            name: "Modality",
-            value: resData?.Modality,
-          },
-          {
-            name: "Gender",
-            value: resData?.Gender,
-          },
-          {
-            name: "Date of birth",
-            value: resData?.DOB,
-          },
-          {
-            name: "Study Description",
-            value: resData?.Study_description,
-          },
-          {
-            name: "Patient's comments",
-            value: resData?.Patient_comments,
-          },
-          {
-            name: "Body Part",
-            value: resData?.Study_body_part,
-          },
-          {
-            name: "Study UID",
-            value: resData?.Study_UID,
-          },
-          {
-            name: "Series UID",
-            value: resData?.Series_UID,
-          },
-          {
-            name: "urgent_case",
-            value: resData?.assigned_study_data,
-          },
-        ];
+            {
+              name: "Assign study username",
+              value: resData?.study_assign_username,
+            },
 
-        setModalData(modifiedData);
+            {
+              name: "Performing Physician Name",
+              value: resData?.Performing_physician_name,
+            },
+            {
+              name: "Accession Number",
+              value: resData?.Accession_number,
+            },
+            {
+              name: "Modality",
+              value: resData?.Modality,
+            },
+            {
+              name: "Gender",
+              value: resData?.Gender,
+            },
+            {
+              name: "Date of birth",
+              value: resData?.DOB,
+            },
+            {
+              name: "Study Description",
+              value: resData?.Study_description,
+            },
+            {
+              name: "Patient's comments",
+              value: resData?.Patient_comments,
+            },
+            {
+              name: "Body Part",
+              value: resData?.Study_body_part,
+            },
+            {
+              name: "Study UID",
+              value: resData?.Study_UID,
+            },
+            {
+              name: "Series UID",
+              value: resData?.Series_UID,
+            },
+            {
+              name: "urgent_case",
+              value: resData?.assigned_study_data,
+            },
+          ];
 
-        // Fetch radiologist name based on Institution id 
+          setModalData(modifiedData);
 
-        const FetchRadiologist = async () => {
+          // Fetch radiologist name based on Institution id
 
-          let requestPayload = {
-            institution_id: resData?.institution_id,
+          const FetchRadiologist = async () => {
+            let requestPayload = {
+              institution_id: resData?.institution_id,
+            };
+
+            let responseData = await APIHandler(
+              "POST",
+              requestPayload,
+              "studies/v1/fetch-institution-radiologist"
+            );
+
+            if (responseData["status"] === true) {
+              const resData = responseData.data.map((data) => ({
+                label: data.name,
+                value: data.id,
+              }));
+
+              setOptions(resData);
+            }
           };
 
-          let responseData = await APIHandler("POST", requestPayload, 'studies/v1/fetch-institution-radiologist');
-
-          if (responseData['status'] === true){
-            const resData = responseData.data.map((data) => ({
-              label: data.name,
-              value: data.id,
-            }));
-
-              
-            setOptions(resData);
-          }
-        };
-
-        FetchRadiologist() ; 
+          FetchRadiologist();
+        } else {
+          NotificationMessage(
+            "warning",
+            "Network request failed",
+            res.data.message
+          );
+        }
       })
-      .catch((err) => console.log(err));
+      .catch((err) =>
+        NotificationMessage(
+          "warning",
+          "Network request failed",
+          err.response.data.message
+        )
+      );
     setIsLoading(false);
   };
 
@@ -247,7 +287,7 @@ const AssignStudy = ({
         </div>
 
         <List
-          style={{ marginTop: "8px"}}
+          style={{ marginTop: "8px" }}
           grid={{
             gutter: 5,
             column: 2,
@@ -264,10 +304,9 @@ const AssignStudy = ({
                 item.name === "Patient's Name" ||
                 item.name === "Study UID" ||
                 item.name === "Institution Name" ||
-                item.name === "Series UID" || 
-                item.name === "Assign study time" || 
-                item.name === "Assign study username"?  
-                 (
+                item.name === "Series UID" ||
+                item.name === "Assign study time" ||
+                item.name === "Assign study username" ? (
                   <Tag color="#87d068" className="Assign-study-info-tag">
                     {item.value}
                   </Tag>
@@ -385,7 +424,6 @@ const AssignStudy = ({
             </div>
           </Form>
         </div>
-      
       </Spin>
     </Modal>
   );

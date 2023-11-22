@@ -16,9 +16,7 @@ const index = () => {
 
   const { isBillingFilterModalOpen, setIsBillingFilterModalOpen } =
     useContext(filterDataContext);
-
-
-
+    
   useEffect(() => setIsBillingFilterModalOpen(true), []);
 
   const [isModalOpen, setIsModalOpen] = useState(false) ; 
