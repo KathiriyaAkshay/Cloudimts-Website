@@ -264,7 +264,10 @@ const AssignStudy = ({
                 item.name === "Patient's Name" ||
                 item.name === "Study UID" ||
                 item.name === "Institution Name" ||
-                item.name === "Series UID" ? (
+                item.name === "Series UID" || 
+                item.name === "Assign study time" || 
+                item.name === "Assign study username"?  
+                 (
                   <Tag color="#87d068" className="Assign-study-info-tag">
                     {item.value}
                   </Tag>
