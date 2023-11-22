@@ -45,7 +45,7 @@ const StudyLogs = () => {
           )
         }
       })
-      .catch(err => NotificationMessage('warning', 'Network request failed'))
+      .catch(err => NotificationMessage('warning', 'Network request failed', err.response.data.message))
     setIsLoading(false)
   }
 

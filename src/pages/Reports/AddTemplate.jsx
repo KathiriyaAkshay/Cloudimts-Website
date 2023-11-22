@@ -47,7 +47,7 @@ const AddTemplate = () => {
           )
         }
       })
-      .catch(err => NotificationMessage('warning', 'Network request failed'))
+      .catch(err => NotificationMessage('warning', 'Network request failed', err.response.data.message))
   }
 
   const handleSubmit = values => {
@@ -67,7 +67,7 @@ const AddTemplate = () => {
             }
           })
           .catch(err =>
-            NotificationMessage('warning', 'Network request failed')
+            NotificationMessage('warning', 'Network request failed', err.response.data.message)
           )
       } else {
         updateReport({ id, update_data: editorData })
@@ -84,7 +84,7 @@ const AddTemplate = () => {
             }
           })
           .catch(err =>
-            NotificationMessage('warning', err.response.data.message)
+            NotificationMessage('warning', 'Network request failed', err.response.data.message)
           )
       }
     } else {

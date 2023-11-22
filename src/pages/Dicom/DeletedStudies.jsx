@@ -73,7 +73,7 @@ const DeletedStudies = () => {
         }
       })
       .catch((err) => {
-        NotificationMessage('warning', 'Network request failed')
+        NotificationMessage('warning', 'Network request failed',err.response.data.message)
       });
     setIsLoading(false);
   };

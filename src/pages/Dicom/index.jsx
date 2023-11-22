@@ -214,7 +214,7 @@ const Dicom = () => {
         }
       })
       .catch(err => {
-        NotificationMessage('warning', 'Network request failed')
+        NotificationMessage('warning', 'Network request failed', err.response.data.message)
       })
 
     setIsLoading(false)
@@ -354,7 +354,7 @@ const Dicom = () => {
           )
         }
       })
-      .catch(err => NotificationMessage('warning', 'Network request failed'))
+      .catch(err => NotificationMessage('warning', 'Network request failed', err.response.data.message))
     setIsLoading(false)
   }
 
@@ -400,7 +400,7 @@ const Dicom = () => {
           )
         }
       })
-      .catch(err => NotificationMessage('warning', 'Network request failed'))
+      .catch(err => NotificationMessage('warning', 'Network request failed', err.response.data.message))
 
     setIsLoading(false)
   }
@@ -433,7 +433,7 @@ const Dicom = () => {
             )
           }
         })
-        .catch(err => NotificationMessage('warning', 'Network request failed'))
+        .catch(err => NotificationMessage('warning', 'Network request failed', err.response.data.message))
     }
   }
 
@@ -457,7 +457,7 @@ const Dicom = () => {
           )
         }
       })
-      .catch(err => NotificationMessage('warning', 'Network request failed'))
+      .catch(err => NotificationMessage('warning', 'Network request failed', err.response.data.message))
   }
 
   const deleteParticularStudy = async id => {
@@ -501,7 +501,7 @@ const Dicom = () => {
           )
         }
       })
-      .catch(err => NotificationMessage('warning', err.response.data.message))
+      .catch(err => NotificationMessage('warning', 'Network request failed', err.response.data.message))
   }
 
   const columns = [
@@ -852,7 +852,7 @@ const Dicom = () => {
           }
         })
         .catch(err => {
-          NotificationMessage('warning', 'Network request failed')
+          NotificationMessage('warning', 'Network request failed', err.response.data.message)
         })
     }
   }
