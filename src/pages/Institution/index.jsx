@@ -87,12 +87,20 @@ const Institution = () => {
       'institute/v1/institution-delete'
     )
 
+    setIsLoading(false)
+    
     if (responseData === false) {
+      NotificationMessage("warning", "Network request failed") ; 
+
     } else if (responseData['status'] === true) {
+      
       NotificationMessage('success', 'Institution delete successfully')
       retrieveInstitutionData()
+    
+    } else {
+
+      NotificationMessage('warning', "Network request failed", responseData['message']) ; 
     }
-    setIsLoading(false)
   }
 
   const retrieveLogsData = (id, name) => {
