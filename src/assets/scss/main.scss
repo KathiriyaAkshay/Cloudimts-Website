@@ -1830,3 +1830,17 @@ thead>tr>th{
 .ant-table-cell{
   text-align: center;
 }
+.ant-table-thead > tr:last-child > td:last-child {
+  opacity: 0; 
+} 
+
+.ant-alert-important{
+  div{
+    color: rgb(250, 62, 62) !important;
+  }
+  span{
+    color:  rgb(250, 62, 62) !important ;
+  }
+  border:1px solid red;
+  background-color:white !important;
+}
