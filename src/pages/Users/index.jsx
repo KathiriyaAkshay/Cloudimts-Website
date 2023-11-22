@@ -13,7 +13,7 @@ import {
   Tag,
   Tooltip
 } from 'antd'
-import { EyeFilled, PlusOutlined } from '@ant-design/icons'
+import { EyeFilled } from '@ant-design/icons'
 import TableWithFilter from '../../components/TableWithFilter'
 import EditActionIcon from '../../components/EditActionIcon'
 import DeleteActionIcon from '../../components/DeleteActionIcon'
@@ -29,6 +29,7 @@ import {
 } from '../../apis/studiesApi'
 import { UserPermissionContext } from '../../hooks/userPermissionContext'
 import NotificationMessage from '../../components/NotificationMessage'
+import APIHandler from "../../apis/apiHandler" ; 
 
 const Users = () => {
   
@@ -42,7 +43,9 @@ const Users = () => {
   const [userTablePermission, setUserTablePermission] = useState([])
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [form] = Form.useForm()
-  const [userID, setUserID] = useState(null)
+  const [userID, setUserID] = useState(null) 
+
+  const [logsUsername, setLogsUsername] = useState(null) ; 
 
   const navigate = useNavigate()
 
@@ -94,9 +97,34 @@ const Users = () => {
     navigate(`/users/${id}/edit`)
   }
 
-  const deleteActionHandler = () => {}
+  const deleteActionHandler = async (id) => {
 
-  const retrieveLogsData = id => {
+    setIsLoading(true) ;
+    
+    let responseData = await APIHandler("POST", {"id": id}, "user/v1/delete-user") ; 
+    
+    setIsLoading(false) ;
+
+    if (responseData === false){
+
+      NotificationMessage("warning", "Network request failed") ; 
+    
+    } else if (responseData['status'] === true){
+
+      NotificationMessage("success", "Delete user successfully") ; 
+      retrieveUsersData() ; 
+    
+    } else {
+
+      NotificationMessage("warning", "Network request failed", responseData['message']) ; 
+    }
+
+  }
+
+  const retrieveLogsData = (id, username) => {
+
+    setLogsUsername(username) ; 
+
     getParticularUsersLogs({ id: id })
       .then(res => {
         if (res.data.status) {
@@ -187,6 +215,7 @@ const Users = () => {
         checkPermissionStatus('View Username') ? '' : 'column-display-none'
       }`
     },
+    
     checkPermissionStatus('View Email') && {
       title: 'Email',
       dataIndex: 'email',
@@ -194,6 +223,7 @@ const Users = () => {
         checkPermissionStatus('View Email') ? '' : 'column-display-none'
       }`
     },
+    
     checkPermissionStatus('View contact number') && {
       title: 'Contact Number',
       dataIndex: 'contact',
@@ -203,6 +233,7 @@ const Users = () => {
           : 'column-display-none'
       }`
     },
+    
     checkPermissionStatus('View Role name') && {
       title: 'Role',
       dataIndex: 'role_name',
@@ -210,6 +241,7 @@ const Users = () => {
         checkPermissionStatus('View Role name') ? '' : 'column-display-none'
       }`
     },
+    
     checkPermissionStatus('View Institution name') && {
       title: 'Institute',
       dataIndex: 'institute_name',
@@ -219,6 +251,7 @@ const Users = () => {
           : 'column-display-none'
       }`
     },
+    
     checkPermissionStatus('View Created time') && {
       title: 'Created At',
       dataIndex: 'created_at',
@@ -226,6 +259,7 @@ const Users = () => {
         checkPermissionStatus('View Created time') ? '' : 'column-display-none'
       }`
     },
+    
     checkPermissionStatus('View last updated time') && {
       title: 'Updated At',
       dataIndex: 'updated_at',
@@ -235,6 +269,7 @@ const Users = () => {
           : 'column-display-none'
       }`
     },
+    
     checkPermissionStatus('View Disable/Enable user option') && {
       title: 'Status',
       dataIndex: 'status',
@@ -250,9 +285,6 @@ const Users = () => {
               <Switch
                 checkedChildren='Enable'
                 checked={record?.user?.is_active}
-                // onChange={(state) => {
-                //   changeStatus(record.id, state);
-                // }}
                 unCheckedChildren='Disable'
                 className='table-switch'
               />
@@ -261,6 +293,7 @@ const Users = () => {
         }
       }
     },
+    
     checkPermissionStatus('Actions option access') && {
       title: 'Actions',
       dataIndex: 'actions',
@@ -273,9 +306,11 @@ const Users = () => {
       width: window.innerWidth < 650 ? '1%' : '10%',
       render: (_, record) => (
         <Space style={{ display: 'flex', justifyContent: 'space-evenly' }}>
+
           <EditActionIcon
             editActionHandler={() => editActionHandler(record.id)}
           />
+          
           <Tooltip title={'Reset Password'}>
             <TbLockAccess
               className='action-icon'
@@ -286,16 +321,19 @@ const Users = () => {
               }}
             />
           </Tooltip>
+          
+
           <Tooltip title={'View Logs'}>
             <EyeFilled
               className='action-icon action-icon-primary'
-              onClick={() => retrieveLogsData(record.id)}
+              onClick={() => retrieveLogsData(record.id, record.username)}
             />
           </Tooltip>
 
           <DeleteActionIcon
-            deleteActionHandler={() => deleteActionHandler(record)}
+            deleteActionHandler={() => deleteActionHandler(record.id)}
           />
+
         </Space>
       )
     }
@@ -304,15 +342,14 @@ const Users = () => {
   const logsColumn = [
     {
       title: 'Perform User',
-      dataIndex: 'perform_user'
+      dataIndex: 'perform_user', 
+      width: 30
     },
-    {
-      title: 'Target User',
-      dataIndex: 'target_user'
-    },
+
     {
       title: 'Event',
       dataIndex: 'logs_id',
+      width: 50, 
       render: text => (
         <Tag
           color={
@@ -342,7 +379,8 @@ const Users = () => {
     },
     {
       title: 'Time',
-      dataIndex: 'time'
+      dataIndex: 'time', 
+      width: 30
     }
   ]
 
@@ -387,13 +425,17 @@ const Users = () => {
       />
 
       <Drawer
-        title='Users Logs'
+        title= {`${logsUsername} user logs`}
         placement='right'
         onClose={() => setIsDrawerOpen(false)}
         open={isDrawerOpen}
         width={700}
       >
-        <TableWithFilter tableData={logsData} tableColumns={logsColumn} />
+        <TableWithFilter 
+          tableData={logsData} 
+          tableColumns={logsColumn} 
+        />
+      
       </Drawer>
 
       <Modal
@@ -419,8 +461,10 @@ const Users = () => {
           form={form}
           onFinish={submitHandler}
           autoComplete={'off'}
+          style={{marginTop: "12px"}}
         >
           <Row gutter={15}>
+        
             <Col xs={24} lg={24}>
               <Form.Item
                 label='New Password'
@@ -442,6 +486,7 @@ const Users = () => {
                 />
               </Form.Item>
             </Col>
+        
             <Col xs={24} lg={24}>
               <Form.Item
                 label='Confirm Password'
@@ -478,7 +523,9 @@ const Users = () => {
                 />
               </Form.Item>
             </Col>
+
           </Row>
+        
         </Form>
       </Modal>
     </>
