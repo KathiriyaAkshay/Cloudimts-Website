@@ -88,7 +88,7 @@ const Users = () => {
         }
       })
       .catch(err => {
-        NotificationMessage('warning', 'Network request failed')
+        NotificationMessage('warning', 'Network request failed',  err?.response?.data?.message)
       })
     setIsLoading(false)
   }
@@ -144,7 +144,7 @@ const Users = () => {
         }
       })
       .catch(err => {
-        NotificationMessage('warning', 'Network request failed')
+        NotificationMessage('warning', 'Network request failed',  err?.response?.data?.message)
       })
   }
 
@@ -157,53 +157,41 @@ const Users = () => {
 
   const statusChangeHandler = async (status, id) => {
     if (status) {
-      if (checkPermissionStatus('Enable user')) {
-        await enableUser({ id })
-          .then(res => {
-            if (res.data.status) {
-              NotificationMessage('success', 'User Status Updated Successfully')
-              retrieveUsersData()
-            } else {
-              NotificationMessage(
-                'warning',
-                'Network request failed',
-                res.data.message
-              )
-            }
-          })
-          .catch(err =>
-            NotificationMessage('warning', err.response.data.message)
-          )
-      } else {
-        NotificationMessage(
-          'warning',
-          "User Don't have Permission to Enable User"
+      await enableUser({ id })
+        .then(res => {
+          if (res.data.status) {
+            NotificationMessage('success', 'User Status Updated Successfully')
+            retrieveUsersData()
+          } else {
+            NotificationMessage(
+              'warning',
+              'Network request failed',
+              res.data.message
+            )
+          }
+        })
+        .catch(err =>
+          NotificationMessage('warning',"Network request failed" , err.response.data.message)
         )
-      }
+    
     } else {
-      if (checkPermissionStatus('Disable user')) {
-        await disableUser({ id })
-          .then(res => {
-            if (res.data.status) {
-              NotificationMessage('success', 'User Status Updated Successfully')
-              retrieveUsersData()
-            } else {
-              NotificationMessage(
-                'warning',
-                'Network request failed',
-                res.data.message
-              )
-            }
-          })
-          .catch(err =>
-            NotificationMessage('warning', err.response.data.message)
-          )
-      } else {
-        NotificationMessage(
-          'warning',
-          "User Don't have Permission to Disable User"
+      await disableUser({ id })
+        .then(res => {
+          if (res.data.status) {
+            NotificationMessage('success', 'User Status Updated Successfully')
+            retrieveUsersData()
+          } else {
+            NotificationMessage(
+              'warning',
+              'Network request failed',
+              res.data.message
+            )
+          }
+        })
+        .catch(err =>
+          NotificationMessage('warning', "Network request failed" , err.response.data.message)
         )
-      }
+    
     }
   }
 
@@ -403,7 +391,7 @@ const Users = () => {
           )
         }
       })
-      .catch(err => NotificationMessage('warning', err.response.data.message))
+      .catch(err => NotificationMessage('warning', "Network request failed" ,err.response.data.message))
     setIsLoading(false)
   }
 
