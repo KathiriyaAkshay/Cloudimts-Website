@@ -31,9 +31,9 @@ const Email = () => {
   useEffect(() => {
     changeBreadcrumbs([{ name: 'Email' }])
     retrieveRoleOptions()
-    // setRole(localStorage.getItem("role"))
   }, [])
 
+  // API Call 
   const editActionHandler = async id => {
     setEmailID(id)
     await API.post(
@@ -58,6 +58,7 @@ const Email = () => {
       })
   }
 
+  // API Call 
   const deleteActionHandler = async id => {
     await deleteEmail({ id })
       .then(res => {
@@ -75,6 +76,7 @@ const Email = () => {
       .catch(err => NotificationMessage('warning', 'Network request failed'))
   }
 
+  // API Call 
   const retrieveEmailData = async (pagination, values = {}) => {
     const currentPagination = pagination || pagi
     setIsLoading(true)
@@ -100,6 +102,7 @@ const Email = () => {
     setIsLoading(false)
   }
 
+  // API Call 
   const retrieveRoleOptions = async () => {
     setIsLoading(true)
     await API.get('/email/v1/role-fetch', {
@@ -131,7 +134,9 @@ const Email = () => {
     return permission
   }
 
+  // Email column 
   const columns = [
+
     checkPermissionStatus('View Full name') && {
       title: 'Full Name',
       dataIndex: 'full_name',
@@ -139,13 +144,12 @@ const Email = () => {
         checkPermissionStatus('View Full name') ? '' : 'column-display-none'
       }`
     },
+    
     {
       title: 'Email',
       dataIndex: 'email'
-      // className: `${
-      //   checkPermissionStatus("View Patient id") ? "" : "column-display-none"
-      // }`,
     },
+    
     checkPermissionStatus('Active status') && {
       title: 'Status',
       dataIndex: 'active_status',
@@ -154,6 +158,7 @@ const Email = () => {
       }`,
       render: (text, record) => `${text ? 'Active' : 'Inactive'}`
     },
+    
     checkPermissionStatus('View User Role') && {
       title: 'Role',
       dataIndex: 'role',
@@ -162,18 +167,22 @@ const Email = () => {
       }`,
       render: (text, record) => `${record?.role?.role_name}`
     },
+    
     {
       title: 'Contact',
       dataIndex: 'contact'
     },
+    
     {
       title: 'Created At',
       dataIndex: 'created_at'
     },
+    
     {
       title: 'Updated At',
       dataIndex: 'updated_at'
     },
+    
     {
       title: 'Actions',
       dataIndex: 'actions',
@@ -181,21 +190,26 @@ const Email = () => {
       width: window.innerWidth < 650 ? '1%' : '10%',
       render: (_, record) => (
         <Space style={{ display: 'flex', justifyContent: 'space-evenly' }}>
+    
           {checkPermissionStatus('Edit option') && (
             <EditActionIcon
               editActionHandler={() => editActionHandler(record.id)}
             />
           )}
+    
           {checkPermissionStatus('Delete option') && (
             <DeleteActionIcon
               deleteActionHandler={() => deleteActionHandler(record.id)}
             />
           )}
+    
         </Space>
       )
     }
   ].filter(Boolean)
 
+  // ==== Insert and Edit email address handler ==== // 
+  
   const handleSubmit = async values => {
     setIsLoading(true)
     if (!emailID) {
@@ -216,8 +230,9 @@ const Email = () => {
             )
           }
         })
-        .catch(err => NotificationMessage('warning', err.response.data.message))
+        .catch(err => NotificationMessage('warning', "Network request failed"))
     } else {
+
       await API.post(
         '/email/v1/edit-email',
         { ...values, id: emailID },
@@ -240,25 +255,25 @@ const Email = () => {
             )
           }
         })
-        .catch(err => NotificationMessage('warning', err.response.data.message))
+        .catch(err => NotificationMessage('warning', "Network request failed"))
     }
     setIsLoading(false)
   }
 
   return (
     <>
+
       <TableWithFilter
         tableData={emailData}
         tableColumns={columns}
-        // onAddClick={() => setIsModalOpen(true)}
-        // addButtonTitle="Add Email"
-        // addButtonIcon={<PlusOutlined />}
-        // rowSelection={rowSelection}
         loadingTableData={isLoading}
         setPagi={setPagi}
         totalRecords={totalPages}
         onPaginationChange={retrieveEmailData}
       />
+
+      {/* === Add new email modal ====  */}
+
       <Modal
         title='Add New Email'
         open={isEmailModalOpen}
@@ -277,6 +292,7 @@ const Email = () => {
           }}
           form={form}
           onFinish={handleSubmit}
+          style={{marginTop: "12px"}}
         >
           <Form.Item
             name='full_name'
@@ -291,6 +307,7 @@ const Email = () => {
           >
             <Input placeholder='Enter Full Name' />
           </Form.Item>
+
           <Form.Item
             name='email'
             label='Email'
@@ -304,6 +321,7 @@ const Email = () => {
           >
             <Input placeholder='Enter Email' />
           </Form.Item>
+
           <Form.Item
             name='contact'
             label='Contact'
@@ -317,6 +335,7 @@ const Email = () => {
           >
             <Input placeholder='Enter Contact Number' />
           </Form.Item>
+
           <Form.Item
             label='Role'
             name='role_id'
@@ -337,9 +356,9 @@ const Email = () => {
                   .toLowerCase()
                   .localeCompare((optionB?.label ?? '').toLowerCase())
               }
-              // onChange={appliedOnChangeHandler}
             />
           </Form.Item>
+
           <Form.Item
             name='active_status'
             label='Active'
@@ -347,8 +366,11 @@ const Email = () => {
           >
             <Switch />
           </Form.Item>
+
         </Form>
+
       </Modal>
+
       <EmailFilterModal
         retrieveEmailData={retrieveEmailData}
         name={'Email Filter'}
