@@ -13,7 +13,7 @@ import {
   Tag,
   Tooltip
 } from 'antd'
-import { EyeFilled, PlusOutlined } from '@ant-design/icons'
+import { EyeFilled } from '@ant-design/icons'
 import TableWithFilter from '../../components/TableWithFilter'
 import EditActionIcon from '../../components/EditActionIcon'
 import DeleteActionIcon from '../../components/DeleteActionIcon'
@@ -29,6 +29,7 @@ import {
 } from '../../apis/studiesApi'
 import { UserPermissionContext } from '../../hooks/userPermissionContext'
 import NotificationMessage from '../../components/NotificationMessage'
+import APIHandler from "../../apis/apiHandler" ; 
 
 const Users = () => {
   
@@ -96,7 +97,29 @@ const Users = () => {
     navigate(`/users/${id}/edit`)
   }
 
-  const deleteActionHandler = () => {}
+  const deleteActionHandler = async (id) => {
+
+    setIsLoading(true) ;
+    
+    let responseData = await APIHandler("POST", {"id": id}, "user/v1/delete-user") ; 
+    
+    setIsLoading(false) ;
+
+    if (responseData === false){
+
+      NotificationMessage("warning", "Network request failed") ; 
+    
+    } else if (responseData['status'] === true){
+
+      NotificationMessage("success", "Delete user successfully") ; 
+      retrieveUsersData() ; 
+    
+    } else {
+
+      NotificationMessage("warning", "Network request failed", responseData['message']) ; 
+    }
+
+  }
 
   const retrieveLogsData = (id, username) => {
 
@@ -308,8 +331,9 @@ const Users = () => {
           </Tooltip>
 
           <DeleteActionIcon
-            deleteActionHandler={() => deleteActionHandler(record)}
+            deleteActionHandler={() => deleteActionHandler(record.id)}
           />
+
         </Space>
       )
     }
