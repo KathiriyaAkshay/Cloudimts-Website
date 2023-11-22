@@ -63,22 +63,32 @@ const ShareStudy = ({
       .then((res) => {
         const resData = res.data.data;
 
-        console.log("Studydata information ===========>");
-        console.log(resData);
-        
         const modifiedData = [
           {
             name: "Patient's id",
             value: resData?.Patient_id,
           },
+          
           {
             name: "Referring Physician Name",
             value: resData?.Referring_physician_name,
           },
+          
           {
             name: "Patient's Name",
             value: resData?.Patient_name,
           },
+
+          {
+            name: "Assign study time", 
+            value: resData?.study_assign_time
+          }, 
+
+          {
+            name:"Assign study username", 
+            value: resData?.study_assign_username
+          }, 
+
           {
             name: "Performing Physician Name",
             value: resData?.Performing_physician_name,
@@ -233,7 +243,9 @@ const ShareStudy = ({
                   item.name === "Patient's Name" ||
                   item.name === "Study UID" ||
                   item.name === "Institution Name" ||
-                  item.name === "Series UID" ? (
+                  item.name === "Series UID" || 
+                  item.name === "Assign study time" || 
+                  item.name === "Assign study username"? (
                     <Tag color="#87d068">{item.value}</Tag>
                   ) : (
                     <Typography style={{ fontWeight: "400" }}>
