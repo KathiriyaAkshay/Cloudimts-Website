@@ -343,10 +343,13 @@ const Institution = () => {
     {
       title: "Perform User",
       dataIndex: "username",
+      width: 20
     },
+
     {
       title: 'Event',
       dataIndex: 'event_info',
+      width: 60,
       render: text => (
         <Tag
           color={
@@ -376,7 +379,8 @@ const Institution = () => {
     },
     {
       title: 'Time',
-      dataIndex: 'time'
+      dataIndex: 'time', 
+      width: 25
     }
   ]
 
@@ -403,6 +407,7 @@ const Institution = () => {
         onClose={() => setIsDrawerOpen(false)}
         open={isDrawerOpen}
         width={800}
+        className='Institution-logs-table'
       >
         <TableWithFilter tableData={logsData} tableColumns={logsColumn} />
       </Drawer>
