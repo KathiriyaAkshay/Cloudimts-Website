@@ -223,6 +223,7 @@ const CustomReportHeaderGenerator = ({institutionId, isModalOpen}) => {
         };
         setDataSource([...dataSource, newData]);
         setCount(count + 1);
+        NotificationMessage("success", "Added new row in Patient report setting")
     };  
 
     const handleSave = (row) => {
@@ -307,6 +308,7 @@ const CustomReportHeaderGenerator = ({institutionId, isModalOpen}) => {
         };
         setDataSourceSec([...dataSourceSec, newData]);
         setCountSec(countSec + 1);
+        NotificationMessage("success", "Add new row in institution report setting")
     };
     
     const handleSaveSec = (row) => {
@@ -560,6 +562,8 @@ const CustomReportHeaderGenerator = ({institutionId, isModalOpen}) => {
             }
     
         ])
+
+        NotificationMessage("success", "Successfully reset report setting")
     }   
 
     useEffect(() => {
@@ -575,7 +579,8 @@ const CustomReportHeaderGenerator = ({institutionId, isModalOpen}) => {
     
     const ResetOptionHandle = () => {
         setDataSource([...defaultPatientOption]) ; 
-        setDataSourceSec([...defaultInstitutionOption]) ; 
+        setDataSourceSec([...defaultInstitutionOption]) ;  
+        NotificationMessage("success", "Report settings have been successfully reset.")
     }
 
     const SaveReportOptionHandle = async () => {
