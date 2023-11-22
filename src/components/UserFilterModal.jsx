@@ -92,7 +92,7 @@ const UserFilterModal = ({ name, setInstitutionData, retrieveUsersData }) => {
           </Col>
           <Col xs={24} lg={12}>
             <Form.Item
-              name="email__icontains"
+              name="user__email__icontains"
               label="Email"
               rules={[
                 {
