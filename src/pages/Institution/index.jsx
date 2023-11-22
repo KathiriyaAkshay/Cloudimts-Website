@@ -137,60 +137,46 @@ const Institution = () => {
 
   const statusChangeHandler = async (status, id) => {
     if (status) {
-      if (checkPermissionStatus('Enable institution')) {
-        await enableInstitution({ id })
-          .then(res => {
-            if (res.data.status) {
-            NotificationMessage(
-              'success',
-              'Institution Status Updated Successfully'
-            )
-            retrieveInstitutionData()
-             } else {
+      await enableInstitution({ id })
+        .then(res => {
+          if (res.data.status) {
           NotificationMessage(
-            'warning',
-            'Network request failed',
-            res.data.message
+            'success',
+            'Institution Status Updated Successfully'
           )
-        }
-          })
-          .catch(err =>
-            NotificationMessage('warning', err.response.data.message)
-          )
-      } else {
+          retrieveInstitutionData()
+            } else {
         NotificationMessage(
           'warning',
-          "User Don't have Permission to Enable Institution"
+          'Network request failed',
+          res.data.message
         )
       }
+        })
+        .catch(err =>
+          NotificationMessage('warning', "Network reqeust failed")
+        )
     } else {
-      if (checkPermissionStatus('Disable institution')) {
-        await disableInstitution({ id })
-          .then(res => {
-            if (res.data.status) {
-            NotificationMessage(
-              'success',
-              'Institution Status Updated Successfully'
-            )
-            retrieveInstitutionData()
-             } else {
+      await disableInstitution({ id })
+        .then(res => {
+          if (res.data.status) {
           NotificationMessage(
-            'warning',
-            'Network request failed',
-            res.data.message
+            'success',
+            'Institution Status Updated Successfully'
           )
-        }
-          })
-          .catch(err =>
-            NotificationMessage('warning', err.response.data.message)
-          )
-      } else {
+          retrieveInstitutionData()
+            } else {
         NotificationMessage(
           'warning',
-          "User Don't have Permission to Disable Institution"
+          'Network request failed',
+          res.data.message
         )
       }
-    }
+        })
+        .catch(err =>
+          NotificationMessage('warning', "Network request failed")
+        )
+  }
   }
 
   // Columns definition for the institution table
