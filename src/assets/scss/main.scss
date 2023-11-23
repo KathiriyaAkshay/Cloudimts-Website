@@ -641,9 +641,15 @@
   top: 33px;
   z-index: 999;
 }
+
 .chat-setting-pop {
   color: #ffff;
-  gap: 13px;
+  gap: 13px; 
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: #efefef;
+  z-index: 100;
 }
 
 .chat-setting-pop-span {

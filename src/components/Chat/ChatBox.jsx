@@ -11,7 +11,8 @@ const ChatBox = (props) => {
     messages,
     setMessages,
     isChatModule,
-    isDrawerOpen
+    isDrawerOpen, 
+    urgentCase
   } = props || {};
   
   const [chatPopUp, setChatPopUp] = useState({
@@ -38,6 +39,7 @@ const ChatBox = (props) => {
         setMessages={setMessages}
         isChatModule={isChatModule}
         isDrawerOpen = {isDrawerOpen}
+        urgentCase = {urgentCase}
       />
     </>
   );

@@ -50,8 +50,12 @@ const ChatMessangerFooter = (props) => {
     setFileStore((prev) => [...e.target.files]);
   };
 
-  console.log("EmojinClick information  =======>");
-  console.log(emojiClick);
+  // Enter key event press hanlder 
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter"){
+      sendMessage() ; 
+    }
+  }
 
   return (
     <>
@@ -87,6 +91,7 @@ const ChatMessangerFooter = (props) => {
             value={chatData}
             rows={1}
             onChange={handleChangeText}
+            onKeyDown={handleKeyPress}
           ></Input.TextArea>
 
           {chatData !== "" && imageStore?.length ? (

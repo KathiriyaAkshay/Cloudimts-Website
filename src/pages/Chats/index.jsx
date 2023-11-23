@@ -12,18 +12,10 @@ const Chats = () => {
   const [seriesId, setSeriesId] = useState(null);
   const [studyId, setStudyId] = useState(null);
   const [personName, setPersonName] = useState(null);
+  const [urgentCase, setUrgentCase] = useState(null) ; 
 
-  console.log("StudyId information ==========>");
-  console.log(studyId);
-
-  console.log("Series id information ===========>");
-  console.log(seriesId);
-
-  console.log("Person name information ==========>");
-  console.log(personName);
-
-  console.log("Messages information =========>");
-  console.log(messages);
+  console.log("Main urgent case information value ============>");
+  console.log(urgentCase);
 
   useEffect(() => {
     changeBreadcrumbs([{ name: "Chats" }]);
@@ -39,6 +31,7 @@ const Chats = () => {
         setStudyId={setStudyId}
         setPersonName={setPersonName}
         studyId={studyId}
+        setUrgentCase={setUrgentCase}
       />
 
       {/* ==== Chat Room data division ====  */}
@@ -52,6 +45,7 @@ const Chats = () => {
             messages={messages}
             setMessages={setMessages}
             isChatModule={true}
+            urgentCase = {urgentCase}
           />
         ) : (
           <div className="empty-chat-div">

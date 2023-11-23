@@ -4,9 +4,6 @@ import ChatBox from "./ChatBox";
 
 const ChatMain = (props) => { 
 
-  console.log("Drawer value ==============>");
-  console.log(props.drawerValue);
-
   const [chatList, setChatList] = useState({
     chatListData: [],
     searchInputShow: false,
@@ -30,6 +27,7 @@ const ChatMain = (props) => {
           setMessages={props.setMessages}
           isChatModule={props.isChatModule}
           isDrawerOpen = {props.drawerValue}
+          urgentCase = {props.urgentCase}
         />
 
       </div>

@@ -5,7 +5,7 @@ import NormalCase from '../assets/images/normalCase.png'
 import { Divider, Typography } from 'antd'
 import { getAllChatList } from '../apis/studiesApi'
 
-const ChatLists = ({ setSeriesId, setStudyId, setPersonName, studyId }) => {
+const ChatLists = ({ setSeriesId, setStudyId, setPersonName, studyId, setUrgentCase }) => {
   const [chatListData, setChatListData] = useState([])
 
   useEffect(() => {
@@ -87,7 +87,8 @@ const ChatLists = ({ setSeriesId, setStudyId, setPersonName, studyId }) => {
               onClick={() => {
                 setSeriesId(data.series_id)
                 setStudyId(data.study_id)
-                setPersonName(data.name)
+                setPersonName(data.name)  
+                setUrgentCase(data.urgent_case)
               }}
             >
               <div className='study-chat-userdata'>

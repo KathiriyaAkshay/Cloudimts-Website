@@ -8,16 +8,13 @@ import downloadImg from '../../assets/images/download-chat-img.png'
 import Excel from '../../assets/images/microsoft-excel-icon.svg'
 import Document from '../../assets/images/Document_chat.svg'
 import chatFileImg from '../../assets/images/chat-file-icon.svg'
-import Word from '../../assets/images/microsoft-word-icon.svg'
+import Word from '../../assets/images/microsoft-word-icon.svg' ; 
 const MessageComp = props => {
   const navigate = useNavigate()
 
   const { item, chatSettingData, ownMessages, colonImage, groupRecieve } = props
   const id = item?.id
   const { media } = item || []
-
-  console.log('Ownmessage information ==========>')
-  console.log(ownMessages)
 
   const handleCustomSlider = (mainData = '') => {
     return (
@@ -253,9 +250,9 @@ const MessageComp = props => {
   const handleQuotedScroll = id => {
     document.getElementById(id).scrollIntoView()
   }
-
   return (
     <>
+      <ChatSettingPop/>
       <div id={id}>
         {item?.is_quoted ? (
           <div className='forward-chat-message'>
@@ -280,9 +277,13 @@ const MessageComp = props => {
         {!groupRecieve ? (
           <>
             <div>
-              <div className='Chat-username-information'>KeyurVaghasiya</div>
 
-              <div className='userchat-data'>
+              {!ownMessages && 
+                <div className='Chat-username-information'>
+                    {item?.username?.username}
+                </div>
+              }
+              <div className='userchat-data'> 
                 <div style={{ flex: '1' }}>
                   {item?.media_option &&
                     handleCustomSlider(
@@ -317,7 +318,9 @@ const MessageComp = props => {
                   ></img>
                 ) : (
                   ''
-                )}
+                  )}
+
+                
               </div>
             </div>
 
@@ -328,10 +331,11 @@ const MessageComp = props => {
                 {moment(item?.timestamp || item?.timestamp).format('hh:mm')}
               </span>
             </div>
+            
           </>
         ) : (
           <></>
-        )}
+          )}
       </div>
     </>
   )

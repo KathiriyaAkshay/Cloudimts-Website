@@ -52,7 +52,8 @@ import DeleteActionIcon from '../../components/DeleteActionIcon'
 import NotificationMessage from '../../components/NotificationMessage'
 import APIHandler from '../../apis/apiHandler'
 import { saveAs } from 'file-saver'
-import * as XLSX from 'xlsx'
+import * as XLSX from 'xlsx' ; 
+
 const BASE_URL = import.meta.env.VITE_APP_SOCKET_BASE_URL
 const Dicom = () => {
   // Modal related useState
@@ -129,6 +130,7 @@ const Dicom = () => {
 
   // Quick Assign Studies option 
   const [quickAssignStudy, settQuickAssignStudy] = useState(false);
+  const [totalStudies, setTotalStudies] = useState(null) ; 
 
   const SetupGenralChatNotification = () => {
     const ws = new WebSocket(`${BASE_URL}genralChat/`)
@@ -255,7 +257,7 @@ const Dicom = () => {
   useEffect(() => {
     setSystemFilterPayload({})
     setStudyDataPayload({})
-    changeBreadcrumbs([{ name: 'Study Data' }])
+    changeBreadcrumbs([{ name: `Study Data` }])
     setStudyIdArray([])
   }, [])
 
@@ -290,11 +292,9 @@ const Dicom = () => {
       })
 
       if (previousSeriesResponse != JSON.stringify(responseData['data'])) {
-        console.log('Not same response =========>')
         setPreviousSeriesResponse(JSON.stringify(responseData['data']))
         // await FetchSeriesCountInformation() ;
       } else {
-        console.log('Same response ==============>')
       }
     }
   }

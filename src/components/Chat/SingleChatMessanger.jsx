@@ -7,6 +7,7 @@ import greycheck from "../../assets/images/grey-check.svg";
 import Col from "../../assets/images/whitcol copy.svg";
 
 const SingleChatMessanger = (props) => {
+  
   const {
     chatfile,
     emojiClick,
@@ -19,8 +20,12 @@ const SingleChatMessanger = (props) => {
     chatSearchedResults,
     searchIndex,
   } = props || {};
-  const ownProfileDataId = localStorage.getItem("userID");
 
+  const ownProfileDataId = localStorage.getItem("custom_user_id"); 
+
+  console.log("Chat messages information ===========>");
+  console.log(messages);
+  
 
   return (
     <div className={`userchat-main`}>

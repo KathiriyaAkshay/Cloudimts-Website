@@ -3,7 +3,6 @@ import moment from 'moment'
 import { useNavigate, useLocation } from 'react-router-dom'
 import SingleChatMessanger from './SingleChatMessanger'
 import ChatMessangerFooter from './ChatMessangerFooter'
-import whiteback from '../../assets/images/whiteback.svg'
 import Col from '../../assets/images/whitcol.svg'
 import ChatHeader from './ChatHeader'
 import { Spin } from 'antd'
@@ -15,7 +14,9 @@ import {
   sendChatMessage,
   sendMediaChat
 } from '../../apis/studiesApi'
-import { RoomDataContext } from '../../hooks/roomDataContext'
+import { RoomDataContext } from '../../hooks/roomDataContext' ; 
+import NotificationMessage from '../NotificationMessage' ; 
+import ChatSettingPop from './ChatSettingPop'
 
 const ChatMessanger = props => {
   const {
@@ -31,7 +32,8 @@ const ChatMessanger = props => {
     messages,
     setMessages,
     isChatModule,
-    isDrawerOpen
+    isDrawerOpen, 
+    urgentCase
   } = props || {}
 
   const userDetail = userProfileData
@@ -44,7 +46,7 @@ const ChatMessanger = props => {
     } else {
       setLayoutHeight('71vh')
     }
-  }, [])
+  }, []) ; 
 
   const [openMenu, setOpenMenu] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -72,6 +74,9 @@ const ChatMessanger = props => {
     chatSearchedResults: [],
     searchIndex: 0
   })
+  // CustomUser id information 
+  const user = localStorage.getItem('custom_user_id') ; 
+  
   const [imageStore, setImageStore] = useState([])
   const [fileStore, setFileStore] = useState([])
   const [description, setDescription] = useState([])
@@ -82,20 +87,22 @@ const ChatMessanger = props => {
     activeIndex: 0,
     chatConnected: false
   })
-  const user = localStorage.getItem('userID')
+  
   const { roomID, setRoomID } = useContext(RoomDataContext)
   const roomName = `${orderId}/${user}/${userId}`
   const QuoteStyle = isHousemateChat
-    ? imageStore?.length < 4 && imageStore?.length
-      ? { bottom: '172px' }
-      : imageStore?.length
-      ? { bottom: '266px' }
-      : { bottom: '55px' }
-    : imageStore?.length < 4 && imageStore?.length
-    ? { bottom: '111px' }
-    : imageStore?.length
-    ? { bottom: '206px' }
-    : { bottom: '-1px' }
+  ? imageStore?.length < 4 && imageStore?.length
+  ? { bottom: '172px' }
+  : imageStore?.length
+  ? { bottom: '266px' }
+  : { bottom: '55px' }
+  : imageStore?.length < 4 && imageStore?.length
+  ? { bottom: '111px' }
+  : imageStore?.length
+  ? { bottom: '206px' }
+  : { bottom: '-1px' } 
+  
+  const [quotedMessageContainer, setQuotedMessageContainer] = useState(false) ; 
 
   useEffect(() => {
     let id = messages?.length ? messages[messages?.length - 1]?.uni_key : 1
@@ -121,7 +128,9 @@ const ChatMessanger = props => {
   }, [forwardMessage?.chatSearchValue])
 
   useEffect(() => {
+
     if (orderId) {
+    
       const ws = new WebSocket(`ws://127.0.0.1:8000/ws/personal/${roomName}/`)
 
       ws.onopen = () => {
@@ -138,6 +147,7 @@ const ChatMessanger = props => {
             ? JSON.parse(event.data).id
             : prev
         )
+
         handleAllChatHistory(
           true,
           JSON.parse(event.data).id != null ||
@@ -161,16 +171,21 @@ const ChatMessanger = props => {
   }, [orderId])
 
   const handleAllChatHistory = async (webSocketConnect, roomData, chatData) => {
-    const room_id = localStorage.getItem('roomID')
+
+    const room_id = localStorage.getItem('roomID') ; 
+
     if (roomData) {
+
       webSocketConnect && setLoading(true)
+
       getInitialChatMessages({
         room_id
       })
-        .then(data => {
+        .then(res => {
           if (res.data.status) {
-            groupMessagesByDate(data.data?.chat)
-            setLoading(false)
+            groupMessagesByDate(res.data?.chat)
+            setLoading(false) ; 
+
           } else {
             NotificationMessage(
               'warning',
@@ -186,9 +201,15 @@ const ChatMessanger = props => {
             err.response.data.message
           )
         )
+
     } else if (!roomData) {
+
       if (chatData.payload.status == 'new_chat') {
-        const timestamp = chatData.payload.data.timestamp.split(' ')[0]
+
+        // ====== New Message handling from socket channel ========= // 
+
+        const timestamp = chatData.payload.data.timestamp.split(' ')[0];  
+
         const newMessage = messages.map(data => {
           if (data.date == timestamp) {
             return {
@@ -201,12 +222,12 @@ const ChatMessanger = props => {
             }
           }
         })
+
         setMessages(prev => {
           const currentDate = moment().format('YYYY-MM-DD')
           const existingData = prev.find(data => data.date === timestamp)
 
           if (existingData) {
-            // If a message with the same date already exists, update it
             return prev.map(data =>
               data.date === timestamp
                 ? {
@@ -216,17 +237,20 @@ const ChatMessanger = props => {
                 : data
             )
           } else if (currentDate === timestamp) {
-            // If no message with the same date exists and it's the current date, create a new entry
             return [
               ...prev,
               { date: timestamp, messages: [chatData.payload.data] }
             ]
           } else {
-            // If no message with the same date exists and it's not the current date, return the previous state
             return prev
           }
         })
+
+
       } else if (chatData.payload.status == 'delete_chat') {
+
+        // Deelete message handling 
+
         setMessages(prev =>
           prev
             .map(data => ({
@@ -238,6 +262,7 @@ const ChatMessanger = props => {
             .filter(item => item.messages.length > 0)
         )
       }
+
     }
   }
 
@@ -260,24 +285,28 @@ const ChatMessanger = props => {
   }
 
   const sendMessage = async () => {
-    const uni_key = moment.utc(`${new Date().toJSON()}`) + '4'
+
     if (chatData) {
-      const modifiedObj = {
+
+      const modifiedObj = { 
         content: chatData,
         send_from_id: Number(user),
         room_name: orderId,
-        media: 'None',
+        media: '',
         media_option: false,
         room_id: roomID,
         is_quoted: forwardMessage?.quoted ? true : false,
-        quoted_message: forwardMessage?.quoted
-          ? forwardMessage?.quotedMessage?.content
-          : ''
-      }
+        quoted_message: forwardMessage?.quoted? forwardMessage?.quotedMessage?.content
+          : '   ', 
+        urgent_case: urgentCase
+      } ; 
+
+      setChatData('') ; 
+
       sendChatMessage(modifiedObj)
         .then(res => {
           if (res.data.status) {
-            NotificationMessage('success', res.data.message)
+            NotificationMessage('success', "Message send successfully")
           } else {
             NotificationMessage(
               'warning',
@@ -293,56 +322,58 @@ const ChatMessanger = props => {
             err.response.data.message
           )
         )
-      setChatData('')
-      setForwardMessage({ ...forwardMessage, quoted: false })
-    }
-    let formData = {}
-    if (imageStore?.length || fileStore?.length) {
-      formData = { uni_key: uni_key }
-      imageStore?.length &&
-        imageStore?.forEach(image => {
-          formData = { ...formData, media: image }
-        })
-      fileStore?.length &&
-        fileStore?.forEach(docs => {
-          formData = { ...formData, media: docs }
-        })
+      setForwardMessage({ ...forwardMessage, quoted: false }) ; 
 
-      formData = {
-        ...formData,
-        media_option: 'True',
-        content: 'None',
-        send_from_id: Number(user),
-        room_name: orderId,
-        room_id: roomID,
-        is_quoted: forwardMessage?.quoted ? true : 'False',
-        quoted_message: forwardMessage?.quoted
-          ? forwardMessage?.quotedMessage?.content
-          : 'None'
-      }
+    } ; 
 
-      sendMediaChat(formData)
-        .then(res => {
-          if (res.data.status) {
-            handleAllChatHistory(false)
-          } else {
-            NotificationMessage(
-              'warning',
-              'Network request failed',
-              res.data.message
-            )
-          }
-        })
-        .catch(err =>
-          NotificationMessage(
-            'warning',
-            'Network request failed',
-            err.response.data.message
-          )
-        )
-      setImageStore([])
-      setFileStore([])
-    }
+
+    // let formData = {}
+    // if (imageStore?.length || fileStore?.length) {
+    //   formData = { uni_key: uni_key }
+    //   imageStore?.length &&
+    //     imageStore?.forEach(image => {
+    //       formData = { ...formData, media: image }
+    //     })
+    //   fileStore?.length &&
+    //     fileStore?.forEach(docs => {
+    //       formData = { ...formData, media: docs }
+    //     })
+
+    //   formData = {
+    //     ...formData,
+    //     media_option: 'True',
+    //     content: 'None',
+    //     send_from_id: Number(user),
+    //     room_name: orderId,
+    //     room_id: roomID,
+    //     is_quoted: forwardMessage?.quoted ? true : 'False',
+    //     quoted_message: forwardMessage?.quoted
+    //       ? forwardMessage?.quotedMessage?.content
+    //       : 'None'
+    //   }
+
+    //   sendMediaChat(formData)
+    //     .then(res => {
+    //       if (res.data.status) {
+    //         handleAllChatHistory(false)
+    //       } else {
+    //         NotificationMessage(
+    //           'warning',
+    //           'Network request failed',
+    //           res.data.message
+    //         )
+    //       }
+    //     })
+    //     .catch(err =>
+    //       NotificationMessage(
+    //         'warning',
+    //         'Network request failed',
+    //         err.response.data.message
+    //       )
+    //     )
+    //   setImageStore([])
+    //   setFileStore([])
+    // }
   }
 
   const onEmojiClick = data => {
@@ -395,8 +426,17 @@ const ChatMessanger = props => {
     setEmojiClick(!emojiClick)
   }
 
-  const chatSettingData = id => {
-    const add = [...description]
+  const chatSettingData = (id) => {
+
+    // Description stand for ChatId =
+    const add = [...description] ; 
+    
+    console.log("Curernt chat id information ==========>");
+    console.log(id);
+
+    console.log("Current description information ===========>");
+    console.log(description);
+
     if (!add.includes(id)) {
       if (add.length) {
         add.pop()
@@ -409,8 +449,10 @@ const ChatMessanger = props => {
       const removed = add.filter(item => item !== id)
       setDescription(removed)
     }
+
   }
-  ;` `
+  ;
+
   const handleChatDetailsPopUp = () => {
     setChatDetails({
       ...chatDetails,
@@ -491,30 +533,34 @@ const ChatMessanger = props => {
               searchIndex={forwardMessage?.searchIndex}
             />
 
-            <div
-              style={QuoteStyle}
-              className={`quotedMessage-container isHousemateChat-quote ${
-                isChatModule && 'quotedMessage-container-position'
-              }`}
-            >
-              <div className='quoted-details'>
-                <span className='quotedMessage-message'>
-                  {forwardMessage?.quotedMessage?.content}
-                </span>
-              </div>
+            {quotedMessageContainer && 
+            
               <div
-                style={{
-                  fontWeight: '600',
-                  color: 'rgb(109, 121, 147)',
-                  cursor: 'pointer'
-                }}
-                onClick={() => setForwardMessage({ quoted: false })}
+                style={QuoteStyle}
+                className={`quotedMessage-container isHousemateChat-quote ${
+                  isChatModule && 'quotedMessage-container-position'
+                }`}
               >
-                X
+                <div className='quoted-details'>
+                  <span className='quotedMessage-message'>
+                    {forwardMessage?.quotedMessage?.content}
+                  </span>
+                </div>
+                <div
+                  style={{
+                    fontWeight: '600',
+                    color: 'rgb(109, 121, 147)',
+                    cursor: 'pointer'
+                  }}
+                  onClick={() => setForwardMessage({ quoted: false })}
+                >
+                  X
+                </div>
+
               </div>
-            </div>
-            {/* {forwardMessage?.quoted && (
-              )} */}
+            }
+
+
           </div>
 
           {/* ==== Chat message footer ====  */}
@@ -534,6 +580,7 @@ const ChatMessanger = props => {
             isChatModule={isChatModule}
             layoutHeight={setLayoutHeight}
           />
+
         </div>
       </div>
     </Spin>
