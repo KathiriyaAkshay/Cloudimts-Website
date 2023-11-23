@@ -243,9 +243,11 @@ const ReportSummary = () => {
                 <div
                     className="report-summary-header"
                     style={{
-                    paddingTop: "1rem",
-                    paddingBottom: "1rem",
-                    marginTop: "2rem",
+                        paddingTop: "1rem",
+                        paddingBottom: "1rem",
+                        marginTop: "2rem",
+                        marginLeft: "auto",
+                        marginRight: "auto" 
                     }}
                 >
                     <div
@@ -276,7 +278,7 @@ const ReportSummary = () => {
                     </div>
                 </div>
 
-                <div className="w-95">
+                <div className="w-95" style={{marginLeft: "auto", marginRight: "auto", marginTop: "20px"}}>
                     <Card bordered={false} style={{ width: "100%" }}>
                         <Table
                             columns={columns}
@@ -290,7 +292,7 @@ const ReportSummary = () => {
                 <div
                     className="w-95"
                     id="patient_details_div"
-                    style={{ display: "none" }}
+                    style={{ display: "none", marginLeft: "auto", marginRight: "auto" }}
                 >
                     <div style={{ width: "100%" }}>
                         <Card
@@ -380,7 +382,7 @@ const ReportSummary = () => {
 
                 {/* ==== Patient report information ====  */}
 
-                <div className="w-95">
+                <div className="w-95" style={{marginLeft: "auto", marginRight: "auto", marginTop: "25px"}}>
                     <Card
                     title="Report information"
                     bordered={false}
