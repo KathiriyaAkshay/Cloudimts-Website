@@ -229,10 +229,7 @@ const AddUsers = () => {
     setIsLoading(true)
 
     if (currentStep === 0) {
-
-      console.log(values);
       setIsLoading(false) ; 
-      console.log("User step1 functioality call =========>");
       setPayload({
         ...values,
         allow_offline_download: values.allow_offline_download
@@ -240,10 +237,9 @@ const AddUsers = () => {
           : false,
         allow: values.allow ? values.allow : false
       })  
-      handleNextStep()
+      handleNextStep() ; 
       
-    } else if (currentStep === 1) {
-    
+    } else if (currentStep === 1) { 
       setPayload(prev => ({
         ...prev,
         start_time: values.availability[0].format('HH:mm:ss'),
@@ -731,9 +727,7 @@ const AddUsers = () => {
 
                   <Button
                     type='primary'
-                    onClick={() => {
-                      handleSubmit() 
-                    }}
+                    htmlType='submit'
                     style={{ marginLeft: '10px' }}>
                     Next
                   </Button>
@@ -743,6 +737,73 @@ const AddUsers = () => {
               </Row>
             </Form>
           
+          )}
+
+          {currentStep === 1 && (
+            <Form
+              labelCol={{
+                span: 24
+              }}
+              wrapperCol={{
+                span: 24
+              }}
+              form={form}
+              onFinish={handleSubmit}
+            >
+              <Row gutter={30}>
+                
+                <Col lg={12} md={12} sm={24}>
+                  <Form.Item
+                    label='Availability'
+                    name='availability'
+                    rules={[
+                      {
+                        required: true,
+                        message: 'Please enter availability'
+                      }
+                    ]}
+                  >
+                    <TimePicker.RangePicker />
+                  </Form.Item>
+                </Col>
+                
+                <Col
+                  lg={24}
+                  md={24}
+                  sm={24}
+                  className='justify-end display-flex'
+                >
+                  <Button type='primary' onClick={handlePrevStep}
+                    className='update-button-option'>
+                    Previous
+                  </Button>
+
+                  <Button
+                    type='primary'
+                    onClick={() => {
+                      if (id) setIsModalOpen(true)
+                      else form.submit()
+                    }}
+                    style={{ marginLeft: '10px' }}
+                  >
+                    {id ? 'Update' : 'Next'}
+                  </Button>
+
+                  {id && (
+                    <Button
+                      type='primary'
+                      onClick={() => {handleSubmit()}}
+                      style={{ marginLeft: '10px' }}
+                    >
+                      Next
+                    </Button>
+                  )}
+
+                </Col>
+
+              </Row>
+
+            </Form>
           )}
 
           {currentStep === 2 && (
@@ -767,7 +828,8 @@ const AddUsers = () => {
                   />
                 </Col>
                 <Col xs={24} sm={24} md={24} lg={24} className='justify-end mt'>
-                  <Button type='primary' onClick={handlePrevStep}>
+                  <Button type='primary' onClick={handlePrevStep}
+                    className='update-button-option'>
                     Previous
                   </Button>
                   
@@ -782,67 +844,6 @@ const AddUsers = () => {
                     {id ? 'Update' : 'Next'}
                   </Button>
 
-                  {id && (
-                    <Button
-                      type='primary'
-                      onClick={() => {
-                        handleNextStep()
-                      }}
-                      style={{ marginLeft: '10px' }}
-                    >
-                      Next
-                    </Button>
-                  )}
-                </Col>
-              </Row>
-            </Form>
-          )}
-
-          {currentStep === 1 && (
-            <Form
-              labelCol={{
-                span: 24
-              }}
-              wrapperCol={{
-                span: 24
-              }}
-              form={form}
-              onFinish={handleSubmit}
-            >
-              <Row gutter={30}>
-                <Col lg={12} md={12} sm={24}>
-                  <Form.Item
-                    label='Availability'
-                    name='availability'
-                    rules={[
-                      {
-                        required: true,
-                        message: 'Please enter availability'
-                      }
-                    ]}
-                  >
-                    <TimePicker.RangePicker />
-                  </Form.Item>
-                </Col>
-                <Col
-                  lg={24}
-                  md={24}
-                  sm={24}
-                  className='justify-end display-flex'
-                >
-                  <Button type='primary' onClick={handlePrevStep}>
-                    Previous
-                  </Button>
-                  <Button
-                    type='primary'
-                    onClick={() => {
-                      if (id) setIsModalOpen(true)
-                      else form.submit()
-                    }}
-                    style={{ marginLeft: '10px' }}
-                  >
-                    {id ? 'Update' : 'Next'}
-                  </Button>
                   {id && (
                     <Button
                       type='primary'
@@ -886,9 +887,11 @@ const AddUsers = () => {
                   sm={24}
                   className='justify-end display-flex'
                 >
-                  <Button type='primary' onClick={handlePrevStep}>
+                  <Button type='primary' onClick={handlePrevStep}
+                    className='update-button-option'>
                     Previous
                   </Button>
+
                   <Button
                     type='primary'
                     onClick={() => {
@@ -899,6 +902,7 @@ const AddUsers = () => {
                   >
                     {id ? 'Update' : 'Next'}
                   </Button>
+
                   {id && (
                     <Button
                       type='primary'
@@ -939,6 +943,7 @@ const AddUsers = () => {
                     type='primary'
                     onClick={handlePrevStep}
                     style={{ marginRight: '10px' }}
+                    className='update-button-option'
                   >
                     Previous
                   </Button>
