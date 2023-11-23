@@ -155,12 +155,12 @@ export const getAllChatList = async (params) => {
   return getAllChatList;
 };
 
-export const deleteChatMessage = async (params) => {
-  const deleteChatMessage = await API.post("/chat/v1/delete_chat", params, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  return deleteChatMessage;
-};
+  export const deleteChatMessage = async (params) => {
+    const deleteChatMessage = await API.post("/chat/v1/delete_chat", params, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return deleteChatMessage;
+  };
 
 export const emailFilterData = async (params) => {
   const emailFilterData = await API.post("/email/v1/email-filter", params, {

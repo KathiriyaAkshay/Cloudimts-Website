@@ -368,7 +368,7 @@ const MessageComp = props => {
 
                 {!item?.is_quoted && 
 
-                  <div className='message-option-image-division' onClick={() => chatSettingData(id, item)}>
+                  <div className='message-option-image-division' onClick={() => chatSettingData(id, item, "reply")}>
                     <img src={ReplyOptionImage} alt="" className='message-option-image'/>
                   </div>
                 
@@ -385,7 +385,7 @@ const MessageComp = props => {
 
                 {/* ==== Delete chat option ====  */}
                 
-                <div className='message-option-image-division'>
+                <div className='message-option-image-division'  onClick={() => chatSettingData(id, item, "delete")}>
                   <img src={DeleteOptionImage} alt="" className='message-option-image'/>
                 </div>
 

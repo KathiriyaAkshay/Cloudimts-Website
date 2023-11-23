@@ -104,10 +104,17 @@ const ChatMessanger = props => {
   
   const [quotedMessageContainer, setQuotedMessageContainer] = useState(false) ; 
   const [quotedMessageInfo, setQuotedMessageInfo] = useState({}) ; 
+  const [deleteChat, setDeletChat] = useState(false) ; 
 
   useEffect(() => {
     let id = messages?.length ? messages[messages?.length - 1]?.uni_key : 1 ; 
-    ScrollToBottom() ; 
+
+    if (deleteChat){
+      setDeletChat((prev) => !prev) ; 
+    } else{
+      
+      ScrollToBottom() ; 
+    }
   }, [messages])
 
   useEffect(() => {
@@ -241,6 +248,8 @@ const ChatMessanger = props => {
       } else if (chatData.payload.status == 'delete_chat') {
 
         // Deelete message handling 
+
+        setDeletChat(true) ; 
 
         setMessages(prev =>
           prev
@@ -467,9 +476,22 @@ const ChatMessanger = props => {
     setEmojiClick(!emojiClick)
   }
 
-  const chatSettingData = (id, item) => {
-    setQuotedMessageContainer(true) ; 
-    setQuotedMessageInfo({...item}) ; 
+  const chatSettingData = (id, item, option) => {
+
+    if (option === "reply"){
+      setQuotedMessageContainer(true) ; 
+      setQuotedMessageInfo({...item}) ; 
+    } else{
+      setDeletChat(true) ; 
+      deleteChatMessage({chat_id: id, room_name: orderId})
+        .then(response => {
+          NotificationMessage("success", "Delete message successfully") ; 
+        })  
+        .catch(error => {
+          setDeletChat(false); 
+          NotificationMessage("warning", "Network request failed", "Failed to delet chat") ; 
+        })
+    }
   };
 
   const handleChatDetailsPopUp = () => {
