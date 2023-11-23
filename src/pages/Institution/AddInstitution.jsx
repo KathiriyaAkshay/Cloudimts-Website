@@ -760,7 +760,6 @@ const AddInstitution = () => {
                     rules={[
                       {
                         required: true,
-                        // type: "number",
                         message: 'Enter storage allocated Limit',
                         validator: validateInput
                       }
@@ -841,9 +840,12 @@ const AddInstitution = () => {
                   />
                 </Col>
                 <Col xs={24} sm={24} md={24} lg={24} className='justify-end mt'>
-                  <Button type='primary' onClick={handlePrevStep}>
+                 
+                  <Button type='primary' onClick={handlePrevStep}
+                    className='update-button-option'>
                     Previous
                   </Button>
+
                   <Button
                     type='primary'
                     onClick={() => {
@@ -888,7 +890,8 @@ const AddInstitution = () => {
                   />
                 </Col>
                 <Col xs={24} sm={24} md={24} lg={24} className='justify-end mt'>
-                  <Button type='primary' onClick={handlePrevStep}>
+                  <Button type='primary' onClick={handlePrevStep}
+                    className='update-button-option'>
                     Previous
                   </Button>
                   <Button
@@ -932,7 +935,8 @@ const AddInstitution = () => {
                 </Col>
 
                 <Col xs={24} sm={24} md={24} lg={24} className='justify-end mt'>
-                  <Button type='primary' onClick={handlePrevStep}>
+                  <Button type='primary' onClick={handlePrevStep}
+                    className='update-button-option'>
                     Previous
                   </Button>
 
@@ -998,7 +1002,8 @@ const AddInstitution = () => {
                   </Form.Item>
                 </Col>
                 <Col lg={24} md={24} sm={24} className='justify-end'>
-                  <Button type='primary' onClick={handlePrevStep}>
+                  <Button type='primary' onClick={handlePrevStep}
+                    className='update-button-option'>
                     Previous
                   </Button>
                   <Button
@@ -1041,7 +1046,6 @@ const AddInstitution = () => {
                   <Form.Item
                     label='Choose Radiologist'
                     name='house_radiologist'
-                    // className="category-select"
                     rules={[
                       {
                         required: false,
@@ -1059,7 +1063,6 @@ const AddInstitution = () => {
                           .toLowerCase()
                           .localeCompare((optionB?.label ?? '').toLowerCase())
                       }
-                      // onChange={appliedOnChangeHandler}
                     />
                   </Form.Item>
                 </Col>
@@ -1069,7 +1072,8 @@ const AddInstitution = () => {
                   sm={24}
                   className='justify-end display-flex'
                 >
-                  <Button type='primary' onClick={handlePrevStep}>
+                  <Button type='primary' onClick={handlePrevStep}
+                    className='update-button-option'>
                     Previous
                   </Button>
                   <Button type='primary' htmlType='submit'>
