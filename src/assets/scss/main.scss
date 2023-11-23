@@ -1836,11 +1836,17 @@ thead>tr>th{
 
 .ant-alert-important{
   div{
-    color: rgb(250, 62, 62) !important;
+    color: rgb(255, 35, 35) !important;
   }
   span{
-    color:  rgb(250, 62, 62) !important ;
+    color:  rgb(255, 144, 144)!important ;
   }
-  border:1px solid red;
+  // border:1px solid red;
   background-color:white !important;
+}
+
+
+.update-button-option{
+  background-color: #CCCCCC !important;
+  color: #212121 !important;
 }

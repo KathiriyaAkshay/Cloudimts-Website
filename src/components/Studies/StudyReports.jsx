@@ -99,8 +99,8 @@ const StudyReports = ({
             autoPaging: 'text',
             x: 0,
             y: 0,
-            width: 190, //target width in the PDF document
-            windowWidth: 675 //window width in CSS pixels
+            width: 190, 
+            windowWidth: 675 
           })
         } else {
           NotificationMessage(
