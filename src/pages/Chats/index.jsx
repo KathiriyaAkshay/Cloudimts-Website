@@ -14,9 +14,6 @@ const Chats = () => {
   const [personName, setPersonName] = useState(null);
   const [urgentCase, setUrgentCase] = useState(null) ; 
 
-  console.log("Main urgent case information value ============>");
-  console.log(urgentCase);
-
   useEffect(() => {
     changeBreadcrumbs([{ name: "Chats" }]);
   }, []);

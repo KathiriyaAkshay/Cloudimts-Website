@@ -327,53 +327,56 @@ const ChatMessanger = props => {
     } ; 
 
 
-    // let formData = {}
-    // if (imageStore?.length || fileStore?.length) {
-    //   formData = { uni_key: uni_key }
-    //   imageStore?.length &&
-    //     imageStore?.forEach(image => {
-    //       formData = { ...formData, media: image }
-    //     })
-    //   fileStore?.length &&
-    //     fileStore?.forEach(docs => {
-    //       formData = { ...formData, media: docs }
-    //     })
+    let formData = {}
+    if (imageStore?.length || fileStore?.length) {
+      formData = { uni_key: uni_key }
+      imageStore?.length &&
+        imageStore?.forEach(image => {
+          formData = { ...formData, media: image }
+        })
+      fileStore?.length &&
+        fileStore?.forEach(docs => {
+          formData = { ...formData, media: docs }
+        })
 
-    //   formData = {
-    //     ...formData,
-    //     media_option: 'True',
-    //     content: 'None',
-    //     send_from_id: Number(user),
-    //     room_name: orderId,
-    //     room_id: roomID,
-    //     is_quoted: forwardMessage?.quoted ? true : 'False',
-    //     quoted_message: forwardMessage?.quoted
-    //       ? forwardMessage?.quotedMessage?.content
-    //       : 'None'
-    //   }
+      formData = {
+        ...formData,
+        media_option: 'True',
+        content: 'None',
+        send_from_id: Number(user),
+        room_name: orderId,
+        room_id: roomID,
+        is_quoted: forwardMessage?.quoted ? true : 'False',
+        quoted_message: forwardMessage?.quoted
+          ? forwardMessage?.quotedMessage?.content
+          : 'None'
+        
+        }
 
-    //   sendMediaChat(formData)
-    //     .then(res => {
-    //       if (res.data.status) {
-    //         handleAllChatHistory(false)
-    //       } else {
-    //         NotificationMessage(
-    //           'warning',
-    //           'Network request failed',
-    //           res.data.message
-    //         )
-    //       }
-    //     })
-    //     .catch(err =>
-    //       NotificationMessage(
-    //         'warning',
-    //         'Network request failed',
-    //         err.response.data.message
-    //       )
-    //     )
-    //   setImageStore([])
-    //   setFileStore([])
-    // }
+      console.log("Chat media message functionality =========>");
+      
+      // sendMediaChat(formData)
+      //   .then(res => {
+      //     if (res.data.status) {
+      //       handleAllChatHistory(false)
+      //     } else {
+      //       NotificationMessage(
+      //         'warning',
+      //         'Network request failed',
+      //         res.data.message
+      //       )
+      //     }
+      //   })
+      //   .catch(err =>
+      //     NotificationMessage(
+      //       'warning',
+      //       'Network request failed',
+      //       err.response.data.message
+      //     )
+      //   )
+      // setImageStore([])
+      // setFileStore([])
+    }
   }
 
   const onEmojiClick = data => {

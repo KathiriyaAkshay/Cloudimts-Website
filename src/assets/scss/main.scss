@@ -297,7 +297,6 @@
 }
 
 .userchat-time {
-  justify-content: end;
   display: flex;
   align-items: center;
   gap: 5px;
@@ -1847,12 +1846,28 @@ thead>tr>th{
   span{
     color:  rgb(255, 144, 144)!important ;
   }
-  // border:1px solid red;
+
   background-color:white !important;
 }
-
 
 .update-button-option{
   background-color: #CCCCCC !important;
   color: #212121 !important;
+}
+
+.message-option-division{
+  display: flex;
+  flex-direction: row; 
+  margin-top: 10px;
+}
+
+.message-option-image-division{
+  margin-left: 8px;
+  margin-right: 8px;
+  cursor: pointer;
+}
+
+.message-option-image{
+  height: 16px;
+  width: 16px;
 }

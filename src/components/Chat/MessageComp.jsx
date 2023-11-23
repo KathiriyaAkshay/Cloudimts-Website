@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { saveAs } from 'file-saver'
 import { useNavigate } from 'react-router'
 import moment from 'moment/moment'
@@ -9,6 +9,10 @@ import Excel from '../../assets/images/microsoft-excel-icon.svg'
 import Document from '../../assets/images/Document_chat.svg'
 import chatFileImg from '../../assets/images/chat-file-icon.svg'
 import Word from '../../assets/images/microsoft-word-icon.svg' ; 
+import ReplyOptionImage from "../../assets/images/reply.png" ; 
+import CopyOptionImage from "../../assets/images/copy.png" ; 
+import DeleteOptionImage from "../../assets/images/delete.png" ; 
+
 const MessageComp = props => {
   const navigate = useNavigate()
 
@@ -252,7 +256,6 @@ const MessageComp = props => {
   }
   return (
     <>
-      <ChatSettingPop/>
       <div id={id}>
         {item?.is_quoted ? (
           <div className='forward-chat-message'>
@@ -327,7 +330,22 @@ const MessageComp = props => {
             {/* ===== Chat timestamp information ======  */}
 
             <div className='userchat-time'>
-              <span>
+              <div className='message-option-division'>
+                
+                <div className='message-option-image-division'>
+                  <img src={ReplyOptionImage} alt="" className='message-option-image'/>
+                </div>
+                
+                <div className='message-option-image-division'>
+                  <img src={CopyOptionImage} alt="" className='message-option-image'/>
+                </div>
+                
+                <div className='message-option-image-division'>
+                  <img src={DeleteOptionImage} alt="" className='message-option-image'/>
+                </div>
+
+              </div>
+              <span style={{marginLeft : 'auto'}}>
                 {moment(item?.timestamp || item?.timestamp).format('hh:mm')}
               </span>
             </div>
