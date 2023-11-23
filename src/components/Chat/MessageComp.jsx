@@ -13,13 +13,13 @@ import ReplyOptionImage from "../../assets/images/reply.png" ;
 import CopyOptionImage from "../../assets/images/copy.png" ; 
 import DeleteOptionImage from "../../assets/images/delete.png" ;  
 import DownloadOptionImage from "../../assets/images/downloads.png" ; 
+import NotificationMessage from '../NotificationMessage'
 
 const MessageComp = props => {
   const navigate = useNavigate()
 
   const { item, chatSettingData, ownMessages, colonImage, groupRecieve } = props
-  const id = item?.id
-  const { media } = item || [] ; 
+  const id = item?.id ; 
 
   const handleCustomSlider = (mainData = '') => {
 
@@ -252,6 +252,17 @@ const MessageComp = props => {
     document.getElementById(id).scrollIntoView()
   } ; 
 
+
+  const CopyTextHandling = (content) => {
+    navigator.clipboard.writeText(content)
+      .then(() => {
+        NotificationMessage("success", "Copied message") ; 
+      })
+      .catch(err => {
+          console.error('Unable to copy text: ', err);
+      });
+  }
+
   return (
     <>
       <div id={id}>
@@ -259,15 +270,8 @@ const MessageComp = props => {
           <div className='forward-chat-message'>
             <div className='forwardChat-data'>
               <div onClick={() => handleQuotedScroll(item?.quoted_id)}>
-                <i style={{ marginBottom: '6px' }}>❝ Quoted ❞ :</i>
-                <p>{item?.quoted_message}</p>
+                <p>Reply of {item?.quoted_message}</p>
               </div>
-              <img
-                alt='img'
-                src={colonImage}
-                onClick={() => chatSettingData(id)}
-                style={{ cursor: 'pointer' }}
-              ></img>
             </div>
             <hr />
           </div>
@@ -325,17 +329,32 @@ const MessageComp = props => {
             <div className='userchat-time'>
               <div className='message-option-division'>
                 
-                <div className='message-option-image-division'>
-                  <img src={ReplyOptionImage} alt="" className='message-option-image'/>
-                </div>
+                {/* ==== Reply option ====  */}
+
+                {!item?.is_quoted && 
+
+                  <div className='message-option-image-division' onClick={() => chatSettingData(id, item)}>
+                    <img src={ReplyOptionImage} alt="" className='message-option-image'/>
+                  </div>
                 
-                <div className='message-option-image-division'>
-                  <img src={CopyOptionImage} alt="" className='message-option-image'/>
-                </div>
+                }
+
+                {/* ==== Copy message option ====  */}
+
+                {!item?.media_option && 
+                  <div className='message-option-image-division'
+                    onClick={() => CopyTextHandling(item?.content)}>
+                    <img src={CopyOptionImage} alt="" className='message-option-image'/>
+                  </div>
+                }
+
+                {/* ==== Delete chat option ====  */}
                 
                 <div className='message-option-image-division'>
                   <img src={DeleteOptionImage} alt="" className='message-option-image'/>
                 </div>
+
+                {/* ==== Media download option ====  */}
 
                 {item?.media_option && 
                 

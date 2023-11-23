@@ -16,7 +16,7 @@ import {
 } from '../../apis/studiesApi'
 import { RoomDataContext } from '../../hooks/roomDataContext' ; 
 import NotificationMessage from '../NotificationMessage' ; 
-import ChatSettingPop from './ChatSettingPop'
+import PDFOptionImage from "../../assets/images/pdf.png" ; 
 
 const ChatMessanger = props => {
   const {
@@ -103,9 +103,11 @@ const ChatMessanger = props => {
   : { bottom: '-1px' } 
   
   const [quotedMessageContainer, setQuotedMessageContainer] = useState(false) ; 
+  const [quotedMessageInfo, setQuotedMessageInfo] = useState({}) ; 
 
   useEffect(() => {
-    let id = messages?.length ? messages[messages?.length - 1]?.uni_key : 1
+    let id = messages?.length ? messages[messages?.length - 1]?.uni_key : 1 ; 
+    ScrollToBottom() ; 
   }, [messages])
 
   useEffect(() => {
@@ -210,19 +212,6 @@ const ChatMessanger = props => {
 
         const timestamp = chatData.payload.data.timestamp.split(' ')[0];  
 
-        const newMessage = messages.map(data => {
-          if (data.date == timestamp) {
-            return {
-              ...data,
-              messages: [...data.messages, chatData.payload.data]
-            }
-          } else {
-            return {
-              ...data
-            }
-          }
-        })
-
         setMessages(prev => {
           const currentDate = moment().format('YYYY-MM-DD')
           const existingData = prev.find(data => data.date === timestamp)
@@ -245,6 +234,8 @@ const ChatMessanger = props => {
             return prev
           }
         })
+
+        ScrollToBottom() ; 
 
 
       } else if (chatData.payload.status == 'delete_chat') {
@@ -289,20 +280,40 @@ const ChatMessanger = props => {
 
     if (chatData) {
 
-      const modifiedObj = { 
-        content: chatData,
-        send_from_id: Number(user),
-        room_name: orderId,
-        media: '',
-        media_option: false,
-        room_id: roomID,
-        is_quoted: forwardMessage?.quoted ? true : false,
-        quoted_message: forwardMessage?.quoted? forwardMessage?.quotedMessage?.content
-          : '   ', 
-        urgent_case: urgentCase
-      } ; 
+      let modifiedObj  = {}; 
 
+      if (quotedMessageContainer){
+
+        modifiedObj = { 
+          content: chatData,
+          send_from_id: Number(user),
+          room_name: orderId,
+          media: '',
+          media_option: false,
+          room_id: roomID,
+          is_quoted: true,
+          quoted_message: quotedMessageInfo?.content, 
+          urgent_case: urgentCase
+        } ;
+        
+      } else{
+
+        modifiedObj = { 
+          content: chatData,
+          send_from_id: Number(user),
+          room_name: orderId,
+          media: '',
+          media_option: false,
+          room_id: roomID,
+          is_quoted: false,
+          quoted_message: '', 
+          urgent_case: urgentCase
+        } ;
+
+      }
       setChatData('') ; 
+      setQuotedMessageContainer(false) ; 
+      setQuotedMessageInfo(null) ; 
 
       sendChatMessage(modifiedObj)
         .then(res => {
@@ -324,11 +335,12 @@ const ChatMessanger = props => {
           )
         )
       setForwardMessage({ ...forwardMessage, quoted: false }) ; 
+      ScrollToBottom() ; 
 
     } ; 
 
-
     let formData = {}
+
     if (imageStore?.length || fileStore?.length) {
 
       // Create unique id for image 
@@ -382,6 +394,12 @@ const ChatMessanger = props => {
     }
   }
 
+
+  const ScrollToBottom = () => {
+    var scrollingDiv = document.getElementById("user-all-chat-main-division");
+    scrollingDiv.scrollTop = scrollingDiv.scrollHeight;
+  }
+
   const onEmojiClick = data => {
     setChatData(chatData + data.emoji)
   }
@@ -394,70 +412,15 @@ const ChatMessanger = props => {
     setOpenMenu(!openMenu)
   }
 
-  const handleMenu = async name => {
-    setOpenMenu(false)
-    if (name === 'Clear History') {
-      await axios
-        .post('https://demo.nordinarychicken.com/api/chat/shl_clear_chat/', {
-          room_id: roomName
-        })
-        .then(res => {
-          if (res.data.status) {
-            // handleAllChatHistory(true);
-            setMessages([])
-          } else {
-            NotificationMessage(
-              'warning',
-              'Network request failed',
-              res.data.message
-            )
-          }
-        })
-        .catch(err =>
-          NotificationMessage(
-            'warning',
-            'Network request failed',
-            err.response.data.message
-          )
-        )
-    } else if (name === 'Search') {
-      setForwardMessage({
-        ...forwardMessage,
-        searchInput: !forwardMessage?.searchInput
-      })
-    }
-  }
 
   const handleEmoji = () => {
     setEmojiClick(!emojiClick)
   }
 
-  const chatSettingData = (id) => {
-
-    // Description stand for ChatId =
-    const add = [...description] ; 
-    
-    console.log("Curernt chat id information ==========>");
-    console.log(id);
-
-    console.log("Current description information ===========>");
-    console.log(description);
-
-    if (!add.includes(id)) {
-      if (add.length) {
-        add.pop()
-        add.push(id)
-      } else {
-        add.push(id)
-      }
-      setDescription(add)
-    } else {
-      const removed = add.filter(item => item !== id)
-      setDescription(removed)
-    }
-
-  }
-  ;
+  const chatSettingData = (id, item) => {
+    setQuotedMessageContainer(true) ; 
+    setQuotedMessageInfo({...item}) ; 
+  };
 
   const handleChatDetailsPopUp = () => {
     setChatDetails({
@@ -475,26 +438,6 @@ const ChatMessanger = props => {
     })
   }
 
-  const handleSearchedMessageArrow = type => {
-    if (type === 'up') {
-      setForwardMessage({
-        ...forwardMessage,
-        searchIndex:
-          forwardMessage?.searchIndex ===
-          forwardMessage?.chatSearchedResults?.length
-            ? forwardMessage?.chatSearchedResults?.length
-            : forwardMessage?.searchIndex + 1
-      })
-    } else {
-      setForwardMessage({
-        ...forwardMessage,
-        searchIndex:
-          forwardMessage?.searchIndex === 1
-            ? 1
-            : forwardMessage?.searchIndex - 1
-      })
-    }
-  }
 
   return (
     <Spin spinning={loading}>
@@ -539,8 +482,10 @@ const ChatMessanger = props => {
               searchIndex={forwardMessage?.searchIndex}
             />
 
+            {/* ==== Quoted message information division ====  */}
+
             {quotedMessageContainer && 
-            
+
               <div
                 style={QuoteStyle}
                 className={`quotedMessage-container isHousemateChat-quote ${
@@ -548,17 +493,41 @@ const ChatMessanger = props => {
                 }`}
               >
                 <div className='quoted-details'>
-                  <span className='quotedMessage-message'>
-                    {forwardMessage?.quotedMessage?.content}
-                  </span>
+
+                  {quotedMessageInfo?.media_option ?<>
+
+                    {quotedMessageInfo?.media.includes(".pdf") ? <>
+                  
+                      <div className='quoted-document-option-division'>
+                        <img className='quoted_message_media_image' src={PDFOptionImage}/>
+                        <div>{quotedMessageInfo?.media?.split(".")[0]}</div>
+                        <div>{quotedMessageInfo?.content}</div>
+                      </div>  
+                    </>:<>
+                      <div className='quoted-document-option-division'>
+                        <div>{quotedMessageInfo?.content}</div>
+                      </div>
+                    </>}
+                  
+
+                  </>:<>
+                  
+                    <span className='quotedMessage-message'>
+                      {quotedMessageInfo?.content}
+                    </span>
+                  
+                  </>}
+
+                
                 </div>
+                
                 <div
                   style={{
                     fontWeight: '600',
                     color: 'rgb(109, 121, 147)',
                     cursor: 'pointer'
                   }}
-                  onClick={() => setForwardMessage({ quoted: false })}
+                  onClick={() => {setForwardMessage({ quoted: false }); setQuotedMessageContainer(false) ; }}
                 >
                   X
                 </div>
@@ -588,6 +557,7 @@ const ChatMessanger = props => {
           />
 
         </div>
+
       </div>
     </Spin>
   )

@@ -680,7 +680,7 @@
   z-index: 999;
 }
 .quotedMessage-container-position {
-  margin: 0px 7px 70px 7px;
+  margin: 0px 7px 65px 7px;
 }
 .quoted-details {
   width: 95%;
@@ -1870,4 +1870,14 @@ thead>tr>th{
 .message-option-image{
   height: 16px;
   width: 16px;
+}
+
+.quoted_message_media_image{
+  height: 24px;
+  width: 24px;
+}
+
+.quoted-document-option-division{
+  display: flex;
+  flex-direction: row;
 }

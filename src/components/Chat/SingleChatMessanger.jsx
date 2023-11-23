@@ -23,12 +23,8 @@ const SingleChatMessanger = (props) => {
 
   const ownProfileDataId = localStorage.getItem("custom_user_id"); 
 
-  console.log("Chat messages information ===========>");
-  console.log(messages);
-  
-
   return (
-    <div className={`userchat-main`}>
+    <div className={`userchat-main`} id="user-all-chat-main-division">
       {messages &&
         messages?.map((messageData) => (
           <div
