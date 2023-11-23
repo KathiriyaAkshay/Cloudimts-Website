@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Space, Table, Tag, Button, Card } from "antd";
+import { Space, Table, Tag, Button, Card, Spin } from "antd";
 import { useParams } from 'react-router-dom'; 
 import APIHandler from "../apis/apiHandler";
 import NotificationMessage from "./NotificationMessage";
-import { parseInt } from "lodash";
+import { parseInt } from "lodash"; 
+import { downloadAdvancedFileReport } from "../apis/studiesApi";
+import jsPDF from "jspdf";
 
 const ReportSummary = () => {
     const { id } = useParams();
@@ -12,6 +14,7 @@ const ReportSummary = () => {
     const [patientData, setPatientData] = useState([]) ;
     const [patientDetails, setPatientDetails] = useState(null) ;  
     const [patientReport, setPatientReport] = useState([]) ;  
+    const [isLoading, setIsLoading] = useState(false) ; 
 
     // Patient detilas information table column value 
 
@@ -73,7 +76,8 @@ const ReportSummary = () => {
             width: "10%",
             render: (_, record) => (
                 <Space size="middle">
-                <Button type="primary" danger className="red-color-button">
+                <Button type="primary" danger className="red-color-button"
+                    onClick={() => DownloadReport(record)}>
                     PDF
                 </Button>
                 </Space>
@@ -125,11 +129,15 @@ const ReportSummary = () => {
 
     const FetchReportInformation = async () => {
 
+        setIsLoading(true) ; 
+
         let  requestPayload  = {
             'id': id 
         } ; 
 
         let responseData = await APIHandler("POST", requestPayload, 'studies/v1/fetch-email-report') ; 
+
+        setIsLoading(false) ; 
 
         if (responseData === false){
 
@@ -176,8 +184,49 @@ const ReportSummary = () => {
         }
     }
 
-    const DownloadReport = async () => {
-        
+    const DownloadReport = async (record) => {
+
+        setIsLoading(true) ; 
+
+        await downloadAdvancedFileReport({ id : record.report_id })
+        .then(res => {
+            if (res.data.status) {
+                const doc = new jsPDF({
+                    format: 'a4',
+                    unit: 'px'
+                })
+
+                doc.setFont('Inter-Regular', 'normal') ; 
+                
+                // Set Patient name
+                let PatientName = patientDetails?.Patient_name ; 
+                let PatientId = patientDetails?.Patient_id ; 
+                let ReportingTime = record?.report_date ; 
+
+                // Set Patient id 
+                doc.html(res?.data?.data?.report, {
+                    async callback (doc) {
+                        doc.save(`${PatientId}-${PatientName}-report-${ReportingTime}`) 
+                    },
+
+                    margin: [10, 10, 10, 10],
+                    autoPaging: 'text',
+                    x: 0,
+                    y: 0,
+                    width: 190, 
+                    windowWidth: 675 
+                })
+            } else {
+                NotificationMessage(
+                    'warning',
+                    'Network request failed',
+                    res.data.message
+                )
+            }
+        })
+        .catch(err => NotificationMessage('warning', err.response.data.message)) ; 
+
+        setIsLoading(false) ; 
     }
 
     useEffect(() => {
@@ -188,160 +237,166 @@ const ReportSummary = () => {
     return (
       <>
         <div className="report-summary-wrapper">
-          <div
-            className="report-summary-header"
-            style={{
-              paddingTop: "1rem",
-              paddingBottom: "1rem",
-              marginTop: "2rem",
-            }}
-          >
-            <div
-              style={{
-                marginLeft: "0.4rem",
-                fontWeight: "600",
-                fontSize: "18px",
-                paddingLeft: "1rem",
-                marginTop: "auto",
-                marginBottom: "auto",
-              }}
-            >
-              Study Reports of {patientDetails?.Patient_name}
-            </div>
 
-            <div className="report-summary-buttons">
-                <Button
-                    className="primary-thin-button"
-                    onClick={toggleShowState}
-                    borderColorDisabled
+            <Spin spinning = {isLoading}>
+
+                <div
+                    className="report-summary-header"
+                    style={{
+                    paddingTop: "1rem",
+                    paddingBottom: "1rem",
+                    marginTop: "2rem",
+                    }}
                 >
-                    + Patient Details
-                </Button>
-
-                {/* Back option button  */}
-
-                <Button type="primary">Back</Button>
-            </div>
-          </div>
-
-          <div className="w-95">
-            <Card bordered={false} style={{ width: "100%" }}>
-                <Table
-                    columns={columns}
-                    dataSource={patientData}
-                    pagination={false}
-                    scroll={{ y: 175, x: false }}
-                />
-            </Card>
-          </div>
-
-          <div
-            className="w-95"
-            id="patient_details_div"
-            style={{ display: "none" }}
-          >
-            <div style={{ width: "100%" }}>
-                <Card
-                    title="Patient Details"
-                    bordered={false}
-                    style={{ width: "100%" }}
-                >
-                    <div className="report-summary-patient-details">
-                        <div>
-                            <table>
-                            <tr>
-                                <td className="bold-text">Patient Id :</td>
-                                <td>
-                                <Tag
-                                    color="#87d068"
-                                    className="Assign-study-info-tag"
-                                >
-                                    {patientDetails?.Patient_id}
-                                </Tag>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td className="bold-text">Patient's Name :</td>
-                                <td>
-                                <Tag
-                                    color="#87d068"
-                                    className="Assign-study-info-tag"
-                                >
-                                    {patientDetails?.Patient_name}
-                                </Tag>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td className="bold-text">Accession Number :</td>
-                                <td>{patientDetails?.Accession_number}</td>
-                            </tr>
-                            <tr>
-                                <td className="bold-text">Gender :</td>
-                                <td>{patientDetails?.Gender}</td>
-                            </tr>
-                            <tr>
-                                <td className="bold-text">Date Of Birth:</td>
-                                <td>{patientDetails?.DOB}</td>
-                            </tr>
-                            <tr>
-                                <td className="bold-text">Age</td>
-                                <td>{patientDetails?.Age}</td>
-                            </tr>
-                            <tr>
-                                <td className="bold-text">Institution :</td>
-                                <td>{patientDetails?.institution?.Institution_name}</td>
-                            </tr>
-                            </table>
-                        </div>
-                        <div>
-                            <table>
-                                <tr>
-                                    <td className="bold-text">
-                                    Reffering Physician Name :
-                                    </td>
-                                    <td>{patientDetails?.Referring_physician_name}</td>
-                                </tr>
-                                <tr>
-                                    <td className="bold-text">
-                                    Performing Physician Name :
-                                    </td>
-                                    <td>{patientDetails?.Performing_physician_name}</td>
-                                </tr>
-                                <tr>
-                                    <td className="bold-text">Modality :</td>
-                                    <td>{patientDetails?.Modality}</td>
-                                </tr>
-                                <tr>
-                                    <td className="bold-text">Study Description :</td>
-                                    <td>{patientDetails?.Study_description}</td>
-                                </tr>
-                                <tr>
-                                    <td className="bold-text">Patient comments :</td>
-                                    <td>{patientDetails?.Patient_comments}</td>
-                                </tr>
-                            </table>
-                        </div>
+                    <div
+                    style={{
+                        marginLeft: "0.4rem",
+                        fontWeight: "600",
+                        fontSize: "18px",
+                        paddingLeft: "1rem",
+                        marginTop: "auto",
+                        marginBottom: "auto",
+                    }}
+                    >
+                    Study Reports of {patientDetails?.Patient_name}
                     </div>
-                </Card>
-            </div>
-          </div>
 
-          {/* ==== Patient report information ====  */}
+                    <div className="report-summary-buttons">
+                        <Button
+                            className="primary-thin-button"
+                            onClick={toggleShowState}
+                            borderColorDisabled
+                        >
+                            + Patient Details
+                        </Button>
 
-          <div className="w-95">
-            <Card
-              title="Report information"
-              bordered={false}
-              style={{ width: "100%", marginTop: "15px", marginBottom: "20px" }}
-            >
-              <Table
-                columns={columns1}
-                dataSource={patientReport}
-                pagination={false}
-                scroll={{ y: 175 }}
-              />
-            </Card>
-          </div>
+                        {/* Back option button  */}
+
+                        <Button type="primary">Back</Button>
+                    </div>
+                </div>
+
+                <div className="w-95">
+                    <Card bordered={false} style={{ width: "100%" }}>
+                        <Table
+                            columns={columns}
+                            dataSource={patientData}
+                            pagination={false}
+                            scroll={{ y: 175, x: false }}
+                        />
+                    </Card>
+                </div>
+
+                <div
+                    className="w-95"
+                    id="patient_details_div"
+                    style={{ display: "none" }}
+                >
+                    <div style={{ width: "100%" }}>
+                        <Card
+                            title="Patient Details"
+                            bordered={false}
+                            style={{ width: "100%" }}
+                        >
+                            <div className="report-summary-patient-details">
+                                <div>
+                                    <table>
+                                    <tr>
+                                        <td className="bold-text">Patient Id :</td>
+                                        <td>
+                                        <Tag
+                                            color="#87d068"
+                                            className="Assign-study-info-tag"
+                                        >
+                                            {patientDetails?.Patient_id}
+                                        </Tag>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td className="bold-text">Patient's Name :</td>
+                                        <td>
+                                        <Tag
+                                            color="#87d068"
+                                            className="Assign-study-info-tag"
+                                        >
+                                            {patientDetails?.Patient_name}
+                                        </Tag>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td className="bold-text">Accession Number :</td>
+                                        <td>{patientDetails?.Accession_number}</td>
+                                    </tr>
+                                    <tr>
+                                        <td className="bold-text">Gender :</td>
+                                        <td>{patientDetails?.Gender}</td>
+                                    </tr>
+                                    <tr>
+                                        <td className="bold-text">Date Of Birth:</td>
+                                        <td>{patientDetails?.DOB}</td>
+                                    </tr>
+                                    <tr>
+                                        <td className="bold-text">Age</td>
+                                        <td>{patientDetails?.Age}</td>
+                                    </tr>
+                                    <tr>
+                                        <td className="bold-text">Institution :</td>
+                                        <td>{patientDetails?.institution?.Institution_name}</td>
+                                    </tr>
+                                    </table>
+                                </div>
+                                <div>
+                                    <table>
+                                        <tr>
+                                            <td className="bold-text">
+                                            Reffering Physician Name :
+                                            </td>
+                                            <td>{patientDetails?.Referring_physician_name}</td>
+                                        </tr>
+                                        <tr>
+                                            <td className="bold-text">
+                                            Performing Physician Name :
+                                            </td>
+                                            <td>{patientDetails?.Performing_physician_name}</td>
+                                        </tr>
+                                        <tr>
+                                            <td className="bold-text">Modality :</td>
+                                            <td>{patientDetails?.Modality}</td>
+                                        </tr>
+                                        <tr>
+                                            <td className="bold-text">Study Description :</td>
+                                            <td>{patientDetails?.Study_description}</td>
+                                        </tr>
+                                        <tr>
+                                            <td className="bold-text">Patient comments :</td>
+                                            <td>{patientDetails?.Patient_comments}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </Card>
+                    </div>
+                </div>
+
+                {/* ==== Patient report information ====  */}
+
+                <div className="w-95">
+                    <Card
+                    title="Report information"
+                    bordered={false}
+                    style={{ width: "100%", marginTop: "15px", marginBottom: "20px" }}
+                    >
+                    <Table
+                        columns={columns1}
+                        dataSource={patientReport}
+                        pagination={false}
+                        scroll={{ y: 175 }}
+                    />
+                    </Card>
+                </div>
+
+            </Spin>
+
         </div>
       </>
     );
