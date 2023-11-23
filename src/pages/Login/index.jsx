@@ -55,7 +55,7 @@ const Login = () => {
 
           loginForm.resetFields()
 
-          navigate('/institutions')
+          navigate('/studies')
         } else {
           NotificationMessage(
             'warning',

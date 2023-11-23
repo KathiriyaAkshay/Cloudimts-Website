@@ -140,23 +140,33 @@ const Dicom = () => {
     ws.onmessage = event => {
       try {
         const eventData = JSON.parse(event.data) ;        
-        if (eventData.payload.status === "new-chat"){
-  
+
+        if (eventData.payload.status == "new-chat"){
           let ChatData = eventData.payload.data; 
+
           studyData.map((element) => {
             if (element.series_id === ChatData.room_name){
-              NotificationMessage("success", 
-              "New chat message", `Message send by ${ChatData.sender_username} for Patient - ${element.name} and StudyId - ${element.id}`, 
-              5, 
-              "bottomRight") ;  
+              
+              if (ChatData.urgent_case){
+                NotificationMessage("important", 
+                "New chat message", `Message send by ${ChatData.sender_username} for Patient - ${element.name} and StudyId - ${element.id}`, 
+                5, 
+                "bottomRight") ;  
+              } else{
+                NotificationMessage("success", 
+                "New chat message", `Message send by ${ChatData.sender_username} for Patient - ${element.name} and StudyId - ${element.id}`, 
+                5, 
+                "bottomRight") ; 
+              }
             }
           })
-        }
+        } 
+
       } catch (error) {}
     }
 
     ws.onclose = () => {
-      console.log('WebSocket connection closed')
+      NotificationMessage("warning", "Socket connection failed", "Chat socket conncetion failed" ) ; 
     }
 
     return () => {
