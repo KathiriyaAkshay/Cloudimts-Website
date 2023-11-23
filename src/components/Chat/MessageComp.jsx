@@ -11,16 +11,18 @@ import chatFileImg from '../../assets/images/chat-file-icon.svg'
 import Word from '../../assets/images/microsoft-word-icon.svg' ; 
 import ReplyOptionImage from "../../assets/images/reply.png" ; 
 import CopyOptionImage from "../../assets/images/copy.png" ; 
-import DeleteOptionImage from "../../assets/images/delete.png" ; 
+import DeleteOptionImage from "../../assets/images/delete.png" ;  
+import DownloadOptionImage from "../../assets/images/downloads.png" ; 
 
 const MessageComp = props => {
   const navigate = useNavigate()
 
   const { item, chatSettingData, ownMessages, colonImage, groupRecieve } = props
   const id = item?.id
-  const { media } = item || []
+  const { media } = item || [] ; 
 
   const handleCustomSlider = (mainData = '') => {
+
     return (
       <div
         className={
@@ -117,25 +119,20 @@ const MessageComp = props => {
             mainData?.includes('png') ||
             mainData?.includes('PNG') ||
             mainData?.includes('avif') ? (
+
             <div className='userchat-container mt-3'>
               <img src={`${mainData}`} />
             </div>
+
           ) : mainData?.includes('.mp4') ||
             mainData?.includes('.mov') ||
             mainData?.includes('.mkv') ? (
             <video quality={100} width='100%' height='100%'>
               <source
-                // type={`video/${mainData[0]?.files?.split(".")?.pop()}`}
-                src={`${mainData}`}
+                src={`${item?.media}`}
               ></source>
             </video>
           ) : (
-            // <Slider
-            //   imageData={mainData}
-            //   numberShowMargin={true}
-            //   handleGalleryPopUp={handleGalleryPopUp}
-            //   isMessageGallery={true}
-            // />
             <div className='d-flex justify-content-between chat-file-container align-items-center'>
               <div
                 className='d-flex gap-1 align-items-center'
@@ -253,11 +250,12 @@ const MessageComp = props => {
 
   const handleQuotedScroll = id => {
     document.getElementById(id).scrollIntoView()
-  }
+  } ; 
+
   return (
     <>
       <div id={id}>
-        {item?.is_quoted ? (
+        {item?.is_quoted  && item?.is_quoted !== "False"? (
           <div className='forward-chat-message'>
             <div className='forwardChat-data'>
               <div onClick={() => handleQuotedScroll(item?.quoted_id)}>
@@ -288,10 +286,8 @@ const MessageComp = props => {
               }
               <div className='userchat-data'> 
                 <div style={{ flex: '1' }}>
-                  {item?.media_option &&
-                    handleCustomSlider(
-                      item?.is_forwarded ? item?.file_url : media
-                    )}
+
+                  {item?.media_option && handleCustomSlider(item?.media)}
 
                   {/* ===== Message content information =====  */}
 
@@ -320,10 +316,7 @@ const MessageComp = props => {
                     onClick={() => chatSettingData(id)}
                   ></img>
                 ) : (
-                  ''
-                  )}
-
-                
+                  '')}
               </div>
             </div>
 
@@ -343,6 +336,15 @@ const MessageComp = props => {
                 <div className='message-option-image-division'>
                   <img src={DeleteOptionImage} alt="" className='message-option-image'/>
                 </div>
+
+                {item?.media_option && 
+                
+                  <div className='message-option-image-division'>
+                    <a href={item.media} download={"Download_image.jpg"} target='_blank'>
+                      <img src={DownloadOptionImage} alt="" className='message-option-image'/>
+                    </a>
+                  </div>
+                }
 
               </div>
               <span style={{marginLeft : 'auto'}}>

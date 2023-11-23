@@ -267,6 +267,7 @@ const ChatMessanger = props => {
   }
 
   function groupMessagesByDate (data) {
+   
     const groupedMessages = data?.reduce((acc, message) => {
       const timestamp = message?.timestamp.split(' ')[0]
       if (!acc[timestamp]) {
@@ -274,7 +275,7 @@ const ChatMessanger = props => {
       }
       acc[timestamp].push(message)
       return acc
-    }, {})
+    }, {}) ; 
 
     const formattedData = Object.keys(groupedMessages).map(date => ({
       date,
@@ -329,6 +330,10 @@ const ChatMessanger = props => {
 
     let formData = {}
     if (imageStore?.length || fileStore?.length) {
+
+      // Create unique id for image 
+      const uni_key = Date.now() + '_' + Math.floor(Math.random() * 1000);
+
       formData = { uni_key: uni_key }
       imageStore?.length &&
         imageStore?.forEach(image => {
@@ -342,7 +347,7 @@ const ChatMessanger = props => {
       formData = {
         ...formData,
         media_option: 'True',
-        content: 'None',
+        content: chatData,
         send_from_id: Number(user),
         room_name: orderId,
         room_id: roomID,
@@ -352,30 +357,28 @@ const ChatMessanger = props => {
           : 'None'
         
         }
-
-      console.log("Chat media message functionality =========>");
       
-      // sendMediaChat(formData)
-      //   .then(res => {
-      //     if (res.data.status) {
-      //       handleAllChatHistory(false)
-      //     } else {
-      //       NotificationMessage(
-      //         'warning',
-      //         'Network request failed',
-      //         res.data.message
-      //       )
-      //     }
-      //   })
-      //   .catch(err =>
-      //     NotificationMessage(
-      //       'warning',
-      //       'Network request failed',
-      //       err.response.data.message
-      //     )
-      //   )
-      // setImageStore([])
-      // setFileStore([])
+      sendMediaChat(formData)
+        .then(res => {
+          if (res.data.status) {
+            handleAllChatHistory(false)
+          } else {
+            NotificationMessage(
+              'warning',
+              'Network request failed',
+              res.data.message
+            )
+          }
+        })
+        .catch(err =>
+          NotificationMessage(
+            'warning',
+            'Network request failed',
+            err.response.data.message
+          )
+        )
+      setImageStore([])
+      setFileStore([])
     }
   }
 
