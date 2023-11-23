@@ -14,7 +14,10 @@ const NotificationMessage = (
       ? "ant-alert ant-alert-warning"
       : alertType === "information"
       ? "ant-alert ant-alert-information"
+      : alertType === "important"
+      ? "ant-alert ant-alert-important"
       : "ant-alert ant-alert-error";
+  alertType=alertType==="important"?"warning":alertType;    
   notification[alertType]({
     message: alertMessage,
     className: _className,
