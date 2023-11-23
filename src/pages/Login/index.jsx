@@ -130,12 +130,6 @@ const Login = () => {
                     placeholder='Enter Password'
                   />
                 </Form.Item>
-                <div className='display-flex-between mb'>
-                  <Checkbox name={'rememberMe'}>Remember me</Checkbox>
-                  <Typography className='login-text-link'>
-                    Forgot Password?
-                  </Typography>
-                </div>
 
                 <Form.Item className='m-0'>
                   <Button
