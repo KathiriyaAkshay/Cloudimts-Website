@@ -15,7 +15,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/admin/login" element={<Login />} />
         <Route path="/not-found" element={<NotFound />} />
-        <Route path="/ReportSummary" element={<ReportSummary />} />     
+        <Route path="/ReportSummary/:id" element={<ReportSummary />} />     
         <Route path="*" element={<Navigate to="/not-found" />} />
         {routes?.map(({ path, component: Component }, index) => (
           <Route
