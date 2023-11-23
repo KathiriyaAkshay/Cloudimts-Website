@@ -1881,3 +1881,21 @@ thead>tr>th{
   display: flex;
   flex-direction: row;
 }
+
+.reply-user-information-media{
+  display: flex;
+  flex-direction: row;
+}
+
+.reply-user-span{
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+.reply-chat-option-image{
+  height: 30px;
+  width: 30px;
+  margin-left: 10px;
+  margin-top: auto;
+  margin-bottom: auto;
+}

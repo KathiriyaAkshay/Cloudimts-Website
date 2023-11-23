@@ -12,8 +12,9 @@ import Word from '../../assets/images/microsoft-word-icon.svg' ;
 import ReplyOptionImage from "../../assets/images/reply.png" ; 
 import CopyOptionImage from "../../assets/images/copy.png" ; 
 import DeleteOptionImage from "../../assets/images/delete.png" ;  
-import DownloadOptionImage from "../../assets/images/downloads.png" ; 
-import NotificationMessage from '../NotificationMessage'
+import DownloadOptionImage from "../../assets/images/downloads.png" ;
+import PDFOptionImage from "../../assets/images/pdf.png" 
+import NotificationMessage from '../NotificationMessage' ; 
 
 const MessageComp = props => {
   const navigate = useNavigate()
@@ -263,6 +264,17 @@ const MessageComp = props => {
       });
   }
 
+  function checkStringInURL(substring) {
+    var currentURL = window.location.href;
+
+    // Check if the substring is present in the URL
+    if (currentURL.includes(substring)) {
+        return true;
+    } else {
+        return false;
+    }
+  }
+
   return (
     <>
       <div id={id}>
@@ -270,7 +282,30 @@ const MessageComp = props => {
           <div className='forward-chat-message'>
             <div className='forwardChat-data'>
               <div onClick={() => handleQuotedScroll(item?.quoted_id)}>
-                <p>Reply of {item?.quoted_message}</p>
+                
+                {item?.quoted_message.includes("https://")?<>
+
+                  {item?.quoted_message.includes(".pdf")?<>
+                  
+                    <div className='reply-user-information-media'>
+                      <span className='reply-user-span'>Reply of</span>
+                      <img className='reply-chat-option-image' src={PDFOptionImage}/>
+                    </div>
+                  
+                  </>:<>
+                  
+                    <div className='reply-user-information-media'>
+                      <span className='reply-user-span'>Reply of</span>
+                      <img className = "reply-chat-option-image" src={item?.quoted_message}/>
+                    </div>
+                  
+                  </>}
+                  
+
+                </>:<>
+                  <p>Reply of {item?.quoted_message}</p>
+                </>}
+
               </div>
             </div>
             <hr />

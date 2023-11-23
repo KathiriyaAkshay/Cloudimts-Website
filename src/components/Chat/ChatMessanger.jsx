@@ -277,76 +277,16 @@ const ChatMessanger = props => {
   }
 
   const sendMessage = async () => {
-
-    if (chatData) {
-
-      let modifiedObj  = {}; 
-
-      if (quotedMessageContainer){
-
-        modifiedObj = { 
-          content: chatData,
-          send_from_id: Number(user),
-          room_name: orderId,
-          media: '',
-          media_option: false,
-          room_id: roomID,
-          is_quoted: true,
-          quoted_message: quotedMessageInfo?.content, 
-          urgent_case: urgentCase
-        } ;
-        
-      } else{
-
-        modifiedObj = { 
-          content: chatData,
-          send_from_id: Number(user),
-          room_name: orderId,
-          media: '',
-          media_option: false,
-          room_id: roomID,
-          is_quoted: false,
-          quoted_message: '', 
-          urgent_case: urgentCase
-        } ;
-
-      }
-      setChatData('') ; 
-      setQuotedMessageContainer(false) ; 
-      setQuotedMessageInfo(null) ; 
-
-      sendChatMessage(modifiedObj)
-        .then(res => {
-          if (res.data.status) {
-            NotificationMessage('success', "Message send successfully")
-          } else {
-            NotificationMessage(
-              'warning',
-              'Network request failed',
-              res.data.message
-            )
-          }
-        })
-        .catch(err =>
-          NotificationMessage(
-            'warning',
-            'Network request failed',
-            err.response.data.message
-          )
-        )
-      setForwardMessage({ ...forwardMessage, quoted: false }) ; 
-      ScrollToBottom() ; 
-
-    } ; 
-
     let formData = {}
 
     if (imageStore?.length || fileStore?.length) {
 
+      console.log("Media message information =========>");
+
       // Create unique id for image 
       const uni_key = Date.now() + '_' + Math.floor(Math.random() * 1000);
 
-      formData = { uni_key: uni_key }
+      formData = { uni_key: uni_key } 
       imageStore?.length &&
         imageStore?.forEach(image => {
           formData = { ...formData, media: image }
@@ -356,20 +296,49 @@ const ChatMessanger = props => {
           formData = { ...formData, media: docs }
         })
 
-      formData = {
-        ...formData,
-        media_option: 'True',
-        content: chatData,
-        send_from_id: Number(user),
-        room_name: orderId,
-        room_id: roomID,
-        is_quoted: forwardMessage?.quoted ? true : 'False',
-        quoted_message: forwardMessage?.quoted
-          ? forwardMessage?.quotedMessage?.content
-          : 'None'
-        
-        }
+      if (quotedMessageContainer){
+
+        if (quotedMessageInfo?.media_option){
+
+          formData = {
+            ...formData,
+            media_option: 'True',
+            content: chatData,
+            send_from_id: Number(user),
+            room_name: orderId,
+            room_id: roomID,
+            is_quoted: 'False',
+            quoted_message: quotedMessageInfo?.media_option
+          }
       
+        } else{
+          
+          formData = {
+            ...formData,
+            media_option: 'True',
+            content: chatData,
+            send_from_id: Number(user),
+            room_name: orderId,
+            room_id: roomID,
+            is_quoted: 'False',
+            quoted_message: quotedMessageInfo?.content
+          }
+        }
+
+      } else{
+
+        formData = {
+          ...formData,
+          media_option: 'True',
+          content: chatData,
+          send_from_id: Number(user),
+          room_name: orderId,
+          room_id: roomID,
+          is_quoted: 'False',
+          quoted_message: ""
+        }
+      }
+
       sendMediaChat(formData)
         .then(res => {
           if (res.data.status) {
@@ -389,9 +358,90 @@ const ChatMessanger = props => {
             err.response.data.message
           )
         )
-      setImageStore([])
-      setFileStore([])
+      setImageStore([]) ; 
+      setFileStore([]) ; 
+
+    } else {
+
+      if (chatData) {
+
+        let modifiedObj  = {}; 
+  
+        if (quotedMessageContainer){
+
+          if (quotedMessageInfo?.media_option){
+
+            modifiedObj = { 
+              content: chatData,
+              send_from_id: Number(user),
+              room_name: orderId,
+              media: '',
+              media_option: false,
+              room_id: roomID,
+              is_quoted: true,
+              quoted_message: quotedMessageInfo?.media, 
+              urgent_case: urgentCase
+            } ;
+          } else{
+
+              modifiedObj = { 
+                content: chatData,
+                send_from_id: Number(user),
+                room_name: orderId,
+                media: '',
+                media_option: false,
+                room_id: roomID,
+                is_quoted: true,
+                quoted_message: quotedMessageInfo?.content, 
+                urgent_case: urgentCase
+              } ;
+          }
+  
+          
+        } else{
+  
+          modifiedObj = { 
+            content: chatData,
+            send_from_id: Number(user),
+            room_name: orderId,
+            media: '',
+            media_option: false,
+            room_id: roomID,
+            is_quoted: false,
+            quoted_message: '', 
+            urgent_case: urgentCase
+          } ;
+  
+        }
+        setChatData('') ; 
+        setQuotedMessageContainer(false) ; 
+        setQuotedMessageInfo(null) ; 
+  
+        sendChatMessage(modifiedObj)
+          .then(res => {
+            if (res.data.status) {
+              NotificationMessage('success', "Message send successfully")
+            } else {
+              NotificationMessage(
+                'warning',
+                'Network request failed',
+                res.data.message
+              )
+            }
+          })
+          .catch(err =>
+            NotificationMessage(
+              'warning',
+              'Network request failed',
+              err.response.data.message
+            )
+          )
+        setForwardMessage({ ...forwardMessage, quoted: false }) ; 
+        ScrollToBottom() ; 
+  
+      } 
     }
+
   }
 
 
@@ -505,11 +555,11 @@ const ChatMessanger = props => {
                       </div>  
                     </>:<>
                       <div className='quoted-document-option-division'>
+                        <img className='quoted_message_media_image' src={quotedMessageInfo?.media}/>
                         <div>{quotedMessageInfo?.content}</div>
-                      </div>
+                      </div>  
                     </>}
                   
-
                   </>:<>
                   
                     <span className='quotedMessage-message'>
