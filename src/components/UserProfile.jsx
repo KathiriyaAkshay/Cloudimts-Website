@@ -11,7 +11,8 @@ import {
   Row,
   Space,
   Spin,
-  Tooltip
+  Tooltip, 
+  Popconfirm
 } from "antd";
 import { useContext, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -154,37 +155,45 @@ const UserProfile = () => {
             <img src={UserImage} alt="user_profile" width="100px" height="100px" />
 
           </div>
-          <div className="usermeta heading user-profile-div-first" >
+          <div className="usermeta heading user-profile-div-first" style={{fontSize: "1rem"}}>
               {profileInformation?.username}
           </div>
 
           <div className="usermeta heading user-profile-div-second" >
-          <MailOutlined style={{color:"black",fontSize:"1.2rem"}}/> <span>{profileInformation?.email}</span>
+          <MailOutlined style={{color:"black",fontSize:"1.2rem"}}/> <span className="user-profile-information-span">{profileInformation?.email}</span>
 
           </div>
           <div className="usermeta heading user-profile-div-second"  >
-          <Tooltip title="Joining Date">
-          <SyncOutlined style={{color:"black",fontSize:"1.2rem"}}/> 
-  </Tooltip>
 
-          <span>{joinedDate}</span>
+          <Tooltip title="Joining Date">
+            <SyncOutlined style={{color:"black",fontSize:"1.2rem"}}/> 
+          </Tooltip>
+
+          <span className="user-profile-information-span">{joinedDate}</span>
 
           </div>
 
-          <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center",marginTop:"2rem"}}>
 
-            
-          <Button
-            onClick={() => logoutHandler()}
-            type="primary"
-            style={{ display: "flex", gap: "8px", alignItems: "center", justifyContent: "center", width: "50%" }}
+          <Popconfirm
+            title = "Logout"
+            description = "Are you sure you want to Logout"
+            onConfirm={() => logoutHandler()}
+            okText = "Yes"
+            cancelText = "No"
           >
 
-            <LogoutOutlined />  
-            Logout
-          </Button>
+            <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center",marginTop:"2rem"}}>
+              <Button
+                type="primary"
+                className="Logout-option-button"
+              >
+                <LogoutOutlined />  
+                <span style={{marginLeft: "10px"}}>Logout</span>
+              </Button>
+            </div>
 
-          </div>
+          </Popconfirm>
+
 
         </Spin>
 
