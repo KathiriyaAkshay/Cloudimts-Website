@@ -89,7 +89,8 @@ const ChatMessanger = props => {
   })
   
   const { roomID, setRoomID } = useContext(RoomDataContext)
-  const roomName = `${orderId}/${user}/${userId}`
+  const roomName = `${orderId}/${user}/${userId}` ; 
+
   const QuoteStyle = isHousemateChat
   ? imageStore?.length < 4 && imageStore?.length
   ? { bottom: '172px' }
@@ -376,7 +377,8 @@ const ChatMessanger = props => {
           room_name: orderId,
           room_id: roomID,
           is_quoted: 'False',
-          quoted_message: ""
+          quoted_message: "", 
+          urgentCase: urgentCase
         }
   
         sendMediaChat(formData)
@@ -418,6 +420,9 @@ const ChatMessanger = props => {
             quoted_message: '', 
             urgent_case: urgentCase
           } ;
+
+          console.log("Modified object information ========>");
+          console.log(modifiedObj);
     
           setChatData('') ; 
           setQuotedMessageContainer(false) ; 

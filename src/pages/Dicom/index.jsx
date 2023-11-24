@@ -101,6 +101,7 @@ const Dicom = () => {
   const [patientId, setPatientId] = useState('')
   const [patientName, setPatientName] = useState('')
   const [studyStatus, setStudyStatus] = useState('')
+  const [urgentCase, setUrgentCase] = useState(false) ; 
 
   // Normal studies information, System filter and Main filter payload information
 
@@ -618,7 +619,8 @@ const Dicom = () => {
               setSeriesID(record.series_id)
               setStudyID(record.id)
               setIsDrawerOpen(true)
-              setPersonName(`${record.study.patient_id} | ${record.name}`)
+              setPersonName(`${record.study.patient_id} | ${record.name}`) 
+              setUrgentCase(record.urgent_case)
             }}
           />
         </Tooltip>
@@ -975,7 +977,7 @@ const Dicom = () => {
         setStudyID={setStudyID}
         seriesId={seriesID}
       />
-  
+
 
       <Drawer
         title={null}
@@ -998,6 +1000,7 @@ const Dicom = () => {
           messages={messages}
           setMessages={setMessages}
           drawerValue={true}
+          urgentCase = {urgentCase}
         />
       </Drawer>
 
