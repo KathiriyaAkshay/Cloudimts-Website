@@ -162,7 +162,7 @@ const HeaderButton = ({
           )
         )
     } else {
-      NotificationMessage('warning', 'Please select study')
+      NotificationMessage('warning', 'Please select study for delete')
     }
   }
 
@@ -472,13 +472,21 @@ const HeaderButton = ({
 
           {/* ==== Delete study option ====  */}
 
-          <Button
-            type='primary'
-            className='error-btn-primary'
-            onClick={deleteStudyData}
+          <Popconfirm
+            title = "Delete study"
+            description = "Are you sure you want to delete this studies ?"
+            onConfirm={deleteStudyData}
+            okText = "Yes"
+            cancelText = "No"
           >
-            <DeleteOutlined />
-          </Button>
+            <Button
+              type='primary'
+              className='error-btn-primary'
+            >
+              <DeleteOutlined />
+            </Button>
+          </Popconfirm>
+
 
           {/* ==== Reload option ====  */}
 
