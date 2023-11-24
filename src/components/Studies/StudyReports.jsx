@@ -139,11 +139,6 @@ const StudyReports = ({
 
   const columns = [
     {
-      title: 'Report Type',
-      dataIndex: 'report_type'
-    },
-
-    {
       title: 'Report Time',
       dataIndex: 'reporting_time'
     },
@@ -158,6 +153,12 @@ const StudyReports = ({
       title: 'Study Description',
       dataIndex: 'study_description'
     },
+
+    {
+      title: 'Report Type',
+      dataIndex: 'report_type'
+    },
+
 
     {
       title: 'Actions',

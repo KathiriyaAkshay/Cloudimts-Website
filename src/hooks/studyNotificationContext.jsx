@@ -49,32 +49,6 @@ const StudyNotificationProvider = ({ children }) => {
           } catch (error) {
             
           }
-
-          // try {
-          //   console.log("Update studies details functionality call ==========>");
-          //   console.log(eventData.payload.data);
-    
-              
-          //   const updatedData = studyData.map((data) => {
-          //     if (data.id === eventData.payload.data.id){
-
-          //       // return {...StudyData,
-          //       //   name: StudyData.study.patient_name, 
-          //       //   institution: StudyData?.institution?.name, 
-          //       //   patient_id: StudyData?.study?.patient_id, 
-          //       //   study_id: StudyData?.study?.id, 
-          //       //   key: StudyData?.id,
-          //       //   count: 0, 
-          //       //   institution_id: StudyData?.institution?.id
-          //       // };
-          //     }
-          //     else data;
-          //   });
-            
-          //   setStudyData(updatedData);
-          // } catch (error) {
-            
-          // }
         
         } else if (eventData.payload.status === "Viewed") {
   
@@ -215,18 +189,24 @@ const StudyNotificationProvider = ({ children }) => {
               if (data.id !== eventData.payload.data.id) {
                 return data;
               
-              } else {
-  
-                console.log("Match object information ========>");
-                console.log(data);
-                
-               }
+              } 
               return null; 
             }).filter((data) => data !== null);
             
             setStudyData(updatedData);
-          } else{
-            console.log("Not maching functionality ");
+          } 
+        } else if (eventData.payload.status === "NewStudy"){ 
+
+          // Handle newstudies information 
+          let InstitutionId = eventData?.payload?.data?.institution?.id ;   
+          let AllPermissionId = JSON.parse(localStorage.getItem("all_permission_id")) ; 
+          
+          if (AllPermissionId.includes(InstitutionId)){
+            setStudyData((prev) => [{...eventData.payload.data, 
+              name: eventData.payload.data.study.patient_name,
+              institution: eventData.payload.data.institution.name, 
+              patient_id: eventData.payload.data.study.patient_id, 
+              study_id: eventData.payload.data.study.id} , ...prev]) ; 
           }
         }
         

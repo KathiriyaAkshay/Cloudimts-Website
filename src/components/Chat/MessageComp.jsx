@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { saveAs } from 'file-saver'
 import { useNavigate } from 'react-router'
 import moment from 'moment/moment'
@@ -8,18 +8,22 @@ import downloadImg from '../../assets/images/download-chat-img.png'
 import Excel from '../../assets/images/microsoft-excel-icon.svg'
 import Document from '../../assets/images/Document_chat.svg'
 import chatFileImg from '../../assets/images/chat-file-icon.svg'
-import Word from '../../assets/images/microsoft-word-icon.svg'
+import Word from '../../assets/images/microsoft-word-icon.svg' ; 
+import ReplyOptionImage from "../../assets/images/reply.png" ; 
+import CopyOptionImage from "../../assets/images/copy.png" ; 
+import DeleteOptionImage from "../../assets/images/delete.png" ;  
+import DownloadOptionImage from "../../assets/images/downloads.png" ;
+import PDFOptionImage from "../../assets/images/pdf.png" 
+import NotificationMessage from '../NotificationMessage' ; 
+
 const MessageComp = props => {
   const navigate = useNavigate()
 
   const { item, chatSettingData, ownMessages, colonImage, groupRecieve } = props
-  const id = item?.id
-  const { media } = item || []
-
-  console.log('Ownmessage information ==========>')
-  console.log(ownMessages)
+  const id = item?.id ; 
 
   const handleCustomSlider = (mainData = '') => {
+
     return (
       <div
         className={
@@ -116,25 +120,20 @@ const MessageComp = props => {
             mainData?.includes('png') ||
             mainData?.includes('PNG') ||
             mainData?.includes('avif') ? (
+
             <div className='userchat-container mt-3'>
-              <img src={`${mainData}`} />
+              <img src={`${mainData}`} loading='lazy'/>
             </div>
+
           ) : mainData?.includes('.mp4') ||
             mainData?.includes('.mov') ||
             mainData?.includes('.mkv') ? (
             <video quality={100} width='100%' height='100%'>
               <source
-                // type={`video/${mainData[0]?.files?.split(".")?.pop()}`}
-                src={`${mainData}`}
+                src={`${item?.media}`}
               ></source>
             </video>
           ) : (
-            // <Slider
-            //   imageData={mainData}
-            //   numberShowMargin={true}
-            //   handleGalleryPopUp={handleGalleryPopUp}
-            //   isMessageGallery={true}
-            // />
             <div className='d-flex justify-content-between chat-file-container align-items-center'>
               <div
                 className='d-flex gap-1 align-items-center'
@@ -252,24 +251,53 @@ const MessageComp = props => {
 
   const handleQuotedScroll = id => {
     document.getElementById(id).scrollIntoView()
+  } ; 
+
+
+  const CopyTextHandling = (content) => {
+    navigator.clipboard.writeText(content)
+      .then(() => {
+        NotificationMessage("success", "Copied message") ; 
+      })
+      .catch(err => {
+          console.error('Unable to copy text: ', err);
+      });
   }
 
   return (
     <>
       <div id={id}>
-        {item?.is_quoted ? (
+
+        {/* ===== Quoted message information division =====  */}
+
+        {item?.is_quoted  && item?.is_quoted !== "False"? (
           <div className='forward-chat-message'>
             <div className='forwardChat-data'>
               <div onClick={() => handleQuotedScroll(item?.quoted_id)}>
-                <i style={{ marginBottom: '6px' }}>❝ Quoted ❞ :</i>
-                <p>{item?.quoted_message}</p>
+                
+                {item?.quoted_message.includes("https://")?<>
+
+                  {item?.quoted_message.includes(".pdf")?<>
+                  
+                    <div className='reply-user-information-media'>
+                      <span className='reply-user-span'>Reply of</span>
+                      <img className='reply-chat-option-image' src={PDFOptionImage}/>
+                    </div>
+                  
+                  </>:<>
+                  
+                    <div className='reply-user-information-media'>
+                      <span className='reply-user-span'>Reply of</span>
+                      <img className = "reply-chat-option-image" src={item?.quoted_message}/>
+                    </div>
+                  
+                  </>}
+
+                </>:<>
+                  <p>Reply of {item?.quoted_message}</p>
+                  </>}
+
               </div>
-              <img
-                alt='img'
-                src={colonImage}
-                onClick={() => chatSettingData(id)}
-                style={{ cursor: 'pointer' }}
-              ></img>
             </div>
             <hr />
           </div>
@@ -277,17 +305,25 @@ const MessageComp = props => {
           <></>
         )}
 
+        {/* ===== Chat message information division =====  */}
+
         {!groupRecieve ? (
           <>
             <div>
-              <div className='Chat-username-information'>KeyurVaghasiya</div>
 
-              <div className='userchat-data'>
+              {/* ==== Sender username information ====  */}
+
+              {!ownMessages && 
+                <div className='Chat-username-information'>
+                    {item?.username?.username}
+                </div>
+              }
+
+              <div className='userchat-data'> 
+
                 <div style={{ flex: '1' }}>
-                  {item?.media_option &&
-                    handleCustomSlider(
-                      item?.is_forwarded ? item?.file_url : media
-                    )}
+
+                  {item?.media_option && handleCustomSlider(item?.media)}
 
                   {/* ===== Message content information =====  */}
 
@@ -305,33 +341,70 @@ const MessageComp = props => {
                         )
                       : item?.content}
                   </span>
+
                 </div>
 
-                {!item?.is_forwarded && !item?.is_quoted ? (
-                  <img
-                    alt='img'
-                    src={colonImage}
-                    style={{ cursor: 'pointer' }}
-                    className='option-menu-image'
-                    onClick={() => chatSettingData(id)}
-                  ></img>
-                ) : (
-                  ''
-                )}
               </div>
+
             </div>
 
             {/* ===== Chat timestamp information ======  */}
 
             <div className='userchat-time'>
-              <span>
+
+              {ownMessages && 
+              
+                <div className='message-option-division'>
+                  
+                  {/* ==== Reply option ====  */}
+
+                  {!item?.is_quoted && 
+
+                    <div className='message-option-image-division' onClick={() => chatSettingData(id, item, "reply")}>
+                      <img src={ReplyOptionImage} alt="" className='message-option-image'/>
+                    </div>
+                  
+                  }
+
+                  {/* ==== Copy message option ====  */}
+
+                  {!item?.media_option && 
+                    <div className='message-option-image-division'
+                      onClick={() => CopyTextHandling(item?.content)}>
+                      <img src={CopyOptionImage} alt="" className='message-option-image'/>
+                    </div>
+                  }
+
+                  {/* ==== Delete chat option ====  */}
+                  
+                  <div className='message-option-image-division'  onClick={() => chatSettingData(id, item, "delete")}>
+                    <img src={DeleteOptionImage} alt="" className='message-option-image'/>
+                  </div>
+
+                  {/* ==== Media download option ====  */}
+
+                  {item?.media_option && 
+                  
+                    <div className='message-option-image-division'>
+                      <a href={item.media} download={"Download_image.jpg"} target='_blank'>
+                        <img src={DownloadOptionImage} alt="" className='message-option-image'/>
+                      </a>
+                    </div>
+                  }
+
+                </div>
+              
+              }
+
+              <span style={{marginLeft : 'auto'}}>
                 {moment(item?.timestamp || item?.timestamp).format('hh:mm')}
               </span>
             </div>
+            
           </>
         ) : (
           <></>
-        )}
+          )}
       </div>
     </>
   )

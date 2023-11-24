@@ -103,6 +103,8 @@ const Dicom = () => {
   const [patientId, setPatientId] = useState('')
   const [patientName, setPatientName] = useState('')
   const [studyStatus, setStudyStatus] = useState('')
+  const [urgentCase, setUrgentCase] = useState(false) 
+  const [currentStudyIdOpenChatLayout, setCurrentStudyIdOpenChatLayout] = useState(null) ; 
 
   // Normal studies information, System filter and Main filter payload information
 
@@ -132,6 +134,7 @@ const Dicom = () => {
 
   // Quick Assign Studies option 
   const [quickAssignStudy, settQuickAssignStudy] = useState(false);
+  const [totalStudies, setTotalStudies] = useState(null) ; 
 
   const SetupGenralChatNotification = () => {
     const ws = new WebSocket(`${BASE_URL}genralChat/`)
@@ -146,23 +149,24 @@ const Dicom = () => {
 
         if (eventData.payload.status == "new-chat"){
           let ChatData = eventData.payload.data; 
-
-          studyData.map((element) => {
-            if (element.series_id === ChatData.room_name){
-              
-              if (ChatData.urgent_case){
-                NotificationMessage("important", 
-                "New chat message", `Message send by ${ChatData.sender_username} for Patient - ${element.name} and StudyId - ${element.id}`, 
-                5, 
-                "bottomRight") ;  
-              } else{
-                NotificationMessage("success", 
-                "New chat message", `Message send by ${ChatData.sender_username} for Patient - ${element.name} and StudyId - ${element.id}`, 
-                5, 
-                "bottomRight") ; 
+          if ((localStorage.getItem("currentChatId") !== ChatData.room_name) || localStorage.getItem("currentChatId") == null){
+            studyData.map((element) => {
+              if (element.series_id === ChatData.room_name){
+                
+                if (ChatData.urgent_case){
+                  NotificationMessage("important", 
+                  "New chat message", `Message send by ${ChatData.sender_username} for Patient - ${element.name} and StudyId - ${element.id}`, 
+                  5, 
+                  "topLeft") ;  
+                } else{
+                  NotificationMessage("success", 
+                  "New chat message", `Message send by ${ChatData.sender_username} for Patient - ${element.name} and StudyId - ${element.id}`, 
+                  5, 
+                  "topLeft") ; 
+                }
               }
-            }
-          })
+            })
+          }
         } 
 
       } catch (error) {}
@@ -258,7 +262,7 @@ const Dicom = () => {
   useEffect(() => {
     setSystemFilterPayload({})
     setStudyDataPayload({})
-    changeBreadcrumbs([{ name: 'Study Data' }])
+    changeBreadcrumbs([{ name: `Study Data` }])
     setStudyIdArray([])
   }, [])
 
@@ -293,11 +297,9 @@ const Dicom = () => {
       })
 
       if (previousSeriesResponse != JSON.stringify(responseData['data'])) {
-        console.log('Not same response =========>')
         setPreviousSeriesResponse(JSON.stringify(responseData['data']))
         // await FetchSeriesCountInformation() ;
       } else {
-        console.log('Same response ==============>')
       }
     }
   }
@@ -621,7 +623,9 @@ const Dicom = () => {
               setSeriesID(record.series_id)
               setStudyID(record.id)
               setIsDrawerOpen(true)
-              setPersonName(`${record.study.patient_id} | ${record.name}`)
+              setPersonName(`${record.study.patient_id} | ${record.name}`) 
+              setUrgentCase(record.urgent_case)
+              localStorage.setItem("currentChatId", record.series_id)
             }}
           />
         </Tooltip>
@@ -989,6 +993,7 @@ const Dicom = () => {
         seriesId={seriesID}
       />
 
+
       <Drawer
         title={null}
         placement='right'
@@ -1010,8 +1015,10 @@ const Dicom = () => {
           messages={messages}
           setMessages={setMessages}
           drawerValue={true}
+          urgentCase = {urgentCase}
         />
       </Drawer>
+
 
       {/* ==== Quick Filter option modal ====  */}
 

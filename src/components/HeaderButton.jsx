@@ -20,7 +20,8 @@ import {
   FilterOutlined,
   PlusOutlined,
   SearchOutlined,
-  DeleteOutlined
+  DeleteOutlined, 
+  ReloadOutlined
 } from '@ant-design/icons'
 import { handleDownloadPDF, handleExport } from '../helpers/billingTemplate'
 import { BillingDataContext } from '../hooks/billingDataContext'
@@ -36,7 +37,6 @@ import {
   applySystemFilter,
   retrieveSystemFilters
 } from '../helpers/studyDataFilter'
-import { set } from 'lodash'
 
 const HeaderButton = ({
   setIsModalOpen,
@@ -85,9 +85,11 @@ const HeaderButton = ({
   const [isSystemFilterChecked, setIsSystemFilterChecked] = useState(null)
 
   useEffect(() => {
+
     if (window.location.pathname === `/reports/${id}`) {
       retrieveTemplateOptions()
     }
+
   }, [window.location.pathname])
 
   useEffect(() => {
@@ -97,14 +99,17 @@ const HeaderButton = ({
   }, [window.location.pathname])
 
   const fetchSystemFilter = async () => {
+
     const response = await retrieveSystemFilters()
+    
     const modifiedOptions = response.map(data => ({
       label: data.name,
       value: `${data?.filter_data?.option} ${data?.filter_data?.filter?.status__icontains}`,
       key: `${data?.filter_data?.option} ${data?.filter_data?.filter?.status__icontains}`,
       details: data.filter_data
     }))
-    setSystemsFilters(modifiedOptions)
+    
+    setSystemsFilters(modifiedOptions) ; 
   }
 
   const retrieveTemplateOptions = async () => {
@@ -164,41 +169,11 @@ const HeaderButton = ({
       data => data.permission === name
     )?.permission_value
     return permission
+  } 
+
+  const ReloadOptionHandler = () => {
+    window.location.reload() ; 
   }
-
-  const menuLabel = title => (
-    <div className='display-flex-between' style={{ gap: '4px' }}>
-      {title}
-      {/* <AiOutlineDown className="down-icon" /> */}
-    </div>
-  )
-
-  const menuItems = [
-    checkPermissionStatus('Show Filter option') && {
-      label: 'Filters',
-      key: 'filters',
-      icon: <AiOutlineFilter />,
-      children: [
-        ...filterOptions,
-        checkPermissionStatus('Show Add Filter option') && {
-          label: (
-            <div onClick={() => setIsAddFilterModalOpen(true)}>
-              <AiOutlinePlus /> Add Filter
-            </div>
-          )
-        }
-      ].filter(Boolean)
-    }
-  ].filter(Boolean)
-
-  const systemsFilterMenu = [
-    {
-      label: 'System Filters',
-      key: 'filters',
-      icon: <AiOutlineFilter />,
-      children: systemFilters
-    }
-  ]
 
   const content = (
     <Collapse
@@ -484,6 +459,9 @@ const HeaderButton = ({
       )}
       {window.location.pathname === '/studies' && (
         <div className='iod-setting-div'>
+
+          {/* ==== Delete study option ====  */}
+
           <Button
             type='primary'
             className='error-btn-primary'
@@ -492,12 +470,25 @@ const HeaderButton = ({
             <DeleteOutlined />
           </Button>
 
+          {/* ==== Reload option ====  */}
+
+          <Button
+            type='primary'
+            onClick={ReloadOptionHandler}
+          >
+            <ReloadOutlined />
+          </Button>
+
+          {/* ==== Study export option ====  */}
+
           <Button
             type='primary'
             onClick={() => setIsStudyExportModalOpen(true)}
           >
             Study Export
           </Button>
+
+          {/* ==== Advance search option ====  */}
 
           <Button
             type='primary'
@@ -510,6 +501,8 @@ const HeaderButton = ({
             Advance Search
           </Button>
 
+          {/* ==== Quick Filter option ====  */}
+
           <Button
             type='primary'
             onClick={() => setIsStudyFilterModalOpen(true)}
@@ -517,6 +510,8 @@ const HeaderButton = ({
           >
             <FilterOutlined style={{ fontWeight: '500' }} /> Quick Filter
           </Button>
+
+          {/* ==== Filter option ====  */}
 
           <div style={{ position: 'relative' }}>
             <Popover
@@ -539,6 +534,8 @@ const HeaderButton = ({
               </Button>
             </Popover>
           </div>
+
+          {/* ==== Study logs option ====  */}
 
           <Button type='primary' onClick={() => navigate('/study-logs')}>
             Study Logs
