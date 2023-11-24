@@ -703,7 +703,7 @@ const CustomReportHeaderGenerator = ({institutionId, isModalOpen}) => {
                             className='Insert-report-info-table'
                         />
 
-                    </div>
+                    </div>  
 
                     {/* ==== Instittuion report setting option handling =====  */}
 

@@ -278,7 +278,7 @@ const ReportSummary = () => {
                     </div>
                 </div>
 
-                <div className="w-95" style={{marginLeft: "auto", marginRight: "auto", marginTop: "20px"}}>
+                <div className="w-95 report-summary-table-res" style={{marginLeft: "auto", marginRight: "auto", marginTop: "20px"}}>
                     <Card bordered={false} style={{ width: "100%" }}>
                         <Table
                             columns={columns}
@@ -382,7 +382,7 @@ const ReportSummary = () => {
 
                 {/* ==== Patient report information ====  */}
 
-                <div className="w-95" style={{marginLeft: "auto", marginRight: "auto", marginTop: "25px"}}>
+                <div className="w-95 report-summary-table-res" style={{marginLeft: "auto", marginRight: "auto", marginTop: "25px"}}>
                     <Card
                     title="Report information"
                     bordered={false}
