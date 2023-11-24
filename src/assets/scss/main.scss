@@ -1736,7 +1736,7 @@
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  width: 95%;
+  width:90vw;;
   background-color: white;
   font-size: 1.3rem;
   padding:0.7rem 0;
@@ -1763,9 +1763,64 @@
 .report-summary-patient-details>div{
   width: 50%;
 }
+@media only screen and (max-width: 1260px) {
+  .report-summary-table-res .ant-card-body {
+    overflow-x: scroll;
+  }
+  .report-summary-table-res table{
+    margin: 0;
+  }
+  
+}
+@media only screen and (max-width: 960px) {
+  .report-summary-patient-details{
+    // display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+  }
+}
+
+@media only screen and (max-width: 960px) {
+  .report-summary-patient-details{
+    // display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+  }
+}
+@media only screen and (max-width: 600px) {
+  *{
+    font-size:0.9rem;
+  }
+
+  .report-summary-header{
+    flex-direction: column;
+  }
+
+  .report-summary-header>div{
+    width: 100%;
+  }
+  .report-summary-buttons{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    button{
+      margin: 0 1rem;
+    }
+  }
+  
+}
+
+
+
+.report-summary-table-res .ant-table-wrapper{
+  min-width: 1100px;
+}
+
 
 .w-95{
-  width: 95%;
+  width: 90vw;
 }
 
 
