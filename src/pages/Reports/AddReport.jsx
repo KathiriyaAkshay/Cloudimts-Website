@@ -14,7 +14,6 @@ const index = () => {
       name: "Advanced Report",
     });
     changeBreadcrumbs(crumbs);
-    // retrieveInstitutionData();
   }, []);
   return (
     <div>
