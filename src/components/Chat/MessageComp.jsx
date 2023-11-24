@@ -122,7 +122,7 @@ const MessageComp = props => {
             mainData?.includes('avif') ? (
 
             <div className='userchat-container mt-3'>
-              <img src={`${mainData}`} />
+              <img src={`${mainData}`} loading='lazy'/>
             </div>
 
           ) : mainData?.includes('.mp4') ||
@@ -267,6 +267,9 @@ const MessageComp = props => {
   return (
     <>
       <div id={id}>
+
+        {/* ===== Quoted message information division =====  */}
+
         {item?.is_quoted  && item?.is_quoted !== "False"? (
           <div className='forward-chat-message'>
             <div className='forwardChat-data'>
@@ -291,18 +294,8 @@ const MessageComp = props => {
                   </>}
 
                 </>:<>
-
-                  {item?.media_option ?<>
-                    <div>
-                      <div>Call this function</div>
-                    </div>
-                  </>:<>
-                    
-                    <p>Reply of {item?.quoted_message}</p>
-                  
+                  <p>Reply of {item?.quoted_message}</p>
                   </>}
-
-                </>}
 
               </div>
             </div>
@@ -312,16 +305,22 @@ const MessageComp = props => {
           <></>
         )}
 
+        {/* ===== Chat message information division =====  */}
+
         {!groupRecieve ? (
           <>
             <div>
+
+              {/* ==== Sender username information ====  */}
 
               {!ownMessages && 
                 <div className='Chat-username-information'>
                     {item?.username?.username}
                 </div>
               }
+
               <div className='userchat-data'> 
+
                 <div style={{ flex: '1' }}>
 
                   {item?.media_option && handleCustomSlider(item?.media)}
@@ -342,24 +341,17 @@ const MessageComp = props => {
                         )
                       : item?.content}
                   </span>
+
                 </div>
 
-                {!item?.is_forwarded && !item?.is_quoted ? (
-                  <img
-                    alt='img'
-                    src={colonImage}
-                    style={{ cursor: 'pointer' }}
-                    className='option-menu-image'
-                    onClick={() => chatSettingData(id)}
-                  ></img>
-                ) : (
-                  '')}
               </div>
+
             </div>
 
             {/* ===== Chat timestamp information ======  */}
 
             <div className='userchat-time'>
+
               <div className='message-option-division'>
                 
                 {/* ==== Reply option ====  */}

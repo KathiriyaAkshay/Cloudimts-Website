@@ -289,28 +289,124 @@ const ChatMessanger = props => {
     
     if (quotedMessageContainer){
 
-      if (chatData) {
+      // Modified object information 
+      let modifiedObj  = {}; 
 
-        // Modified object information 
+      if (quotedMessageInfo?.media_option){
+        
+        modifiedObj = { 
+          content: chatData,
+          send_from_id: Number(user),
+          room_name: orderId,
+          media: '',
+          media_option: false,
+          room_id: roomID,  
+          is_quoted: true,
+          quoted_message: quotedMessageInfo?.media, 
+          urgent_case: urgentCase
+        } ;
+        
+      } else {
+        
+        modifiedObj = { 
+          content: chatData,
+          send_from_id: Number(user),
+          room_name: orderId,
+          media: '',
+          media_option: false,
+          room_id: roomID,  
+          is_quoted: true,
+          quoted_message: quotedMessageInfo?.content, 
+          urgent_case: urgentCase
+        } ;
+      }
 
-        let modifiedObj  = {}; 
+      setChatData('') ; 
+      setQuotedMessageContainer(false) ; 
+      setQuotedMessageInfo(null) ; 
+
+      sendChatMessage(modifiedObj)
+        .then(res => {
+          if (res.data.status) {
+            NotificationMessage('success', "Message send successfully")
+          } else {
+            NotificationMessage(
+              'warning',
+              'Network request failed',
+              res.data.message
+            )
+          }
+        })
+        .catch(err =>
+          NotificationMessage(
+            'warning',
+            'Network request failed',
+            err.response.data.message
+          )
+        )
+      setForwardMessage({ ...forwardMessage, quoted: false }) ; 
+      ScrollToBottom() ; 
+      
+    } else {
+      
+      let formData = {}
+      
+      if (imageStore?.length || fileStore?.length) {
+
+        // Create unique key 
+
+        const uni_key = Date.now() + '_' + Math.floor(Math.random() * 1000);
+        formData = { uni_key: uni_key } 
+        imageStore?.length &&
+          imageStore?.forEach(image => {
+            formData = { ...formData, media: image }
+          })
+        fileStore?.length &&
+          fileStore?.forEach(docs => {
+            formData = { ...formData, media: docs }
+          })
+
+        // Send media message payload 
   
-        if (quotedMessageInfo?.media_option){
-
-          modifiedObj = { 
-            content: chatData,
-            send_from_id: Number(user),
-            room_name: orderId,
-            media: '',
-            media_option: false,
-            room_id: roomID,  
-            is_quoted: true,
-            quoted_message: quotedMessageInfo?.media, 
-            urgent_case: urgentCase
-          } ;
-
-        } else{
-
+        formData = {
+          ...formData,
+          media_option: 'True',
+          content: chatData,
+          send_from_id: Number(user),
+          room_name: orderId,
+          room_id: roomID,
+          is_quoted: 'False',
+          quoted_message: ""
+        }
+  
+        sendMediaChat(formData)
+          .then(res => {
+            if (res.data.status) {
+              handleAllChatHistory(false)
+            } else {
+              NotificationMessage(
+                'warning',
+                'Network request failed',
+                res.data.message
+              )
+            }
+          })
+          .catch(err =>
+            NotificationMessage(
+              'warning',
+              'Network request failed',
+              err.response.data.message
+            )
+          )
+        setImageStore([]) ; 
+        setFileStore([]) ; 
+  
+      }  else {
+        
+        if (chatData) {
+  
+          let modifiedObj  = {}; 
+    
           modifiedObj = { 
             content: chatData,
             send_from_id: Number(user),
@@ -318,213 +414,43 @@ const ChatMessanger = props => {
             media: '',
             media_option: false,
             room_id: roomID,
-            is_quoted: true,
-            quoted_message: quotedMessageInfo?.content, 
+            is_quoted: false,
+            quoted_message: '', 
             urgent_case: urgentCase
           } ;
-
-        }
-
-        console.log("Normal chat message consider =========>");
-        console.log(modifiedObj);
-        
-        // setChatData('') ; 
-        // setQuotedMessageContainer(false) ; 
-        // setQuotedMessageInfo(null) ; 
-  
-        // sendChatMessage(modifiedObj)
-        //   .then(res => {
-        //     if (res.data.status) {
-        //       NotificationMessage('success', "Message send successfully")
-        //     } else {
-        //       NotificationMessage(
-        //         'warning',
-        //         'Network request failed',
-        //         res.data.message
-        //       )
-        //     }
-        //   })
-        //   .catch(err =>
-        //     NotificationMessage(
-        //       'warning',
-        //       'Network request failed',
-        //       err.response.data.message
-        //     )
-        //   )
-        // setForwardMessage({ ...forwardMessage, quoted: false }) ; 
-        // ScrollToBottom() ; 
-
+    
+          setChatData('') ; 
+          setQuotedMessageContainer(false) ; 
+          setQuotedMessageInfo(null) ; 
+    
+          sendChatMessage(modifiedObj)
+            .then(res => {
+              if (res.data.status) {
+                NotificationMessage('success', "Message send successfully")
+              } else {
+                NotificationMessage(
+                  'warning',
+                  'Network request failed',
+                  res.data.message
+                )
+              }
+            })
+            .catch(err =>
+              NotificationMessage(
+                'warning',
+                'Network request failed',
+                err.response.data.message
+              )
+            )
+          setForwardMessage({ ...forwardMessage, quoted: false }) ; 
+    
+        } 
       }
-      
-    } else {
-      console.log("Without quoted message functionality call =====>");
+
     }
 
 
-    // let formData = {}
 
-    // if (imageStore?.length || fileStore?.length) {
-
-    //   console.log("Media message information =========>");
-
-    //   // Create unique id for image 
-    //   const uni_key = Date.now() + '_' + Math.floor(Math.random() * 1000);
-
-    //   formData = { uni_key: uni_key } 
-    //   imageStore?.length &&
-    //     imageStore?.forEach(image => {
-    //       formData = { ...formData, media: image }
-    //     })
-    //   fileStore?.length &&
-    //     fileStore?.forEach(docs => {
-    //       formData = { ...formData, media: docs }
-    //     })
-
-    //   if (quotedMessageContainer){
-
-    //     if (quotedMessageInfo?.media_option){
-
-    //       formData = {
-    //         ...formData,
-    //         media_option: 'True',
-    //         content: chatData,
-    //         send_from_id: Number(user),
-    //         room_name: orderId,
-    //         room_id: roomID,
-    //         is_quoted: 'False',
-    //         quoted_message: quotedMessageInfo?.media_option
-    //       }
-      
-    //     } else{
-          
-    //       formData = {
-    //         ...formData,
-    //         media_option: 'True',
-    //         content: chatData,
-    //         send_from_id: Number(user),
-    //         room_name: orderId,
-    //         room_id: roomID,
-    //         is_quoted: 'False',
-    //         quoted_message: quotedMessageInfo?.content
-    //       }
-    //     }
-
-    //   } else{
-
-    //     formData = {
-    //       ...formData,
-    //       media_option: 'True',
-    //       content: chatData,
-    //       send_from_id: Number(user),
-    //       room_name: orderId,
-    //       room_id: roomID,
-    //       is_quoted: 'False',
-    //       quoted_message: ""
-    //     }
-    //   }
-
-    //   sendMediaChat(formData)
-    //     .then(res => {
-    //       if (res.data.status) {
-    //         handleAllChatHistory(false)
-    //       } else {
-    //         NotificationMessage(
-    //           'warning',
-    //           'Network request failed',
-    //           res.data.message
-    //         )
-    //       }
-    //     })
-    //     .catch(err =>
-    //       NotificationMessage(
-    //         'warning',
-    //         'Network request failed',
-    //         err.response.data.message
-    //       )
-    //     )
-    //   setImageStore([]) ; 
-    //   setFileStore([]) ; 
-
-    // } else {
-
-    //   if (chatData) {
-
-    //     let modifiedObj  = {}; 
-  
-    //     if (quotedMessageContainer){
-
-    //       if (quotedMessageInfo?.media_option){
-
-    //         modifiedObj = { 
-    //           content: chatData,
-    //           send_from_id: Number(user),
-    //           room_name: orderId,
-    //           media: '',
-    //           media_option: false,
-    //           room_id: roomID,
-    //           is_quoted: true,
-    //           quoted_message: quotedMessageInfo?.media, 
-    //           urgent_case: urgentCase
-    //         } ;
-    //       } else{
-
-    //           modifiedObj = { 
-    //             content: chatData,
-    //             send_from_id: Number(user),
-    //             room_name: orderId,
-    //             media: '',
-    //             media_option: false,
-    //             room_id: roomID,
-    //             is_quoted: true,
-    //             quoted_message: quotedMessageInfo?.content, 
-    //             urgent_case: urgentCase
-    //           } ;
-    //       }
-  
-          
-    //     } else{
-  
-    //       modifiedObj = { 
-    //         content: chatData,
-    //         send_from_id: Number(user),
-    //         room_name: orderId,
-    //         media: '',
-    //         media_option: false,
-    //         room_id: roomID,
-    //         is_quoted: false,
-    //         quoted_message: '', 
-    //         urgent_case: urgentCase
-    //       } ;
-  
-    //     }
-    //     setChatData('') ; 
-    //     setQuotedMessageContainer(false) ; 
-    //     setQuotedMessageInfo(null) ; 
-  
-    //     sendChatMessage(modifiedObj)
-    //       .then(res => {
-    //         if (res.data.status) {
-    //           NotificationMessage('success', "Message send successfully")
-    //         } else {
-    //           NotificationMessage(
-    //             'warning',
-    //             'Network request failed',
-    //             res.data.message
-    //           )
-    //         }
-    //       })
-    //       .catch(err =>
-    //         NotificationMessage(
-    //           'warning',
-    //           'Network request failed',
-    //           err.response.data.message
-    //         )
-    //       )
-    //     setForwardMessage({ ...forwardMessage, quoted: false }) ; 
-    //     ScrollToBottom() ; 
-  
-    //   } 
-    // }
 
   }
 
