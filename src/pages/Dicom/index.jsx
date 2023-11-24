@@ -101,7 +101,8 @@ const Dicom = () => {
   const [patientId, setPatientId] = useState('')
   const [patientName, setPatientName] = useState('')
   const [studyStatus, setStudyStatus] = useState('')
-  const [urgentCase, setUrgentCase] = useState(false) ; 
+  const [urgentCase, setUrgentCase] = useState(false) 
+  const [currentStudyIdOpenChatLayout, setCurrentStudyIdOpenChatLayout] = useState(null) ; 
 
   // Normal studies information, System filter and Main filter payload information
 
@@ -147,22 +148,31 @@ const Dicom = () => {
         if (eventData.payload.status == "new-chat"){
           let ChatData = eventData.payload.data; 
 
-          studyData.map((element) => {
-            if (element.series_id === ChatData.room_name){
-              
-              if (ChatData.urgent_case){
-                NotificationMessage("important", 
-                "New chat message", `Message send by ${ChatData.sender_username} for Patient - ${element.name} and StudyId - ${element.id}`, 
-                5, 
-                "bottomRight") ;  
-              } else{
-                NotificationMessage("success", 
-                "New chat message", `Message send by ${ChatData.sender_username} for Patient - ${element.name} and StudyId - ${element.id}`, 
-                5, 
-                "bottomRight") ; 
+          console.log("Current open room name information");
+          console.log(currentStudyIdOpenChatLayout);
+
+          console.log("Socket notification room name");
+          console.log(ChatData.room_name);
+
+          if ((localStorage.getItem("currentChatId") !== ChatData.room_name) || localStorage.getItem("currentChatId") == null){
+            console.log("Run this function ========>"); 
+            studyData.map((element) => {
+              if (element.series_id === ChatData.room_name){
+                
+                if (ChatData.urgent_case){
+                  NotificationMessage("important", 
+                  "New chat message", `Message send by ${ChatData.sender_username} for Patient - ${element.name} and StudyId - ${element.id}`, 
+                  5, 
+                  "topLeft") ;  
+                } else{
+                  NotificationMessage("success", 
+                  "New chat message", `Message send by ${ChatData.sender_username} for Patient - ${element.name} and StudyId - ${element.id}`, 
+                  5, 
+                  "topLeft") ; 
+                }
               }
-            }
-          })
+            })
+          }
         } 
 
       } catch (error) {}
@@ -621,6 +631,7 @@ const Dicom = () => {
               setIsDrawerOpen(true)
               setPersonName(`${record.study.patient_id} | ${record.name}`) 
               setUrgentCase(record.urgent_case)
+              localStorage.setItem("currentChatId", record.series_id)
             }}
           />
         </Tooltip>
