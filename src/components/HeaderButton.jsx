@@ -64,7 +64,8 @@ const HeaderButton = ({
     setIsUserLogsFilterModalOpen,
     setIsSupportModalOpen,
     setIsAdvancedSearchModalOpen,
-    setIsStudyExportModalOpen
+    setIsStudyExportModalOpen, 
+    setIsQuickAssignStudyModalOpen
   } = useContext(filterDataContext)
   const { setSelectedItem } = useContext(ReportDataContext)
   const { billingFilterData, setBillingFilterData } =
@@ -486,6 +487,14 @@ const HeaderButton = ({
             onClick={() => setIsStudyExportModalOpen(true)}
           >
             Study Export
+          </Button>
+
+          {/* ==== Assign study option division =====  */}
+          <Button
+            type='primary'
+            onClick={() => setIsQuickAssignStudyModalOpen(true)}
+          >
+            Assign Study
           </Button>
 
           {/* ==== Advance search option ====  */}

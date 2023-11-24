@@ -1956,3 +1956,26 @@ thead>tr>th{
   margin-top: auto;
   margin-bottom: auto;
 }
+
+.quick-assign-study-division{
+  label{
+    margin-top: auto;
+    margin-bottom: auto;
+  }
+}
+
+.assign_studies_all_id_list{
+  display: flex;
+  flex-direction: row;
+}
+
+.particular_assign_study_id_information{
+  background-color: #efefef;
+  padding-left: 0.8rem;
+  padding-right: 0.8rem;
+  padding-top: 0.2rem;
+  padding-bottom: 0.2rem;
+  border-radius: 5px;
+  margin-right: 10px;
+  font-weight: 600;
+}
