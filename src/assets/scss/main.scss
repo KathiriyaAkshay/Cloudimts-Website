@@ -201,9 +201,12 @@
   .ant-drawer-header {
     display: none;
   }
+
   .ant-drawer-body {
     padding: 0;
   }
+
+  width: 700px;
 }
 
 .wrap_tabbing {
@@ -275,9 +278,8 @@
 }
 
 .userchat-reply {
-  border: 1px solid #6d7993;
   background: #ffff;
-  color: #6d7993;
+  color: #FFFFFF;
   float: left;
 }
 

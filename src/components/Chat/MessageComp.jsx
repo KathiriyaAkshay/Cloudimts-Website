@@ -352,45 +352,50 @@ const MessageComp = props => {
 
             <div className='userchat-time'>
 
-              <div className='message-option-division'>
-                
-                {/* ==== Reply option ====  */}
+              {ownMessages && 
+              
+                <div className='message-option-division'>
+                  
+                  {/* ==== Reply option ====  */}
 
-                {!item?.is_quoted && 
+                  {!item?.is_quoted && 
 
-                  <div className='message-option-image-division' onClick={() => chatSettingData(id, item, "reply")}>
-                    <img src={ReplyOptionImage} alt="" className='message-option-image'/>
+                    <div className='message-option-image-division' onClick={() => chatSettingData(id, item, "reply")}>
+                      <img src={ReplyOptionImage} alt="" className='message-option-image'/>
+                    </div>
+                  
+                  }
+
+                  {/* ==== Copy message option ====  */}
+
+                  {!item?.media_option && 
+                    <div className='message-option-image-division'
+                      onClick={() => CopyTextHandling(item?.content)}>
+                      <img src={CopyOptionImage} alt="" className='message-option-image'/>
+                    </div>
+                  }
+
+                  {/* ==== Delete chat option ====  */}
+                  
+                  <div className='message-option-image-division'  onClick={() => chatSettingData(id, item, "delete")}>
+                    <img src={DeleteOptionImage} alt="" className='message-option-image'/>
                   </div>
-                
-                }
 
-                {/* ==== Copy message option ====  */}
+                  {/* ==== Media download option ====  */}
 
-                {!item?.media_option && 
-                  <div className='message-option-image-division'
-                    onClick={() => CopyTextHandling(item?.content)}>
-                    <img src={CopyOptionImage} alt="" className='message-option-image'/>
-                  </div>
-                }
+                  {item?.media_option && 
+                  
+                    <div className='message-option-image-division'>
+                      <a href={item.media} download={"Download_image.jpg"} target='_blank'>
+                        <img src={DownloadOptionImage} alt="" className='message-option-image'/>
+                      </a>
+                    </div>
+                  }
 
-                {/* ==== Delete chat option ====  */}
-                
-                <div className='message-option-image-division'  onClick={() => chatSettingData(id, item, "delete")}>
-                  <img src={DeleteOptionImage} alt="" className='message-option-image'/>
                 </div>
+              
+              }
 
-                {/* ==== Media download option ====  */}
-
-                {item?.media_option && 
-                
-                  <div className='message-option-image-division'>
-                    <a href={item.media} download={"Download_image.jpg"} target='_blank'>
-                      <img src={DownloadOptionImage} alt="" className='message-option-image'/>
-                    </a>
-                  </div>
-                }
-
-              </div>
               <span style={{marginLeft : 'auto'}}>
                 {moment(item?.timestamp || item?.timestamp).format('hh:mm')}
               </span>

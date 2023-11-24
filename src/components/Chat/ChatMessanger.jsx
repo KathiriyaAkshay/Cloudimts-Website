@@ -448,12 +448,7 @@ const ChatMessanger = props => {
       }
 
     }
-
-
-
-
   }
-
 
   const ScrollToBottom = () => {
     var scrollingDiv = document.getElementById("user-all-chat-main-division");

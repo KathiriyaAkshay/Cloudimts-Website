@@ -975,6 +975,7 @@ const Dicom = () => {
         setStudyID={setStudyID}
         seriesId={seriesID}
       />
+  
 
       <Drawer
         title={null}
@@ -999,6 +1000,7 @@ const Dicom = () => {
           drawerValue={true}
         />
       </Drawer>
+
 
       {/* ==== Quick Filter option modal ====  */}
 
