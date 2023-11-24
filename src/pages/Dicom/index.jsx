@@ -52,8 +52,8 @@ import DeleteActionIcon from '../../components/DeleteActionIcon'
 import NotificationMessage from '../../components/NotificationMessage'
 import APIHandler from '../../apis/apiHandler'
 import { saveAs } from 'file-saver'
-import * as XLSX from 'xlsx' ; 
-
+import * as XLSX from 'xlsx'
+import AssignStudyModified from '../../components/Studies/AssignStudyModified'
 const BASE_URL = import.meta.env.VITE_APP_SOCKET_BASE_URL
 const Dicom = () => {
   // Modal related useState
@@ -62,6 +62,8 @@ const Dicom = () => {
   const [isStudyModalOpen, setIsStudyModalOpen] = useState(false)
   const [isReportModalOpen, setIsReportModalOpen] = useState(false)
   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false)
+  const [isAssignModifiedModalOpen, setIsAssignModifiedModalOpen] = useState(true)
+
   const [isShareStudyModalOpen, setIsShareStudyModalOpen] = useState(false)
 
   // Breadcumbs information
@@ -871,6 +873,14 @@ const Dicom = () => {
 
   return (
     <>
+    
+    <AssignStudyModified
+        isAssignModifiedModalOpen={isAssignModifiedModalOpen}
+        setIsAssignModifiedModalOpen={setIsAssignModifiedModalOpen}
+        studyID={studyID}
+        setStudyID={setStudyID}
+      />
+
       <Table
         className='Study-table'
         dataSource={studyData}
@@ -924,6 +934,8 @@ const Dicom = () => {
           onShowSizeChange: onShowSizeChange
         }}
       />
+
+
 
       {/* ==== Edit study details option modal =====  */}
 
@@ -1121,9 +1133,7 @@ const Dicom = () => {
 
       {/* ==== Assign studies option modal ====  */}
 
-      <Modal title = "Assign study"
-       
-      >
+      <Modal title = "Assign study">
 
       </Modal>
     </>
