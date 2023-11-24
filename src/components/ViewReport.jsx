@@ -46,13 +46,6 @@ const ViewReport = ({ id }) => {
           editor={ClassicEditor}
           data={editorData}
           disabled
-          // onReady={(editor) => {
-          //   editor.plugins.get("FileRepository").createUploadAdapter = (
-          //     loader
-          //   ) => {
-          //     return new UploadAdapter(loader);
-          //   };
-          // }}
           onChange={(event, editor) => {
             const data = editor.getData()
             setEditorData(data)

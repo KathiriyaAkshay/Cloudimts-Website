@@ -5,7 +5,8 @@ import {
   Divider,
   Menu,
   Popover,
-  Select
+  Select, 
+  Popconfirm
 } from 'antd'
 import React, { useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -64,7 +65,8 @@ const HeaderButton = ({
     setIsUserLogsFilterModalOpen,
     setIsSupportModalOpen,
     setIsAdvancedSearchModalOpen,
-    setIsStudyExportModalOpen
+    setIsStudyExportModalOpen, 
+    setIsQuickAssignStudyModalOpen
   } = useContext(filterDataContext)
   const { setSelectedItem } = useContext(ReportDataContext)
   const { billingFilterData, setBillingFilterData } =
@@ -160,7 +162,7 @@ const HeaderButton = ({
           )
         )
     } else {
-      NotificationMessage('warning', 'Please select study')
+      NotificationMessage('warning', 'Please select study for delete')
     }
   }
 
@@ -173,6 +175,14 @@ const HeaderButton = ({
 
   const ReloadOptionHandler = () => {
     window.location.reload() ; 
+  }
+
+  const QuickAssignStudyModalHandler = () => {
+    if (studyIdArray.length === 0){
+      NotificationMessage("warning", "Please, Select study for assign") ; 
+    } else{
+      setIsQuickAssignStudyModalOpen(true) ; 
+    }
   }
 
   const content = (
@@ -462,22 +472,37 @@ const HeaderButton = ({
 
           {/* ==== Delete study option ====  */}
 
-          <Button
-            type='primary'
-            className='error-btn-primary'
-            onClick={deleteStudyData}
+          <Popconfirm
+            title = "Delete study"
+            description = "Are you sure you want to delete this studies ?"
+            onConfirm={deleteStudyData}
+            okText = "Yes"
+            cancelText = "No"
           >
-            <DeleteOutlined />
-          </Button>
+            <Button
+              type='primary'
+              className='error-btn-primary'
+            >
+              <DeleteOutlined />
+            </Button>
+          </Popconfirm>
+
 
           {/* ==== Reload option ====  */}
 
-          <Button
-            type='primary'
-            onClick={ReloadOptionHandler}
+          <Popconfirm
+            title = "Reload page"
+            description = "Are you sure you want to reload page" 
+            onConfirm={ReloadOptionHandler}
+            okText = "Yes"
+            cancelText = "No"
           >
-            <ReloadOutlined />
-          </Button>
+            <Button
+              type='primary'
+            >
+              <ReloadOutlined />
+            </Button>
+          </Popconfirm>
 
           {/* ==== Study export option ====  */}
 
@@ -486,6 +511,14 @@ const HeaderButton = ({
             onClick={() => setIsStudyExportModalOpen(true)}
           >
             Study Export
+          </Button>
+
+          {/* ==== Assign study option division =====  */}
+          <Button
+            type='primary'
+            onClick={() => QuickAssignStudyModalHandler()}
+          >
+            Assign Study
           </Button>
 
           {/* ==== Advance search option ====  */}

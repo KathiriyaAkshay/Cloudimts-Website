@@ -50,7 +50,7 @@ const AddTemplate = () => {
       .catch(err => NotificationMessage('warning', 'Network request failed', err.response.data.message))
   }
 
-  const handleSubmit = values => {
+  const handleSubmit = (values) => {
     if (editorData.trim() !== '') {
       if (!id) {
         insertNewTemplate({ name: values.name, data: editorData })
@@ -70,7 +70,8 @@ const AddTemplate = () => {
             NotificationMessage('warning', 'Network request failed', err.response.data.message)
           )
       } else {
-        updateReport({ id, update_data: editorData })
+       
+        updateReport({ id, update_data: editorData, update_report_name: values.name })
           .then(res => {
             if (res.data.status) {
               NotificationMessage('success', 'Template Updated Successfully')
@@ -120,7 +121,6 @@ const AddTemplate = () => {
               >
                 <Input
                   placeholder='Enter Template Name'
-                  disabled={id ? true : false}
                 />
               </Form.Item>
             </Col>

@@ -4,24 +4,35 @@ export const filterDataContext = createContext();
 
 const FilterDataProvider = ({ children }) => {
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  
   const [isUserFilterModalOpen, setIsUserFilterModalOpen] = useState(false);
+  
   const [isEmailFilterModalOpen, setIsEmailFilterModalOpen] = useState(false);
+  
   const [isStudyFilterModalOpen, setIsStudyFilterModalOpen] = useState(false);
+  
   const [isBillingFilterModalOpen, setIsBillingFilterModalOpen] =
     useState(true);
-  const [isRoleLogsFilterModalOpen, setIsRoleLogsFilterModalOpen] =
+  
+    const [isRoleLogsFilterModalOpen, setIsRoleLogsFilterModalOpen] =
     useState(false);
-  const [
+  
+    const [
     isInstitutionLogsFilterModalOpen,
     setIsInstitutionLogsFilterModalOpen,
   ] = useState(false);
+  
   const [isUserLogsFilterModalOpen, setIsUserLogsFilterModalOpen] =
     useState(false);
+  
   const [isSupportModalOpen, setIsSupportModalOpen] = useState(false);
+  
   const [isAdvancedSearchModalOpen, setIsAdvancedSearchModalOpen] =
     useState(false);
 
   const [isStudyExportModalOpen, setIsStudyExportModalOpen] = useState(false) ; 
+
+  const [isQuickAssignStudyModalOpen, setIsQuickAssignStudyModalOpen ] = useState(false) ; 
 
   return (
     <filterDataContext.Provider
@@ -47,7 +58,9 @@ const FilterDataProvider = ({ children }) => {
         isAdvancedSearchModalOpen,
         setIsAdvancedSearchModalOpen,
         isStudyExportModalOpen, 
-        setIsStudyExportModalOpen
+        setIsStudyExportModalOpen, 
+        isQuickAssignStudyModalOpen, 
+        setIsQuickAssignStudyModalOpen
       }}
     >
       {children}

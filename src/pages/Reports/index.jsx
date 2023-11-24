@@ -55,9 +55,6 @@ const index = () => {
     {
       title: 'Template Name',
       dataIndex: 'name'
-      // className: `${
-      //   checkPermissionStatus("View Full name") ? "" : "column-display-none"
-      // }`,
     },
     checkPermissionStatus('View created at') && {
       title: 'Created At',
@@ -96,7 +93,6 @@ const index = () => {
     <TableWithFilter
       tableData={reportsData}
       tableColumns={columns}
-      // rowSelection={rowSelection}
       loadingTableData={isLoading}
       setPagi={setPagi}
       totalRecords={totalPages}

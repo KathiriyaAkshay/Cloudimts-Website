@@ -23,10 +23,6 @@ const StudyFilterModal = ({
   const [modalityOptions, setModalityOptions] = useState([])
   const [statusOptions, setStatusOptions] = useState([
     {
-      label: 'Unassigned',
-      value: 'Unassigned'
-    },
-    {
       label: 'New',
       value: 'New'
     },
@@ -39,16 +35,20 @@ const StudyFilterModal = ({
       value: 'Assigned'
     },
     {
-      label: 'In Reporting',
-      value: 'In Reporting'
-    },
-    {
-      label: 'Draft',
-      value: 'Draft'
+      label: 'Reporting',
+      value: 'Reporting'
     },
     {
       label: 'Reported',
       value: 'Reported'
+    },
+    {
+      label: 'ViewReport',
+      value: 'ViewReport'
+    },
+    {
+      label: 'ClosedStudy',
+      value: 'ClosedStudy'
     }
   ])
   const [form] = Form.useForm()
@@ -248,6 +248,7 @@ const StudyFilterModal = ({
           form={form}
           onFinish={submitHandler}
           autoComplete={'off'}
+          style={{marginTop: "12px"}}
         >
           <Row gutter={15}>
             <Col xs={24} lg={12}>

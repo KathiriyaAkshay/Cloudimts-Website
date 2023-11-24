@@ -91,8 +91,8 @@ const Dicom = () => {
   // Permission information context
   const { permissionData } = useContext(UserPermissionContext)
 
-  const { isStudyExportModalOpen, setIsStudyExportModalOpen } =
-    useContext(filterDataContext)
+  const { isStudyExportModalOpen, setIsStudyExportModalOpen, isQuickAssignStudyModalOpen, 
+    setIsQuickAssignStudyModalOpen } = useContext(filterDataContext)
 
   // Modal passing attributes information
 
@@ -104,7 +104,6 @@ const Dicom = () => {
   const [patientName, setPatientName] = useState('')
   const [studyStatus, setStudyStatus] = useState('')
   const [urgentCase, setUrgentCase] = useState(false) 
-  const [currentStudyIdOpenChatLayout, setCurrentStudyIdOpenChatLayout] = useState(null) ; 
 
   // Normal studies information, System filter and Main filter payload information
 
@@ -873,13 +872,6 @@ const Dicom = () => {
 
   return (
     <>
-    
-    <AssignStudyModified
-        isAssignModifiedModalOpen={isAssignModifiedModalOpen}
-        setIsAssignModifiedModalOpen={setIsAssignModifiedModalOpen}
-        studyID={studyID}
-        setStudyID={setStudyID}
-      />
 
       <Table
         className='Study-table'
@@ -934,8 +926,6 @@ const Dicom = () => {
           onShowSizeChange: onShowSizeChange
         }}
       />
-
-
 
       {/* ==== Edit study details option modal =====  */}
 
@@ -993,7 +983,6 @@ const Dicom = () => {
         seriesId={seriesID}
       />
 
-
       <Drawer
         title={null}
         placement='right'
@@ -1019,7 +1008,6 @@ const Dicom = () => {
         />
       </Drawer>
 
-
       {/* ==== Quick Filter option modal ====  */}
 
       <QuickFilterModal
@@ -1035,6 +1023,15 @@ const Dicom = () => {
         name={'Advance Search'}
         retrieveStudyData={retrieveStudyData}
         advanceSearchFilterData={advanceSearchFilterData}
+      />
+
+      {/* ==== Assign quick studies ====  */}
+
+      <AssignStudyModified
+        isAssignModifiedModalOpen={isQuickAssignStudyModalOpen}
+        setIsAssignModifiedModalOpen={setIsQuickAssignStudyModalOpen}
+        studyID={studyID}
+        setStudyID={setStudyID}
       />
 
       {/* ===== Study Export option modal ======  */}
