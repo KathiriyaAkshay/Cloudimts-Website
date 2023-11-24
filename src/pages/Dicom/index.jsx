@@ -147,15 +147,7 @@ const Dicom = () => {
 
         if (eventData.payload.status == "new-chat"){
           let ChatData = eventData.payload.data; 
-
-          console.log("Current open room name information");
-          console.log(currentStudyIdOpenChatLayout);
-
-          console.log("Socket notification room name");
-          console.log(ChatData.room_name);
-
           if ((localStorage.getItem("currentChatId") !== ChatData.room_name) || localStorage.getItem("currentChatId") == null){
-            console.log("Run this function ========>"); 
             studyData.map((element) => {
               if (element.series_id === ChatData.room_name){
                 
