@@ -176,6 +176,14 @@ const HeaderButton = ({
     window.location.reload() ; 
   }
 
+  const QuickAssignStudyModalHandler = () => {
+    if (studyIdArray.length === 0){
+      NotificationMessage("warning", "Please, Select study for assign") ; 
+    } else{
+      setIsQuickAssignStudyModalOpen(true) ; 
+    }
+  }
+
   const content = (
     <Collapse
       bordered={true}
@@ -492,7 +500,7 @@ const HeaderButton = ({
           {/* ==== Assign study option division =====  */}
           <Button
             type='primary'
-            onClick={() => setIsQuickAssignStudyModalOpen(true)}
+            onClick={() => QuickAssignStudyModalHandler()}
           >
             Assign Study
           </Button>
