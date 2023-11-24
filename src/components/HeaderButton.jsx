@@ -5,7 +5,8 @@ import {
   Divider,
   Menu,
   Popover,
-  Select
+  Select, 
+  Popconfirm
 } from 'antd'
 import React, { useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -481,12 +482,19 @@ const HeaderButton = ({
 
           {/* ==== Reload option ====  */}
 
-          <Button
-            type='primary'
-            onClick={ReloadOptionHandler}
+          <Popconfirm
+            title = "Reload page"
+            description = "Are you sure you want to reload page" 
+            onConfirm={ReloadOptionHandler}
+            okText = "Yes"
+            cancelText = "No"
           >
-            <ReloadOutlined />
-          </Button>
+            <Button
+              type='primary'
+            >
+              <ReloadOutlined />
+            </Button>
+          </Popconfirm>
 
           {/* ==== Study export option ====  */}
 
