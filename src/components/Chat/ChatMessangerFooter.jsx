@@ -22,7 +22,8 @@ const ChatMessangerFooter = (props) => {
     setFileStore,
     fileStore,
     isChatModule,
-    layoutHeight
+    layoutHeight, 
+    isQuotedMessage
   } = props || {};
 
   const handleUploadData = (data, type) => {
@@ -82,7 +83,6 @@ const ChatMessangerFooter = (props) => {
             />
           </>}
 
-
           {/* ===== TextInput option division =====  */}
 
           <Input.TextArea
@@ -95,15 +95,9 @@ const ChatMessangerFooter = (props) => {
           ></Input.TextArea>
 
           {chatData !== "" && imageStore?.length ? (
-            <div
-              className="d-flex"
-              style={{ marginLeft: "20px", cursor: "pointer" }}
-            >
-              <div
-                style={{ display: "flex", flexWrap: "wrap", cursor: "pointer" }}
-              >
+            <div className="d-flex" style={{ marginLeft: "20px", cursor: "pointer" }} >
+              <div style={{ display: "flex", flexWrap: "wrap", cursor: "pointer" }} >
                 <div className="chat-camera-module">
-
                   <input
                     type="file"
                     id="myfile"
@@ -112,12 +106,15 @@ const ChatMessangerFooter = (props) => {
                     onChange={(e) => handleImageStore(e)}
                     multiple="multiple"
                   />
+
+                  {!isQuotedMessage && 
+                    <img
+                      src={CameraImage}
+                      alt="alt"
+                      style={{ cursor: "pointer", marginTop: "5px" }}
+                    ></img>
+                  }
                   
-                  <img
-                    src={CameraImage}
-                    alt="alt"
-                    style={{ cursor: "pointer", marginTop: "5px" }}
-                  ></img>
                 
                 </div>
               
@@ -125,17 +122,9 @@ const ChatMessangerFooter = (props) => {
             
             </div>
           ) : (
-            <div
-              className="d-flex"
-              style={{ marginLeft: "20px", cursor: "pointer" }}
-            >
+            <div className="d-flex" style={{ marginLeft: "20px", cursor: "pointer" }} >
               <div style={{ display: "flex", flexWrap: "wrap" }}>
-                
-                <div
-                  className="chat-camera-module"
-                  style={{ position: "relative", cursor: "pointer" }}
-                >
-                
+                <div className="chat-camera-module" style={{ position: "relative", cursor: "pointer" }} >
                   <input
                     type="file"
                     id="myfile"
@@ -146,11 +135,13 @@ const ChatMessangerFooter = (props) => {
                     style={{ left: 0, width: "100%" }}
                   />
                 
-                  <img
-                    src={CameraImage}
-                    alt="alt"
-                    style={{ cursor: "pointer", marginTop: '5px' }}
-                  ></img>
+                  {!isQuotedMessage && 
+                    <img
+                      src={CameraImage}
+                      alt="alt"
+                      style={{ cursor: "pointer", marginTop: '5px' }}
+                    ></img>
+                  }
                 
                 </div>
               

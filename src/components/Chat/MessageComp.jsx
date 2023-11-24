@@ -264,17 +264,6 @@ const MessageComp = props => {
       });
   }
 
-  function checkStringInURL(substring) {
-    var currentURL = window.location.href;
-
-    // Check if the substring is present in the URL
-    if (currentURL.includes(substring)) {
-        return true;
-    } else {
-        return false;
-    }
-  }
-
   return (
     <>
       <div id={id}>
@@ -300,10 +289,19 @@ const MessageComp = props => {
                     </div>
                   
                   </>}
-                  
 
                 </>:<>
-                  <p>Reply of {item?.quoted_message}</p>
+
+                  {item?.media_option ?<>
+                    <div>
+                      <div>Call this function</div>
+                    </div>
+                  </>:<>
+                    
+                    <p>Reply of {item?.quoted_message}</p>
+                  
+                  </>}
+
                 </>}
 
               </div>

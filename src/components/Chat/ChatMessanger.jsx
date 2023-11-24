@@ -286,129 +286,31 @@ const ChatMessanger = props => {
   }
 
   const sendMessage = async () => {
-    let formData = {}
-
-    if (imageStore?.length || fileStore?.length) {
-
-      console.log("Media message information =========>");
-
-      // Create unique id for image 
-      const uni_key = Date.now() + '_' + Math.floor(Math.random() * 1000);
-
-      formData = { uni_key: uni_key } 
-      imageStore?.length &&
-        imageStore?.forEach(image => {
-          formData = { ...formData, media: image }
-        })
-      fileStore?.length &&
-        fileStore?.forEach(docs => {
-          formData = { ...formData, media: docs }
-        })
-
-      if (quotedMessageContainer){
-
-        if (quotedMessageInfo?.media_option){
-
-          formData = {
-            ...formData,
-            media_option: 'True',
-            content: chatData,
-            send_from_id: Number(user),
-            room_name: orderId,
-            room_id: roomID,
-            is_quoted: 'False',
-            quoted_message: quotedMessageInfo?.media_option
-          }
-      
-        } else{
-          
-          formData = {
-            ...formData,
-            media_option: 'True',
-            content: chatData,
-            send_from_id: Number(user),
-            room_name: orderId,
-            room_id: roomID,
-            is_quoted: 'False',
-            quoted_message: quotedMessageInfo?.content
-          }
-        }
-
-      } else{
-
-        formData = {
-          ...formData,
-          media_option: 'True',
-          content: chatData,
-          send_from_id: Number(user),
-          room_name: orderId,
-          room_id: roomID,
-          is_quoted: 'False',
-          quoted_message: ""
-        }
-      }
-
-      sendMediaChat(formData)
-        .then(res => {
-          if (res.data.status) {
-            handleAllChatHistory(false)
-          } else {
-            NotificationMessage(
-              'warning',
-              'Network request failed',
-              res.data.message
-            )
-          }
-        })
-        .catch(err =>
-          NotificationMessage(
-            'warning',
-            'Network request failed',
-            err.response.data.message
-          )
-        )
-      setImageStore([]) ; 
-      setFileStore([]) ; 
-
-    } else {
+    
+    if (quotedMessageContainer){
 
       if (chatData) {
 
+        // Modified object information 
+
         let modifiedObj  = {}; 
   
-        if (quotedMessageContainer){
+        if (quotedMessageInfo?.media_option){
 
-          if (quotedMessageInfo?.media_option){
+          modifiedObj = { 
+            content: chatData,
+            send_from_id: Number(user),
+            room_name: orderId,
+            media: '',
+            media_option: false,
+            room_id: roomID,  
+            is_quoted: true,
+            quoted_message: quotedMessageInfo?.media, 
+            urgent_case: urgentCase
+          } ;
 
-            modifiedObj = { 
-              content: chatData,
-              send_from_id: Number(user),
-              room_name: orderId,
-              media: '',
-              media_option: false,
-              room_id: roomID,
-              is_quoted: true,
-              quoted_message: quotedMessageInfo?.media, 
-              urgent_case: urgentCase
-            } ;
-          } else{
-
-              modifiedObj = { 
-                content: chatData,
-                send_from_id: Number(user),
-                room_name: orderId,
-                media: '',
-                media_option: false,
-                room_id: roomID,
-                is_quoted: true,
-                quoted_message: quotedMessageInfo?.content, 
-                urgent_case: urgentCase
-              } ;
-          }
-  
-          
         } else{
-  
+
           modifiedObj = { 
             content: chatData,
             send_from_id: Number(user),
@@ -416,40 +318,213 @@ const ChatMessanger = props => {
             media: '',
             media_option: false,
             room_id: roomID,
-            is_quoted: false,
-            quoted_message: '', 
+            is_quoted: true,
+            quoted_message: quotedMessageInfo?.content, 
             urgent_case: urgentCase
           } ;
-  
+
         }
-        setChatData('') ; 
-        setQuotedMessageContainer(false) ; 
-        setQuotedMessageInfo(null) ; 
+
+        console.log("Normal chat message consider =========>");
+        console.log(modifiedObj);
+        
+        // setChatData('') ; 
+        // setQuotedMessageContainer(false) ; 
+        // setQuotedMessageInfo(null) ; 
   
-        sendChatMessage(modifiedObj)
-          .then(res => {
-            if (res.data.status) {
-              NotificationMessage('success', "Message send successfully")
-            } else {
-              NotificationMessage(
-                'warning',
-                'Network request failed',
-                res.data.message
-              )
-            }
-          })
-          .catch(err =>
-            NotificationMessage(
-              'warning',
-              'Network request failed',
-              err.response.data.message
-            )
-          )
-        setForwardMessage({ ...forwardMessage, quoted: false }) ; 
-        ScrollToBottom() ; 
-  
-      } 
+        // sendChatMessage(modifiedObj)
+        //   .then(res => {
+        //     if (res.data.status) {
+        //       NotificationMessage('success', "Message send successfully")
+        //     } else {
+        //       NotificationMessage(
+        //         'warning',
+        //         'Network request failed',
+        //         res.data.message
+        //       )
+        //     }
+        //   })
+        //   .catch(err =>
+        //     NotificationMessage(
+        //       'warning',
+        //       'Network request failed',
+        //       err.response.data.message
+        //     )
+        //   )
+        // setForwardMessage({ ...forwardMessage, quoted: false }) ; 
+        // ScrollToBottom() ; 
+
+      }
+      
+    } else {
+      console.log("Without quoted message functionality call =====>");
     }
+
+
+    // let formData = {}
+
+    // if (imageStore?.length || fileStore?.length) {
+
+    //   console.log("Media message information =========>");
+
+    //   // Create unique id for image 
+    //   const uni_key = Date.now() + '_' + Math.floor(Math.random() * 1000);
+
+    //   formData = { uni_key: uni_key } 
+    //   imageStore?.length &&
+    //     imageStore?.forEach(image => {
+    //       formData = { ...formData, media: image }
+    //     })
+    //   fileStore?.length &&
+    //     fileStore?.forEach(docs => {
+    //       formData = { ...formData, media: docs }
+    //     })
+
+    //   if (quotedMessageContainer){
+
+    //     if (quotedMessageInfo?.media_option){
+
+    //       formData = {
+    //         ...formData,
+    //         media_option: 'True',
+    //         content: chatData,
+    //         send_from_id: Number(user),
+    //         room_name: orderId,
+    //         room_id: roomID,
+    //         is_quoted: 'False',
+    //         quoted_message: quotedMessageInfo?.media_option
+    //       }
+      
+    //     } else{
+          
+    //       formData = {
+    //         ...formData,
+    //         media_option: 'True',
+    //         content: chatData,
+    //         send_from_id: Number(user),
+    //         room_name: orderId,
+    //         room_id: roomID,
+    //         is_quoted: 'False',
+    //         quoted_message: quotedMessageInfo?.content
+    //       }
+    //     }
+
+    //   } else{
+
+    //     formData = {
+    //       ...formData,
+    //       media_option: 'True',
+    //       content: chatData,
+    //       send_from_id: Number(user),
+    //       room_name: orderId,
+    //       room_id: roomID,
+    //       is_quoted: 'False',
+    //       quoted_message: ""
+    //     }
+    //   }
+
+    //   sendMediaChat(formData)
+    //     .then(res => {
+    //       if (res.data.status) {
+    //         handleAllChatHistory(false)
+    //       } else {
+    //         NotificationMessage(
+    //           'warning',
+    //           'Network request failed',
+    //           res.data.message
+    //         )
+    //       }
+    //     })
+    //     .catch(err =>
+    //       NotificationMessage(
+    //         'warning',
+    //         'Network request failed',
+    //         err.response.data.message
+    //       )
+    //     )
+    //   setImageStore([]) ; 
+    //   setFileStore([]) ; 
+
+    // } else {
+
+    //   if (chatData) {
+
+    //     let modifiedObj  = {}; 
+  
+    //     if (quotedMessageContainer){
+
+    //       if (quotedMessageInfo?.media_option){
+
+    //         modifiedObj = { 
+    //           content: chatData,
+    //           send_from_id: Number(user),
+    //           room_name: orderId,
+    //           media: '',
+    //           media_option: false,
+    //           room_id: roomID,
+    //           is_quoted: true,
+    //           quoted_message: quotedMessageInfo?.media, 
+    //           urgent_case: urgentCase
+    //         } ;
+    //       } else{
+
+    //           modifiedObj = { 
+    //             content: chatData,
+    //             send_from_id: Number(user),
+    //             room_name: orderId,
+    //             media: '',
+    //             media_option: false,
+    //             room_id: roomID,
+    //             is_quoted: true,
+    //             quoted_message: quotedMessageInfo?.content, 
+    //             urgent_case: urgentCase
+    //           } ;
+    //       }
+  
+          
+    //     } else{
+  
+    //       modifiedObj = { 
+    //         content: chatData,
+    //         send_from_id: Number(user),
+    //         room_name: orderId,
+    //         media: '',
+    //         media_option: false,
+    //         room_id: roomID,
+    //         is_quoted: false,
+    //         quoted_message: '', 
+    //         urgent_case: urgentCase
+    //       } ;
+  
+    //     }
+    //     setChatData('') ; 
+    //     setQuotedMessageContainer(false) ; 
+    //     setQuotedMessageInfo(null) ; 
+  
+    //     sendChatMessage(modifiedObj)
+    //       .then(res => {
+    //         if (res.data.status) {
+    //           NotificationMessage('success', "Message send successfully")
+    //         } else {
+    //           NotificationMessage(
+    //             'warning',
+    //             'Network request failed',
+    //             res.data.message
+    //           )
+    //         }
+    //       })
+    //       .catch(err =>
+    //         NotificationMessage(
+    //           'warning',
+    //           'Network request failed',
+    //           err.response.data.message
+    //         )
+    //       )
+    //     setForwardMessage({ ...forwardMessage, quoted: false }) ; 
+    //     ScrollToBottom() ; 
+  
+    //   } 
+    // }
 
   }
 
@@ -479,8 +554,10 @@ const ChatMessanger = props => {
   const chatSettingData = (id, item, option) => {
 
     if (option === "reply"){
+      
       setQuotedMessageContainer(true) ; 
       setQuotedMessageInfo({...item}) ; 
+
     } else{
       setDeletChat(true) ; 
       deleteChatMessage({chat_id: id, room_name: orderId})
@@ -626,6 +703,7 @@ const ChatMessanger = props => {
             fileStore={fileStore}
             isChatModule={isChatModule}
             layoutHeight={setLayoutHeight}
+            isQuotedMessage = {quotedMessageContainer}
           />
 
         </div>
