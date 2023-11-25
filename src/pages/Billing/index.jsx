@@ -95,6 +95,9 @@ const index = () => {
 
   return (
     <div>
+
+      {/* ===== Billing data table ======  */}
+      
       <Card style={{ marginTop: "30px" }}>
         
         {billingData.length !== 0 && 
@@ -123,12 +126,16 @@ const index = () => {
         </div>
 
       </Card>
+    
+      {/* ===== Search billing related modal ======  */}
 
       <BillingModal
         setBillingData={setBillingData}
         setIsLoading={setIsLoading}
         setCharges={setCharges}
       />
+
+      {/* ===== Total billing information modal ====== ` */}
 
       <Modal
         title="Billing information"

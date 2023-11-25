@@ -24,10 +24,6 @@ const BillingModal = ({ setBillingData, setIsLoading, setCharges }) => {
       value: "all",
     },
     {
-      label: "Unassigned",
-      value: "Unassigned",
-    },
-    {
       label: "New",
       value: "New",
     },
@@ -40,16 +36,20 @@ const BillingModal = ({ setBillingData, setIsLoading, setCharges }) => {
       value: "Assigned",
     },
     {
-      label: "In Reporting",
-      value: "In Reporting",
-    },
-    {
-      label: "Draft",
-      value: "Draft",
+      label: "Reporting",
+      value: "Reporting",
     },
     {
       label: "Reported",
       value: "Reported",
+    },
+    {
+      label: "ViewReport",
+      value: "ViewReport",
+    },
+    {
+      label: "ClosedStudy",
+      value: "ClosedStudy",
     },
   ]);
 

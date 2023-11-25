@@ -1,7 +1,6 @@
 import { saveAs } from "file-saver";
 import * as XLSX from "xlsx";
 import * as htmlToImage from 'html-to-image';
-import { toPng, toJpeg, toBlob, toPixelData, toSvg } from 'html-to-image';
 import { jsPDF } from "jspdf";
 
 export const handleDownloadPDF = (billingData) => {
@@ -61,9 +60,6 @@ export const handleDownloadPDF = (billingData) => {
   let FilterData = localStorage.getItem("BillingFilterValues") ; 
   FilterData = JSON.parse(FilterData) ;
 
-  console.log("Filter data information ==============>");
-  console.log(FilterData);
-  
   let BillingStartDate = FilterData['fromdate'] ; 
   let BillingEndDate = FilterData['todate'] ; 
   let ShowBillingEndDate = FilterData['todate'] ; 
