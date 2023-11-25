@@ -26,34 +26,57 @@ const index = () => {
       title: "Patient ID",
       dataIndex: "patient_id"
     },
+    
     {
       title: "Patient Name",
       dataIndex: "patient_name"
     },
+    
     {
       title: "Modality",
       dataIndex: "modality",
     },
+    
     {
       title: "Institution",
       dataIndex: "institution",
     },
+    
     {
       title: "Reporting Time",
       dataIndex: "reporting_time",
     },
+    
+    {
+      title: "Reported by",
+      dataIndex: "reported_by",
+    },
+
+    {
+      title: "Reporting description",
+      dataIndex: "reporting_study_description",
+    },
+
+    {
+      title: "Reporting type",
+      dataIndex: "reporting_type",
+    },
+    
     {
       title: "Study Description",
       dataIndex: "study_description",
     },
+    
     {
       title: "Study History",
       dataIndex: "study_history",
     },
+    
     {
       title: "Study Date",
       dataIndex: "study_date",
     },
+    
     {
       title: "Status",
       dataIndex: "study_status",
@@ -119,7 +142,7 @@ const index = () => {
             loading={isLoading}
             className="Billing-table"
             scroll={{
-              x: 2000,
+              x: 1800,
               y:"45vh"
             }}
           />
