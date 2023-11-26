@@ -1,11 +1,14 @@
 import React, { useContext, useEffect, useState } from 'react'
 import TableWithFilter from '../../components/TableWithFilter'
-import EditActionIcon from '../../components/EditActionIcon'
+import EditActionIcon from '../../components/EditActionIcon' ; 
+import { DeleteOutlined } from '@ant-design/icons';
 import { getReportList } from '../../apis/studiesApi'
 import { useBreadcrumbs } from '../../hooks/useBreadcrumbs'
-import { Space } from 'antd'
+import { Button, Space, Popconfirm } from 'antd'
 import { useNavigate } from 'react-router-dom'
-import { UserPermissionContext } from '../../hooks/userPermissionContext'
+import { UserPermissionContext } from '../../hooks/userPermissionContext' ; 
+import APIHandler from '../../apis/apiHandler';
+import NotificationMessage from '../../components/NotificationMessage';
 
 const index = () => {
   const [reportsData, setReportsData] = useState([])
@@ -22,7 +25,9 @@ const index = () => {
   }, [])
 
   const retrieveReportsData = pagination => {
+
     setIsLoading(true)
+  
     const currentPagination = pagination || pagi
     getReportList({ page_number: currentPagination.page, page_limit: 10 })
       .then(res => {
@@ -42,6 +47,29 @@ const index = () => {
 
   const editActionHandler = id => {
     navigate(`/reports/${id}/edit`)
+  }
+
+  const DeleteTemplateOptionHandler = async (id) => {
+
+    setIsLoading(true) ; 
+
+    let responsePayload = { "id": id} ; 
+
+    let responseData = await APIHandler("POST", responsePayload, "report/v1/deleteReport") ; 
+
+    if (responseData === false) {
+
+      NotificationMessage("warning", "Network request failed") ; 
+    
+    } else if (responseData['status'] === true){
+
+      NotificationMessage("success", "Successfully delete template") ; 
+    
+      retrieveReportsData() ; 
+    } else {
+
+      NotificationMessage("warning", "Network request failed", responseData['message']) ; 
+    }
   }
 
   const checkPermissionStatus = name => {
@@ -79,11 +107,27 @@ const index = () => {
       width: window.innerWidth < 650 ? '1%' : '10%',
       render: (_, record) => (
         <Space style={{ display: 'flex', justifyContent: 'space-evenly' }}>
+
           {checkPermissionStatus('Edit template option') && (
             <EditActionIcon
               editActionHandler={() => editActionHandler(record.id)}
             />
           )}
+          
+          {checkPermissionStatus('Delete template option') && (
+            <Popconfirm
+              title = "Delete template"
+              description = "Are you sure you want to delete this template ?"
+              onConfirm={() => DeleteTemplateOptionHandler(record.id)}
+              okText = "Yes"
+              cancelText = "No"
+            >
+              <Button>
+                <DeleteOutlined/>
+              </Button>
+            </Popconfirm>
+          )}
+
         </Space>
       )
     }
