@@ -6,6 +6,7 @@ import { Space, Button, Tooltip, Popconfirm } from 'antd'
 import { DeleteOutlined, QuestionCircleOutlined } from '@ant-design/icons'
 import EditActionIcon from '../../components/EditActionIcon'
 import StudyFilterModal from '../../components/StudyFilterModal'
+import DeleteActionIcon from '../../components/DeleteActionIcon'
 import { UserPermissionContext } from '../../hooks/userPermissionContext'
 import NotificationMessage from '../../components/NotificationMessage'
 import APIHandler from '../../apis/apiHandler'
@@ -111,9 +112,10 @@ const index = () => {
                 />
               }
               onConfirm={() => DeleteFilterOptionHandler(record.id)}>
-              <Button type="primary" shape="circle" 
-                icon = {<DeleteOutlined color="red"/>} 
-                className='Filter-delete-option' />
+              <DeleteActionIcon
+                deleteActionHandler={() => deleteParticularStudy(record?.id)}
+                />
+
             </Popconfirm>
           )}
         </Space>
