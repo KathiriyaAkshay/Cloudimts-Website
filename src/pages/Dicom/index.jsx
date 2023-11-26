@@ -34,6 +34,7 @@ import {
 import AssignStudy from '../../components/Studies/AssignStudy'
 import QuickFilterModal from '../../components/QuickFilterModal'
 import { BsChat, BsEyeFill } from 'react-icons/bs'
+import { AiTwotoneEdit } from "react-icons/ai";
 import { IoIosDocument, IoIosShareAlt } from 'react-icons/io'
 import { MdOutlineHistory } from 'react-icons/md'
 import { AuditOutlined } from '@ant-design/icons'
@@ -64,8 +65,7 @@ const Dicom = () => {
   const [isReportModalOpen, setIsReportModalOpen] = useState(false)
   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false)
   const [isAssignModifiedModalOpen, setIsAssignModifiedModalOpen] = useState(true)
-  const [IsEditSeriesIdModifiedOpen, setIsEditSeriesIdModifiedOpen] =
-  useState(true)
+  const [isEditSeriesIdModifiedOpen, setIsEditSeriesIdModifiedOpen] = useState(false) ; 
 
   const [isShareStudyModalOpen, setIsShareStudyModalOpen] = useState(false)
 
@@ -120,9 +120,7 @@ const Dicom = () => {
   } = useContext(StudyDataContext)
 
   const { studyIdArray, setStudyIdArray } = useContext(StudyIdContext)
-  const { isFilterSelected, isAdvanceSearchSelected } = useContext(
-    FilterSelectedContext
-  )
+  const { isFilterSelected, isAdvanceSearchSelected } = useContext( FilterSelectedContext ) ; 
 
   const [quickFilterPayload, setQuickFilterPayload] = useState({})
 
@@ -133,10 +131,6 @@ const Dicom = () => {
   const [previousSeriesResponse, setPreviousSeriesResponse] = useState(null)
 
   const [notificationValue, setNotificationValue] = useState(0);  
-
-  // Quick Assign Studies option 
-  const [quickAssignStudy, settQuickAssignStudy] = useState(false);
-  const [totalStudies, setTotalStudies] = useState(null) ; 
 
   const SetupGenralChatNotification = () => {
     const ws = new WebSocket(`${BASE_URL}genralChat/`)
@@ -640,6 +634,27 @@ const Dicom = () => {
     },
     
     checkPermissionStatus('Study chat option') && {
+      title: 'Edit seriesid',
+      dataIndex: 'chat',
+      fixed: "right", 
+      className: `${
+        checkPermissionStatus('Study chat option') ? '' : 'column-display-none'
+      }`,
+      render: (text, record) => (
+        <Tooltip title={`${record.patient_id} | ${record.created_at}`}>
+          <AiTwotoneEdit
+            className='action-icon action-icon-primary'
+            onClick={() => {
+              setSeriesID(record.series_id)
+              setStudyID(record.id)
+              setIsEditSeriesIdModifiedOpen(true)``
+            }}
+          />
+        </Tooltip>
+      )
+    },
+    
+    checkPermissionStatus('Study chat option') && {
       title: 'Chat',
       dataIndex: 'chat',
       fixed: "right", 
@@ -961,12 +976,14 @@ const Dicom = () => {
       />
     
       {/* Edit Series Id popup */}
-        <EditSeriesId
-            isEditSeriesIdModifiedOpen={true}
-            setIsEditSeriesIdModifiedOpen={setIsEditSeriesIdModifiedOpen}
-            studyID={studyID}
-            setStudyID={setStudyID}
-        />
+      <EditSeriesId
+        isEditSeriesIdModifiedOpen={isEditSeriesIdModifiedOpen}
+        setIsEditSeriesIdModifiedOpen={setIsEditSeriesIdModifiedOpen}
+        studyID={studyID}
+        setStudyID={setStudyID}
+        seriesId={seriesID}
+        setPagination={setPagination}
+      />
 
 
       {/* ==== Edit study details option modal =====  */}
@@ -1170,11 +1187,6 @@ const Dicom = () => {
         </Spin>
       </Modal>
 
-      {/* ==== Assign studies option modal ====  */}
-
-      <Modal title = "Assign study">
-
-      </Modal>
     </>
   )
 }

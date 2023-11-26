@@ -1,12 +1,5 @@
 import { Form, List, Modal, Select, Spin, Tag, Typography, Input } from 'antd'
 import React, { useEffect, useState, useContext } from 'react'
-import {
-  fetchAssignStudy,
-  getStudyData,
-  postAssignStudy,
-  uploadImage
-} from '../apis/studiesApi'
-import { omit } from 'lodash'
 import NotificationMessage from './NotificationMessage'
 import APIHandler from '../apis/apiHandler'
 import { StudyIdContext } from '../hooks/studyIdContext'
@@ -15,66 +8,39 @@ const EditSeriesId = ({
   isEditSeriesIdModifiedOpen,
   setIsEditSeriesIdModifiedOpen,
   studyID,
-  setStudyID
+  setStudyID, 
+  seriesId, 
+  setPagination
 }) => {
-  const [isLoading, setIsLoading] = useState(false)
-  const [options, setOptions] = useState([])
-  const [form] = Form.useForm()
-  const { studyIdArray, setStudyIdArray } = useContext(StudyIdContext)
+  const [isLoading, setIsLoading] = useState(false) ; 
+  const [form] = Form.useForm() ; 
+  const { studyIdArray, setStudyIdArray } = useContext(StudyIdContext) ; 
 
-  // Fetch radiologist name based on Institution id
-
-  const FetchRadiologist = async () => {
-    let requestPayload = {}
-
-    let responseData = await APIHandler(
-      'POST',
-      requestPayload,
-      'institute/v1/fetch-radiologist-name'
-    )
-
-    if (responseData['status'] === true) {
-      const resData = responseData['data'].map(element => ({
-        label: element.name,
-        value: element.id
-      }))
-
-      setOptions(resData)
-    }
-  }
-
-  useEffect(() => {
-    FetchRadiologist()
-  }, [])
-
-  const handleSubmit = async values => {
-    setIsLoading(true)
+  const handleSubmit = async (values) => {    
+    setIsLoading(true) ; 
 
     let requestPayload = {
-      studyId: studyIdArray,
-      assign_user: values?.radiologist
+      "id": studyID, 
+      "updated_series_id": values?.seriesId
     }
 
-    let responseData = await APIHandler(
-      'POST',
-      requestPayload,
-      'studies/v1/quick-assign-study'
-    )
+    let responseData = await APIHandler("POST", requestPayload, "studies/v1/edit-series-id") ; 
 
-    setIsLoading(false)
+    setIsLoading(false) ; 
 
-    if (responseData === false) {
-      NotificationMessage('warning', 'Network request failed')
-    } else if (responseData['status'] === true) {
-      setIsEditSeriesIdModifiedOpen(false)
-      setStudyIdArray([])
-      NotificationMessage('success', 'Study assign successfully')
+    if (responseData === false){
+
+      NotificationMessage("warning", "Network request failed") ; 
+    
+    } else if (responseData['status'] === true){
+
+      setIsEditSeriesIdModifiedOpen(false) ; 
+      NotificationMessage("success", "Study seriesId updated successfully") ; 
+      setPagination((prev) => ({ ...prev, page: 1 }));
+
     } else {
-      NotificationMessage(
-        'warning',
-        'Network request failed',
-        responseData['message']
-      )
+
+      NotificationMessage("warning", responseData['message']) ; 
     }
   }
 
@@ -106,13 +72,10 @@ const EditSeriesId = ({
             alignItems: 'center'
           }}
         >
-          <div>Edit Series Id</div>
+          <div>StudyId - {studyID}</div>
         </div>
 
-        <div
-          className='Study-modal-input-option-division'
-          style={{ borderTop: '0px', paddingTop: 0 }}
-        >
+        <div className='Study-modal-input-option-division' style={{ borderTop: '0px', paddingTop: 0 }} >
           <div className='assign_studies_all_id_list'>
             {studyIdArray.map(element => {
               return (
@@ -138,10 +101,11 @@ const EditSeriesId = ({
                 form={form}
                 onFinish={handleSubmit}
                 className='mt'
+                initialValues={{seriesId:seriesId}}
               >
                 <Form.Item
-                  label='Input manually'
-                  name='radiologist'
+                  label='Provide updated seriesId'
+                  name='seriesId'
                   className='category-select'
                   rules={[
                     {
@@ -151,7 +115,7 @@ const EditSeriesId = ({
                   ]}
                   style={{ marginTop: 'auto', width: '100%' }}
                 >
-                  <Input placeholder='Basic usage' />
+                  <Input placeholder='Update seriesd id' />
 
                 </Form.Item>
               </Form>
