@@ -516,6 +516,7 @@ const Dicom = () => {
   }
 
   const columns = [
+
     checkPermissionStatus('View Patient id') && {
       title: "Patient's Id",
       dataIndex: 'patient_id',
@@ -523,6 +524,7 @@ const Dicom = () => {
         checkPermissionStatus('View Patient id') ? '' : 'column-display-none'
       }`
     },
+    
     checkPermissionStatus('View Patient name') && {
       title: "Patient's Name",
       dataIndex: 'name',
@@ -530,6 +532,7 @@ const Dicom = () => {
         checkPermissionStatus('View Patient name') ? '' : 'column-display-none'
       }`
     },
+    
     checkPermissionStatus('Study id') && {
       title: 'Study Id',
       dataIndex: 'study_id',
@@ -544,33 +547,40 @@ const Dicom = () => {
       title: 'Status',
       dataIndex: 'status',
       render: (text, record) => (
-        <Tag
-          color={
-            text === 'New'
-              ? 'success'
-              : text === 'Assigned'
-              ? 'blue'
-              : text === 'Viewed'
-              ? 'cyan'
-              : text === 'ViewReport'
-              ? 'lime'
-              : text === 'Reporting'
-              ? 'magenta'
-              : text === 'CloseStudy'
-              ? 'red'
-              : 'warning'
-          }
-          style={{ textAlign: 'center', fontWeight: '600' }}
-        >
-          {text}
-        </Tag>
+        <Tooltip title={`${record.patient_id} | ${record.created_at}`}>
+          <Tag
+            color={
+              text === 'New'
+                ? 'success'
+                : text === 'Assigned'
+                ? 'blue'
+                : text === 'Viewed'
+                ? 'cyan'
+                : text === 'ViewReport'
+                ? 'lime'
+                : text === 'Reporting'
+                ? 'magenta'
+                : text === 'CloseStudy'
+                ? 'red'
+                : 'warning'
+            }
+            style={{ textAlign: 'center', fontWeight: '600' }}
+          >
+            {text}
+          </Tag>
+        </Tooltip>
       )
     },
 
     {
       title: 'Modality',
       dataIndex: 'modality',
-      className: 'Study-count-column'
+      className: 'Study-count-column', 
+      render: (text, record) => (
+        <Tooltip title={`${record.patient_id} | ${record.created_at}`}>
+          {text}
+        </Tooltip>
+      ),
     },
 
     {
@@ -592,6 +602,7 @@ const Dicom = () => {
           : 'column-display-none'
       }`
     },
+    
     checkPermissionStatus('View Study description') && {
       title: 'Description',
       dataIndex: 'study_description',
@@ -599,13 +610,20 @@ const Dicom = () => {
         checkPermissionStatus('View Study description')
           ? ''
           : 'column-display-none'
-      }`
+      }`, 
+      render: (text, record) => (
+        <Tooltip title={`${record.patient_id} | ${record.created_at}`}>
+          {text}
+        </Tooltip>
+      ),
     },
+    
     {
       title: 'Count',
       dataIndex: 'count',
       className: 'Study-count-column'
     },
+    
     checkPermissionStatus('Study chat option') && {
       title: 'Chat',
       dataIndex: 'chat',
@@ -613,9 +631,7 @@ const Dicom = () => {
         checkPermissionStatus('Study chat option') ? '' : 'column-display-none'
       }`,
       render: (text, record) => (
-        // Chat option
-
-        <Tooltip title='Chat'>
+        <Tooltip title={`${record.patient_id} | ${record.created_at}`}>
           <BsChat
             className='action-icon action-icon-primary'
             onClick={() => {
@@ -630,6 +646,7 @@ const Dicom = () => {
         </Tooltip>
       )
     },
+    
     {
       title: 'Actions',
       dataIndex: 'actions',
