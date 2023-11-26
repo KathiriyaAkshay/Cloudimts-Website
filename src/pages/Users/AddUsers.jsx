@@ -251,8 +251,8 @@ const AddUsers = () => {
           '/user/v1/user-update-basic-details',
           {
             ...payload,
-            start_time: values.availability[0].format('HH:mm:ss'),
-            end_time: values.availability[1].format('HH:mm:ss'),
+            start_time: values?.availability[0].format('HH:mm:ss'),
+            end_time: values?.availability[1].format('HH:mm:ss'),
             user_id: id
           },
           { headers: { Authorization: `Bearer ${token}` } }
@@ -792,7 +792,7 @@ const AddUsers = () => {
                   {id && (
                     <Button
                       type='primary'
-                      onClick={() => {handleSubmit()}}
+                      onClick={() => {handleNextStep()}}
                       style={{ marginLeft: '10px' }}
                     >
                       Next
