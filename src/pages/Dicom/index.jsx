@@ -54,6 +54,7 @@ import APIHandler from '../../apis/apiHandler'
 import { saveAs } from 'file-saver'
 import * as XLSX from 'xlsx'
 import AssignStudyModified from '../../components/Studies/AssignStudyModified'
+import EditSeriesId from '../../components/EditSeriesId'
 const BASE_URL = import.meta.env.VITE_APP_SOCKET_BASE_URL
 const Dicom = () => {
   // Modal related useState
@@ -63,6 +64,8 @@ const Dicom = () => {
   const [isReportModalOpen, setIsReportModalOpen] = useState(false)
   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false)
   const [isAssignModifiedModalOpen, setIsAssignModifiedModalOpen] = useState(true)
+  const [IsEditSeriesIdModifiedOpen, setIsEditSeriesIdModifiedOpen] =
+  useState(true)
 
   const [isShareStudyModalOpen, setIsShareStudyModalOpen] = useState(false)
 
@@ -956,6 +959,15 @@ const Dicom = () => {
           onShowSizeChange: onShowSizeChange
         }}
       />
+    
+      {/* Edit Series Id popup */}
+        <EditSeriesId
+            isEditSeriesIdModifiedOpen={true}
+            setIsEditSeriesIdModifiedOpen={setIsEditSeriesIdModifiedOpen}
+            studyID={studyID}
+            setStudyID={setStudyID}
+        />
+
 
       {/* ==== Edit study details option modal =====  */}
 
