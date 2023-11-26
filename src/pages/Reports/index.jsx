@@ -122,7 +122,7 @@ const index = () => {
               okText = "Yes"
               cancelText = "No"
             >
-              <Button>
+              <Button className='error-btn-primary' style={{color:'white'}}>
                 <DeleteOutlined/>
               </Button>
             </Popconfirm>
