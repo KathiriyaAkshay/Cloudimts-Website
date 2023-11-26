@@ -122,7 +122,7 @@ const BasicLayout = ({ children }) => {
     checkPermissionStatus('Show Studies option') && {
       label: <NavLink to={'/studies'}>Studies</NavLink>,
       key: 'studies',
-      icon: <AiOutlineFileSync color='red' />
+      icon: <AiOutlineFileSync />
     },
 
     // Institution option

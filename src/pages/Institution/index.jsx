@@ -230,14 +230,17 @@ const Institution = () => {
           : 'column-display-none'
       }`
     },
+    
     {
       title: 'Country',
       dataIndex: 'country'
     },
+    
     {
       title: 'Allocated Storage',
       dataIndex: 'allocated_storage'
     },
+
     checkPermissionStatus('View Institution space usage') && {
       title: 'Usage',
       dataIndex: 'institution_space_usage',
@@ -246,7 +249,11 @@ const Institution = () => {
           ? ''
           : 'column-display-none'
       }`,
-      render: (text, record) => <Progress percent={text} />
+      render: (text, record) => {
+        let Calculate_usaeg_permission = parseFloat(record.space_usage / record.allocated_storage)*100; 
+        return <Progress percent={Calculate_usaeg_permission} />;
+      }
+      
     },
 
     checkPermissionStatus('View Institution created at') && {
