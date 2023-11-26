@@ -121,8 +121,8 @@ const MessageComp = props => {
             mainData?.includes('PNG') ||
             mainData?.includes('avif') ? (
 
-            <div className='userchat-container mt-3'>
-              <img src={`${mainData}`} loading='lazy'/>
+            <div className='userchat-container mt-3 hw-90'>
+              <img src={`${mainData}`} loading='lazy' className='hw-90'/>
             </div>
 
           ) : mainData?.includes('.mp4') ||
@@ -218,7 +218,7 @@ const MessageComp = props => {
           className='d-flex gap-1 align-items-center'
           style={{ display: 'flex', alignItems: 'center', gap: '10px' }}
         >
-          <img src={chatFileImg} alt='chatFileImg' />
+          <img src={chatFileImg} alt='chatFileImg' /> 
           <span>{data}</span>
         </div>
         <img
@@ -395,7 +395,7 @@ const MessageComp = props => {
                 </div>
               
               }
-
+          
               <span style={{marginLeft : 'auto'}}>
                 {moment(item?.timestamp || item?.timestamp).format('hh:mm')}
               </span>
