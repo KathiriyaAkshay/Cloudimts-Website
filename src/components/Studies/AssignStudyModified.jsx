@@ -117,7 +117,7 @@ const AssignStudyModified = ({
 
           <div className="Assign-study-upload-option-input-layout" style={{marginTop: 20  }}>
 
-            <div className="quick-assign-study-division">
+            <div className="quick-assign-study-division w-100">
 
               <Form
                 labelCol={{
