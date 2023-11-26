@@ -32,7 +32,10 @@ import CustomReportHeaderGenerator from './Popup'
 const { Step } = Steps
 
 const AddInstitution = () => {
-  const { id } = useParams()
+  const { id } = useParams() ; 
+
+  console.log("Institution id information ");
+  console.log(id);
 
   const { changeBreadcrumbs } = useBreadcrumbs()
 
@@ -545,7 +548,7 @@ const AddInstitution = () => {
       value_field: 'select',
       report_value: 'show_patient_info'
     },
-    ...(id !== null
+    ...(id !== null && id !== undefined
       ? [
           {
             report_option: 'Report dataset',
@@ -576,7 +579,7 @@ const AddInstitution = () => {
 
   const uploadSettingsData = [
     {
-      upload_option: 'Modify Study Instance UID before upload',
+      upload_option: 'Modify Study seriesId for Re-upload ',
       value: false
     }
   ]
@@ -756,7 +759,7 @@ const AddInstitution = () => {
                 <Col xs={24} sm={12} md={12} lg={12}>
                   <Form.Item
                     name='allocated_storage'
-                    label='Storage Allocated'
+                    label='Storage Allocated in MB'
                     rules={[
                       {
                         required: true,
@@ -765,7 +768,7 @@ const AddInstitution = () => {
                       }
                     ]}
                   >
-                    <InputNumber placeholder='Enter storage allocated Limit' />
+                    <InputNumber placeholder='Enter storage allocated Limit' type='number' />
                   </Form.Item>
                 </Col>
                 <Col xs={4} sm={4} md={4} lg={2}>
