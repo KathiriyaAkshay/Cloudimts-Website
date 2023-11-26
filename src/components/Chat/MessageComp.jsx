@@ -15,6 +15,7 @@ import DeleteOptionImage from "../../assets/images/delete.png" ;
 import DownloadOptionImage from "../../assets/images/downloads.png" ;
 import PDFOptionImage from "../../assets/images/pdf.png" 
 import NotificationMessage from '../NotificationMessage' ; 
+import { Image } from 'antd'
 
 const MessageComp = props => {
   const navigate = useNavigate()
@@ -122,7 +123,8 @@ const MessageComp = props => {
             mainData?.includes('avif') ? (
 
             <div className='userchat-container mt-3 hw-90'>
-              <img src={`${mainData}`} loading='lazy' className='hw-90'/>
+              <Image src={`${mainData}`} loading='lazy' className='hw-90'/>
+              {/* <img src={`${mainData}`} loading='lazy' className='hw-90'/> */}
             </div>
 
           ) : mainData?.includes('.mp4') ||

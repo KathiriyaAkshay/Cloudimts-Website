@@ -4,6 +4,7 @@ import Document from "../../assets/images/document.svg";
 import Excel from "../../assets/images/microsoft-excel-icon.svg";
 import Word from "../../assets/images/microsoft-word-icon.svg";
 import { MdOutlineClear } from "react-icons/md";
+import { Image } from "antd";
 
 const ChatFileUploader = (props) => {
   const {
