@@ -17,12 +17,10 @@ const AssignStudyModified = ({
   studyID,
   setStudyID,
 }) => {
-  const [modalData, setModalData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [options, setOptions] = useState([]);
-  const [multipleImageFile, setMultipleImageFile] = useState([]);
   const [form] = Form.useForm();
-  const { studyIdArray } = useContext(StudyIdContext) ; 
+  const { studyIdArray, setStudyIdArray } = useContext(StudyIdContext) ; 
 
   // Fetch radiologist name based on Institution id
 
@@ -48,63 +46,29 @@ const AssignStudyModified = ({
     }
   };
 
+
   useEffect(() => {
     FetchRadiologist() ;
   }, []) ; 
 
   const handleSubmit = async (values) => {
     setIsLoading(true);
-    const payloadObj = omit(values, ["radiologist", "url"]);
-    const images = [];
-    if (values?.url?.fileList) {
-      for (const data of values?.url?.fileList) {
-        try {
-          const formData = {
-            image: data?.originFileObj,
-          };
+  
+    let requestPayload = {"studyId": studyIdArray, "assign_user": values?.radiologist} ; 
+    
+    let responseData = await APIHandler("POST", requestPayload, "studies/v1/quick-assign-study") ; 
 
-          const res = await uploadImage(formData);
-          images.push(res.data.image_url);
-        } catch (err) {
-          console.error(err);
-        }
-      }
-    }
-    try {
-      const modifiedPayload = {
-        ...payloadObj,
-        id: studyID,
-        assign_user: values.radiologist,
-        study_data: {
-          images: !values?.url ? multipleImageFile : images,
-        },
-      };
-      await postAssignStudy(modifiedPayload)
-        .then((res) => {
-          if (res.data.status) {
-            NotificationMessage("success", "Study Assigned Successfully");
-            setIsAssignModifiedModalOpen(false);
-            setStudyID(null);
-            form.resetFields();
-          } else {
-            NotificationMessage(
-              "warning",
-              "Network request failed",
-              res.data.message
-            );
-          }
-        })
-        .catch((err) =>
-          NotificationMessage(
-            "warning",
-            "Network request failed",
-            err.response.data.message
-          )
-        );
-    } catch (err) {
-      NotificationMessage("warning", err);
-    }
     setIsLoading(false);
+
+    if (responseData === false){
+      NotificationMessage("warning", "Network request failed") ; 
+    } else if (responseData['status'] === true){
+      setIsAssignModifiedModalOpen(false) ; 
+      setStudyIdArray([]) ; 
+      NotificationMessage("success", "Study assign successfully") ; 
+    } else{
+      NotificationMessage("warning", "Network request failed", responseData['message']) ; 
+    }
   };
 
   return (
@@ -135,7 +99,7 @@ const AssignStudyModified = ({
             alignItems: "center",
           }}
         >
-          <div>StudyId Info</div>
+          <div>Assign Studyid</div>
         </div>
 
         <div className="Study-modal-input-option-division"  style={{borderTop: "0px", paddingTop: 0}}>
@@ -155,46 +119,47 @@ const AssignStudyModified = ({
 
             <div className="quick-assign-study-division">
 
-              <Form.Item
-                label="Choose Radiologist"
-                name="radiologist"
-                className="category-select"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please select radiologist",
-                  },
-                ]}
-                style={{marginTop: "auto"}}
+              <Form
+                labelCol={{
+                  span: 24,
+                }}
+                wrapperCol={{
+                  span: 24,
+                }}
+                form={form}
+                onFinish={handleSubmit}
+                className="mt"
               >
-                <Select
-                  placeholder="Select Radiologist"
-                  options={options}
-                  showSearch
-                  filterSort={(optionA, optionB) =>
-                    (optionA?.label ?? "")
-                      .toLowerCase()
-                      .localeCompare((optionB?.label ?? "").toLowerCase())
-                  }
-                />
-              </Form.Item>
+                <Form.Item
+                  label="Choose Radiologist"
+                  name="radiologist"
+                  className="category-select"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please select radiologist",
+                    },
+                  ]}
+                  style={{marginTop: "auto", width: "100%"}}
+                >
+                  <Select
+                    placeholder="Select Radiologist"
+                    options={options}
+                    showSearch
+                    filterSort={(optionA, optionB) =>
+                      (optionA?.label ?? "")
+                        .toLowerCase()
+                        .localeCompare((optionB?.label ?? "").toLowerCase())
+                    }
+                  />
+                </Form.Item>
+
+              </Form>
 
             </div>
 
           </div>
 
-          <Form
-            labelCol={{
-              span: 24,
-            }}
-            wrapperCol={{
-              span: 24,
-            }}
-            form={form}
-            onFinish={handleSubmit}
-            className="mt"
-          >
-          </Form>
         </div>
       </Spin>
     </Modal>

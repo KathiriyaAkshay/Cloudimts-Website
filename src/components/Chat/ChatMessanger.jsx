@@ -141,7 +141,7 @@ const ChatMessanger = props => {
 
     if (orderId) {
     
-      const ws = new WebSocket(`ws://0.tcp.in.ngrok.io:13097/ws/personal/${roomName}/`)
+      const ws = new WebSocket(`ws://127.0.0.1:8000/ws/personal/${roomName}/`)
 
       ws.onopen = () => {
         console.log('WebSocket connection opened')

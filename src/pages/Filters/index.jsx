@@ -2,10 +2,13 @@ import React, { useEffect, useState, useContext } from 'react'
 import TableWithFilter from '../../components/TableWithFilter'
 import { getFilterList } from '../../apis/studiesApi'
 import { useBreadcrumbs } from '../../hooks/useBreadcrumbs'
-import { Space } from 'antd'
+import { Space, Button, Tooltip, Popconfirm } from 'antd'
+import { DeleteOutlined, QuestionCircleOutlined } from '@ant-design/icons'
 import EditActionIcon from '../../components/EditActionIcon'
 import StudyFilterModal from '../../components/StudyFilterModal'
 import { UserPermissionContext } from '../../hooks/userPermissionContext'
+import NotificationMessage from '../../components/NotificationMessage'
+import APIHandler from '../../apis/apiHandler'
 
 const index = () => {
   const [filterData, setFilterData] = useState([])
@@ -48,7 +51,23 @@ const index = () => {
   const editActionHandler = id => {
     setFilterID(id)
     setIsFilterModalOpen(true)
+  } 
+
+  const DeleteFilterOptionHandler = async (id) => {
+    setIsLoading(true) ; 
+    let responseData = await APIHandler("POST", {"id" : id}, "studies/v1/delete-filter") ; 
+    setIsLoading(false) ; 
+    
+    if (responseData === false){
+      NotificationMessage("warning", "Network request failed") ; 
+    } else if (responseData['status'] === true){
+      NotificationMessage("success", "Delete filter successfully") ; 
+      retrieveFilterOptions() ; 
+    } else{
+      NotificationMessage("warning", "Network request failed", responseData['message']) ; 
+    }
   }
+
 
   const columns = [
 
@@ -69,6 +88,7 @@ const index = () => {
       width: window.innerWidth < 650 ? '1%' : '10%',
       render: (_, record) => (
         <Space style={{ display: 'flex', justifyContent: 'space-evenly' }}>
+
           {checkPermissionStatus("Edit Filter") && (
             <EditActionIcon
               editActionHandler={() => editActionHandler(record.id)}
@@ -76,9 +96,25 @@ const index = () => {
           )}
     
           {checkPermissionStatus("Delete Filter") && (
-            <EditActionIcon
-              deleteActionHandler={() => deleteActionHandler(record.id)}
-            />
+            // <EditActionIcon
+            //   deleteActionHandler={() => deleteActionHandler(record.id)}
+            // />
+
+            <Popconfirm 
+              title  = "Delete Filter"
+              description = "Are you sure you want delete this filter ?"
+              icon={
+                <QuestionCircleOutlined
+                  style={{
+                    color: 'red',
+                  }}
+                />
+              }
+              onConfirm={() => DeleteFilterOptionHandler(record.id)}>
+              <Button type="primary" shape="circle" 
+                icon = {<DeleteOutlined color="red"/>} 
+                className='Filter-delete-option' />
+            </Popconfirm>
           )}
         </Space>
       )
