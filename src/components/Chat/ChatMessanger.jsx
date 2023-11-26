@@ -233,7 +233,7 @@ const ChatMessanger = props => {
                   }
                 : data
             )
-          } else if (currentDate === timestamp) {
+          } else if (currentDate === timestamp) { 
             return [
               ...prev,
               { date: timestamp, messages: [chatData.payload.data] }

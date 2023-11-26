@@ -5,6 +5,7 @@ import ColBlack from "../../assets/images/dotImg.svg";
 import white_double from "../../assets/images/white-double-check.svg";
 import greycheck from "../../assets/images/grey-check.svg";
 import Col from "../../assets/images/whitcol copy.svg";
+import { Divider } from "antd";
 
 const SingleChatMessanger = (props) => {
   
@@ -37,7 +38,10 @@ const SingleChatMessanger = (props) => {
             className={`${chatfile && "chatfile-style"}`}
           >
             <div className="userchat-date">
+              <Divider style={{fontSize:"1rem"}}>
               <span>{moment(messageData.date).format("DD-MMM-YYYY")}</span>
+
+              </Divider>
             </div>
 
             {messageData?.messages?.map((item, index) => {
