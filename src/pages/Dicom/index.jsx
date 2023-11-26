@@ -522,7 +522,19 @@ const Dicom = () => {
       dataIndex: 'patient_id',
       className: `${
         checkPermissionStatus('View Patient id') ? '' : 'column-display-none'
-      }`
+      }`, 
+      render: (text, record) => (        
+        record.urgent_case ?<>
+          <Tooltip title={`${record.patient_id} | ${record.created_at}`} style={{color: "red"}}>
+            {text}
+          </Tooltip>
+        </>:<>
+          <Tooltip title={`${record.patient_id} | ${record.created_at}`}>
+            {text}
+          </Tooltip>
+        
+        </>
+      ),
     },
     
     checkPermissionStatus('View Patient name') && {
@@ -627,6 +639,7 @@ const Dicom = () => {
     checkPermissionStatus('Study chat option') && {
       title: 'Chat',
       dataIndex: 'chat',
+      fixed: "right", 
       className: `${
         checkPermissionStatus('Study chat option') ? '' : 'column-display-none'
       }`,
