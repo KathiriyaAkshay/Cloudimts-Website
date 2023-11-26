@@ -2166,6 +2166,10 @@ thead>tr>th {
   height: 90%;
   width: 90%;
 }
+.hw-80 {
+  height: 80%;
+  width: 80%;
+}
 
 .w-100{
   width:100%;
@@ -2210,4 +2214,20 @@ thead>tr>th {
 
 .reply-chat-option-image{
   padding: 0.5rem 0;
+}
+
+.chats-modality-status{
+  display:flex;
+  // width: 100%;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.chats-study-id{
+  background-color: #00a0e3 !important;
+  color: white;
+  width: fit-content;
+  padding: 0.3rem;
+  border-radius: 0.2rem;
 }

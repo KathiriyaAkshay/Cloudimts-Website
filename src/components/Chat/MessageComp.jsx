@@ -122,8 +122,8 @@ const MessageComp = props => {
             mainData?.includes('PNG') ||
             mainData?.includes('avif') ? (
 
-            <div className='userchat-container mt-3 hw-90'>
-              <Image src={`${mainData}`} loading='lazy' className='hw-90'/>
+            <div className='userchat-container mt-3 hw-80'>
+              <Image src={`${mainData}`} loading='lazy' className='hw-80'/>
               {/* <img src={`${mainData}`} loading='lazy' className='hw-90'/> */}
             </div>
 

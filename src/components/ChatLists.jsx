@@ -23,7 +23,7 @@ const ChatLists = ({ setSeriesId, setStudyId, setPersonName, studyId, setUrgentC
         if (res.data.status) {
 
           // Configure Room ChatTimestamp
-          
+
           const chatLatestTime = {}
           res['data']['room_timestamp'].forEach(timeStampInfo => {
             chatLatestTime[timeStampInfo.room_id] =
@@ -36,33 +36,33 @@ const ChatLists = ({ setSeriesId, setStudyId, setPersonName, studyId, setUrgentC
           })
 
           const resData = res.data.data.map(data => (
-            
+
             // console.log(data)
-            
+
             {
-            ...data,
-            room_id: data.room.id,
-            name: `${data.room.study.patient.patient_id} | ${data.room.study.patient.patient_name}`,
-            modality: data.room.study.modality,
-            status: data.room.study.status,
-            urgent_case: data.room.study.urgent_case,
-            study_id: data.room.study.id,
-            series_id: data.room.study.series_id,
-            profile: ProfileImage,
-            latest_timestamp: chatLatestTime[data.room.id] || null
-          }
-          
-          )) 
+              ...data,
+              room_id: data.room.id,
+              name: `${data.room.study.patient.patient_id} | ${data.room.study.patient.patient_name}`,
+              modality: data.room.study.modality,
+              status: data.room.study.status,
+              urgent_case: data.room.study.urgent_case,
+              study_id: data.room.study.id,
+              series_id: data.room.study.series_id,
+              profile: ProfileImage,
+              latest_timestamp: chatLatestTime[data.room.id] || null
+            }
+
+          ))
 
           const sortedData = resData.sort((a, b) => {
             const timestampA = new Date(a.latest_timestamp || '1970-01-01'); // Assuming default date is '1970-01-01'
             const timestampB = new Date(b.latest_timestamp || '1970-01-01');
-          
+
             return timestampB - timestampA; // Sort as Date objects in descending order
           });
 
           setChatListData([...sortedData])
-        
+
         } else {
           NotificationMessage(
             'warning',
@@ -103,13 +103,12 @@ const ChatLists = ({ setSeriesId, setStudyId, setPersonName, studyId, setUrgentC
           <>
             <div
               key={data.study_id}
-              className={`chat-list-div ${
-                studyId == data.study_id && `chat-list-div-active`
-              }`}
+              className={`chat-list-div ${studyId == data.study_id && `chat-list-div-active`
+                }`}
               onClick={() => {
                 setSeriesId(data.series_id)
                 setStudyId(data.study_id)
-                setPersonName(data.name)  
+                setPersonName(data.name)
                 setUrgentCase(data.urgent_case)
               }}
             >
@@ -138,36 +137,42 @@ const ChatLists = ({ setSeriesId, setStudyId, setPersonName, studyId, setUrgentC
                   </Typography>
 
                   <div className='study-description-data'>
-                    
-                    <Typography
-                      className='particular-study-chat-description'
-                      style={{ fontSize: '12px' }}
-                    >
-                      <span style={{ color: '#A6A6A6', fontWeight: 600 }}>
-                        StudyId -{' '}
-                      </span>
-                      {data.id}
-                    </Typography>
 
                     <Typography
                       className='particular-study-chat-description'
                       style={{ fontSize: '12px' }}
                     >
-                      <span style={{ color: '#A6A6A6', fontWeight: 600 }}>
-                        Modality -{' '}
-                      </span>
-                      {data.modality}
-                    </Typography>
+                      <div className='chats-study-id'>
+                        <span style={{fontWeight: 600 }}>
+                          StudyId -{' '}
+                        </span>
+                        {data.id}
 
-                    <Typography
-                      className='particular-study-chat-description'
-                      style={{ fontSize: '12px' }}
-                    >
-                      <span style={{ color: '#A6A6A6', fontWeight: 600 }}>
-                        Status -{' '}
-                      </span>
-                      {data.status}
+                      </div>
+
                     </Typography>
+                    <div className='chats-modality-status'>
+                      <Typography
+                        className='particular-study-chat-description'
+                        style={{ fontSize: '12px' }}
+                      >
+                        <span style={{ color: '#A6A6A6', fontWeight: 600 }}>
+                          Modality -{' '}
+                        </span>
+                        {data.modality}
+                      </Typography>
+
+                      <Typography
+                        className='particular-study-chat-description'
+                        style={{ fontSize: '12px' }}
+                      >
+                        <span style={{ color: '#A6A6A6', fontWeight: 600 }}>
+                          Status -{' '}
+                        </span>
+                        {data.status}
+                      </Typography>
+                    </div>
+
 
                     {data.latest_timestamp !== null ? (
                       <>
