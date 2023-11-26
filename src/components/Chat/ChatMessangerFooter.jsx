@@ -38,7 +38,7 @@ const ChatMessangerFooter = (props) => {
     if (imageStore.length !== 0){
       layoutHeight("55vh") ; 
     } else{
-      layoutHeight("71vh") ;
+      layoutHeight("83vh") ;
     }
   }, [imageStore])
 
@@ -54,6 +54,7 @@ const ChatMessangerFooter = (props) => {
   // Enter key event press hanlder 
   const handleKeyPress = (e) => {
     if (e.key === "Enter"){
+      // layoutHeight("83vh") ; 
       sendMessage() ; 
     }
   }

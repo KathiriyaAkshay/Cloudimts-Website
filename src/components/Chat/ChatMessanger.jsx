@@ -17,7 +17,7 @@ import {
 import { RoomDataContext } from '../../hooks/roomDataContext' ; 
 import NotificationMessage from '../NotificationMessage' ; 
 import PDFOptionImage from "../../assets/images/pdf.png" ; 
-
+const WEBSOCKET_URL= import.meta.env.VITE_APP_SOCKET_BASE_URL;
 const ChatMessanger = props => {
   const {
     handleChatPopUp,
@@ -141,7 +141,7 @@ const ChatMessanger = props => {
 
     if (orderId) {
     
-      const ws = new WebSocket(`ws://127.0.0.1:8000/ws/personal/${roomName}/`)
+      const ws = new WebSocket(`${WEBSOCKET_URL}personal/${roomName}/`)
 
       ws.onopen = () => {
         console.log('WebSocket connection opened')
