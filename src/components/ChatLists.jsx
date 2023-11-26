@@ -4,6 +4,7 @@ import UrgentCase from '../assets/images/urgentCase.png'
 import NormalCase from '../assets/images/normalCase.png'
 import { Divider, Typography } from 'antd'
 import { getAllChatList } from '../apis/studiesApi'
+import NotificationMessage from './NotificationMessage'
 
 const ChatLists = ({ setSeriesId, setStudyId, setPersonName, studyId, setUrgentCase }) => {
   const [chatListData, setChatListData] = useState([])
@@ -20,14 +21,25 @@ const ChatLists = ({ setSeriesId, setStudyId, setPersonName, studyId, setUrgentC
     })
       .then(res => {
         if (res.data.status) {
+
           // Configure Room ChatTimestamp
+          
           const chatLatestTime = {}
           res['data']['room_timestamp'].forEach(timeStampInfo => {
             chatLatestTime[timeStampInfo.room_id] =
               timeStampInfo.latest_timestamp
           })
 
-          const resData = res.data.data.map(data => ({
+          res.data.data.map((data) => {
+            console.log("New chat information =========>");
+            console.log(data);
+          })
+
+          const resData = res.data.data.map(data => (
+            
+            // console.log(data)
+            
+            {
             ...data,
             room_id: data.room.id,
             name: `${data.room.study.patient.patient_id} | ${data.room.study.patient.patient_name}`,
@@ -38,9 +50,19 @@ const ChatLists = ({ setSeriesId, setStudyId, setPersonName, studyId, setUrgentC
             series_id: data.room.study.series_id,
             profile: ProfileImage,
             latest_timestamp: chatLatestTime[data.room.id] || null
-          }))
+          }
+          
+          )) 
 
-          setChatListData([...resData])
+          const sortedData = resData.sort((a, b) => {
+            const timestampA = new Date(a.latest_timestamp || '1970-01-01'); // Assuming default date is '1970-01-01'
+            const timestampB = new Date(b.latest_timestamp || '1970-01-01');
+          
+            return timestampB - timestampA; // Sort as Date objects in descending order
+          });
+
+          setChatListData([...sortedData])
+        
         } else {
           NotificationMessage(
             'warning',
@@ -116,6 +138,17 @@ const ChatLists = ({ setSeriesId, setStudyId, setPersonName, studyId, setUrgentC
                   </Typography>
 
                   <div className='study-description-data'>
+                    
+                    <Typography
+                      className='particular-study-chat-description'
+                      style={{ fontSize: '12px' }}
+                    >
+                      <span style={{ color: '#A6A6A6', fontWeight: 600 }}>
+                        StudyId -{' '}
+                      </span>
+                      {data.id}
+                    </Typography>
+
                     <Typography
                       className='particular-study-chat-description'
                       style={{ fontSize: '12px' }}
