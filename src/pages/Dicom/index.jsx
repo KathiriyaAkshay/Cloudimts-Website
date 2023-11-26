@@ -633,12 +633,12 @@ const Dicom = () => {
       className: 'Study-count-column'
     },
     
-    checkPermissionStatus('Study chat option') && {
+    checkPermissionStatus('Edit SeriesId option') && {
       title: 'Edit seriesid',
       dataIndex: 'chat',
       fixed: "right", 
       className: `${
-        checkPermissionStatus('Study chat option') ? '' : 'column-display-none'
+        checkPermissionStatus('Edit SeriesId option') ? '' : 'column-display-none'
       }`,
       render: (text, record) => (
         <Tooltip title={`${record.patient_id} | ${record.created_at}`}>
