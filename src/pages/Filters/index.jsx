@@ -81,6 +81,11 @@ const index = () => {
       title: 'Created At',
       dataIndex: 'created_at'
     },
+
+    {
+      title: 'Updated at',
+      dataIndex: 'updated_at'
+    },
     
     {
       title: 'Actions',
@@ -97,10 +102,6 @@ const index = () => {
           )}
     
           {checkPermissionStatus("Delete Filter") && (
-            // <EditActionIcon
-            //   deleteActionHandler={() => deleteActionHandler(record.id)}
-            // />
-
             <Popconfirm 
               title  = "Delete Filter"
               description = "Are you sure you want delete this filter ?"
