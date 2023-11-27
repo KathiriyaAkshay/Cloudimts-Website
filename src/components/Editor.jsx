@@ -1,21 +1,20 @@
 import { CKEditor } from '@ckeditor/ckeditor5-react'
 import React, { useContext, useEffect, useState } from 'react'
 import '../../ckeditor5/build/ckeditor'
-import { Button, Card, Col, Divider, Row, Spin, Typography } from 'antd'
+import { Button, Card, Col, Divider, Row, Spin, Typography, Input, Select, Form } from 'antd'
 import {
   fetchTemplate,
   fetchUserSignature,
-  getMoreDetails,
   saveAdvancedFileReport
 } from '../apis/studiesApi'
 import { ReportDataContext } from '../hooks/reportDataContext'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
-import image from '../assets/images/backgroundImg.jpg'
 import Slider from 'react-slick'
 import NotificationMessage from './NotificationMessage'
 import { useNavigate } from 'react-router-dom'
 import APIHandler from '../apis/apiHandler'
+import { descriptionOptions } from '../helpers/utils'
 
 const Editor = ({ id }) => {
   const [editorData, setEditorData] = useState('')
@@ -35,9 +34,13 @@ const Editor = ({ id }) => {
   ] = useState(false)
   const [isStudyDescriptionInserted, setIsStudyDescriptionInserted] =
     useState(false)
-  const [institutionReport, setInstitutionReport] = useState({})
-  const [referenceImageCount, setReferenceImageCount] = useState(1)
-  const [seriesId, setSeriesId] = useState(null)
+
+  const [institutionReport, setInstitutionReport] = useState({}) ; 
+  const [referenceImageCount, setReferenceImageCount] = useState(1) ; 
+  const [seriesId, setSeriesId] = useState(null) ; 
+
+  const [form] = Form.useForm() ; 
+  const [reportStudyDescription, setReportStudyDescription] = useState(null) ; 
 
   useEffect(() => {
     setSelectedItem(prev => ({
@@ -56,6 +59,9 @@ const Editor = ({ id }) => {
 
   useEffect(() => {
     if (selectedItem?.templateId) {
+      setIsPatientInformationInserted(false) ; 
+      setIsInstitutionInformationInserted(false) ; 
+      setIsStudyDescriptionInserted(false) ; 
       retrieveTemplateData()
     }
   }, [selectedItem?.templateId])
@@ -121,17 +127,21 @@ const Editor = ({ id }) => {
     )
 
     if (responseData === false) {
-      NotificationMessage('warning', 'Network request failed')
+      NotificationMessage('warning', 'Network request failed') ; 
+
     } else if (responseData['status'] === true) {
+      
       let Institution_id = responseData['data']['institution_id']
       let SeriesIdValue = responseData['data']['series_id']
 
-      setSeriesId(SeriesIdValue)
+      setSeriesId(SeriesIdValue) ; 
 
       let institutionReportPayload = {
         institution_id: Institution_id,
         study_id: id
-      }
+      } ; 
+
+      setCardDetails({"Study_description": responseData['data']?.Study_description})
 
       let reportResponseData = await APIHandler(
         'POST',
@@ -254,28 +264,41 @@ const Editor = ({ id }) => {
   const [imageSlider, setImageSlider] = useState([])
 
   const handleReportSave = async () => {
-    setIsLoading(true)
-    await saveAdvancedFileReport({
-      id,
-      report: `${editorData} ${`<p style="text-align: right;"><img src=${signatureImage} alt="signature image" style="width:100px;height:80px;text-align: right;"></p>`} ${`<p style="text-align: right;">${username}</p>`}`,
-      report_study_description: 'Advance'
-    })
-      .then(res => {
-        if (res.data.status) {
-          NotificationMessage('success', 'Advanced Report Saved Successfully')
-          navigate(-1)
-        } else {
-          NotificationMessage(
-            'warning',
-            'Network request failed',
-            res.data.message
-          )
-        }
+    
+    if (reportStudyDescription == null){
+      
+      NotificationMessage("warning", "Please, Select report study description")
+      
+    } else {
+      
+      setIsLoading(true) ; 
+      await saveAdvancedFileReport({
+        id,
+        report: `${editorData} ${`<p style="text-align: right;"><img src=${signatureImage} alt="signature image" style="width:100px;height:80px;text-align: right;"></p>`} ${`<p style="text-align: right;">${username}</p>`}`,
+        report_study_description: reportStudyDescription
       })
-      .catch(err => NotificationMessage('warning', err.response.data.message))
-    setIsLoading(false)
+        .then(res => {
+          if (res.data.status) {
+            NotificationMessage('success', 'Your report submit successfully')
+            navigate(-1)
+          } else {
+            NotificationMessage(
+              'warning',
+              'Network request failed',
+              res.data.message
+            )
+          }
+        })
+        .catch(err => NotificationMessage('warning', err.response.data.message))
+      setIsLoading(false)
+    }
+
+
   }
 
+  const StudyDescriptionChangeHandler  = (selectionOption) => {
+    setReportStudyDescription(selectionOption) ; 
+  }
   return (
     <>
       <div>
@@ -287,6 +310,7 @@ const Editor = ({ id }) => {
             <Row gutter={30}>
               <Col xs={24} sm={12} md={12}>
                 <div className='report-details-div'>
+
                   {/* ==== Show Patient details ====  */}
 
                   {selectedItem?.isPatientSelected && (
@@ -415,6 +439,42 @@ const Editor = ({ id }) => {
               </Col>
 
               <Col xs={24} sm={12} md={12} className='report-editor-div'>
+
+                <Form
+                  labelCol={{
+                    span: 24,
+                  }}
+                  wrapperCol={{
+                    span: 24,
+                  }}
+                  form={form}
+                  className='Advance-report-study-description-selection'
+                >
+                  <Form.Item
+                    name="study_description"
+                    label="Modality Study Description"
+                    className="category-select"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please select Modality Study Description",
+                      },
+                    ]}
+                  >
+                      <Select
+                        placeholder="Select Study Description"
+                        options={descriptionOptions}
+                        showSearch
+                        filterSort={(optionA, optionB) =>
+                          (optionA?.label ?? "")
+                            .toLowerCase()
+                            .localeCompare((optionB?.label ?? "").toLowerCase())
+                        }
+                        onChange={StudyDescriptionChangeHandler}
+                      />
+                  </Form.Item>
+                </Form>
+
                 <CKEditor
                   editor={ClassicEditor}
                   data={editorData}
@@ -423,10 +483,15 @@ const Editor = ({ id }) => {
                     setEditorData(data)
                   }}
                 />
+
               </Col>
+
             </Row>
+
           </Spin>
+
         </Card>
+
         <div
           style={{
             display: 'flex',

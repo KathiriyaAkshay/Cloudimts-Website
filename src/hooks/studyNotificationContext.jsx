@@ -54,22 +54,29 @@ const StudyNotificationProvider = ({ children }) => {
   
           // Viewed Study status handler 
           // Previous status -- Assigned, Reporting   
-          const updatedData = studyData.map((data) => {
-            if (data.id === eventData.payload.data.id)
-              return {
-                ...data,
-                status: "Viewed",
-                updated_at: eventData.payload.data.updated_at,
-              };
-            else return data;
+          setStudyData((prevStudyData) => {
+            const updatedData = prevStudyData.map((data) => {
+              if (data.id === eventData.payload.data.id) {
+                return {
+                  ...data,
+                  status: "Viewed",
+                  updated_at: eventData.payload.data.updated_at,
+                };
+              } else {
+                return data;
+              }
+            });
+            return updatedData;
           });
-          setStudyData(updatedData);
         
         } else if (eventData.payload.status === "Delete") {
-          const updatedData = studyData.filter(
-            (data) => data.id !== eventData.payload.data.id
-          );
-          setStudyData(updatedData);
+
+          setStudyData(prevStudyData => {
+            const updatedData = prevStudyData.filter(
+                data => data.id !== eventData.payload.data.id
+            );
+            return updatedData;
+        });
         
         } else if (eventData.payload.status === "Assigned") {
   
@@ -118,30 +125,37 @@ const StudyNotificationProvider = ({ children }) => {
         
         } else if (eventData.payload.status === "Reporting") {
           
-          const updatedData = studyData.map((data) => {
-          
-            if (data.id === eventData.payload.data.id)
-              return {
-                ...data,
-                status: "Reporting",
-                updated_at: eventData.payload.data.updated_at,
-              };
-            else return data;
-          });
-  
-          setStudyData(updatedData);      
+          setStudyData((prevStudyData) => {
+            const updatedData = prevStudyData.map((data) => {
+              if (data.id === eventData.payload.data.id) {
+                return {
+                  ...data,
+                  status: "Reporting",
+                  updated_at: eventData.payload.data.updated_at,
+                };
+              } else {
+                return data;
+              }
+            });
+            return updatedData;
+          });     
         } else if (eventData.payload.status === "Reported") {
   
-          const updatedData = studyData.map((data) => {
-            if (data.id === eventData.payload.data.id)
-              return {
-                ...data,
-                status: "Reported",
-                updated_at: eventData.payload.data.updated_at,
-              };
-            else return data;
+          setStudyData((prevStudyData) => {
+            const updatedData = prevStudyData.map((data) => {
+              if (data.id === eventData.payload.data.id) {
+                return {
+                  ...data,
+                  status: "Reported",
+                  updated_at: eventData.payload.data.updated_at,
+                };
+              } else {
+                return data;
+              }
+            });
+            return updatedData;
           });
-          setStudyData(updatedData);
+          
   
           NotificationMessage(
             "success",
@@ -152,30 +166,37 @@ const StudyNotificationProvider = ({ children }) => {
         
         } else if (eventData.payload.status === "ViewReport") {
   
-          const updatedData = studyData.map((data) => {
-            if (data.id === eventData.payload.data.id)
-              return {
-                ...data,
-                status: "ViewReport",
-                updated_at: eventData.payload.data.updated_at,
-              };
-            else return data;
-          });
-          setStudyData(updatedData);
+          setStudyData((prevStudyData) => {
+            return prevStudyData.map((data) => {
+              if (data.id === eventData.payload.data.id) {
+                return {
+                  ...data,
+                  status: "ViewReport",
+                  updated_at: eventData.payload.data.updated_at,
+                };
+              } else {
+                return data;
+              }
+            });
+          }); 
+          
         
         } else if (eventData.payload.status === "ClosedStudy") {
   
-          const updatedData = studyData.map((data) => {
-            if (data.id === eventData.payload.data.id)
-              return {
-                ...data,
-                status: "ClosedStudy",
-                updated_at: eventData.payload.data.updated_at,
-              };
-            else return data;
+          setStudyData((prevStudyData) => {
+            return prevStudyData.map((data) => {
+              if (data.id === eventData.payload.data.id) {
+                return {
+                  ...data,
+                  status: "ClosedStudy",
+                  updated_at: eventData.payload.data.updated_at,
+                };
+              } else {
+                return data;
+              }
+            });
           });
-        
-          setStudyData(updatedData);
+          
         
         } else if (eventData.payload.status === "RemoveAssign"){
   

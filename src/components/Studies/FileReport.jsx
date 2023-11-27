@@ -8,34 +8,37 @@ import {
   Row,
   Spin,
   Tag,
-  Typography
+  Typography, 
+  Select
 } from 'antd'
 import React, { useEffect, useState } from 'react'
 import {
-  getMoreDetails,
   submitNormalReportFile,
   uploadImage
 } from '../../apis/studiesApi'
 import UploadImage from '../UploadImage'
 import NotificationMessage from '../NotificationMessage'
+import { descriptionOptions } from '../../helpers/utils'
 
 const FileReport = ({
   isFileReportModalOpen,
   setIsFileReportModalOpen,
   studyID,
   setStudyID,
+  setReportModalOpen, 
   modalData
 }) => {
-  // const [modalData, setModalData] = useState([]);
+
   const [isLoading, setIsLoading] = useState(false)
   const [form] = Form.useForm()
   const [imageFile, setImageFile] = useState(null)
   const [imageURL, setImageURL] = useState(null)
-  const [value, setValues] = useState({
-    url: undefined
-  })
+  const [value, setValues] = useState({ url: undefined})
+
+  // ===== Simplified report option handling ====== // 
 
   const submitReport = async (values, report_attach_data = []) => {
+
     await submitNormalReportFile({
       id: studyID,
       report_type: values.report_type,
@@ -44,9 +47,11 @@ const FileReport = ({
     })
       .then(res => {
         if (res.data.status) {
-          NotificationMessage('success', 'File Report Submitted Successfully')
           form.resetFields()
-          setIsFileReportModalOpen(false)
+          setIsFileReportModalOpen(false) ; 
+          setReportModalOpen(false) ; 
+          
+          NotificationMessage('success', 'File Report Submitted Successfully')
         } else {
           NotificationMessage(
             'warning',
@@ -64,41 +69,42 @@ const FileReport = ({
       )
   }
 
-  const handleSubmit = async values => {
-    setIsLoading(true)
-    console.log(values)
-    const report_attach_data = []
-    for (const data of values.url.fileList) {
-      try {
-        const formData = {
-          image: data.originFileObj
-        }
+  const handleSubmit = async (values) => {
 
-        const res = await uploadImage(formData)
-        report_attach_data.push(res.data.image_url)
-      } catch (err) {
-        console.error(err)
+    setIsLoading(true) ; 
+
+    const report_attach_data = [] ; 
+
+    try {
+      for (const data of values.url.fileList) {
+
+        try {
+
+          const formData = {image: data.originFileObj} ; 
+          const res = await uploadImage(formData)
+          report_attach_data.push(res.data.image_url)
+
+        } catch (err) {}
       }
+    } catch (error) {
+      
     }
+    
     try {
       await submitReport(values, report_attach_data)
     } catch (err) {
-      console.error(err)
+      NotificationMessage("warning", "Network request failed", "Failed to file Simplified report") ; 
     }
-    setIsLoading(false)
+    
+    setIsLoading(false) ; 
   }
 
   return (
     <Modal
       title='Simplified Report'
       open={isFileReportModalOpen}
-      onOk={() => {
-        // setIsFileReportModalOpen(false);
-        form.submit()
-      }}
-      onCancel={() => {
-        setIsFileReportModalOpen(false)
-      }}
+      onOk={() => { form.submit() }}
+      onCancel={() => { setIsFileReportModalOpen(false) }}
       width={1000}
       centered
       okText='Save Report'
@@ -156,6 +162,9 @@ const FileReport = ({
           className='mt'
         >
           <Row gutter={15}>
+
+            {/* ===== Report type information =====  */}
+            
             <Col xs={24} md={12}>
               <Form.Item
                 name='report_type'
@@ -173,21 +182,35 @@ const FileReport = ({
                 </Radio.Group>
               </Form.Item>
             </Col>
-            <Col xs={24} md={12}>
+
+            {/* ==== Report study description information =====  */}
+            
+            <Col xs={24} lg={12}>
               <Form.Item
                 name='report_study_description'
                 label='Modality Study Description'
                 rules={[
                   {
                     required: true,
-                    whitespace: true,
-                    message: 'Please enter modality study description'
+                    message: 'Please, Select Study description'
                   }
                 ]}
               >
-                <Input placeholder='Enter modality study description' />
+                <Select
+                  placeholder="Select Study Description"
+                  options={descriptionOptions}
+                  showSearch
+                  filterSort={(optionA, optionB) =>
+                    (optionA?.label ?? "")
+                      .toLowerCase()
+                      .localeCompare((optionB?.label ?? "").toLowerCase())
+                  }
+                />
               </Form.Item>
             </Col>
+
+            {/* ===== Report refernce images information =====  */}
+            
             <Col xs={24} md={12}>
               <UploadImage
                 values={value}
@@ -198,6 +221,7 @@ const FileReport = ({
                 multipleImage={true}
               />
             </Col>
+
           </Row>
         </Form>
       </Spin>

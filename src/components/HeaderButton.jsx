@@ -71,7 +71,7 @@ const HeaderButton = ({
   const { setSelectedItem } = useContext(ReportDataContext)
   const { billingFilterData, setBillingFilterData } =
     useContext(BillingDataContext)
-  const { studyIdArray } = useContext(StudyIdContext)
+  const { studyIdArray, setStudyIdArray } = useContext(StudyIdContext)
   const [templateOptions, setTemplateOptions] = useState([])
   const [isAddFilterModalOpen, setIsAddFilterModalOpen] = useState(false)
   const {
@@ -141,11 +141,13 @@ const HeaderButton = ({
   }
 
   const deleteStudyData = async () => {
+
     if (studyIdArray.length > 0) {
       deleteStudy({ id: studyIdArray })
         .then(res => {
           if (res.data.status) {
-            NotificationMessage('success', res.data.message)
+            NotificationMessage('success', "Study delete successfully") ;
+            setStudyIdArray([]) ; 
           } else {
             NotificationMessage(
               'warning',

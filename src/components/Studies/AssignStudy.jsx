@@ -307,9 +307,12 @@ const AssignStudy = ({
                 item.name === "Series UID" ||
                 item.name === "Assign study time" ||
                 item.name === "Assign study username" ? (
-                  <Tag color="#87d068" className="Assign-study-info-tag">
-                    {item.value}
-                  </Tag>
+                  // console.log()
+                  item.value !== undefined?<>
+                    <Tag color="#87d068" className="Assign-study-info-tag">
+                      {item.value}
+                    </Tag>
+                  </>:<></>
                 ) : (
                   <Typography style={{ fontWeight: "400" }}>
                     {item.value}
