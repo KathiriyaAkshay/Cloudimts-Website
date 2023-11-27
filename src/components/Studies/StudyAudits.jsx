@@ -86,20 +86,10 @@ const StudyAudits = ({ isModalOpen, setIsModalOpen, studyID, setStudyID }) => {
               if (res.data.status) {
                 const resData = res.data.data.map(data => ({
                   ...data,
-                  perform_user: data.perform_user.username
+                  perform_user: data.perform_user.username, 
+                  target_user: data?.target_user?.username
                 }))
                 setAuditData([
-                  ...resData,
-                  ...resData,
-                  ...resData,
-                  ...resData,
-                  ...resData,
-                  ...resData,
-                  ...resData,
-                  ...resData,
-                  ...resData,
-                  ...resData,
-                  ...resData,
                   ...resData
                 ])
               } else {
@@ -176,7 +166,7 @@ const StudyAudits = ({ isModalOpen, setIsModalOpen, studyID, setStudyID }) => {
       )
     },
     {
-      title: 'Performed Type',
+      title: 'Event time',
       dataIndex: 'time',
       sorter: (a, b) => moment(a.time).diff(b.time)
     },

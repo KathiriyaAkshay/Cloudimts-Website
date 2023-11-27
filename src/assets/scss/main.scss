@@ -2230,3 +2230,9 @@ thead>tr>th {
   padding: 0.3rem;
   border-radius: 0.2rem;
 }
+
+.Normal-report-view-option-modal{
+  .ant-modal-body{
+    padding-top: 1rem !important;
+  }
+}

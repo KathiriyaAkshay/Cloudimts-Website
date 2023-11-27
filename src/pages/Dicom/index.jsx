@@ -14,6 +14,7 @@ import {
   Spin,
   Input
 } from 'antd'
+import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons'
 import { useBreadcrumbs } from '../../hooks/useBreadcrumbs'
 import ChatMain from '../../components/Chat/ChatMain'
 import DicomViewer from '../../components/DicomViewer'
@@ -21,7 +22,8 @@ import EditStudy from '../../components/Studies/EditStudy'
 import PatientDetails from '../../components/Studies/PatientDetails'
 import StudyAudits from '../../components/Studies/StudyAudits'
 import StudyReports from '../../components/Studies/StudyReports'
-import ShareStudy from '../../components/Studies/ShareStudy'
+import ShareStudy from '../../components/Studies/ShareStudy' 
+
 import {
   advanceSearchFilter,
   closeStudy,
@@ -432,7 +434,7 @@ const Dicom = () => {
       await updateStudyStatusReported({ id: studyID })
         .then(res => {
           if (res.data.status) {
-            NotificationMessage('success', res.data.message)
+            // NotificationMessage('success', res.data.message)
           } else {
             NotificationMessage(
               'warning',
@@ -523,7 +525,7 @@ const Dicom = () => {
       render: (text, record) => (        
         record.urgent_case ?<>
           <Tooltip title={`${record.patient_id} | ${record.created_at}`} style={{color: "red"}}>
-            {text}
+            <div style={{color: "red"}}>{text}</div>
           </Tooltip>
         </>:<>
           <Tooltip title={`${record.patient_id} | ${record.created_at}`}>
@@ -539,7 +541,20 @@ const Dicom = () => {
       dataIndex: 'name',
       className: `${
         checkPermissionStatus('View Patient name') ? '' : 'column-display-none'
-      }`
+      }`, 
+      render: (text, record) => (        
+        record.urgent_case ?<>
+          <Tooltip title={`${record.patient_id} | ${record.created_at}`} style={{color: "red"}}>
+            <div style={{color: "red"}}>{text}</div>
+          </Tooltip>
+        </>:<>
+          <Tooltip title={`${record.patient_id} | ${record.created_at}`}>
+            {text}
+          </Tooltip>
+        
+        </>
+      ),
+
     },
     
     checkPermissionStatus('Study id') && {
@@ -569,11 +584,16 @@ const Dicom = () => {
                 ? 'lime'
                 : text === 'Reporting'
                 ? 'magenta'
-                : text === 'CloseStudy'
+                : text === 'ClosedStudy'
                 ? 'red'
                 : 'warning'
             }
             style={{ textAlign: 'center', fontWeight: '600' }}
+
+            icon = {
+              text === "ViewReport"?<CheckCircleOutlined></CheckCircleOutlined>:
+              text === "ClosedStudy"?<CloseCircleOutlined></CloseCircleOutlined>:<></>
+            }
           >
             {text}
           </Tag>
@@ -903,7 +923,7 @@ const Dicom = () => {
       updateStudyStatus({ id: record.id })
         .then(res => {
           if (res.data.status) {
-            NotificationMessage('success', res.data.message)
+            // NotificationMessage('success', res.data.message)
           } else {
             NotificationMessage(
               'warning',
