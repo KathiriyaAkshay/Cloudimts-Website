@@ -75,20 +75,19 @@ const FileReport = ({
 
     const report_attach_data = [] ; 
 
-    if (values.uri !== undefined){
+    try {
       for (const data of values.url.fileList) {
+
         try {
-          const formData = {
-            image: data.originFileObj
-          }
-  
+
+          const formData = {image: data.originFileObj} ; 
           const res = await uploadImage(formData)
           report_attach_data.push(res.data.image_url)
-        } catch (err) {
-          console.error(err)
-        }
-      }
 
+        } catch (err) {}
+      }
+    } catch (error) {
+      
     }
     
     try {
