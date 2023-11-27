@@ -118,7 +118,7 @@ const StudyReports = ({
       await viewReported({ id: studyID })
         .then(res => {
           if (res.data.status) {
-            NotificationMessage('success', res.data.message)
+            // NotificationMessage('success', res.data.message)
           } else {
             NotificationMessage(
               'warning',

@@ -613,6 +613,7 @@ const CustomReportHeaderGenerator = ({institutionId, isModalOpen}) => {
             
             } else if (responseData['status'] === true){
 
+                isModalOpen(false) ; 
                 NotificationMessage("success", "Institution report setting update successfully") ; 
             
             }   else {
