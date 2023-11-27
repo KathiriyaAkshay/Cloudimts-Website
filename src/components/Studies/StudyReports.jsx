@@ -68,7 +68,7 @@ const StudyReports = ({
     return permission
   }
 
-  const downloadReport = async id => {
+  const downloadReport = async (id) => { 
 
     let requestPayload = {id: studyID} ; 
 
