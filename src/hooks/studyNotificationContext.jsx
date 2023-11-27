@@ -141,16 +141,21 @@ const StudyNotificationProvider = ({ children }) => {
           });     
         } else if (eventData.payload.status === "Reported") {
   
-          const updatedData = studyData.map((data) => {
-            if (data.id === eventData.payload.data.id)
-              return {
-                ...data,
-                status: "Reported",
-                updated_at: eventData.payload.data.updated_at,
-              };
-            else return data;
+          setStudyData((prevStudyData) => {
+            const updatedData = prevStudyData.map((data) => {
+              if (data.id === eventData.payload.data.id) {
+                return {
+                  ...data,
+                  status: "Reported",
+                  updated_at: eventData.payload.data.updated_at,
+                };
+              } else {
+                return data;
+              }
+            });
+            return updatedData;
           });
-          setStudyData(updatedData);
+          
   
           NotificationMessage(
             "success",

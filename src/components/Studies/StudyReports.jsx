@@ -467,6 +467,7 @@ const StudyReports = ({
       <FileReport
         isFileReportModalOpen={isFileReportModalOpen}
         setIsFileReportModalOpen={setIsFileReportModalOpen}
+        setReportModalOpen = {setIsReportModalOpen}
         studyID={studyID}
         modalData={modalData}
       />
