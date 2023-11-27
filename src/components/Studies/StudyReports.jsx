@@ -167,6 +167,7 @@ const StudyReports = ({
       width: window.innerWidth < 650 ? '1%' : '20%',
       render: (text, record) => (
         <Space style={{ display: 'flex', justifyContent: 'space-evenly' }}>
+          
           {/* ===== View report option ======   */}
 
           <Tooltip title={'View'}>
