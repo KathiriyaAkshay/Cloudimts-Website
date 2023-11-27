@@ -516,7 +516,6 @@
 }
 
 .emoji-container {
-  bottom: 0px !important;
   position: fixed;
   width: -webkit-fill-available;
   overflow-y: auto;
@@ -2093,8 +2092,8 @@ thead>tr>th {
 }
 
 .reply-chat-option-image {
-  height: 30px;
-  width: 30px;
+  height: 50px;
+  width: 50px;
   margin-left: 10px;
   margin-top: auto;
   margin-bottom: auto;
@@ -2166,6 +2165,10 @@ thead>tr>th {
   height: 90%;
   width: 90%;
 }
+.hw-80 {
+  height: 80%;
+  width: 80%;
+}
 
 .w-100{
   width:100%;
@@ -2210,6 +2213,22 @@ thead>tr>th {
 
 .reply-chat-option-image{
   padding: 0.5rem 0;
+}
+
+.chats-modality-status{
+  display:flex;
+  // width: 100%;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.chats-study-id{
+  background-color: #00a0e3 !important;
+  color: white;
+  width: fit-content;
+  padding: 0.3rem;
+  border-radius: 0.2rem;
 }
 
 .Normal-report-view-option-modal{

@@ -629,6 +629,7 @@ const ChatMessanger = props => {
             fileStore={fileStore}
             isChatModule={isChatModule}
             layoutHeight={setLayoutHeight}
+            isDrawerOpen={isDrawerOpen}
             isQuotedMessage = {quotedMessageContainer}
           />
 
