@@ -30,7 +30,6 @@ const APIHandler = async (method, payload, route) => {
         }
 
     } catch (error) {
-        console.log(error);
         return false
     }
 }

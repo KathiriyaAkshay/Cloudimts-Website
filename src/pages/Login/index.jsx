@@ -1,43 +1,57 @@
 import {
   Button,
   Card,
-  Checkbox,
   Col,
   Divider,
   Form,
   Input,
   Row,
   Spin,
-  Tabs
 } from 'antd'
 import { Link, useNavigate } from 'react-router-dom'
 import API from '../../apis/getApi'
-import NotificationMessage from '../../components/NotificationMessage'
 import { useContext, useEffect, useState } from 'react'
-import Typography from 'antd/es/typography/Typography'
 import logo from '../../assets/images/Imageinet-logo.png'
-import { UserDetailsContext } from '../../hooks/userDetailsContext'
+import { UserDetailsContext } from '../../hooks/userDetailsContext' ; 
+import NotificationMessage from '../../components/NotificationMessage' ; 
+import APIHandler from '../../apis/apiHandler'
 
 const Login = () => {
-  const navigate = useNavigate()
-  const [loginForm] = Form.useForm()
-  const [userForm] = Form.useForm()
-  const [isLoading, setIsLoading] = useState(false)
-  const [userData, setUserData] = useState([])
-  const { userDetails, changeUserDetails } = useContext(UserDetailsContext)
+  const navigate = useNavigate() ; 
+  const [loginForm] = Form.useForm() ; 
+  const [userForm] = Form.useForm() ; 
+  const [isLoading, setIsLoading] = useState(false) ; 
+  const { userDetails, changeUserDetails } = useContext(UserDetailsContext) ; 
+
+  const CheckUserCredentails = async () => {
+
+    let responseData = await APIHandler("POST", {}, "owner/v1/user_details_fetch") ; 
+
+    if (responseData['status'] === true){
+      navigate("/studies") ; 
+    }
+  } ; 
+
+  useEffect(() => {
+    CheckUserCredentails() ; 
+  }, []) ; 
 
   const handleSubmit = async values => {
     setIsLoading(true)
     await API.post('/owner/v1/login', values)
       .then(res => {
         if (res.data.status) {
+          
+          // Setup user token information 
           localStorage.setItem('token', res.data.data.accessToken)
 
+          // Setup user all permission id information 
           localStorage.setItem(
             'all_permission_id',
             JSON.stringify(res.data.data.all_permission_institution_id)
           )
 
+          // Setup user all assign id information 
           localStorage.setItem(
             'all_assign_id',
             JSON.stringify(
@@ -45,17 +59,20 @@ const Login = () => {
             )
           )
 
+          // Setup UserId 
           localStorage.setItem('userID', res.data.data.user_id)
 
+          // Setup Role id 
           localStorage.setItem('role_id', res.data.data.rold_id)
 
+          // Setup User custom id 
           localStorage.setItem('custom_user_id', res.data.data.custom_user_id)
 
-          NotificationMessage('success', 'Successfully Log In')
-
+          NotificationMessage('success', 'Successfully Login')
+          
           loginForm.resetFields()
+          navigate('/studies') ; 
 
-          navigate('/studies')
         } else {
           NotificationMessage(
             'warning',
