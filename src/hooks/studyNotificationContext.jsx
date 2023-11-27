@@ -66,10 +66,13 @@ const StudyNotificationProvider = ({ children }) => {
           setStudyData(updatedData);
         
         } else if (eventData.payload.status === "Delete") {
-          const updatedData = studyData.filter(
-            (data) => data.id !== eventData.payload.data.id
-          );
-          setStudyData(updatedData);
+
+          setStudyData(prevStudyData => {
+            const updatedData = prevStudyData.filter(
+                data => data.id !== eventData.payload.data.id
+            );
+            return updatedData;
+        });
         
         } else if (eventData.payload.status === "Assigned") {
   

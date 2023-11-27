@@ -523,7 +523,7 @@ const Dicom = () => {
       render: (text, record) => (        
         record.urgent_case ?<>
           <Tooltip title={`${record.patient_id} | ${record.created_at}`} style={{color: "red"}}>
-            {text}
+            <div style={{color: "red"}}>{text}</div>
           </Tooltip>
         </>:<>
           <Tooltip title={`${record.patient_id} | ${record.created_at}`}>
@@ -539,7 +539,20 @@ const Dicom = () => {
       dataIndex: 'name',
       className: `${
         checkPermissionStatus('View Patient name') ? '' : 'column-display-none'
-      }`
+      }`, 
+      render: (text, record) => (        
+        record.urgent_case ?<>
+          <Tooltip title={`${record.patient_id} | ${record.created_at}`} style={{color: "red"}}>
+            <div style={{color: "red"}}>{text}</div>
+          </Tooltip>
+        </>:<>
+          <Tooltip title={`${record.patient_id} | ${record.created_at}`}>
+            {text}
+          </Tooltip>
+        
+        </>
+      ),
+
     },
     
     checkPermissionStatus('Study id') && {
