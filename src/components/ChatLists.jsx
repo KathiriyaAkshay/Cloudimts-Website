@@ -131,13 +131,15 @@ const ChatLists = ({ setSeriesId, setStudyId, setPersonName, studyId, setUrgentC
                   </>
                 )}
 
-                <div className='study-chat-data'>
+                <div className='study-chat-data w-100'>
                   <Typography className='chat-list-name'>
                     {data.name}
                   </Typography>
 
                   <div className='study-description-data'>
 
+
+                    <div className='chats-modality-status'>
                     <Typography
                       className='particular-study-chat-description'
                       style={{ fontSize: '12px' }}
@@ -151,18 +153,21 @@ const ChatLists = ({ setSeriesId, setStudyId, setPersonName, studyId, setUrgentC
                       </div>
 
                     </Typography>
-                    <div className='chats-modality-status'>
                       <Typography
                         className='particular-study-chat-description'
                         style={{ fontSize: '12px' }}
                       >
-                        <span style={{ color: '#A6A6A6', fontWeight: 600 }}>
+                         <div className='chats-study-id'>
+                        <span style={{ color: 'white', fontWeight: 600,padding:"0.2rem" }}>
                           Modality -{' '}
                         </span>
                         {data.modality}
+                        </div>
                       </Typography>
 
-                      <Typography
+
+                    </div>
+                    <Typography
                         className='particular-study-chat-description'
                         style={{ fontSize: '12px' }}
                       >
@@ -171,7 +176,6 @@ const ChatLists = ({ setSeriesId, setStudyId, setPersonName, studyId, setUrgentC
                         </span>
                         {data.status}
                       </Typography>
-                    </div>
 
 
                     {data.latest_timestamp !== null ? (

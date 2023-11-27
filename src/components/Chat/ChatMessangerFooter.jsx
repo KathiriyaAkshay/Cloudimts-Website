@@ -23,6 +23,7 @@ const ChatMessangerFooter = (props) => {
     fileStore,
     isChatModule,
     layoutHeight, 
+    isDrawerOpen,
     isQuotedMessage
   } = props || {};
 
@@ -33,17 +34,32 @@ const ChatMessangerFooter = (props) => {
       setImageStore(data);
     }
   };
+  const[emojiContainerBottom,setEmojiContainerBottom]=useState("0px")
 
   useEffect(() => {
     if (imageStore.length !== 0){
+      if (isDrawerOpen==true){
+        setEmojiContainerBottom("190px");
+
+      }
+      else{
+        setEmojiContainerBottom("108px");
+
+      }
       layoutHeight("55vh") ; 
     } else{
-      layoutHeight("83vh") ;
+      setEmojiContainerBottom("0px");
+      if (isDrawerOpen==true){
+        layoutHeight("83vh") ;
+      }else{
+        layoutHeight("71vh");
+      }
     }
   }, [imageStore])
 
   const handleImageStore = (e) => {
-    layoutHeight("55vh") ; 
+    layoutHeight("55vh") ;
+
     setImageStore((prev) => [...e.target.files]);
   };
 
@@ -193,7 +209,7 @@ const ChatMessangerFooter = (props) => {
       {emojiClick && (
         <div
           className="emoji-container"
-          style={!isChatModule ? { paddingLeft: "0px", height: "310px" } : {}}
+          style={!isChatModule ? { paddingLeft: "0px", height: "310px",bottom:emojiContainerBottom} : {bottom:emojiContainerBottom}}
         >
           <EmojiPicker
             height="20rem"
