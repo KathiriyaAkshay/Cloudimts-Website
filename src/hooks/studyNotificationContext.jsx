@@ -54,16 +54,20 @@ const StudyNotificationProvider = ({ children }) => {
   
           // Viewed Study status handler 
           // Previous status -- Assigned, Reporting   
-          const updatedData = studyData.map((data) => {
-            if (data.id === eventData.payload.data.id)
-              return {
-                ...data,
-                status: "Viewed",
-                updated_at: eventData.payload.data.updated_at,
-              };
-            else return data;
+          setStudyData((prevStudyData) => {
+            const updatedData = prevStudyData.map((data) => {
+              if (data.id === eventData.payload.data.id) {
+                return {
+                  ...data,
+                  status: "Viewed",
+                  updated_at: eventData.payload.data.updated_at,
+                };
+              } else {
+                return data;
+              }
+            });
+            return updatedData;
           });
-          setStudyData(updatedData);
         
         } else if (eventData.payload.status === "Delete") {
 
