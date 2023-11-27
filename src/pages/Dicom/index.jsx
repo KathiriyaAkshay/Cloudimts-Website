@@ -14,6 +14,7 @@ import {
   Spin,
   Input
 } from 'antd'
+import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons'
 import { useBreadcrumbs } from '../../hooks/useBreadcrumbs'
 import ChatMain from '../../components/Chat/ChatMain'
 import DicomViewer from '../../components/DicomViewer'
@@ -21,7 +22,8 @@ import EditStudy from '../../components/Studies/EditStudy'
 import PatientDetails from '../../components/Studies/PatientDetails'
 import StudyAudits from '../../components/Studies/StudyAudits'
 import StudyReports from '../../components/Studies/StudyReports'
-import ShareStudy from '../../components/Studies/ShareStudy'
+import ShareStudy from '../../components/Studies/ShareStudy' 
+
 import {
   advanceSearchFilter,
   closeStudy,
@@ -582,11 +584,16 @@ const Dicom = () => {
                 ? 'lime'
                 : text === 'Reporting'
                 ? 'magenta'
-                : text === 'CloseStudy'
+                : text === 'ClosedStudy'
                 ? 'red'
                 : 'warning'
             }
             style={{ textAlign: 'center', fontWeight: '600' }}
+
+            icon = {
+              text === "ViewReport"?<CheckCircleOutlined></CheckCircleOutlined>:
+              text === "ClosedStudy"?<CloseCircleOutlined></CloseCircleOutlined>:<></>
+            }
           >
             {text}
           </Tag>

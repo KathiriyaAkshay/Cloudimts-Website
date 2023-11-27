@@ -114,27 +114,25 @@ const StudyReports = ({
   }
 
   const handleStudyStatus = async () => {
-    if (studyStatus === 'Reported') {
-      await viewReported({ id: studyID })
-        .then(res => {
-          if (res.data.status) {
-            // NotificationMessage('success', res.data.message)
-          } else {
-            NotificationMessage(
-              'warning',
-              'Network request failed',
-              res.data.message
-            )
-          }
-        })
-        .catch(err =>
+    await viewReported({ id: studyID })
+      .then(res => {
+        if (res.data.status) {
+          // NotificationMessage('success', res.data.message)
+        } else {
           NotificationMessage(
             'warning',
             'Network request failed',
-            err.response.data.message
+            res.data.message
           )
+        }
+      })
+      .catch(err =>
+        NotificationMessage(
+          'warning',
+          'Network request failed',
+          err.response.data.message
         )
-    }
+      )
   }
 
   const columns = [

@@ -166,16 +166,20 @@ const StudyNotificationProvider = ({ children }) => {
         
         } else if (eventData.payload.status === "ViewReport") {
   
-          const updatedData = studyData.map((data) => {
-            if (data.id === eventData.payload.data.id)
-              return {
-                ...data,
-                status: "ViewReport",
-                updated_at: eventData.payload.data.updated_at,
-              };
-            else return data;
-          });
-          setStudyData(updatedData);
+          setStudyData((prevStudyData) => {
+            return prevStudyData.map((data) => {
+              if (data.id === eventData.payload.data.id) {
+                return {
+                  ...data,
+                  status: "ViewReport",
+                  updated_at: eventData.payload.data.updated_at,
+                };
+              } else {
+                return data;
+              }
+            });
+          }); 
+          
         
         } else if (eventData.payload.status === "ClosedStudy") {
   
