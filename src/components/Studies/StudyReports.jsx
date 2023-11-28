@@ -389,6 +389,14 @@ const StudyReports = ({
     window.open(url, "_blank") ; 
   }
 
+  const WeasisViewerHandler = () => {
+
+    const originalString = '$dicom:rs --url "https://viewer.cloudimts.com/orthanc" -r "patientID=5Yp0E"';
+    let encodedString = encodeURIComponent(originalString);
+    encodedString = "weasis://" + encodedString ; 
+    window.open(encodedString , "_blank") ; 
+  }
+
   return (
     <>
       <Modal
@@ -419,8 +427,11 @@ const StudyReports = ({
                 OHIF Viewer
               </Button>
 
-              <Button key='back' className='Report-modal-option-button'>
-                Web Report
+              {/* ==== Weasis Viewer option =====  */}
+
+              <Button key='back' className='Report-modal-option-button' 
+                onClick={WeasisViewerHandler}>
+                Weasis viewer
               </Button>
 
               {checkPermissionStatus('Report study') && (
