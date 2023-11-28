@@ -39,14 +39,16 @@ const ChatMessangerFooter = (props) => {
   useEffect(() => {
     if (imageStore.length !== 0){
       if (isDrawerOpen==true){
-        setEmojiContainerBottom("190px");
+        setEmojiContainerBottom("5.75rem");
+        layoutHeight("69vh") ; 
+
 
       }
       else{
-        setEmojiContainerBottom("108px");
+        setEmojiContainerBottom("7.5rem");
+        layoutHeight("55vh") ; 
 
       }
-      layoutHeight("55vh") ; 
     } else{
       setEmojiContainerBottom("0px");
       if (isDrawerOpen==true){

@@ -127,12 +127,12 @@ const FileReport = ({
             gutter: 5,
             column: 2
           }}
-          className='queue-status-list'
+          className='queue-status-list h-9'
           dataSource={modalData?.filter(data => data.name !== 'urgent_case')}
           renderItem={item => (
             <List.Item className='queue-number-list'>
               <Typography
-                style={{ display: 'flex', gap: '4px', fontWeight: '600' }}
+                style={{ display: 'flex', gap: '4px', fontWeight: '600',flexWrap:"wrap" }}
               >
                 {item.name}:
                 {item.name === "Patient's id" ||
@@ -151,6 +151,7 @@ const FileReport = ({
           )}
         />
         <Form
+        className="h-21 overflow-y-auto mt-1"
           labelCol={{
             span: 24
           }}
@@ -159,7 +160,6 @@ const FileReport = ({
           }}
           form={form}
           onFinish={handleSubmit}
-          className='mt'
         >
           <Row gutter={15}>
 

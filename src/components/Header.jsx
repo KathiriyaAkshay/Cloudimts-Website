@@ -238,7 +238,7 @@ const BasicLayout = ({ children }) => {
       onCollapse={onCollapse}
       width={240}
     >
-      <Link to='/home'>
+      <Link to='/dashboard'>
         <div className='logo sidebar-logo'>
           <img src={logo} alt='Logo' />
         </div>

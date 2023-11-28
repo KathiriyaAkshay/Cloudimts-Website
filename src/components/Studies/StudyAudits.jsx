@@ -58,10 +58,7 @@ const StudyAudits = ({ isModalOpen, setIsModalOpen, studyID, setStudyID }) => {
               name: 'Study Description',
               value: resData?.Study_description
             },
-            {
-              name: "Patient's comments",
-              value: resData?.Patient_comments
-            },
+           
             {
               name: 'Body Part',
               value: resData?.Study_body_part
@@ -77,7 +74,11 @@ const StudyAudits = ({ isModalOpen, setIsModalOpen, studyID, setStudyID }) => {
             {
               name: 'urgent_case',
               value: resData?.assigned_study_data
-            }
+            },
+            {
+              name: "Patient's comments",
+              value: resData?.Patient_comments
+            },
           ]
           setModalData(modifiedData)
 
@@ -212,7 +213,7 @@ const StudyAudits = ({ isModalOpen, setIsModalOpen, studyID, setStudyID }) => {
           }}
         >
           <div>Patient Info</div>
-          <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: '20px', alignItems: 'center'}}>
             {modalData.find(data => data.name === 'urgent_case')?.value
               ?.urgent_case && <Tag color='error'>Urgent</Tag>}
           </div>
@@ -229,7 +230,7 @@ const StudyAudits = ({ isModalOpen, setIsModalOpen, studyID, setStudyID }) => {
           renderItem={item => (
             <List.Item className='queue-number-list'>
               <Typography
-                style={{ display: 'flex', gap: '4px', fontWeight: '600' }}
+                style={{ display: 'flex', gap: '4px', fontWeight: '600',flexWrap:"wrap" }}
               >
                 {item.name}:
                 {item.name === "Patient's id" ||

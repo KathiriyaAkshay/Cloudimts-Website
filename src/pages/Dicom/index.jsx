@@ -570,6 +570,7 @@ const Dicom = () => {
     {
       title: 'Status',
       dataIndex: 'status',
+    width:"8rem",
       render: (text, record) => (
         <Tooltip title={`${record.patient_id} | ${record.created_at}`}>
           <Tag
@@ -1018,7 +1019,7 @@ const Dicom = () => {
       {/* ==== Assign study option modal ====  */}
 
       <AssignStudy
-        isAssignModalOpen={isAssignModalOpen}
+        isAssignModalOpen={isAssignModalOpen} 
         setIsAssignModalOpen={setIsAssignModalOpen}
         studyID={studyID}
         setStudyID={setStudyID}

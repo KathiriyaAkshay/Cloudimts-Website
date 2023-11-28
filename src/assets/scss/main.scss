@@ -1135,11 +1135,17 @@
 }
 
 .queue-status-list .ant-row div {
-  height: 30px;
+  height: max-content;
 }
 
 .assign-queue-status-list .ant-row div {
-  height: 30px;
+  height: max-content;
+  
+}
+.queue-status-list{
+  overflow-x: hidden;
+  overflow-y: auto;
+
 }
 
 .ant-modal-body {
@@ -2219,7 +2225,7 @@ thead>tr>th {
   display:flex;
   // width: 100%;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: flex-start;
 }
 
@@ -2231,8 +2237,58 @@ thead>tr>th {
   border-radius: 0.2rem;
 }
 
+.chats-study-modality{
+  background-color:transparent;
+  color:  black !important;
+  width: fit-content;
+  padding: 0.3rem;
+  border-radius: 0.2rem;
+}
+
+
 .Normal-report-view-option-modal{
   .ant-modal-body{
     padding-top: 1rem !important;
   }
+}
+
+.h-10{
+  height:10rem;
+}
+.h-15{
+  height:15rem;
+}
+.h-20{
+  height:20rem;
+}
+
+
+.overflow-x-auto{
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.overflow-y-auto{
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.mt-1{
+  margin-top: 0.5rem;
+}
+
+.ant-select-selector .ant-select-selection-placeholder {
+  line-height: 45px !important;
+}
+
+#report_study_description{
+margin-top: 8px !important;
+}
+
+.h-21{
+  height: 21rem;
+}
+
+.h-9{
+  height: 9rem;
 }

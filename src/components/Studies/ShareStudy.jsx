@@ -125,10 +125,7 @@ const ShareStudy = ({
               name: 'Study Description',
               value: resData?.Study_description
             },
-            {
-              name: "Patient's comments",
-              value: resData?.Patient_comments
-            },
+          
             {
               name: 'Body Part',
               value: resData?.Study_body_part
@@ -140,7 +137,11 @@ const ShareStudy = ({
             {
               name: 'Series UID',
               value: resData?.Series_UID
-            }
+            },
+            {
+              name: "Patient's comments",
+              value: resData?.Patient_comments
+            },
           ]
           setModalData(modifiedData)
           setStudyData(resData)
@@ -260,7 +261,7 @@ const ShareStudy = ({
                 }`}
               >
                 <Typography
-                  style={{ display: 'flex', gap: '4px', fontWeight: '600' }}
+                  style={{ display: 'flex', gap: '4px', fontWeight: '600',flexWrap:"wrap" }}
                 >
                   {item.name}:
                   {item.name === "Patient's id" ||
