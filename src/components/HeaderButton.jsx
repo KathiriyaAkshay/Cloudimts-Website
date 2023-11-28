@@ -80,7 +80,8 @@ const HeaderButton = ({
     setStudyData,
     setSystemFilterPayload,
     studyDataPayload,
-    systemFilterPayload
+    systemFilterPayload, 
+    studyData
   } = useContext(StudyDataContext)
   const [systemFilters, setSystemsFilters] = useState([])
   const [isFilterCollapseOpen, setIsFilterCollapseOpen] = useState(false)
@@ -186,6 +187,17 @@ const HeaderButton = ({
     } else{
       setIsQuickAssignStudyModalOpen(true) ; 
     }
+  }
+
+
+  const OpenOHIFViwerOptionHandler = () => {
+    studyData.map((element) => {
+      if (element.id = studyIdArray[0]){
+
+        let url = `https://viewer.cloudimts.com/viewer/${element?.study?.study_uid}` ; 
+        window.open(url, "_blank") ; 
+      }
+    })
   }
 
   const content = (
@@ -509,10 +521,14 @@ const HeaderButton = ({
 
           {/* ===== OHIF Viwer option =====  */}
 
-          <Button>
-            <img src={OHIFViwer} className='ohif-viwer-option-icon' style={{ marginRight: 8 }} />
-            OHIF 
-          </Button>
+          {studyIdArray.length === 1 && (
+            <Button onClick={OpenOHIFViwerOptionHandler}>
+              <img src={OHIFViwer} className='ohif-viwer-option-icon' style={{ marginRight: 8 }} />
+              OHIF 
+            </Button>
+
+          )}
+
 
           {/* ==== Study export option ====  */}
 
