@@ -6,7 +6,8 @@ import {
   Spin,
   Tag,
   Tooltip,
-  Typography
+  Typography, 
+  Popconfirm
 } from "antd";
 import React, { useContext, useEffect, useState } from "react";
 import {
@@ -20,7 +21,8 @@ import { BsEyeFill } from 'react-icons/bs'
 import {
   DownloadOutlined,
   MailOutlined,
-  WhatsAppOutlined
+  WhatsAppOutlined, 
+  CloseCircleFilled
 } from '@ant-design/icons'
 import ImageCarousel from './ImageCarousel'
 import { useNavigate } from 'react-router-dom'
@@ -34,7 +36,7 @@ const StudyReports = ({
   setIsReportModalOpen,
   studyID,
   setStudyID,
-  studyStatus,
+  studyStatus,  
   setStudyStatus,
   studyStatusHandler,
   pageNumberHandler,
@@ -52,8 +54,10 @@ const StudyReports = ({
   const navigate = useNavigate()
   const { permissionData } = useContext(UserPermissionContext)
   const [isViewReportModalOpen, setIsViewReportModalOpen] = useState(false)
+
   const [normalReportImages, setNormalReportImages] = useState([])
-  const [normalReportModalData, setNormalReportModalData] = useState({})
+  const [normalReportModalData, setNormalReportModalData] = useState({}) 
+  const [normalReportClosedLoading, setNormalReportClosedLoading] = useState(false) ; 
 
   useEffect(() => {
     if (studyID && isReportModalOpen) {
@@ -220,6 +224,24 @@ const StudyReports = ({
               <WhatsAppOutlined className='action-icon' />
             </Tooltip>
           )}
+
+          {/* ==== Close report option handler ====  */}
+
+          {record.report_type !== 'Advanced report' && (
+            <Popconfirm
+              title = "Closed study"
+              description = {"Are you sure you want to closed this study ?"}
+              okText = "Yes"
+              cancelText = "No" 
+              okButtonProps={{
+                loading: normalReportClosedLoading
+              }}
+              onConfirm={() => ClosedStudyHandler(record.id)}
+            >
+              <CloseCircleFilled style={{color: "red"}} className='action-icon' />
+            </Popconfirm>
+          )}
+
         </Space>
       )
     }
@@ -327,6 +349,31 @@ const StudyReports = ({
   const EmailShareModalOpen = id => {
     setEmailReportId(id)
     isEmailShareModalOpen(true)
+  }
+
+  const ClosedStudyHandler = async (id) => {  
+
+    setNormalReportClosedLoading(true) ; 
+
+    let requestPayload = {id: studyID} ; 
+
+    let responseData = await APIHandler('POST', requestPayload, 'studies/v1/complete-study') ; 
+
+    setNormalReportClosedLoading(false) ; 
+
+    if (responseData === false){
+
+      NotificationMessage("warning", "Network request failed") ; 
+    
+    } else if (responseData['status'] === true){
+
+      NotificationMessage("success", "Closed study successfully") ; 
+      setIsReportModalOpen(false) ; 
+    
+    } else{
+
+      NotificationMessage("warning", "Network request failed", responseData['message'])
+    }
   }
 
   return (
