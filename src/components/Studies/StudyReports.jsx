@@ -452,7 +452,7 @@ const StudyReports = ({
                   paddingRight: '10px'
                 }}
               >
-                <div>Patient Info</div>
+                <div>Patient Info | StudyId {studyID}</div>
                 <div
                   style={{ display: 'flex', gap: '20px', alignItems: 'center' }}
                 >
