@@ -31,6 +31,7 @@ import jsPDF from 'jspdf'
 import APIHandler from '../../apis/apiHandler' ; 
 import NotificationMessage from "../NotificationMessage";
 
+
 const StudyReports = ({
   isReportModalOpen,
   setIsReportModalOpen,
@@ -43,8 +44,14 @@ const StudyReports = ({
   isEmailShareModalOpen,
   setEmailReportId,
   patientId,
-  patientName
+  patientName, 
+  studyUIDInformation
 }) => {
+  const ViEWER_URL = import.meta.env.ORTHANC_VIEWER_URL ; 
+  
+  console.log("Viewer url information ======>");
+  console.log(ViEWER_URL);
+
   const [modalData, setModalData] = useState([])
   const [isLoading, setIsLoading] = useState(false)
   const [isFileReportModalOpen, setIsFileReportModalOpen] = useState(false)
@@ -376,6 +383,12 @@ const StudyReports = ({
     }
   }
 
+  const OHIFViewerHandler = () => {
+    
+    let url = `https://viewer.cloudimts.com/viewer/${studyUIDInformation}` ; 
+    window.open(url, "_blank") ; 
+  }
+
   return (
     <>
       <Modal
@@ -398,7 +411,11 @@ const StudyReports = ({
         <Spin spinning={isLoading}>
           <div className='Assign-study-upload-option-input-layout'>
             <div className='Report-modal-all-option-div'>
-              <Button key='back' className='Report-modal-option-button'>
+              
+              {/* ==== OHIF viewer option ====  */}
+
+              <Button key='back' className='Report-modal-option-button'
+                onClick={OHIFViewerHandler}>
                 OHIF Viewer
               </Button>
 

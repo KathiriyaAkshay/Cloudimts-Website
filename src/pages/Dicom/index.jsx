@@ -108,7 +108,8 @@ const Dicom = () => {
   const [patientId, setPatientId] = useState('')
   const [patientName, setPatientName] = useState('')
   const [studyStatus, setStudyStatus] = useState('')
-  const [urgentCase, setUrgentCase] = useState(false) 
+  const [urgentCase, setUrgentCase] = useState(false)  
+  const [studyUID, setStudyUId] = useState(null) ; 
 
   // Normal studies information, System filter and Main filter payload information
 
@@ -726,12 +727,12 @@ const Dicom = () => {
               <IoIosDocument
                 className='action-icon'
                 onClick={() => {
-                  console.log(record)
                   setStudyID(record.id)
                   setStudyStatus(record.status)
                   setIsReportModalOpen(true)
                   setPatientId(record.patient_id)
-                  setPatientName(record.name)
+                  setPatientName(record.name) 
+                  setStudyUId(record.study?.study_uid)
                 }}
               />
             </Tooltip>
@@ -1045,6 +1046,7 @@ const Dicom = () => {
         setEmailReportId={setEmailReportId}
         patientId={patientId}
         patientName={patientName}
+        studyUIDInformation = {studyUID}
       />
 
       <PatientDetails

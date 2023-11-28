@@ -38,6 +38,7 @@ import {
   applySystemFilter,
   retrieveSystemFilters
 } from '../helpers/studyDataFilter'
+import OHIFViwer from "../assets/images/menu.png"
 
 const HeaderButton = ({
   setIsModalOpen,
@@ -505,6 +506,13 @@ const HeaderButton = ({
               <ReloadOutlined />
             </Button>
           </Popconfirm>
+
+          {/* ===== OHIF Viwer option =====  */}
+
+          <Button>
+            <img src={OHIFViwer} className='ohif-viwer-option-icon' style={{ marginRight: 8 }} />
+            OHIF 
+          </Button>
 
           {/* ==== Study export option ====  */}
 
