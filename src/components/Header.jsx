@@ -105,7 +105,6 @@ const BasicLayout = ({ children }) => {
   const menuLabel = title => (
     <div className='display-flex-between' style={{ gap: '4px' }}>
       {title}
-      {/* <AiOutlineDown className="down-icon" /> */}
     </div>
   )
 
@@ -117,6 +116,7 @@ const BasicLayout = ({ children }) => {
   }
 
   const menuItems = [
+
     // Studies option
 
     checkPermissionStatus('Show Studies option') && {
@@ -238,11 +238,18 @@ const BasicLayout = ({ children }) => {
       onCollapse={onCollapse}
       width={240}
     >
-      <Link to='/dashboard'>
-        <div className='logo sidebar-logo'>
-          <img src={logo} alt='Logo' />
-        </div>
-      </Link>
+      {checkPermissionStatus("Show Dashboard option") ?<>
+        <Link to='/dashboard'>
+          <div className='logo sidebar-logo'>
+            <img src={logo} alt='Logo' />
+          </div>
+        </Link>
+      </>:<>
+          <div className='logo sidebar-logo'>
+            <img src={logo} alt='Logo' />
+          </div>
+      
+      </>}
 
       <div className='sidebar-menu-wrap' style={{ overflow: 'hidden' }}>
         <Menu
@@ -252,6 +259,7 @@ const BasicLayout = ({ children }) => {
           className='header-menu'
         />
       </div>
+
     </Sider>
   )
 
@@ -259,6 +267,7 @@ const BasicLayout = ({ children }) => {
     <>
       <Layout style={{ minHeight: '100vh' }}>
         {menu}
+
         <Layout className='site-layout'>
           <Header
             className='site-layout-background'
@@ -284,11 +293,18 @@ const BasicLayout = ({ children }) => {
                   onClick: () => setCollapsed(!collapsed)
                 }
               )}
-              <AppstoreOutlined
-                style={{ fontSize: '24px', color: '#000000b4' }}
-                onClick={() => navigate('/dashboard')}
-              />
+
+              {checkPermissionStatus("Show Dashboard option") && 
+              
+                <AppstoreOutlined
+                  style={{ fontSize: '24px', color: '#000000b4' }}
+                  onClick={() => navigate('/dashboard')}
+                />
+              }
+              
+
               <Divider type='vertical' className='vertical-divider' />
+
               <Breadcrumb
                 separator='|'
                 style={{
@@ -312,9 +328,13 @@ const BasicLayout = ({ children }) => {
                     </Breadcrumb.Item>
                   ))}
               </Breadcrumb>
+
               <UserProfile />
+            
             </div>
+          
           </Header>
+
           <Content
             ref={contentRef}
             className='site-layout-background'
@@ -364,7 +384,9 @@ const BasicLayout = ({ children }) => {
               {children}
             </div>
           </Content>
+        
         </Layout>
+      
       </Layout>
 
       <StudyFilterModal
