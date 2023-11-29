@@ -307,10 +307,6 @@ const StudyReports = ({
             },
 
             {
-              name: "Patient's comments",
-              value: resData?.Patient_comments
-            },
-            {
               name: 'Body Part',
               value: resData?.Study_body_part
             },
@@ -325,7 +321,11 @@ const StudyReports = ({
             {
               name: 'urgent_case',
               value: resData?.assigned_study_data
-            }
+            },
+            {
+              name: "Patient's comments",
+              value: resData?.Patient_comments
+            },
           ]
           setModalData(modifiedData)
           setTableData(res?.data?.report)
@@ -508,7 +508,7 @@ const StudyReports = ({
                 renderItem={item => (
                   <List.Item className='queue-number-list'>
                     <Typography
-                      style={{ display: 'flex', gap: '4px', fontWeight: '600' }}
+                      style={{ display: 'flex', gap: '4px', fontWeight: '600', flexWrap: 'wrap' }}
                     >
                       {item.name}:
                       {item.name === "Patient's id" ||
@@ -521,7 +521,9 @@ const StudyReports = ({
                         <Tag color="#87d068">{item.value}</Tag>
                       ) : (
                         <Typography style={{ fontWeight: '400' }}>
-                          {item.value}
+                          {item.value !== undefined && item.value !== null && 
+                            item.value
+                          }
                         </Typography>
                       )}
                     </Typography>

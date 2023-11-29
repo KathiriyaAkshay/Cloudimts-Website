@@ -211,6 +211,7 @@ const DeletedStudies = () => {
     <Table
       dataSource={studyData}
       columns={columns}
+      scroll={{y  :475}}
       expandable={{
         expandedRowRender: record => (
           <p style={{ margin: 0 }}>

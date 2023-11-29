@@ -85,10 +85,6 @@ const PatientDetails = ({
             value: resData?.institution?.Institution_name,
           },
           {
-            name: "Patient's comments",
-            value: resData?.Patient_comments,
-          },
-          {
             name: "Body Part",
             value: resData?.Study_body_part,
           },
@@ -112,6 +108,10 @@ const PatientDetails = ({
             name: "Series UID",
             value: resData?.Series_UID,
           },
+          {
+            name: "Patient's comments",
+            value: resData?.Patient_comments,
+          },  
         ];
         setModalData(modifiedData);
          } else {
@@ -160,7 +160,7 @@ const PatientDetails = ({
           }}
         >
           <div>Patient Info | StudyId {studyID}</div>
-          <div style={{ display: "flex", gap: "20px", alignItems: "center" }}>
+          <div style={{ display: "flex", gap: "20px", alignItems: "center",flexWrap:"wrap" }}>
             {modalData.find((data) => data.name === "Urgent Case")?.value && (
               <Tag color="error">Urgent</Tag>
             )}
@@ -177,7 +177,7 @@ const PatientDetails = ({
           renderItem={(item) => (
             <List.Item className="queue-number-list">
               <Typography
-                style={{ display: "flex", gap: "4px", fontWeight: "600" }}
+                style={{ display: "flex", gap: "4px", fontWeight: "600",flexWrap:"wrap" }}
               >
                 {item.name}:
                 {item.name === "Patient's id" ||

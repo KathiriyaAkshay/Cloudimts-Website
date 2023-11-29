@@ -443,10 +443,12 @@ const Editor = ({ id }) => {
                 <Form
                   labelCol={{
                     span: 24,
+                    // offset:3,
                   }}
                   wrapperCol={{
                     span: 24,
                   }}
+                  labelAlign="right"
                   form={form}
                   className='Advance-report-study-description-selection'
                 >
@@ -454,6 +456,7 @@ const Editor = ({ id }) => {
                     name="study_description"
                     label="Modality Study Description"
                     className="category-select"
+
                     rules={[
                       {
                         required: true,
