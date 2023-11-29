@@ -28,7 +28,8 @@ import ImageCarousel from './ImageCarousel'
 import { useNavigate } from 'react-router-dom'
 import { UserPermissionContext } from '../../hooks/userPermissionContext'
 import jsPDF from 'jspdf'
-import APIHandler from '../../apis/apiHandler'
+import APIHandler from '../../apis/apiHandler' ; 
+import NotificationMessage from "../NotificationMessage";
 
 
 const StudyReports = ({
@@ -75,58 +76,40 @@ const StudyReports = ({
     return permission
   }
 
-  const CompleteStudyHandler = async () => {
-    let requestPayload = {
-      id: studyID
-    }
+  const downloadReport = async (id) => { 
 
-    await APIHandler('POST', requestPayload, 'studies/v1/complete-study')
-  }
+    let requestPayload = {id: studyID} ; 
 
-  const downloadReport = async id => {
-    await CompleteStudyHandler()
+    let responseData = await APIHandler('POST', requestPayload, 'studies/v1/complete-study') ; 
 
-    await downloadAdvancedFileReport({ id })
-      .then(res => {
-        if (res.data.status) {
-          const doc = new jsPDF({
-            format: 'a4',
-            unit: 'px'
-          })
-
-          var reportPatientName = patientName.replace(/ /g, '-')
-
-          // Adding the fonts.
-          doc.setFont('Inter-Regular', 'normal')
-
-          doc.html(res?.data?.data?.report, {
-            async callback (doc) {
-              await doc.save(`${patientId}-${reportPatientName}-report`)
-            },
-            margin: [10, 10, 10, 10],
-            autoPaging: 'text',
-            x: 0,
-            y: 0,
-            width: 190, 
-            windowWidth: 675 
-          })
-        } else {
-          NotificationMessage(
-            'warning',
-            'Network request failed',
-            res.data.message
-          )
-        }
-      })
-      .catch(err => NotificationMessage('warning', err.response.data.message))
-  }
-
-  const handleStudyStatus = async () => {
-    if (studyStatus === 'Reported') {
-      await viewReported({ id: studyID })
+    if (responseData === false){
+      NotificationMessage("warning", "Network request failed") ; 
+    
+    } else if (responseData['status'] === true){
+      await downloadAdvancedFileReport({ id })
         .then(res => {
           if (res.data.status) {
-            NotificationMessage('success', res.data.message)
+            const doc = new jsPDF({
+              format: 'a4',
+              unit: 'px'
+            })
+  
+            var reportPatientName = patientName.replace(/ /g, '-')
+  
+            // Adding the fonts.
+            doc.setFont('Inter-Regular', 'normal')
+  
+            doc.html(res?.data?.data?.report, {
+              async callback (doc) {
+                await doc.save(`${patientId}-${reportPatientName}-report`)
+              },
+              margin: [10, 10, 10, 10],
+              autoPaging: 'text',
+              x: 0,
+              y: 0,
+              width: 190, 
+              windowWidth: 675 
+            })
           } else {
             NotificationMessage(
               'warning',
@@ -135,14 +118,34 @@ const StudyReports = ({
             )
           }
         })
-        .catch(err =>
+        .catch(err => NotificationMessage('warning', err.response.data.message))
+
+    } else{
+
+      NotificationMessage("warning", "Network request failed", responseData['message']) ; 
+    }
+  }
+
+  const handleStudyStatus = async () => {
+    await viewReported({ id: studyID })
+      .then(res => {
+        if (res.data.status) {
+          // NotificationMessage('success', res.data.message)
+        } else {
           NotificationMessage(
             'warning',
             'Network request failed',
-            err.response.data.message
+            res.data.message
           )
+        }
+      })
+      .catch(err =>
+        NotificationMessage(
+          'warning',
+          'Network request failed',
+          err.response.data.message
         )
-    }
+      )
   }
 
   const columns = [
@@ -175,6 +178,7 @@ const StudyReports = ({
       width: window.innerWidth < 650 ? '1%' : '20%',
       render: (text, record) => (
         <Space style={{ display: 'flex', justifyContent: 'space-evenly' }}>
+          
           {/* ===== View report option ======   */}
 
           <Tooltip title={'View'}>
@@ -197,13 +201,15 @@ const StudyReports = ({
 
           {/* ==== Download report option =====  */}
 
-          <Tooltip title={'Download'}>
-            <DownloadOutlined
-              className='action-icon'
-              onClick={() => downloadReport(record.id)}
-            />
-          </Tooltip>
-
+          {record.report_type === 'Advanced report' && (
+            
+            <Tooltip title={'Download'}>
+              <DownloadOutlined
+                className='action-icon'
+                onClick={() => downloadReport(record.id)}
+              />
+            </Tooltip>
+          )}
           {/* ===== Email share option ====== */}
 
           {record.report_type === 'Advanced report' && (
@@ -299,6 +305,7 @@ const StudyReports = ({
               name: 'Study Description',
               value: resData?.Study_description
             },
+
             {
               name: 'Body Part',
               value: resData?.Study_body_part
@@ -317,7 +324,7 @@ const StudyReports = ({
             },
             {
               name: "Patient's comments",
-              value: resData?.Patient_comments,
+              value: resData?.Patient_comments
             },
           ]
           setModalData(modifiedData)
@@ -501,7 +508,7 @@ const StudyReports = ({
                 renderItem={item => (
                   <List.Item className='queue-number-list'>
                     <Typography
-                      style={{ display: 'flex', gap: '4px', fontWeight: '600',flexWrap:"wrap" }}
+                      style={{ display: 'flex', gap: '4px', fontWeight: '600', flexWrap: 'wrap' }}
                     >
                       {item.name}:
                       {item.name === "Patient's id" ||
@@ -514,7 +521,9 @@ const StudyReports = ({
                         <Tag color="#87d068">{item.value}</Tag>
                       ) : (
                         <Typography style={{ fontWeight: '400' }}>
-                          {item.value}
+                          {item.value !== undefined && item.value !== null && 
+                            item.value
+                          }
                         </Typography>
                       )}
                     </Typography>
@@ -538,6 +547,7 @@ const StudyReports = ({
       <FileReport
         isFileReportModalOpen={isFileReportModalOpen}
         setIsFileReportModalOpen={setIsFileReportModalOpen}
+        setReportModalOpen = {setIsReportModalOpen}
         studyID={studyID}
         modalData={modalData}
       />
