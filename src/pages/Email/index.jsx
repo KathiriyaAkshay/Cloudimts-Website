@@ -210,7 +210,12 @@ const Email = () => {
 
   // ==== Insert and Edit email address handler ==== // 
   
-  const handleSubmit = async values => {
+  const handleSubmit = async (values) => {
+
+    if (values.active_status === undefined){
+      values.active_status = false
+    }
+
     setIsLoading(true)
     if (!emailID) {
       await API.post('/email/v1/insert-email', values, {
