@@ -183,10 +183,6 @@ const AssignStudy = ({
               value: resData?.Study_description,
             },
             {
-              name: "Patient's comments",
-              value: resData?.Patient_comments,
-            },
-            {
               name: "Body Part",
               value: resData?.Study_body_part,
             },
@@ -201,6 +197,10 @@ const AssignStudy = ({
             {
               name: "urgent_case",
               value: resData?.assigned_study_data,
+            },
+            {
+              name: "Patient's comments",
+              value: resData?.Patient_comments,
             },
           ];
 
@@ -297,7 +297,7 @@ const AssignStudy = ({
           renderItem={(item) => (
             <List.Item className="queue-number-list">
               <Typography
-                style={{ display: "flex", gap: "4px", fontWeight: "600" }}
+                style={{ display: "flex", gap: "2px", fontWeight: "600",flexWrap:"wrap" }}
               >
                 {item.name}:
                 {item.name === "Patient's id" ||

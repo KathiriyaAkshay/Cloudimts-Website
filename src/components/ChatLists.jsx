@@ -157,8 +157,8 @@ const ChatLists = ({ setSeriesId, setStudyId, setPersonName, studyId, setUrgentC
                         className='particular-study-chat-description'
                         style={{ fontSize: '12px' }}
                       >
-                         <div className='chats-study-id'>
-                        <span style={{ color: 'white', fontWeight: 600,padding:"0.2rem" }}>
+                         <div className='chats-study-modality'>
+                         <span style={{ color: '#A6A6A6', fontWeight: 600 }}>
                           Modality -{' '}
                         </span>
                         {data.modality}
