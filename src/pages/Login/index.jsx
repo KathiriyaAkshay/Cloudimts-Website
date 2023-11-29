@@ -20,11 +20,9 @@ import axios from 'axios'
 const Login = () => {
   const navigate = useNavigate() ; 
   const [loginForm] = Form.useForm() ; 
-  const [userForm] = Form.useForm() ; 
   const [isLoading, setIsLoading] = useState(false) ; 
-  const { userDetails, changeUserDetails } = useContext(UserDetailsContext) ; 
 
-  const CheckUserCredentails = async () => {
+  const CheckUserCredentails = async () => { 
 
     let responseData = await APIHandler("POST", {}, "owner/v1/user_details_fetch") ; 
 

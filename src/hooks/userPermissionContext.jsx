@@ -9,6 +9,7 @@ const UserPermissionProvider = ({ children }) => {
   const role_id = localStorage.getItem('role_id')
   const [isLoading, setIsLoading] = useState(false)
   const token = localStorage.getItem('token')
+
   useEffect(() => {
     setIsLoading(true)
     fetchPermissions({ role_id })
@@ -40,7 +41,6 @@ const UserPermissionProvider = ({ children }) => {
       </Spin>
     )
   }
-  console.log(permissionData)
 
   return (
     <UserPermissionContext.Provider value={{ permissionData }}>

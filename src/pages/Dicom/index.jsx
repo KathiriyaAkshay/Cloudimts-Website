@@ -246,6 +246,8 @@ const Dicom = () => {
     ) {
       // If not selected any filter and Systemfilter, studyDatapayload length empty than call normal reterive stuydData API
       retrieveStudyData(Pagination)
+    } else{
+      retrieveStudyData(Pagination) ; 
     }
   }, [Pagination, isFilterSelected, studyDataPayload, systemFilterPayload])
 
@@ -259,6 +261,8 @@ const Dicom = () => {
   }, [isLoading, studyData, notificationValue])
 
   useEffect(() => {
+
+    console.log("Render study page =========>");
     setSystemFilterPayload({})
     setStudyDataPayload({})
     changeBreadcrumbs([{ name: `Study Data` }])
@@ -422,7 +426,7 @@ const Dicom = () => {
   }
 
   const checkPermissionStatus = name => {
-    const permission = permissionData['StudyTable view'].find(
+    const permission = permissionData['StudyTable view']?.find(
       data => data.permission === name
     )?.permission_value
     return permission

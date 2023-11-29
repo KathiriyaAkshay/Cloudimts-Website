@@ -48,9 +48,6 @@ const StudyReports = ({
   studyUIDInformation
 }) => {
   const ViEWER_URL = import.meta.env.ORTHANC_VIEWER_URL ; 
-  
-  console.log("Viewer url information ======>");
-  console.log(ViEWER_URL);
 
   const [modalData, setModalData] = useState([])
   const [isLoading, setIsLoading] = useState(false)
@@ -73,7 +70,7 @@ const StudyReports = ({
   }, [studyID])
 
   const checkPermissionStatus = name => {
-    const permission = permissionData['Studies permission'].find(
+    const permission = permissionData['Studies permission']?.find(
       data => data.permission === name
     )?.permission_value
     return permission
@@ -197,7 +194,7 @@ const StudyReports = ({
                     record?.normal_report_data?.report_attach_data
                   )
                   setNormalReportModalData(record)
-                }
+                } 
               }}
             />
           </Tooltip>
