@@ -225,7 +225,7 @@ const DeletedStudies = () => {
       loading={isLoading}
       pagination={{
         current: Pagination.page,
-        pageSize: limit,
+        pageSize: localStorage.getItem("pageSize")||Pagination.limit,
         total: totalPages,
         pageSizeOptions: [10, 25, 50, 100, 200, 500],
         showSizeChanger: totalPages > 10,

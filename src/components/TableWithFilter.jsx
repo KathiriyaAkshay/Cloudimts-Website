@@ -40,7 +40,7 @@ const TableWithFilter = ({
   const [userRole, setUserRole] = useState(null);
   const [Pagination, setPagination] = useState({
     page: 1,
-    limit: limit,
+    limit:limit,
     total: totalRecords,
     search: "",
     order: "desc",
@@ -111,11 +111,12 @@ const TableWithFilter = ({
             !pagination
               ? {
                   current: Pagination.page,
-                  pageSize: limit,
+                  pageSize: localStorage.getItem("pageSize")||Pagination.limit,
                   total: totalRecords,
                   pageSizeOptions: [5,10, 25, 50, 100, 200, 500],
                   showSizeChanger: totalRecords >= 0,
                   onChange: (page = 1, pageSize = limit) => {
+                    localStorage.setItem("pageSize",pageSize)
                     setPagination({ ...Pagination, page, limit: pageSize });
                   },
                   onShowSizeChange: onShowSizeChange,
