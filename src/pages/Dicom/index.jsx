@@ -965,11 +965,12 @@ const Dicom = () => {
         // Pagination handle
         pagination={{
           current: Pagination.page,
-          pageSize: limit,
+          pageSize: localStorage.getItem("pageSize")||Pagination.limit,
           total: totalPages,
           pageSizeOptions: [10, 25, 50, 100, 200, 500],
           showSizeChanger: totalPages > 10,
           onChange: (page = 1, pageSize = limit) => {
+            localStorage.setItem("pageSize",pageSize)
             if (Object.keys(studyDataPayload).length > 0) {
               applyMainFilter(
                 { ...studyDataPayload, page_number: page, page_size: pageSize },
