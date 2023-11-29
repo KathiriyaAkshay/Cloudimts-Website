@@ -213,7 +213,9 @@ const HeaderButton = ({
         className='setting-panel mb-0 admin-panel-filter-option-list'
       >
         {filterOptions?.map(data => (
-          <div>
+          <div 
+          key={data?.key}
+          >
             <Checkbox
               name={data?.label}
               key={data?.key}
@@ -287,7 +289,7 @@ const HeaderButton = ({
         className='setting-panel mb-0  normal-filter-option-list'
       >
         {systemFilters?.map(data => (
-          <div>
+          <div key={data?.key}>
             <Checkbox
               name={data?.label}
               key={data?.key}
