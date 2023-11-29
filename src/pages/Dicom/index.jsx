@@ -108,7 +108,8 @@ const Dicom = () => {
   const [patientId, setPatientId] = useState('')
   const [patientName, setPatientName] = useState('')
   const [studyStatus, setStudyStatus] = useState('')
-  const [urgentCase, setUrgentCase] = useState(false) 
+  const [urgentCase, setUrgentCase] = useState(false)  
+  const [studyUID, setStudyUId] = useState(null) ; 
 
   // Normal studies information, System filter and Main filter payload information
 
@@ -245,6 +246,8 @@ const Dicom = () => {
     ) {
       // If not selected any filter and Systemfilter, studyDatapayload length empty than call normal reterive stuydData API
       retrieveStudyData(Pagination)
+    } else{
+      retrieveStudyData(Pagination) ; 
     }
   }, [Pagination, isFilterSelected, studyDataPayload, systemFilterPayload])
 
@@ -258,6 +261,8 @@ const Dicom = () => {
   }, [isLoading, studyData, notificationValue])
 
   useEffect(() => {
+
+    console.log("Render study page =========>");
     setSystemFilterPayload({})
     setStudyDataPayload({})
     changeBreadcrumbs([{ name: `Study Data` }])
@@ -421,7 +426,7 @@ const Dicom = () => {
   }
 
   const checkPermissionStatus = name => {
-    const permission = permissionData['StudyTable view'].find(
+    const permission = permissionData['StudyTable view']?.find(
       data => data.permission === name
     )?.permission_value
     return permission
@@ -727,12 +732,12 @@ const Dicom = () => {
               <IoIosDocument
                 className='action-icon'
                 onClick={() => {
-                  console.log(record)
                   setStudyID(record.id)
                   setStudyStatus(record.status)
                   setIsReportModalOpen(true)
                   setPatientId(record.patient_id)
-                  setPatientName(record.name)
+                  setPatientName(record.name) 
+                  setStudyUId(record.study?.study_uid)
                 }}
               />
             </Tooltip>
@@ -1046,6 +1051,7 @@ const Dicom = () => {
         setEmailReportId={setEmailReportId}
         patientId={patientId}
         patientName={patientName}
+        studyUIDInformation = {studyUID}
       />
 
       <PatientDetails

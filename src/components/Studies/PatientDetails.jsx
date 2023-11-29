@@ -159,7 +159,7 @@ const PatientDetails = ({
             alignItems: "center",
           }}
         >
-          <div>Patient Info</div>
+          <div>Patient Info | StudyId {studyID}</div>
           <div style={{ display: "flex", gap: "20px", alignItems: "center",flexWrap:"wrap" }}>
             {modalData.find((data) => data.name === "Urgent Case")?.value && (
               <Tag color="error">Urgent</Tag>

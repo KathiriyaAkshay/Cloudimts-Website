@@ -1,7 +1,11 @@
 import API from "./getApi";
-const token = localStorage.getItem("token");
+
+const GetToken = () => {
+  return localStorage.getItem("token") ; 
+}
 
 export const getAllStudyData = async (params) => {
+  let token = GetToken() ; 
   const getAllStudyData = await API.post(
     "/studies/v1/fetch_studies_list",
     params,
@@ -11,6 +15,7 @@ export const getAllStudyData = async (params) => {
 };
 
 export const getMoreDetails = async (params) => {
+  let token = GetToken() ; 
   const getMoreDetails = await API.post(
     "/studies/v1/fetch_particular_study_more_details",
     params,
@@ -20,6 +25,7 @@ export const getMoreDetails = async (params) => {
 };
 
 export const getStudyData = async (params) => {
+  let token = GetToken() ; 
   const getStudyData = await API.post(
     "/studies/v1/fetch_particular_study",
     params,
@@ -29,6 +35,7 @@ export const getStudyData = async (params) => {
 };
 
 export const getStudyLogsData = async (params) => {
+  let token = GetToken() ; 
   const getStudyLogsData = await API.post(
     "/studies/v1/fetch_studies_logs",
     params,
@@ -38,6 +45,10 @@ export const getStudyLogsData = async (params) => {
 };
 
 export const getRadiologistList = async (params) => {
+  let token = GetToken() ; 
+  console.log("Radiologist fetch token information =======>");
+  console.log(token);
+
   const getRadiologistList = await API.post(
     "/institute/v1/fetch-radiologist-name",
     params,
@@ -47,6 +58,7 @@ export const getRadiologistList = async (params) => {
 };
 
 export const postAssignStudy = async (params) => {
+  let token = GetToken() ; 
   const postAssignStudy = await API.post("/studies/v1/assign_study", params, {
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -54,6 +66,7 @@ export const postAssignStudy = async (params) => {
 };
 
 export const updateStudyData = async (params) => {
+  let token = GetToken() ; 
   const updateStudyData = await API.post(
     "/studies/v1/update_study_details",
     params,
@@ -63,6 +76,7 @@ export const updateStudyData = async (params) => {
 };
 
 export const getStudyLogs = async (params) => {
+  let token = GetToken() ; 
   const getStudyLogs = await API.post(
     "/studies/v1/fetch_all_studies_logs",
     params,
@@ -72,6 +86,7 @@ export const getStudyLogs = async (params) => {
 };
 
 export const updateBlockUsers = async (params) => {
+  let token = GetToken() ; 
   const updateBlockUsers = await API.post(
     "/institute/v1/institute-blocked-user-update",
     params,
@@ -81,6 +96,7 @@ export const updateBlockUsers = async (params) => {
 };
 
 export const updateInHouseUser = async (params) => {
+  let token = GetToken() ; 
   const updateInHouseUser = await API.post(
     "/institute/v1/institution-inhouse-radiologist-update",
     params,
@@ -90,6 +106,7 @@ export const updateInHouseUser = async (params) => {
 };
 
 export const filterInstitutionData = async (params) => {
+  let token = GetToken() ; 
   const filterInstitutionData = await API.post(
     "/institute/v1/institution_filter",
     params,
@@ -99,6 +116,7 @@ export const filterInstitutionData = async (params) => {
 };
 
 export const filterUserData = async (params) => {
+  let token = GetToken() ; 
   const filterUserData = await API.post("/user/v1/user_filter_data", params, {
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -106,6 +124,7 @@ export const filterUserData = async (params) => {
 };
 
 export const getInstitutionLogs = async (params) => {
+  let token = GetToken() ; 
   const getInstitutionLogs = await API.post(
     "/institute/v1/particular-institution-logs",
     params,
@@ -115,6 +134,7 @@ export const getInstitutionLogs = async (params) => {
 };
 
 export const getUsersLogs = async (params) => {
+  let token = GetToken() ; 
   const getUsersLogs = await API.post("/user/v1/fetch-user-logs", params, {
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -122,6 +142,7 @@ export const getUsersLogs = async (params) => {
 };
 
 export const getParticularUsersLogs = async (params) => {
+  let token = GetToken() ; 
   const getParticularUsersLogs = await API.post(
     "/user/v1/fetch-particular-user-logs",
     params,
@@ -131,6 +152,7 @@ export const getParticularUsersLogs = async (params) => {
 };
 
 export const getInitialChatMessages = async (params) => {
+  let token = GetToken() ; 
   const getInitialChatMessages = await API.post(
     "/chat/v1/fetch_initial_chat_message",
     params,
@@ -140,6 +162,7 @@ export const getInitialChatMessages = async (params) => {
 };
 
 export const sendChatMessage = async (params) => {
+  let token = GetToken() ; 
   const sendChatMessage = await API.post("/chat/v1/send_chat", params, {
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -147,6 +170,7 @@ export const sendChatMessage = async (params) => {
 };
 
 export const getAllChatList = async (params) => {
+  let token = GetToken() ; 
   const getAllChatList = await API.post(
     "/chat/v1/fetch_chat_information",
     params,
@@ -156,13 +180,16 @@ export const getAllChatList = async (params) => {
 };
 
   export const deleteChatMessage = async (params) => {
-    const deleteChatMessage = await API.post("/chat/v1/delete_chat", params, {
-      headers: { Authorization: `Bearer ${token}` },
+  let token = GetToken() ; 
+  const deleteChatMessage = await API.post("/chat/v1/delete_chat", params, {
+    headers: { Authorization: `Bearer ${token}` },
     });
     return deleteChatMessage;
   };
 
 export const emailFilterData = async (params) => {
+  let token = GetToken() ; 
+ 
   const emailFilterData = await API.post("/email/v1/email-filter", params, {
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -170,6 +197,8 @@ export const emailFilterData = async (params) => {
 };
 
 export const getInstitutionList = async (params) => {
+  let token = GetToken() ; 
+ 
   const getInstitutionList = await API.get("/user/v1/fetch-institution-list", {
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -177,6 +206,8 @@ export const getInstitutionList = async (params) => {
 };
 
 export const getModalityList = async (params) => {
+  let token = GetToken() ; 
+ 
   const getModalityList = await API.get("/institute/v1/institute-modality", {
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -184,6 +215,8 @@ export const getModalityList = async (params) => {
 };
 
 export const createNewFilter = async (params) => {
+  let token = GetToken() ; 
+ 
   const createNewFilter = await API.post(
     "/studies/v1/insert-new-filter",
     params,
@@ -193,6 +226,8 @@ export const createNewFilter = async (params) => {
 };
 
 export const getFilterList = async (params) => {
+  let token = GetToken() ; 
+ 
   const getFilterList = await API.post(
     "/studies/v1/fetch-filter-list",
     params,
@@ -202,6 +237,8 @@ export const getFilterList = async (params) => {
 };
 
 export const filterStudyData = async (params) => {
+  let token = GetToken() ; 
+ 
   const filterStudyData = await API.post(
     "/studies/v1/study-quick-filter",
     params,
@@ -211,6 +248,8 @@ export const filterStudyData = async (params) => {
 };
 
 export const getParticularFilter = async (params) => {
+  let token = GetToken() ; 
+ 
   const getParticularFilter = await API.post(
     "/studies/v1/particular-filter-fetch",
     params,
@@ -220,6 +259,8 @@ export const getParticularFilter = async (params) => {
 };
 
 export const updateFilterData = async (params) => {
+  let token = GetToken() ; 
+
   const updateFilterData = await API.post("/studies/v1/edit-filter", params, {
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -227,6 +268,8 @@ export const updateFilterData = async (params) => {
 };
 
 export const sendMediaChat = async (params) => {
+  let token = GetToken() ; 
+
   const sendMediaChat = await API.post("/chat/v1/send_chat_media", params, {
     headers: {
       "Content-Type": "multipart/form-data",
@@ -237,6 +280,8 @@ export const sendMediaChat = async (params) => {
 };
 
 export const getInstanceData = async (params) => {
+  let token = GetToken() ; 
+
   const getInstanceData = await API.post("/studies/v1/getSeriesInfo", params, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -246,6 +291,8 @@ export const getInstanceData = async (params) => {
 };
 
 export const getStudyImages = async (params) => {
+  let token = GetToken() ; 
+
   const getStudyImages = await API.get(
     `/studies/v1/fetch_instance_image/${params}`,
     {
@@ -258,6 +305,8 @@ export const getStudyImages = async (params) => {
 };
 
 export const getBillingData = async (params) => {
+  let token = GetToken() ; 
+
   const getBillingData = await API.post(
     "/billing/v1/fetch-billing-info",
     params,
@@ -271,6 +320,8 @@ export const getBillingData = async (params) => {
 };
 
 export const getReportList = async (params) => {
+  let token = GetToken() ; 
+
   const getReportList = await API.post("/report/v1/getReportlist", params, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -280,6 +331,8 @@ export const getReportList = async (params) => {
 };
 
 export const insertNewTemplate = async (params) => {
+  let token = GetToken() ; 
+
   const insertNewTemplate = await API.post("/report/v1/insert-report", params, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -289,6 +342,8 @@ export const insertNewTemplate = async (params) => {
 };
 
 export const fetchTemplate = async (params) => {
+  let token = GetToken() ; 
+
   const fetchTemplate = await API.post(
     "/report/v1/particularReportData",
     params,
@@ -302,6 +357,8 @@ export const fetchTemplate = async (params) => {
 };
 
 export const fetchPermissions = async (params) => {
+  let token = GetToken() ; 
+
   const fetchPermissions = await API.post(
     "/role/v1/fetch_particular_role_permission",
     params,
@@ -315,6 +372,8 @@ export const fetchPermissions = async (params) => {
 };
 
 export const getDashboardData = async (params = {}) => {
+  let token = GetToken() ; 
+
   const getDashboardData = await API.post(
     "/dashboard/v1/fetch-dashboard-details",
     params,
@@ -328,6 +387,8 @@ export const getDashboardData = async (params = {}) => {
 };
 
 export const getDashboardTableData = async (params = {}) => {
+  let token = GetToken() ; 
+
   const getDashboardTableData = await API.post(
     "/dashboard/v1/fetch-dashboard-logs",
     params,
@@ -341,6 +402,8 @@ export const getDashboardTableData = async (params = {}) => {
 };
 
 export const updateStudyStatus = async (params = {}) => {
+  let token = GetToken() ; 
+
   const updateStudyStatus = await API.post("/studies/v1/view_study", params, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -350,6 +413,8 @@ export const updateStudyStatus = async (params = {}) => {
 };
 
 export const uploadImage = async (params = {}) => {
+  let token = GetToken() ; 
+
   const uploadImage = await API.post("/image/v1/upload", params, {
     headers: {
       "Content-Type": "multipart/form-data",
@@ -360,6 +425,8 @@ export const uploadImage = async (params = {}) => {
 };
 
 export const submitNormalReportFile = async (params = {}) => {
+  let token = GetToken() ; 
+
   const submitNormalReportFile = await API.post(
     "/studies/v1/normal-report-file",
     params,
@@ -373,6 +440,8 @@ export const submitNormalReportFile = async (params = {}) => {
 };
 
 export const fetchRoleLogs = async (params = {}) => {
+  let token = GetToken() ; 
+
   const fetchRoleLogs = await API.post(
     "/role/v1/user_role_logs_filter",
     params,
@@ -386,6 +455,8 @@ export const fetchRoleLogs = async (params = {}) => {
 };
 
 export const deleteEmail = async (params = {}) => {
+  let token = GetToken() ; 
+
   const deleteEmail = await API.post("/email/v1/delete-email", params, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -395,6 +466,8 @@ export const deleteEmail = async (params = {}) => {
 };
 
 export const instituteLogsFilter = async (params = {}) => {
+  let token = GetToken() ; 
+
   const instituteLogsFilter = await API.post(
     "/institute/v1/filter-institution-logs",
     params,
@@ -408,7 +481,8 @@ export const instituteLogsFilter = async (params = {}) => {
 };
 
 export const userLogsFilter = async (params = {}) => {
-  console.log(params);
+  let token = GetToken() ; 
+
   const userLogsFilter = await API.post("/user/v1/user_logs_filter", params, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -418,6 +492,8 @@ export const userLogsFilter = async (params = {}) => {
 };
 
 export const fetchAssignStudy = async (params = {}) => {
+  let token = GetToken() ; 
+
   const fetchAssignStudy = await API.post(
     "/studies/v1/fetch_assign_study_details",
     params,
@@ -431,6 +507,8 @@ export const fetchAssignStudy = async (params = {}) => {
 };
 
 export const updateUserPassword = async (params = {}) => {
+  let token = GetToken() ; 
+
   const updateUserPassword = await API.post(
     "/owner/v1/update_password",
     params,
@@ -444,6 +522,8 @@ export const updateUserPassword = async (params = {}) => {
 };
 
 export const fetchEmailList = async (params = {}) => {
+  let token = GetToken() ; 
+
   const fetchEmailList = await API.post("/email/v1/send-email-list", params, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -453,6 +533,8 @@ export const fetchEmailList = async (params = {}) => {
 };
 
 export const fetchAuth = async (params = {}) => {
+  let token = GetToken() ; 
+
   const fetchAuth = await API.post("/owner/v1/user_details_fetch", params, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -462,6 +544,8 @@ export const fetchAuth = async (params = {}) => {
 };
 
 export const enableUser = async (params = {}) => {
+  let token = GetToken() ; 
+
   const enableUser = await API.post("/user/v1/enable-user", params, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -471,6 +555,8 @@ export const enableUser = async (params = {}) => {
 };
 
 export const disableUser = async (params = {}) => {
+  let token = GetToken() ; 
+
   const disableUser = await API.post("/user/v1/disable-user", params, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -480,6 +566,8 @@ export const disableUser = async (params = {}) => {
 };
 
 export const downloadBilling = async (params = {}) => {
+  let token = GetToken() ; 
+
   const downloadBilling = await API.post(
     "/billing/v1/fetch-billing-info",
     params,
@@ -493,6 +581,8 @@ export const downloadBilling = async (params = {}) => {
 };
 
 export const enableInstitution = async (params = {}) => {
+  let token = GetToken() ; 
+
   const enableInstitution = await API.post(
     "/institute/v1/institution-enable",
     params,
@@ -506,6 +596,8 @@ export const enableInstitution = async (params = {}) => {
 };
 
 export const disableInstitution = async (params = {}) => {
+  let token = GetToken() ; 
+
   const disableInstitution = await API.post(
     "/institute/v1/institution-disable",
     params,
@@ -519,6 +611,8 @@ export const disableInstitution = async (params = {}) => {
 };
 
 export const updateStudyStatusReported = async (params = {}) => {
+  let token = GetToken() ; 
+
   const updateStudyStatusReported = await API.post(
     "/studies/v1/report_study",
     params,
@@ -532,6 +626,8 @@ export const updateStudyStatusReported = async (params = {}) => {
 };
 
 export const closeStudy = async (params = {}) => {
+  let token = GetToken() ; 
+
   const closeStudy = await API.post("/studies/v1/closed-study", params, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -541,6 +637,8 @@ export const closeStudy = async (params = {}) => {
 };
 
 export const deleteStudy = async (params = {}) => {
+  let token = GetToken() ; 
+
   const deleteStudy = await API.post("/studies/v1/delete_study", params, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -550,6 +648,8 @@ export const deleteStudy = async (params = {}) => {
 };
 
 export const addSupport = async (params = {}) => {
+  let token = GetToken() ; 
+
   const addSupport = await API.post(
     "/support/v1/insert-support-option",
     params,
@@ -563,6 +663,8 @@ export const addSupport = async (params = {}) => {
 };
 
 export const fetchSupport = async (params = {}) => {
+  let token = GetToken() ; 
+
   const fetchSupport = await API.post(
     "/support/v1/support-details-fetch",
     params,
@@ -576,6 +678,8 @@ export const fetchSupport = async (params = {}) => {
 };
 
 export const deleteSupport = async (params = {}) => {
+  let token = GetToken() ; 
+
   const deleteSupport = await API.post(
     "/support/v1/support-details-delete",
     params,
@@ -589,6 +693,8 @@ export const deleteSupport = async (params = {}) => {
 };
 
 export const updateReport = async (params = {}) => {
+  let token = GetToken() ; 
+
   const updateReport = await API.post("/report/v1/updateReportData", params, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -598,6 +704,8 @@ export const updateReport = async (params = {}) => {
 };
 
 export const fetchParticularSupport = async (params = {}) => {
+  let token = GetToken() ; 
+
   const fetchParticularSupport = await API.post(
     "/support/v1/fetch-particular-support-details",
     params,
@@ -611,6 +719,8 @@ export const fetchParticularSupport = async (params = {}) => {
 };
 
 export const updateParticularSupport = async (params = {}) => {
+  let token = GetToken() ; 
+
   const updateParticularSupport = await API.post(
     "/support/v1/support-details-edit",
     params,
@@ -624,6 +734,8 @@ export const updateParticularSupport = async (params = {}) => {
 };
 
 export const fetchUserSignature = async (params = {}) => {
+  let token = GetToken() ; 
+
   const fetchUserSignature = await API.post(
     "/studies/v1/fetch-user-signature",
     params,
@@ -637,6 +749,8 @@ export const fetchUserSignature = async (params = {}) => {
 };
 
 export const saveAdvancedFileReport = async (params = {}) => {
+  let token = GetToken() ; 
+
   const saveAdvancedFileReport = await API.post(
     "/studies/v1/advanced-file-report",
     params,
@@ -650,6 +764,8 @@ export const saveAdvancedFileReport = async (params = {}) => {
 };
 
 export const downloadAdvancedFileReport = async (params = {}) => {
+  let token = GetToken() ; 
+
   const downloadAdvancedFileReport = await API.post(
     "/studies/v1/download_report_data",
     params,
@@ -663,6 +779,8 @@ export const downloadAdvancedFileReport = async (params = {}) => {
 };
 
 export const sendEmail = async (params = {}) => {
+  let token = GetToken() ; 
+
   const sendEmail = await API.post("/email/v1/email-share-option", params, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -672,6 +790,8 @@ export const sendEmail = async (params = {}) => {
 };
 
 export const adminFilterStudyData = async (params = {}) => {
+  let token = GetToken() ; 
+
   const adminFilterStudyData = await API.post(
     "/studies/v1/apply-main-filter",
     params,
@@ -685,6 +805,7 @@ export const adminFilterStudyData = async (params = {}) => {
 };
 
 export const fetchSystemFilter = async (params = {}) => {
+  let token = GetToken() ; 
   const fetchSystemFilter = await API.post(
     "/studies/v1/system-filter-list-fetch",
     params,
@@ -698,6 +819,8 @@ export const fetchSystemFilter = async (params = {}) => {
 };
 
 export const applyStudySystemFilter = async (params = {}) => {
+  let token = GetToken() ; 
+
   const applyStudySystemFilter = await API.post(
     "/studies/v1/system-filter",
     params,
@@ -711,6 +834,8 @@ export const applyStudySystemFilter = async (params = {}) => {
 };
 
 export const advanceSearchFilter = async (params = {}) => {
+  let token = GetToken() ; 
+
   const advanceSearchFilter = await API.post(
     "/studies/v1/apply-advance-search",
     params,
@@ -724,6 +849,8 @@ export const advanceSearchFilter = async (params = {}) => {
 };
 
 export const fetchDeletedStudies = async (params = {}) => {
+  let token = GetToken() ; 
+
   const fetchDeletedStudies = await API.post(
     "/studies/v1/fetch_delete_studies_list",
     params,
@@ -737,6 +864,8 @@ export const fetchDeletedStudies = async (params = {}) => {
 };
 
 export const backupStudy = async (params = {}) => {
+  let token = GetToken() ; 
+
   const backupStudy = await API.post("/studies/v1/backup_study", params, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -746,6 +875,8 @@ export const backupStudy = async (params = {}) => {
 };
 
 export const viewReported = async (params = {}) => {
+  let token = GetToken() ; 
+
   const viewReported = await API.post(
     "/studies/v1/update-status-report-viewed",
     params,

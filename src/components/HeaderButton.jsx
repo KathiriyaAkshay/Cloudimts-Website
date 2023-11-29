@@ -38,6 +38,7 @@ import {
   applySystemFilter,
   retrieveSystemFilters
 } from '../helpers/studyDataFilter'
+import OHIFViwer from "../assets/images/menu.png"
 
 const HeaderButton = ({
   setIsModalOpen,
@@ -79,7 +80,8 @@ const HeaderButton = ({
     setStudyData,
     setSystemFilterPayload,
     studyDataPayload,
-    systemFilterPayload
+    systemFilterPayload, 
+    studyData
   } = useContext(StudyDataContext)
   const [systemFilters, setSystemsFilters] = useState([])
   const [isFilterCollapseOpen, setIsFilterCollapseOpen] = useState(false)
@@ -187,6 +189,17 @@ const HeaderButton = ({
     }
   }
 
+
+  const OpenOHIFViwerOptionHandler = () => {
+    studyData.map((element) => {
+      if (element.id = studyIdArray[0]){
+
+        let url = `https://viewer.cloudimts.com/viewer/${element?.study?.study_uid}` ; 
+        window.open(url, "_blank") ; 
+      }
+    })
+  }
+
   const content = (
     <Collapse
       bordered={true}
@@ -200,7 +213,9 @@ const HeaderButton = ({
         className='setting-panel mb-0 admin-panel-filter-option-list'
       >
         {filterOptions?.map(data => (
-          <div>
+          <div 
+          key={data?.key}
+          >
             <Checkbox
               name={data?.label}
               key={data?.key}
@@ -274,7 +289,7 @@ const HeaderButton = ({
         className='setting-panel mb-0  normal-filter-option-list'
       >
         {systemFilters?.map(data => (
-          <div>
+          <div key={data?.key}>
             <Checkbox
               name={data?.label}
               key={data?.key}
@@ -342,15 +357,6 @@ const HeaderButton = ({
 
   return (
     <div>
-      {window.location.pathname === '/iod-settings' && (
-        <div className='iod-setting-div'>
-          <Button type='primary'>Upload</Button>
-          <Button>Connect IOD</Button>
-          <Button type='primary' onClick={() => setIsModalOpen(true)}>
-            Configure IOD settings
-          </Button>
-        </div>
-      )}
       {window.location.pathname === '/institutions' && (
         <div className='iod-setting-div'>
           <Button
@@ -505,6 +511,17 @@ const HeaderButton = ({
               <ReloadOutlined />
             </Button>
           </Popconfirm>
+
+          {/* ===== OHIF Viwer option =====  */}
+
+          {studyIdArray.length === 1 && (
+            <Button onClick={OpenOHIFViwerOptionHandler}>
+              <img src={OHIFViwer} className='ohif-viwer-option-icon' style={{ marginRight: 8 }} />
+              OHIF 
+            </Button>
+
+          )}
+
 
           {/* ==== Study export option ====  */}
 

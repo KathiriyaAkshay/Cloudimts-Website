@@ -62,7 +62,7 @@ const BasicLayout = ({ children }) => {
 
   useEffect(() => {
     setToken(localStorage.getItem('token'))
-  }, [token])
+  }, [])
 
   useEffect(() => {
     setRole(localStorage.getItem('role'))

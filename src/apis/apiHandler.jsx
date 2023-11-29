@@ -1,8 +1,8 @@
-const token = localStorage.getItem("token");
 const BASE_URL = import.meta.env.VITE_APP_BE_ENDPOINT;
 
 const APIHandler = async (method, payload, route) => {
-
+    
+    const token = localStorage.getItem("token");
     try {
         
         let request = `${BASE_URL}${route}` ;  

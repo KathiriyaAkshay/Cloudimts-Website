@@ -329,7 +329,7 @@ const ChatMessanger = props => {
       sendChatMessage(modifiedObj)
         .then(res => {
           if (res.data.status) {
-            NotificationMessage('success', "Message send successfully")
+            // NotificationMessage('success', "Message send successfully")
           } else {
             NotificationMessage(
               'warning',
@@ -421,9 +421,6 @@ const ChatMessanger = props => {
             urgent_case: urgentCase
           } ;
 
-          console.log("Modified object information ========>");
-          console.log(modifiedObj);
-    
           setChatData('') ; 
           setQuotedMessageContainer(false) ; 
           setQuotedMessageInfo(null) ; 
@@ -431,7 +428,7 @@ const ChatMessanger = props => {
           sendChatMessage(modifiedObj)
             .then(res => {
               if (res.data.status) {
-                NotificationMessage('success', "Message send successfully")
+                // NotificationMessage('success', "Message send successfully")
               } else {
                 NotificationMessage(
                   'warning',
