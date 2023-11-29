@@ -15,15 +15,14 @@ import logo from '../../assets/images/Imageinet-logo.png'
 import { UserDetailsContext } from '../../hooks/userDetailsContext' ; 
 import NotificationMessage from '../../components/NotificationMessage' ; 
 import APIHandler from '../../apis/apiHandler'
+import axios from 'axios'
 
 const Login = () => {
   const navigate = useNavigate() ; 
   const [loginForm] = Form.useForm() ; 
-  const [userForm] = Form.useForm() ; 
   const [isLoading, setIsLoading] = useState(false) ; 
-  const { userDetails, changeUserDetails } = useContext(UserDetailsContext) ; 
 
-  const CheckUserCredentails = async () => {
+  const CheckUserCredentails = async () => { 
 
     let responseData = await APIHandler("POST", {}, "owner/v1/user_details_fetch") ; 
 
@@ -41,6 +40,7 @@ const Login = () => {
     await API.post('/owner/v1/login', values)
       .then(res => {
         if (res.data.status) {
+          API.defaults.headers.common["Authorization"] = `Bearer ${res.data.data.accessToken}`
           
           // Setup user token information 
           localStorage.setItem('token', res.data.data.accessToken)

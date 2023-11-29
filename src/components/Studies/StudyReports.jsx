@@ -6,7 +6,8 @@ import {
   Spin,
   Tag,
   Tooltip,
-  Typography
+  Typography, 
+  Popconfirm
 } from "antd";
 import React, { useContext, useEffect, useState } from "react";
 import {
@@ -20,7 +21,8 @@ import { BsEyeFill } from 'react-icons/bs'
 import {
   DownloadOutlined,
   MailOutlined,
-  WhatsAppOutlined
+  WhatsAppOutlined, 
+  CloseCircleFilled
 } from '@ant-design/icons'
 import ImageCarousel from './ImageCarousel'
 import { useNavigate } from 'react-router-dom'
@@ -29,20 +31,24 @@ import jsPDF from 'jspdf'
 import APIHandler from '../../apis/apiHandler' ; 
 import NotificationMessage from "../NotificationMessage";
 
+
 const StudyReports = ({
   isReportModalOpen,
   setIsReportModalOpen,
   studyID,
   setStudyID,
-  studyStatus,
+  studyStatus,  
   setStudyStatus,
   studyStatusHandler,
   pageNumberHandler,
   isEmailShareModalOpen,
   setEmailReportId,
   patientId,
-  patientName
+  patientName, 
+  studyUIDInformation
 }) => {
+  const ViEWER_URL = import.meta.env.ORTHANC_VIEWER_URL ; 
+
   const [modalData, setModalData] = useState([])
   const [isLoading, setIsLoading] = useState(false)
   const [isFileReportModalOpen, setIsFileReportModalOpen] = useState(false)
@@ -52,8 +58,10 @@ const StudyReports = ({
   const navigate = useNavigate()
   const { permissionData } = useContext(UserPermissionContext)
   const [isViewReportModalOpen, setIsViewReportModalOpen] = useState(false)
+
   const [normalReportImages, setNormalReportImages] = useState([])
-  const [normalReportModalData, setNormalReportModalData] = useState({})
+  const [normalReportModalData, setNormalReportModalData] = useState({}) 
+  const [normalReportClosedLoading, setNormalReportClosedLoading] = useState(false) ; 
 
   useEffect(() => {
     if (studyID && isReportModalOpen) {
@@ -62,7 +70,7 @@ const StudyReports = ({
   }, [studyID])
 
   const checkPermissionStatus = name => {
-    const permission = permissionData['Studies permission'].find(
+    const permission = permissionData['Studies permission']?.find(
       data => data.permission === name
     )?.permission_value
     return permission
@@ -186,7 +194,7 @@ const StudyReports = ({
                     record?.normal_report_data?.report_attach_data
                   )
                   setNormalReportModalData(record)
-                }
+                } 
               }}
             />
           </Tooltip>
@@ -220,6 +228,24 @@ const StudyReports = ({
               <WhatsAppOutlined className='action-icon' />
             </Tooltip>
           )}
+
+          {/* ==== Close report option handler ====  */}
+
+          {record.report_type !== 'Advanced report' && (
+            <Popconfirm
+              title = "Closed study"
+              description = {"Are you sure you want to closed this study ?"}
+              okText = "Yes"
+              cancelText = "No" 
+              okButtonProps={{
+                loading: normalReportClosedLoading
+              }}
+              onConfirm={() => ClosedStudyHandler(record.id)}
+            >
+              <CloseCircleFilled style={{color: "red"}} className='action-icon' />
+            </Popconfirm>
+          )}
+
         </Space>
       )
     }
@@ -329,6 +355,45 @@ const StudyReports = ({
     isEmailShareModalOpen(true)
   }
 
+  const ClosedStudyHandler = async (id) => {  
+
+    setNormalReportClosedLoading(true) ; 
+
+    let requestPayload = {id: studyID} ; 
+
+    let responseData = await APIHandler('POST', requestPayload, 'studies/v1/complete-study') ; 
+
+    setNormalReportClosedLoading(false) ; 
+
+    if (responseData === false){
+
+      NotificationMessage("warning", "Network request failed") ; 
+    
+    } else if (responseData['status'] === true){
+
+      NotificationMessage("success", "Closed study successfully") ; 
+      setIsReportModalOpen(false) ; 
+    
+    } else{
+
+      NotificationMessage("warning", "Network request failed", responseData['message'])
+    }
+  }
+
+  const OHIFViewerHandler = () => {
+    
+    let url = `https://viewer.cloudimts.com/viewer/${studyUIDInformation}` ; 
+    window.open(url, "_blank") ; 
+  }
+
+  const WeasisViewerHandler = () => {
+
+    const originalString = '$dicom:rs --url "https://viewer.cloudimts.com/orthanc" -r "patientID=5Yp0E"';
+    let encodedString = encodeURIComponent(originalString);
+    encodedString = "weasis://" + encodedString ; 
+    window.open(encodedString , "_blank") ; 
+  }
+
   return (
     <>
       <Modal
@@ -351,12 +416,19 @@ const StudyReports = ({
         <Spin spinning={isLoading}>
           <div className='Assign-study-upload-option-input-layout'>
             <div className='Report-modal-all-option-div'>
-              <Button key='back' className='Report-modal-option-button'>
+              
+              {/* ==== OHIF viewer option ====  */}
+
+              <Button key='back' className='Report-modal-option-button'
+                onClick={OHIFViewerHandler}>
                 OHIF Viewer
               </Button>
 
-              <Button key='back' className='Report-modal-option-button'>
-                Web Report
+              {/* ==== Weasis Viewer option =====  */}
+
+              <Button key='back' className='Report-modal-option-button' 
+                onClick={WeasisViewerHandler}>
+                Weasis viewer
               </Button>
 
               {checkPermissionStatus('Report study') && (
@@ -405,7 +477,7 @@ const StudyReports = ({
                   paddingRight: '10px'
                 }}
               >
-                <div>Patient Info</div>
+                <div>Patient Info | StudyId {studyID}</div>
                 <div
                   style={{ display: 'flex', gap: '20px', alignItems: 'center' }}
                 >
