@@ -65,11 +65,13 @@ const index = () => {
     {
       title: "Study Description",
       dataIndex: "study_description",
+      ellipsis: true,
     },
     
     {
       title: "Study History",
       dataIndex: "study_history",
+      ellipsis: true,
     },
     
     {

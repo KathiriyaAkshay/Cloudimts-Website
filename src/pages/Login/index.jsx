@@ -15,6 +15,7 @@ import logo from '../../assets/images/Imageinet-logo.png'
 import { UserDetailsContext } from '../../hooks/userDetailsContext' ; 
 import NotificationMessage from '../../components/NotificationMessage' ; 
 import APIHandler from '../../apis/apiHandler'
+import axios from 'axios'
 
 const Login = () => {
   const navigate = useNavigate() ; 
@@ -41,6 +42,7 @@ const Login = () => {
     await API.post('/owner/v1/login', values)
       .then(res => {
         if (res.data.status) {
+          API.defaults.headers.common["Authorization"] = `Bearer ${res.data.data.accessToken}`
           
           // Setup user token information 
           localStorage.setItem('token', res.data.data.accessToken)
