@@ -194,7 +194,7 @@ const StudyReports = ({
                     record?.normal_report_data?.report_attach_data
                   )
                   setNormalReportModalData(record)
-                }
+                } 
               }}
             />
           </Tooltip>

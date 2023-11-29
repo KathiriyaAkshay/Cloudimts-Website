@@ -61,15 +61,15 @@ const AddInstitution = () => {
 
     changeBreadcrumbs(crumbs)
 
-    if (id) {
-      retrieveInstitutionData()
-      retrieveModalityData()
-      retrieveRadiologistData()
-    } else {
-      retrieveModalityData()
-      retrieveRadiologistData()
-    }
-  }, [])
+      if (id) {
+        retrieveInstitutionData()
+        retrieveModalityData()
+        retrieveRadiologistData()
+      } else {
+        retrieveModalityData()
+        retrieveRadiologistData()
+      }
+}, [])
 
   const convertToInitialObject = data => {
     let initialObject = {}
@@ -122,7 +122,8 @@ const AddInstitution = () => {
     setIsLoading(false)
   }
 
-  const retrieveModalityData = async () => {
+  const retrieveModalityData = async () => { 
+    console.log("fetch institution modality =====?");
     const auth = 'Bearer ' + `${token}`
     await API.get('/institute/v1/institute-modality', {
       headers: { Authorization: auth }
