@@ -622,6 +622,7 @@ const AddInstitution = () => {
               form={form}
               onFinish={handleSubmit}
               className='mt'
+              style = {{marginTop : "25px"}}
             >
               <Row gutter={15}>
                 <Col xs={24} sm={12} md={12} lg={6}>
