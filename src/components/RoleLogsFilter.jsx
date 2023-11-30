@@ -9,10 +9,6 @@ const roleOptions = [
     value: "Create role",
   },
   {
-    label: "Fetch role premission",
-    value: "Fetch role premission",
-  },
-  {
     label: "Update role premission",
     value: "Update role premission",
   },
@@ -66,19 +62,13 @@ const RoleLogsFilter = ({
       open={isRoleLogsFilterModalOpen}
       onOk={() => form.submit()}
       onCancel={() => {
-        // setFilterValues({});
-        // form.resetFields();
         setIsRoleLogsFilterModalOpen(false);
-        // retrieveRoleData({ page: 1 }, {}, true);
       }}
       footer={[
         <Button
           key="back"
           onClick={() => {
-            // setFilterValues({});
-            // form.resetFields();
             setIsRoleLogsFilterModalOpen(false);
-            // retrieveRoleData({ page: 1 }, {}, true);
           }}
         >
           Cancel
@@ -111,6 +101,7 @@ const RoleLogsFilter = ({
         form={form}
         onFinish={handleSubmit}
         autoComplete={"off"}
+        style={{marginTop: '25px'}}
       >
         <Row gutter={15}>
           <Col xs={24} lg={12}>
@@ -164,7 +155,7 @@ const RoleLogsFilter = ({
           </Col>
           <Col xs={24} lg={12}>
             <Form.Item
-              name="role__role_name"
+              name="role__role_name__icontains"
               label="Role Name"
               rules={[
                 {

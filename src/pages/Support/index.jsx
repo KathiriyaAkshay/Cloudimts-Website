@@ -94,17 +94,21 @@ const index = () => {
       fixed: 'right',
       width: window.innerWidth < 650 ? '1%' : '10%',
       render: (_, record) => (
+
         <Space style={{ display: 'flex', justifyContent: 'space-evenly' }}>
+        
           {checkPermissionStatus('Edit Support details') && (
             <EditActionIcon
               editActionHandler={() => editActionHandler(record.id)}
             />
           )}
+        
           {checkPermissionStatus('Delete Support details') && (
             <DeleteActionIcon
               deleteActionHandler={() => deleteActionHandler(record.id)}
             />
           )}
+        
         </Space>
       )
     }
@@ -116,11 +120,13 @@ const index = () => {
         tableColumns={columns}
         loadingTableData={isLoading}
       />
+
       <SupportModal
         retrieveSupportData={retrieveSupportData}
         setSupportId={setSupportId}
         supportId={supportId}
       />
+      
     </>
   )
 }

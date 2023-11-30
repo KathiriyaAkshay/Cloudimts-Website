@@ -66,7 +66,7 @@ const RoleLogs = () => {
 
   const columns = [
     {
-      title: 'Username',
+      title: 'Perfrom user',
       dataIndex: 'username'
     },
     {

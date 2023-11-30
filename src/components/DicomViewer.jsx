@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { getInstanceData, getStudyImages } from '../apis/studiesApi'
 import { Badge, Spin } from 'antd'
-const BASE_URL = import.meta.env.VITE_APP_BE_ENDPOINT
+const BASE_URL = import.meta.env.VITE_APP_BE_ENDPOINT ; 
+import NotificationMessage from './NotificationMessage';
 
 const DicomViewer = ({ dicomUrl }) => {
   const [imageData, setImageData] = useState([])
@@ -47,17 +48,20 @@ const DicomViewer = ({ dicomUrl }) => {
     setIsLoading(true)
     getInstanceData({ study_id: id })
       .then(res => {
-        if (res.data.status) {
-          res.data.data.map(data =>
-            retrieveStudyImages(data.seriesInstance, data.instances)
-          )
-        } else {
-          NotificationMessage(
-            'warning',
-            'Network request failed',
-            res.data.message
-          )
-        }
+
+        console.log("Response information =======>");
+        console.log(res);
+        // if (res.data.status) {
+        //   res.data.data.map(data =>
+        //     retrieveStudyImages(data.seriesInstance, data.instances)
+        //   )
+        // } else {
+        //   NotificationMessage(
+        //     'warning',
+        //     'Network request failed',
+        //     res.data.message
+        //   )
+        // }
       })
       .catch(err =>
         NotificationMessage(
@@ -80,7 +84,7 @@ const DicomViewer = ({ dicomUrl }) => {
           padding: '10px'
         }}
       >
-        {imageData?.map(images => (
+        { imageData.length !== 0 && imageData?.map(images => (
           <div>
             <Badge count={images.instances} showZero offset={[-12, 12]}>
               <img

@@ -713,18 +713,13 @@ const HeaderButton = ({
       )}
       {window.location.pathname === '/support' && (
         <div className='iod-setting-div'>
-          {permissionData['Support permission'] &&
-            permissionData['Support permission'].find(
-              data => data.permission === 'Add Support details'
-            )?.permission_value && (
-              <Button
-                type='primary'
-                onClick={() => setIsSupportModalOpen(true)}
-                className='btn-icon-div'
-              >
-                <PlusOutlined style={{ fontWeight: '500' }} /> Add New Support
-              </Button>
-            )}
+          <Button
+            type='primary'
+            onClick={() => setIsSupportModalOpen(true)}
+            className='btn-icon-div'
+          >
+            <PlusOutlined style={{ fontWeight: '500' }} /> Add New Support
+          </Button>
         </div>
       )}
       <StudyFilterModal

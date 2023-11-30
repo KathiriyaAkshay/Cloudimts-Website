@@ -76,6 +76,22 @@ const StudyReports = ({
     return permission
   }
 
+  function downloadPDF(pdfUrl) {
+    var pdfUrl = pdfUrl;
+    console.log(pdfUrl);
+    var updatedFileName = 'new_filename.pdf';
+
+    var link = document.createElement('a');
+    link.style.display = 'none';
+    link.setAttribute('download', updatedFileName);
+    link.setAttribute('href', pdfUrl);
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+
   const downloadReport = async (id) => { 
 
     let requestPayload = {id: studyID} ; 
@@ -89,27 +105,14 @@ const StudyReports = ({
       await downloadAdvancedFileReport({ id })
         .then(res => {
           if (res.data.status) {
-            const doc = new jsPDF({
-              format: 'a4',
-              unit: 'px'
-            })
-  
-            var reportPatientName = patientName.replace(/ /g, '-')
-  
-            // Adding the fonts.
-            doc.setFont('Inter-Regular', 'normal')
-  
-            doc.html(res?.data?.data?.report, {
-              async callback (doc) {
-                await doc.save(`${patientId}-${reportPatientName}-report`)
-              },
-              margin: [10, 10, 10, 10],
-              autoPaging: 'text',
-              x: 0,
-              y: 0,
-              width: 190, 
-              windowWidth: 675 
-            })
+            
+            let report_download_url = res.data?.data?.report_url ; 
+            let report_patient_name = patientName.replace(/ /g, "-") ; 
+
+            let updated_report_name = `${patientId}-${report_patient_name}-report.pdf` ; 
+            
+            downloadPDF(report_download_url, updated_report_name) ; 
+
           } else {
             NotificationMessage(
               'warning',
