@@ -41,7 +41,7 @@ const ViewReport = ({ id }) => {
       >
         <Button onClick={() => navigate(-1)}>Back</Button>
       </div>
-      <Card>
+      <Card className='Advance-view-report-layout'>
         <CKEditor
           editor={ClassicEditor}
           data={editorData}
