@@ -216,7 +216,7 @@ const BasicLayout = ({ children }) => {
     )?.permission_value && {
       label: <NavLink to={'/deleted-studies'}>Deleted Studies</NavLink>,
       key: 'deletedStudy',
-      icon: <MdDeleteSweep />
+      icon: <MdDeleteSweep color='red' />
     },
 
     // Support option
