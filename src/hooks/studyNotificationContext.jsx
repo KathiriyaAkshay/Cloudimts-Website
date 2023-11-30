@@ -140,10 +140,20 @@ const StudyNotificationProvider = ({ children }) => {
             return updatedData;
           });     
         } else if (eventData.payload.status === "Reported") {
+
+          console.log("Reported socket notification information ========>");
+          console.log(eventData.payload.data.id);
   
           setStudyData((prevStudyData) => {
             const updatedData = prevStudyData.map((data) => {
-              if (data.id === eventData.payload.data.id) {
+              if (data.id == eventData.payload.data.id) {
+                NotificationMessage(
+                  "success",
+                  `Study #${eventData.payload.data.id} Reported successfully`, 
+                  "", 
+                  5
+                );
+                
                 return {
                   ...data,
                   status: "Reported",
@@ -157,12 +167,6 @@ const StudyNotificationProvider = ({ children }) => {
           });
           
   
-          NotificationMessage(
-            "success",
-            `Study #${eventData.payload.data.id} Reported successfully`, 
-            "", 
-            5
-          );
         
         } else if (eventData.payload.status === "ViewReport") {
   

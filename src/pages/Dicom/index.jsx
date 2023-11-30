@@ -172,7 +172,8 @@ const Dicom = () => {
     }
 
     ws.onclose = () => {
-      NotificationMessage("warning", "Socket connection failed", "Chat socket conncetion failed" ) ; 
+      // NotificationMessage("warning", "Socket connection failed", "Chat socket conncetion failed" ) ; 
+      console.log("Chat socket connecttion close");
     }
 
     return () => {
