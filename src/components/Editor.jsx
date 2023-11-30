@@ -442,13 +442,13 @@ const Editor = ({ id }) => {
 
                 <Form
                   labelCol={{
-                    span: 24,
+                    span: 8,
                     // offset:3,
                   }}
                   wrapperCol={{
-                    span: 24,
+                    span: 22,
                   }}
-                  labelAlign="right"
+                  labelAlign="left"
                   form={form}
                   className='Advance-report-study-description-selection'
                 >

@@ -205,7 +205,7 @@ function Home () {
 
         <Row gutter={0} style={{ marginTop: '20px' }}>
           <Col xs={24}>
-            <TableWithFilter tableData={tableData} tableColumns={column} />
+            <TableWithFilter tableData={tableData} tableColumns={column} dashboard={true} />
           </Col>
         </Row>
       </div>
