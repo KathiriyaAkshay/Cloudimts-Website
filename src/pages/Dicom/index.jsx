@@ -262,7 +262,7 @@ const Dicom = () => {
 
   useEffect(() => {
 
-    console.log("Render study page =========>");
+console.log("Render study page =========>");
     setSystemFilterPayload({})
     setStudyDataPayload({})
     changeBreadcrumbs([{ name: `Study Data` }])
@@ -284,8 +284,6 @@ const Dicom = () => {
 
     if (responseData === false) {
     } else if (responseData['status'] === true) {
-      console.log(responseData['data'])
-
       setStudyData(prev => {
         return prev.map(element => {
           let series_id = element.series_id

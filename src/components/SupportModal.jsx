@@ -50,6 +50,7 @@ const SupportModal = ({ retrieveSupportData, setSupportId, supportId }) => {
   }
 
   const handleSubmit = async values => {
+
     if (supportId) {
       await updateParticularSupport({
         ...values,
@@ -158,6 +159,7 @@ const SupportModal = ({ retrieveSupportData, setSupportId, supportId }) => {
                 </Col>
               </Row>
             </Tabs.TabPane>
+
             <Tabs.TabPane key={'2'} tab='Phone Support'>
               <Row gutter={15}>
                 <Col xs={24} lg={12}>
