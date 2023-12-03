@@ -7,6 +7,7 @@ const ReportDataProvider = ({ children }) => {
     isPatientSelected: false,
     isInstitutionSelected: false,
     isImagesSelected: false,
+    isOhifViewerSelected:false,
     templateId: null,
     isStudyDescriptionSelected: false,
   });
