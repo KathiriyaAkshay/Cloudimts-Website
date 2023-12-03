@@ -573,7 +573,7 @@ const AddUsers = () => {
                   </Form.Item>
                 </Col>
 
-                <Col lg={8} md={12} sm={12}>
+                <Col lg={8} md={12} sm={12}>  
                   <Form.Item
                     label='Role'
                     name='role_id'
@@ -658,6 +658,23 @@ const AddUsers = () => {
                   </Form.Item>
                 </Col>
 
+                
+                <Col xs={24} sm={12} md={12} lg={8}>
+                  <Form.Item
+                    name='Remote Address'
+                    label='Remote Address'
+                    rules={[
+                      {
+                        whitespace: true,
+                        required: true,
+                        message: 'Please enter Remote Address'
+                      }
+                    ]}
+                  >
+                    <Input placeholder='Enter Remote Address (Platform)' />
+                  </Form.Item>
+                </Col>    
+
                 {!id && (
                   <>
                     {' '}
@@ -720,6 +737,7 @@ const AddUsers = () => {
                         />
                       </Form.Item>
                     </Col>{' '}
+
                   </>
                 )}
 

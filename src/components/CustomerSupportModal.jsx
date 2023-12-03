@@ -57,6 +57,17 @@ const CustomerSupportModal = ({ show, setShow }) => {
     }
   ]
 
+  const RemoteColumns = [
+    {
+      title: 'Description',
+      dataIndex: 'option_description'
+    },
+    {
+      title: 'Remote Address',
+      dataIndex: 'option_value'
+    }
+  ]
+
   return (
     <div>
       <Modal
@@ -86,6 +97,15 @@ const CustomerSupportModal = ({ show, setShow }) => {
                 <TableWithFilter
                   tableColumns={PhoneColumns}
                   tableData={tableData?.filter(data => data?.option === 2)}
+                  pagination
+                />
+              </Row>
+            </Tabs.TabPane>
+            <Tabs.TabPane key={'3'} tab='Remote Support'>
+              <Row gutter={15}>
+                <TableWithFilter
+                  tableColumns={RemoteColumns}
+                  tableData={tableData?.filter(data => data?.option === 3)}
                   pagination
                 />
               </Row>

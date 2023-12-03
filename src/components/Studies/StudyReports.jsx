@@ -42,6 +42,7 @@ const StudyReports = ({
   studyStatusHandler,
   pageNumberHandler,
   isEmailShareModalOpen,
+  isWhatsappShareModelOpen,
   setEmailReportId,
   patientId,
   patientName, 
@@ -228,7 +229,9 @@ const StudyReports = ({
 
           {record.report_type === 'Advanced report' && (
             <Tooltip title={'Whatsapp'}>
-              <WhatsAppOutlined className='action-icon' />
+              <WhatsAppOutlined className='action-icon'
+              onClick={() => isWhatsappShareModelOpen(true)}
+              />
             </Tooltip>
           )}
 

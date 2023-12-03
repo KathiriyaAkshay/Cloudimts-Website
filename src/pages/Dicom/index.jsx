@@ -12,7 +12,8 @@ import {
   Col,
   Select,
   Spin,
-  Input
+  Input,
+  Switch
 } from 'antd'
 import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons'
 import { useBreadcrumbs } from '../../hooks/useBreadcrumbs'
@@ -661,6 +662,7 @@ console.log("Render study page =========>");
     checkPermissionStatus('Edit SeriesId option') && {
       title: 'Edit seriesid',
       dataIndex: 'chat',
+      width:"5%",
       fixed: "right", 
       className: `${
         checkPermissionStatus('Edit SeriesId option') ? '' : 'column-display-none'
@@ -683,6 +685,7 @@ console.log("Render study page =========>");
       title: 'Chat',
       dataIndex: 'chat',
       fixed: "right", 
+      width:"4%",
       className: `${
         checkPermissionStatus('Study chat option') ? '' : 'column-display-none'
       }`,
@@ -706,8 +709,9 @@ console.log("Render study page =========>");
     {
       title: 'Actions',
       dataIndex: 'actions',
+      // width:"123rem",
       fixed: 'right',
-      width: window.innerWidth < 650 ? '1%' : '15%',
+      width: window.innerWidth < 650 ? '1%' : '9%',
       render: (_, record) => (
         <Space style={{ display: 'flex', justifyContent: 'space-evenly' }}>
           {/* ==== Clinical History option ====  */}
@@ -884,6 +888,7 @@ console.log("Render study page =========>");
   const [form] = Form.useForm()
 
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false)
+  const [isWhatsappShareModelOpen,setIsWhatsappModalOpen]=useState(false);
   const [emailShareLoading, setEmailShareLoading] = useState(false)
   const [emailReportId, setEmailReportId] = useState(null)
 
@@ -950,7 +955,7 @@ console.log("Render study page =========>");
         className='Study-table'
         dataSource={studyData}
         columns={columns}
-        scroll={{ y: 475, x: 1500 }}
+        scroll={{ y: 475, x: 2800 }}
         expandable={{
           expandedRowRender: record => (
             <p style={{ margin: 0 }}>
@@ -1048,6 +1053,7 @@ console.log("Render study page =========>");
         studyCloseHandler={studyCloseHandler}
         pageNumberHandler={PageNumberHandler}
         isEmailShareModalOpen={setIsEmailModalOpen}
+        isWhatsappShareModelOpen={setIsWhatsappModalOpen}
         setEmailReportId={setEmailReportId}
         patientId={patientId}
         patientName={patientName}
@@ -1182,6 +1188,7 @@ console.log("Render study page =========>");
         style={{ zIndex: 200 }}
         className='Report-email-share-option-modal'
       >
+        
         <Spin spinning={emailShareLoading}>
           <Form
             labelCol={{
@@ -1207,6 +1214,63 @@ console.log("Render study page =========>");
                   ]}
                 >
                   <Input placeholder='Enter Email address' />
+                </Form.Item>
+              </Col>
+            </Row>
+          </Form>
+        </Spin>
+      </Modal>
+
+            {/* ==== Share Whatsapp modal ==== */}
+            <Modal
+        title='Whatsapp Report'
+        centered
+        open={isWhatsappShareModelOpen}
+        onCancel={() => {
+          form.resetFields()
+          setIsWhatsappModalOpen(false)
+        }}
+        okText='Send'
+        onOk={() => form.submit()}
+      >
+        <Spin spinning={studyExportLoading}>
+          <Form
+            labelCol={{
+              span: 24
+            }}
+            wrapperCol={{
+              span: 24
+            }}
+            form={form}
+            // onFinish={handleSubmitWhatsapp}
+            className='mt'
+          >
+            <Row gutter={15}>
+              <Col xs={24} sm={24} md={24} lg={24}>
+                <Form.Item
+                  name='contact'
+                  label='Contact Details'
+                  className='category-select'
+                  rules={[
+                    {
+                      required: true,
+                      message: 'Please enter valid Contact Number'
+                    }
+                  ]}
+                >
+                  <Input
+                    placeholder='Enter Whatsapp Number'
+                  />
+                </Form.Item>
+              </Col>
+              <Col xs={24}>
+                <Form.Item
+                  name='attach_dicom'
+                  label='Attach Dicom Images'
+                  valuePropName='checked'
+                  initialValue={false}
+                >
+                  <Switch />
                 </Form.Item>
               </Col>
             </Row>

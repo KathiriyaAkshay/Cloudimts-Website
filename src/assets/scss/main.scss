@@ -1318,7 +1318,6 @@
 }
 
 .study-modal-patient-info-layout {
-  height: 22vh;
   overflow-y: auto;
   overflow-x: hidden;
 }
@@ -1758,7 +1757,11 @@
 .Report-info-table {
   border: 1px solid #c4c4c4;
   border-collapse: collapse;
-  margin-top: 1rem;
+  margin-top: 1rem; 
+  table-layout: fixed;
+  width: 95% !important;
+  word-wrap:break-word
+
 }
 
 .Report-info-table th,

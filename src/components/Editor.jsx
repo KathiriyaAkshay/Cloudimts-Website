@@ -12,7 +12,7 @@ import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 import Slider from 'react-slick'
 import NotificationMessage from './NotificationMessage'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'  
 import APIHandler from '../apis/apiHandler'
 import { descriptionOptions } from '../helpers/utils'
 
@@ -47,6 +47,7 @@ const Editor = ({ id }) => {
       isPatientSelected: true,
       isInstitutionSelected: false,
       isImagesSelected: false,
+      isOhifViewerSelected:false,
       templateId: null,
       isStudyDescriptionSelected: false
     }))
@@ -245,7 +246,9 @@ const Editor = ({ id }) => {
         <h3 style = "text-align:center;">Study Description</h3>
         <p style = "text-align: center ; ">${cardDetails?.Study_description}</p>
         </div>`
-        : ''
+        : selectedItem.isOhifViewerSelected
+        ? `qfqeg`
+        :`wef`
 
     setEditorData(prev =>
       selectedItem.isPatientSelected || selectedItem.isInstitutionSelected
@@ -308,7 +311,7 @@ const Editor = ({ id }) => {
         >
           <Spin spinning={isLoading}>
             <Row gutter={30}>
-              <Col xs={24} sm={12} md={12}>
+              <Col xs={24} sm={12} md={7}>
                 <div className='report-details-div'>
 
                   {/* ==== Show Patient details ====  */}
@@ -438,7 +441,7 @@ const Editor = ({ id }) => {
                 </div>
               </Col>
 
-              <Col xs={24} sm={12} md={12} className='report-editor-div'>
+              <Col xs={24} sm={12} md={17} className='report-editor-div'>
 
                 <Form
                   labelCol={{
