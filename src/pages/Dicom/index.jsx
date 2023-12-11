@@ -544,6 +544,7 @@ console.log("Render study page =========>");
     checkPermissionStatus('View Patient name') && {
       title: "Patient's Name",
       dataIndex: 'name',
+      width:"12%",
       className: `${
         checkPermissionStatus('View Patient name') ? '' : 'column-display-none'
       }`, 
@@ -620,12 +621,15 @@ console.log("Render study page =========>");
 
     {
       title: 'Study date',
-      dataIndex: 'created_at'
+      dataIndex: 'created_at',
+      width:"10%",
     },
 
     {
       title: 'Update at',
-      dataIndex: 'updated_at'
+      dataIndex: 'updated_at',
+      width:"10%",
+
     },
 
     checkPermissionStatus('View Institution name') && {
@@ -955,7 +959,7 @@ console.log("Render study page =========>");
         className='Study-table'
         dataSource={studyData}
         columns={columns}
-        scroll={{ y: 475, x: 2800 }}
+        scroll={{ y: 475, x: 2000 }}
         expandable={{
           expandedRowRender: record => (
             <p style={{ margin: 0 }}>
