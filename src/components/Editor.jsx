@@ -35,18 +35,19 @@ const Editor = ({ id }) => {
   const [isStudyDescriptionInserted, setIsStudyDescriptionInserted] =
     useState(false)
 
-  const [institutionReport, setInstitutionReport] = useState({}) ; 
-  const [referenceImageCount, setReferenceImageCount] = useState(1) ; 
-  const [seriesId, setSeriesId] = useState(null) ; 
+  const [institutionReport, setInstitutionReport] = useState({});
+  const [referenceImageCount, setReferenceImageCount] = useState(1);
+  const [seriesId, setSeriesId] = useState(null);
 
-  const [form] = Form.useForm() ; 
-  const [reportStudyDescription, setReportStudyDescription] = useState(null) ; 
+  const [form] = Form.useForm();
+  const [reportStudyDescription, setReportStudyDescription] = useState(null);
 
   useEffect(() => {
     setSelectedItem(prev => ({
       isPatientSelected: true,
       isInstitutionSelected: false,
       isImagesSelected: false,
+      isOhifViewerSelected: false,
       templateId: null,
       isStudyDescriptionSelected: false
     }))
@@ -59,9 +60,9 @@ const Editor = ({ id }) => {
 
   useEffect(() => {
     if (selectedItem?.templateId) {
-      setIsPatientInformationInserted(false) ; 
-      setIsInstitutionInformationInserted(false) ; 
-      setIsStudyDescriptionInserted(false) ; 
+      setIsPatientInformationInserted(false);
+      setIsInstitutionInformationInserted(false);
+      setIsStudyDescriptionInserted(false);
       retrieveTemplateData()
     }
   }, [selectedItem?.templateId])
@@ -127,21 +128,21 @@ const Editor = ({ id }) => {
     )
 
     if (responseData === false) {
-      NotificationMessage('warning', 'Network request failed') ; 
+      NotificationMessage('warning', 'Network request failed');
 
     } else if (responseData['status'] === true) {
-      
+
       let Institution_id = responseData['data']['institution_id']
       let SeriesIdValue = responseData['data']['series_id']
 
-      setSeriesId(SeriesIdValue) ; 
+      setSeriesId(SeriesIdValue);
 
       let institutionReportPayload = {
         institution_id: Institution_id,
         study_id: id
-      } ; 
+      };
 
-      setCardDetails({"Study_description": responseData['data']?.Study_description})
+      setCardDetails({ "Study_description": responseData['data']?.Study_description })
 
       let reportResponseData = await APIHandler(
         'POST',
@@ -190,62 +191,63 @@ const Editor = ({ id }) => {
   }, [seriesId])
 
   const convertPatientDataToTable = () => {
+    console.log(selectedItem);
     const data =
       selectedItem.isPatientSelected && !isPatientInformationInserted
         ? `<div>
         <h2 style = "text-align: center; ">Patient Information</h2>
         <table>
           <tbody>
-            ${
-              institutionReport.hasOwnProperty('patient_details') &&
-              Object.entries(institutionReport?.patient_details)
-                .map(([key, value]) => {
-                  return `
+            ${institutionReport.hasOwnProperty('patient_details') &&
+        Object.entries(institutionReport?.patient_details)
+          .map(([key, value]) => {
+            return `
                 <tr>
                   <td>${key}</td>
                   <td>${value}</td>
                 </tr>
               `
-                })
-                .join('')
-            }
+          })
+          .join('')
+        }
           </tbody>
         </table>
         </div>`
         : selectedItem.isInstitutionSelected &&
           !isInstitutionInformationInserted
-        ? `<div>
+          ? `<div>
               <h2 style = "text-align: center;">Institution Information</h2>
               <table>
                 <tbody>
-                  ${
-                    institutionReport.hasOwnProperty('institution_details') &&
-                    Object.entries(institutionReport?.institution_details)
-                      .map(([key, value]) => {
-                        return `
+                  ${institutionReport.hasOwnProperty('institution_details') &&
+          Object.entries(institutionReport?.institution_details)
+            .map(([key, value]) => {
+              return `
                   <tr>
                     <td>${key}</td>
                     <td>${value}</td>
                   </tr>
                 `
-                      })
-                      .join('')
-                  }
+            })
+            .join('')
+          }
                 </tbody>
         </table>
       </div>`
-        : selectedItem.isImagesSelected
-        ? `
+          : selectedItem.isImagesSelected
+            ? `
           <h3 style = "text-align:center;">Reference image ${referenceImageCount}</h3>
           <figure class="image">
           <img src="${imageSlider[studyImageID]?.url}" alt="study image" style="width: 256px; height: 200px;" class="Reference-image">
           </figure>`
-        : selectedItem.isStudyDescriptionSelected && !isStudyDescriptionInserted
-        ? `<div>
+            : selectedItem.isStudyDescriptionSelected && !isStudyDescriptionInserted
+              ? `<div>
         <h3 style = "text-align:center;">Study Description</h3>
         <p style = "text-align: center ; ">${cardDetails?.Study_description}</p>
         </div>`
-        : ''
+              : selectedItem.isOhifViewerSelected
+                ? `<div>asdsa</div>`
+                : ``
 
     setEditorData(prev =>
       selectedItem.isPatientSelected || selectedItem.isInstitutionSelected
@@ -264,14 +266,14 @@ const Editor = ({ id }) => {
   const [imageSlider, setImageSlider] = useState([])
 
   const handleReportSave = async () => {
-    
-    if (reportStudyDescription == null){
-      
+
+    if (reportStudyDescription == null) {
+
       NotificationMessage("warning", "Please, Select report study description")
-      
+
     } else {
-      
-      setIsLoading(true) ; 
+
+      setIsLoading(true);
       await saveAdvancedFileReport({
         id,
         report: `${editorData} ${`<p style="text-align: right;"><img src=${signatureImage} alt="signature image" style="width:100px;height:80px;text-align: right;"></p>`} ${`<p style="text-align: right;">${username}</p>`}`,
@@ -296,8 +298,8 @@ const Editor = ({ id }) => {
 
   }
 
-  const StudyDescriptionChangeHandler  = (selectionOption) => {
-    setReportStudyDescription(selectionOption) ; 
+  const StudyDescriptionChangeHandler = (selectionOption) => {
+    setReportStudyDescription(selectionOption);
   }
   return (
     <>
@@ -308,7 +310,7 @@ const Editor = ({ id }) => {
         >
           <Spin spinning={isLoading}>
             <Row gutter={30}>
-              <Col xs={24} sm={12} md={12}>
+              <Col xs={24} sm={12} md={selectedItem.isOhifViewerSelected ? 12 : 7}>
                 <div className='report-details-div'>
 
                   {/* ==== Show Patient details ====  */}
@@ -430,15 +432,38 @@ const Editor = ({ id }) => {
                     </>
                   )}
 
-                  <div className='btn-div insert-report-details-option'>
-                    <Button type='primary' onClick={convertPatientDataToTable}>
-                      Insert
-                    </Button>
-                  </div>
+
+                  {/* ==== Show OHIF Viewer information ====  */}
+
+                  {selectedItem?.isOhifViewerSelected && (
+                    <>
+                      <Typography className='card-heading'>
+                        OHIF viewer
+                      </Typography>
+                      <Divider />
+                      <iframe src="https://viewer.cloudimts.com/viewer/1.2.392.200036.9116.2.2.2.1762658034.1589977474.281820" width="95%" height="1000px"></iframe>
+
+
+                    </>
+                  )}
+
+                  {!selectedItem?.isOhifViewerSelected && (
+                    <>
+                      <div className='btn-div insert-report-details-option'>
+                        <Button type='primary' onClick={convertPatientDataToTable}>
+                          Insert
+                        </Button>
+                      </div>
+
+                    </>
+                  )}
+
+
+
                 </div>
               </Col>
 
-              <Col xs={24} sm={12} md={12} className='report-editor-div'>
+              <Col xs={24} sm={12} md={selectedItem.isOhifViewerSelected ? 12 : 17} className='report-editor-div'>
 
                 <Form
                   labelCol={{
@@ -464,17 +489,17 @@ const Editor = ({ id }) => {
                       },
                     ]}
                   >
-                      <Select
-                        placeholder="Select Study Description"
-                        options={descriptionOptions}
-                        showSearch
-                        filterSort={(optionA, optionB) =>
-                          (optionA?.label ?? "")
-                            .toLowerCase()
-                            .localeCompare((optionB?.label ?? "").toLowerCase())
-                        }
-                        onChange={StudyDescriptionChangeHandler}
-                      />
+                    <Select
+                      placeholder="Select Study Description"
+                      options={descriptionOptions}
+                      showSearch
+                      filterSort={(optionA, optionB) =>
+                        (optionA?.label ?? "")
+                          .toLowerCase()
+                          .localeCompare((optionB?.label ?? "").toLowerCase())
+                      }
+                      onChange={StudyDescriptionChangeHandler}
+                    />
                   </Form.Item>
                 </Form>
 

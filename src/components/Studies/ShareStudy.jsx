@@ -4,6 +4,7 @@ import {
   Button,
   Col,
   Form,
+  Input,
   List,
   Modal,
   Row,
@@ -13,7 +14,7 @@ import {
   Tag,
   Typography
 } from 'antd'
-import { MdEmail } from 'react-icons/md'
+import { MdEmail,MdOutlineWhatsapp } from 'react-icons/md'
 import NotificationMessage from '../NotificationMessage'
 import APIHandler from '../../apis/apiHandler'
 
@@ -28,6 +29,8 @@ const ShareStudy = ({
   const [isEmailSending, setIsEmailSending] = useState(false)
 
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false)
+  const [isWhatsappModalOpen, setIsWhatsappModalOpen] = useState(false)
+
   const [emailOptions, setEmailOptions] = useState([])
   const [form] = Form.useForm()
   const [studyData, setStudyData] = useState({})
@@ -165,7 +168,7 @@ const ShareStudy = ({
     setIsLoading(false)
   }
 
-  const handleSubmit = async values => {
+  const handleSubmitEmail = async values => {
     setIsEmailSending(true)
 
     let requestPayload = {
@@ -192,6 +195,32 @@ const ShareStudy = ({
     }
   }
 
+  const handleSubmitWhatsapp = async values => {
+    setIsEmailSending(true)
+
+    let requestPayload = {
+      // sender_email: values?.email,
+      // attach_dicom: values?.attach_dicom,
+      // study_id: studyID
+    }
+
+    // let responseData = await APIHandler(
+    //   'POST',
+    //   requestPayload,
+    //   'email/v1/email-share-option'
+    // )
+
+    setIsEmailSending(false)
+    setIsWhatsappModalOpen(false)
+
+    if (responseData === false) {
+      NotificationMessage('warning', 'Network request failed')
+    } else if (responseData['status'] === true) {
+      NotificationMessage('success', 'Email send successfully')
+    } else {
+      NotificationMessage('warning', responseData['message'])
+    }
+  }
   const modalHeader = (
     <div
       style={{
@@ -202,6 +231,7 @@ const ShareStudy = ({
       }}
     >
       <span>Share Study</span>
+      <div>
       <Button style={{ background: 'transparent', border: '1px solid #fff' }}>
         <MdEmail
           className='action-icon'
@@ -209,6 +239,17 @@ const ShareStudy = ({
           onClick={() => setIsEmailModalOpen(true)}
         />
       </Button>
+
+      <Button style={{ background: 'transparent', border: '1px solid #fff',marginLeft:"0.3rem" }}>
+        <MdOutlineWhatsapp
+          className='action-icon'
+          style={{ color: '#fff' }}
+          onClick={() => setIsWhatsappModalOpen(true)}
+        />
+      </Button>
+      </div>
+     
+      
     </div>
   )
 
@@ -306,7 +347,7 @@ const ShareStudy = ({
               span: 24
             }}
             form={form}
-            onFinish={handleSubmit}
+            onFinish={handleSubmitEmail}
             className='mt'
           >
             <Row gutter={15}>
@@ -331,6 +372,64 @@ const ShareStudy = ({
                         .toLowerCase()
                         .localeCompare((optionB?.label ?? '').toLowerCase())
                     }
+                  />
+                </Form.Item>
+              </Col>
+              <Col xs={24}>
+                <Form.Item
+                  name='attach_dicom'
+                  label='Attach Dicom Images'
+                  valuePropName='checked'
+                  initialValue={false}
+                >
+                  <Switch />
+                </Form.Item>
+              </Col>
+            </Row>
+          </Form>
+        </Spin>
+      </Modal>
+
+
+      {/* ==== Share Whatsapp modal ==== */}
+      <Modal
+        title='Whatsapp Report'
+        centered
+        open={isWhatsappModalOpen}
+        onCancel={() => {
+          form.resetFields()
+          setIsWhatsappModalOpen(false)
+        }}
+        okText='Send'
+        onOk={() => form.submit()}
+      >
+        <Spin spinning={isEmailSending}>
+          <Form
+            labelCol={{
+              span: 24
+            }}
+            wrapperCol={{
+              span: 24
+            }}
+            form={form}
+            onFinish={handleSubmitWhatsapp}
+            className='mt'
+          >
+            <Row gutter={15}>
+              <Col xs={24} sm={24} md={24} lg={24}>
+                <Form.Item
+                  name='contact'
+                  label='Contact Details'
+                  className='category-select'
+                  rules={[
+                    {
+                      required: true,
+                      message: 'Please enter valid Contact Number'
+                    }
+                  ]}
+                >
+                  <Input
+                    placeholder='Enter Whatsapp Number'
                   />
                 </Form.Item>
               </Col>

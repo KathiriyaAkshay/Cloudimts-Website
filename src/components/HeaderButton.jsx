@@ -614,6 +614,7 @@ const HeaderButton = ({
                 isPatientSelected: false,
                 isInstitutionSelected: false,
                 isImagesSelected: true,
+                isOhifViewerSelected:false,
                 templateId: prev?.templateId,
                 isStudyDescriptionSelected: false
               }))
@@ -628,6 +629,8 @@ const HeaderButton = ({
                 isPatientSelected: false,
                 isInstitutionSelected: false,
                 isImagesSelected: false,
+                isOhifViewerSelected:false,
+
                 templateId: prev?.templateId,
                 isStudyDescriptionSelected: true
               }))
@@ -642,6 +645,8 @@ const HeaderButton = ({
                 isPatientSelected: true,
                 isInstitutionSelected: false,
                 isImagesSelected: false,
+                isOhifViewerSelected:false,
+
                 templateId: prev?.templateId,
                 isStudyDescriptionSelected: false
               }))
@@ -656,12 +661,29 @@ const HeaderButton = ({
                 isPatientSelected: false,
                 isInstitutionSelected: true,
                 isImagesSelected: false,
+                isOhifViewerSelected:false,
+
                 templateId: prev?.templateId,
                 isStudyDescriptionSelected: false
               }))
             }
           >
             Institution Information
+          </Button>
+          <Button
+            type='primary'
+            onClick={() =>
+              setSelectedItem(prev => ({
+                isPatientSelected: false,
+                isInstitutionSelected: false,
+                isImagesSelected: false,
+                isOhifViewerSelected:true,
+                templateId: prev?.templateId,
+                isStudyDescriptionSelected: false
+              }))
+            }
+          >
+            OHIF Viewer
           </Button>
           <Select
             placeholder='choose template'

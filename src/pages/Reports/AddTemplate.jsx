@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useBreadcrumbs } from '../../hooks/useBreadcrumbs'
-import { Button, Card, Col, Form, Input, Row } from 'antd'
+import { Button, Card, Col, Form, Input, Row,Select } from 'antd'
 import '../../../ckeditor5/build/ckeditor'
 import { CKEditor } from '@ckeditor/ckeditor5-react'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -10,6 +10,7 @@ import {
   updateReport
 } from '../../apis/studiesApi'
 import NotificationMessage from '../../components/NotificationMessage'
+import { descriptionOptions } from '../../helpers/utils'
 
 const AddTemplate = () => {
   const [editorData, setEditorData] = useState('')
@@ -107,7 +108,7 @@ const AddTemplate = () => {
           onFinish={handleSubmit}
         >
           <Row gutter={30}>
-            <Col lg={12} md={12} sm={12}>
+            <Col lg={8} md={8} sm={8}>
               <Form.Item
                 label='Template Name'
                 name='name'
@@ -125,11 +126,34 @@ const AddTemplate = () => {
               </Form.Item>
             </Col>
             <Col
-              lg={12}
-              md={12}
-              sm={12}
+              lg={16}
+              md={16}
+              sm={16}
               style={{ height: 'calc(100vh - 300px)', overflow: 'auto' }}
             >
+                  <Form.Item
+                    name="study_description"
+                    label="Modality Study Description"
+                    className="category-select"
+
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please select Modality Study Description",
+                      },
+                    ]}
+                  >
+                      <Select
+                        placeholder="Select Study Description"
+                        options={descriptionOptions}
+                        showSearch
+                        filterSort={(optionA, optionB) =>
+                          (optionA?.label ?? "")
+                            .toLowerCase()
+                            .localeCompare((optionB?.label ?? "").toLowerCase())
+                        }
+                      />
+                  </Form.Item>
               <Form.Item label='Create Template'>
                 <CKEditor
                   editor={ClassicEditor}

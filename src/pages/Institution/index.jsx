@@ -244,6 +244,7 @@ const Institution = () => {
     checkPermissionStatus('View Institution space usage') && {
       title: 'Usage',
       dataIndex: 'institution_space_usage',
+      width:"10%",
       className: `${
         checkPermissionStatus('View Institution space usage')
           ? ''
@@ -251,7 +252,8 @@ const Institution = () => {
       }`,
       render: (text, record) => {
         let Calculate_usaeg_permission = parseFloat(parseFloat(record.space_usage / record.allocated_storage)*100).toFixed(2); 
-        return <Progress percent={Calculate_usaeg_permission} style={{width: 30}} />;
+        console.log(Calculate_usaeg_permission);
+        return <Progress percent={Calculate_usaeg_permission} style={{width: 100}} />;
       }
       
     },
