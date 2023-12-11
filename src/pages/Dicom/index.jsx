@@ -15,7 +15,7 @@ import {
   Input,
   Switch
 } from 'antd'
-import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons'
+import { CheckCircleOutlined, CloseCircleOutlined, FileOutlined } from '@ant-design/icons'
 import { useBreadcrumbs } from '../../hooks/useBreadcrumbs'
 import ChatMain from '../../components/Chat/ChatMain'
 import DicomViewer from '../../components/DicomViewer'
@@ -59,6 +59,7 @@ import { saveAs } from 'file-saver'
 import * as XLSX from 'xlsx'
 import AssignStudyModified from '../../components/Studies/AssignStudyModified'
 import EditSeriesId from '../../components/EditSeriesId'
+import ImageDrawer from './ImageDrawer'
 const BASE_URL = import.meta.env.VITE_APP_SOCKET_BASE_URL
 const Dicom = () => {
   // Modal related useState
@@ -67,6 +68,7 @@ const Dicom = () => {
   const [isStudyModalOpen, setIsStudyModalOpen] = useState(false)
   const [isReportModalOpen, setIsReportModalOpen] = useState(false)
   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false)
+  const [isImageModalOpen,setImageDrawerOpen]=useState(false)
   const [isAssignModifiedModalOpen, setIsAssignModifiedModalOpen] = useState(true)
   const [isEditSeriesIdModifiedOpen, setIsEditSeriesIdModifiedOpen] = useState(false) ; 
 
@@ -520,6 +522,22 @@ console.log("Render study page =========>");
   }
 
   const columns = [
+    {
+      title: 'Images',
+      dataIndex: 'images',
+      // fixed: "right", 
+      width:"5%",
+      render: (text, record) => (        
+        <Tooltip title={`${record.patient_id} | ${record.created_at}`}>
+          <FileOutlined
+            className='action-icon action-icon-primary'
+            onClick={() => {
+              setImageDrawerOpen(true)
+            }}
+          />
+        </Tooltip>
+      ),
+    },
 
     checkPermissionStatus('View Patient id') && {
       title: "Patient's Id",
@@ -960,13 +978,7 @@ console.log("Render study page =========>");
         dataSource={studyData}
         columns={columns}
         scroll={{ y: 475, x: 2000 }}
-        expandable={{
-          expandedRowRender: record => (
-            <p style={{ margin: 0 }}>
-              <DicomViewer dicomUrl={record?.study?.study_original_id} />
-            </p>
-          )
-        }}
+
         rowSelection={rowSelection}
         onRow={onRow}
         loading={isLoading}
@@ -1129,6 +1141,10 @@ console.log("Render study page =========>");
         studyID={studyID}
         setStudyID={setStudyID}
       />
+
+
+      {/* ==== Image Drawer==== */}
+      <ImageDrawer isDrawerOpen={isImageModalOpen} setImageDrawerOpen={setImageDrawerOpen}/>
 
       {/* ===== Study Export option modal ======  */}
 
