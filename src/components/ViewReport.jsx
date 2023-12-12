@@ -17,7 +17,7 @@ const ViewReport = ({ id }) => {
     await downloadAdvancedFileReport({ id })
       .then(res => {
         if (res.data.status) {
-          setEditorData(res.data.data.report)
+          setEditorData(res.data.message)
         } else {
           NotificationMessage(
             'warning',

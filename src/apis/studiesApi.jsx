@@ -767,7 +767,7 @@ export const downloadAdvancedFileReport = async (params = {}) => {
   let token = GetToken() ; 
 
   const downloadAdvancedFileReport = await API.post(
-    "/studies/v1/download_report_data",
+    "/studies/v1/fetch-report-html",
     params,
     {
       headers: {
