@@ -17,17 +17,20 @@ import {
 import { MdEmail,MdOutlineWhatsapp } from 'react-icons/md'
 import NotificationMessage from '../NotificationMessage'
 import APIHandler from '../../apis/apiHandler'
-
+import API from '../../apis/getApi'
 const ShareStudy = ({
   isShareStudyModalOpen,
   setIsShareStudyModalOpen,
   studyID,
   setStudyID
 }) => {
+  const token = localStorage.getItem('token')
+    
   const [modalData, setModalData] = useState([])
   const [isLoading, setIsLoading] = useState(false)
+  const [roleOptions, setRoleOptions] = useState([])
   const [isEmailSending, setIsEmailSending] = useState(false)
-
+  const [isNewEmailModalOpen, setIsNewEmailModalOpen] = useState(false)
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false)
   const [isWhatsappModalOpen, setIsWhatsappModalOpen] = useState(false)
 
@@ -46,6 +49,13 @@ const ShareStudy = ({
       retrieveEmailOptions()
     }
   }, [isEmailModalOpen])
+
+  useEffect(() => {
+    if (isNewEmailModalOpen) {
+      console.log("asdsa");
+      retrieveRoleOptions()
+    }
+  }, [isNewEmailModalOpen])
 
   const retrieveEmailOptions = () => {
     fetchEmailList()
@@ -196,6 +206,7 @@ const ShareStudy = ({
   }
 
   const handleSubmitWhatsapp = async values => {
+
     setIsEmailSending(true)
 
     let requestPayload = {
@@ -253,6 +264,87 @@ const ShareStudy = ({
     </div>
   )
 
+    // ==== add email data handler ==== 
+
+    const handleSubmit = async (values) => {
+
+      if (values.active_status === undefined){
+        values.active_status = false
+      }
+  
+      setIsLoading(true)
+      if (!emailID) {
+        await API.post('/email/v1/insert-email', values, {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+          .then(res => {
+            if (res.data.status) {
+              NotificationMessage('success', 'Email Added Successfully')
+              form.resetFields()
+              setIsEmailModalOpen(false)
+              retrieveEmailData()
+            } else {
+              NotificationMessage(
+                'warning',
+                'Network request failed',
+                res.data.message
+              )
+            }
+          })
+          .catch(err => NotificationMessage('warning', "Network request failed"))
+      } else {
+  
+        await API.post(
+          '/email/v1/edit-email',
+          { ...values, id: emailID },
+          {
+            headers: { Authorization: `Bearer ${token}` }
+          }
+        )
+          .then(res => {
+            if (res.data.status) {
+              NotificationMessage('success', 'Email Updated Successfully')
+              form.resetFields()
+              setIsEmailModalOpen(false)
+              retrieveEmailData()
+              setEmailID(null)
+            } else {
+              NotificationMessage(
+                'warning',
+                'Network request failed',
+                res.data.message
+              )
+            }
+          })
+          .catch(err => NotificationMessage('warning', "Network request failed"))
+      }
+      setIsLoading(false)
+    }
+
+      // API Call 
+  const retrieveRoleOptions = async () => {
+    setIsLoading(true)
+    await API.get('/email/v1/role-fetch', {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then(res => {
+        if (res.data.status) {
+          const resData = res.data.data.map(role => ({
+            label: role.role_name,
+            value: role.id
+          }))
+          setRoleOptions(resData)
+        } else {
+          NotificationMessage(
+            'warning',
+            'Network request failed',
+            res.data.message
+          )
+        }
+      })
+      .catch(err => NotificationMessage('warning', 'Network request failed'))
+    setIsLoading(false)
+  }
   return (
     <>
       {/* ==== Email deails modal ====  */}
@@ -384,6 +476,8 @@ const ShareStudy = ({
                 >
                   <Switch />
                 </Form.Item>
+                <Button type="primary" onClick={()=>setIsNewEmailModalOpen(true)}>Add New Email</Button>
+
               </Col>
             </Row>
           </Form>
@@ -447,6 +541,106 @@ const ShareStudy = ({
           </Form>
         </Spin>
       </Modal>
+
+      
+      {/* ==== Add Email Model ==== */}
+      <Modal
+        title='Add New Email'
+        open={isNewEmailModalOpen}
+        onOk={() => form.submit()}
+        onCancel={() => {
+          form.resetFields()
+          setIsNewEmailModalOpen(false)
+        }}
+      >
+        <Form
+          labelCol={{
+            span: 24
+          }}
+          wrapperCol={{
+            span: 24
+          }}
+          form={form}
+          onFinish={handleSubmit}
+          style={{marginTop: "12px"}}
+        >
+          <Form.Item
+            name='full_name'
+            label='Full Name'
+            rules={[
+              {
+                required: true,
+                whitespace: true,
+                message: 'Please enter full name'
+              }
+            ]}
+          >
+            <Input placeholder='Enter Full Name' />
+          </Form.Item>
+
+          <Form.Item
+            name='email'
+            label='Email'
+            rules={[
+              {
+                type: 'email',
+                required: true,
+                message: 'Please enter email'
+              }
+            ]}
+          >
+            <Input placeholder='Enter Email' />
+          </Form.Item>
+
+          <Form.Item
+            name='contact'
+            label='Contact'
+            rules={[
+              {
+                required: true,
+                whitespace: true,
+                message: 'Please enter contact number'
+              }
+            ]}
+          >
+            <Input placeholder='Enter Contact Number' />
+          </Form.Item>
+
+          <Form.Item
+            label='Role'
+            name='role_id'
+            className='category-select'
+            rules={[
+              {
+                required: true,
+                message: 'Please select role'
+              }
+            ]}
+          >
+            <Select
+              placeholder='Select Role'
+              options={roleOptions}
+              showSearch
+              filterSort={(optionA, optionB) =>
+                (optionA?.label ?? '')
+                  .toLowerCase()
+                  .localeCompare((optionB?.label ?? '').toLowerCase())
+              }
+            />
+          </Form.Item>
+
+          <Form.Item
+            name='active_status'
+            label='Active'
+            valuePropName='checked'
+          >
+            <Switch />
+          </Form.Item>
+
+        </Form>
+
+      </Modal>
+
     </>
   )
 }

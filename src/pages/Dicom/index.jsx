@@ -15,7 +15,7 @@ import {
   Input,
   Switch
 } from 'antd'
-import { CheckCircleOutlined, CloseCircleOutlined, FileOutlined } from '@ant-design/icons'
+import { CheckCircleOutlined, CloseCircleOutlined, FileOutlined, PictureOutlined } from '@ant-design/icons'
 import { useBreadcrumbs } from '../../hooks/useBreadcrumbs'
 import ChatMain from '../../components/Chat/ChatMain'
 import EditStudy from '../../components/Studies/EditStudy'
@@ -528,7 +528,7 @@ const Dicom = () => {
       width:"5%",
       render: (text, record) => (        
         <Tooltip title={`${record.patient_id} | ${record.created_at}`}>
-          <FileOutlined
+          <PictureOutlined
             className='action-icon action-icon-primary'
             onClick={() => ImageDrawerHandler(record)}
           />
@@ -729,7 +729,7 @@ const Dicom = () => {
       title: 'Actions',
       dataIndex: 'actions',
       fixed: 'right',
-      width: window.innerWidth < 650 ? '1%' : '9%',
+      width: window.innerWidth < 650 ? '1%' : '10%',
       render: (_, record) => (
         <Space style={{ display: 'flex', justifyContent: 'space-evenly' }}>
           {/* ==== Clinical History option ====  */}
