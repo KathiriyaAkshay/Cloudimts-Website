@@ -1271,7 +1271,7 @@
 .assign-study-modal {
   .ant-modal-body {
     max-height: calc(100vh - 150px) !important;
-    overflow-y: auto;
+    overflow-y: hidden;
   }
 }
 
@@ -1338,10 +1338,12 @@
   padding-top: 1rem;
   border-top: 1px solid #c4c4c4;
   margin-top: 1rem;
+  height: 25vh;
+  overflow-x: auto;
 }
 
 .assign-study-modal {
-  height: 95vh !important;
+  height: 70vh !important;
 }
 
 .Report-modal-all-option-div {
