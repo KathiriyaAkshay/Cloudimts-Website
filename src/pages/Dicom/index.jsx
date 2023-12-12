@@ -1296,7 +1296,6 @@ const Dicom = () => {
               span: 24
             }}
             form={form}
-            // onFinish={handleSubmitWhatsapp}
             className='mt'
           >
             <Row gutter={15}>
