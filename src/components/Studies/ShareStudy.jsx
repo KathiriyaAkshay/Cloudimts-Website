@@ -264,64 +264,36 @@ const ShareStudy = ({
     </div>
   )
 
-    // ==== add email data handler ==== 
+  // ==== add email data handler ==== 
 
-    const handleSubmit = async (values) => {
+  const handleSubmit = async (values) => {
 
-      if (values.active_status === undefined){
-        values.active_status = false
-      }
-  
-      setIsLoading(true)
-      if (!emailID) {
-        await API.post('/email/v1/insert-email', values, {
-          headers: { Authorization: `Bearer ${token}` }
-        })
-          .then(res => {
-            if (res.data.status) {
-              NotificationMessage('success', 'Email Added Successfully')
-              form.resetFields()
-              setIsEmailModalOpen(false)
-              retrieveEmailData()
-            } else {
-              NotificationMessage(
-                'warning',
-                'Network request failed',
-                res.data.message
-              )
-            }
-          })
-          .catch(err => NotificationMessage('warning', "Network request failed"))
-      } else {
-  
-        await API.post(
-          '/email/v1/edit-email',
-          { ...values, id: emailID },
-          {
-            headers: { Authorization: `Bearer ${token}` }
-          }
-        )
-          .then(res => {
-            if (res.data.status) {
-              NotificationMessage('success', 'Email Updated Successfully')
-              form.resetFields()
-              setIsEmailModalOpen(false)
-              retrieveEmailData()
-              setEmailID(null)
-            } else {
-              NotificationMessage(
-                'warning',
-                'Network request failed',
-                res.data.message
-              )
-            }
-          })
-          .catch(err => NotificationMessage('warning', "Network request failed"))
-      }
-      setIsLoading(false)
+    if (values.active_status === undefined){
+      values.active_status = false
     }
 
-      // API Call 
+    setIsLoading(true)
+    await API.post('/email/v1/insert-email', values, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then(res => {
+        if (res.data.status) {
+          NotificationMessage('success', 'Email Added Successfully')
+          form.resetFields()
+          setIsNewEmailModalOpen(false) ; 
+        } else {
+          NotificationMessage(
+            'warning',
+            'Network request failed',
+            res.data.message
+          )
+        }
+      })
+      .catch(err => NotificationMessage("warning", "Network request failed"))
+    setIsLoading(false)
+  }
+
+  // API Call 
   const retrieveRoleOptions = async () => {
     setIsLoading(true)
     await API.get('/email/v1/role-fetch', {
@@ -345,6 +317,7 @@ const ShareStudy = ({
       .catch(err => NotificationMessage('warning', 'Network request failed'))
     setIsLoading(false)
   }
+
   return (
     <>
       {/* ==== Email deails modal ====  */}
@@ -484,7 +457,6 @@ const ShareStudy = ({
         </Spin>
       </Modal>
 
-
       {/* ==== Share Whatsapp modal ==== */}
       <Modal
         title='Whatsapp Report'
@@ -541,7 +513,6 @@ const ShareStudy = ({
           </Form>
         </Spin>
       </Modal>
-
       
       {/* ==== Add Email Model ==== */}
       <Modal
