@@ -214,6 +214,7 @@ const StudyReports = ({
               />
             </Tooltip>
           )}
+          
           {/* ===== Email share option ====== */}
 
           {record.report_type === 'Advanced report' && (
