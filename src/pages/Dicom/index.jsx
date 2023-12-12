@@ -604,7 +604,7 @@ const Dicom = () => {
                 ? 'cyan'
                 : text === 'ViewReport'
                 ? 'lime'
-                : text === 'Reporting'
+                : text === 'InReporting'
                 ? 'magenta'
                 : text === 'ClosedStudy'
                 ? 'red'
@@ -947,7 +947,7 @@ const Dicom = () => {
   // Function ==== onRow doubleClick handler
 
   const handleCellDoubleClick = (record) => {
-    if (record.status === 'Assigned' || record.status === 'Reporting') {
+    if (record.status === 'Assigned' || record.status === 'InReporting') {
       updateStudyStatus({ id: record.id })
         .then(res => {
           if (res.data.status) {

@@ -442,8 +442,6 @@ const Editor = ({ id }) => {
                       </Typography>
                       <Divider />
                       <iframe src="https://viewer.cloudimts.com/viewer/1.2.392.200036.9116.2.2.2.1762658034.1589977474.281820" width="95%" height="1000px"></iframe>
-
-
                     </>
                   )}
 

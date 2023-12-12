@@ -121,6 +121,7 @@ const FileReport = ({
         >
           Patient Info
         </div>
+
         <List
           style={{ marginTop: '8px' }}
           grid={{
@@ -150,8 +151,9 @@ const FileReport = ({
             </List.Item>
           )}
         />
+
         <Form
-        className="h-21 overflow-y-auto mt-1"
+          className="h-21 overflow-y-auto mt-1"
           labelCol={{
             span: 24
           }}
@@ -160,6 +162,7 @@ const FileReport = ({
           }}
           form={form}
           onFinish={handleSubmit}
+          style={{borderTop: "1px"}}
         >
           <Row gutter={15}>
 
@@ -224,7 +227,9 @@ const FileReport = ({
 
           </Row>
         </Form>
+
       </Spin>
+
     </Modal>
   )
 }

@@ -130,7 +130,7 @@ const StudyNotificationProvider = ({ children }) => {
               if (data.id === eventData.payload.data.id) {
                 return {
                   ...data,
-                  status: "Reporting",
+                  status: "InReporting",
                   updated_at: eventData.payload.data.updated_at,
                 };
               } else {

@@ -132,7 +132,7 @@ const DeletedStudies = () => {
               ? 'cyan'
               : text === 'ViewReport'
               ? 'lime'
-              : text === 'Reporting'
+              : text === 'InReporting'
               ? 'magenta'
               : text === 'CloseStudy'
               ? 'red'
