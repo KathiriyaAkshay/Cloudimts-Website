@@ -54,7 +54,7 @@ const AddTemplate = () => {
   const handleSubmit = (values) => {
     if (editorData.trim() !== '') {
       if (!id) {
-        insertNewTemplate({ name: values.name, data: editorData,modality_description:values.study_description })
+        insertNewTemplate({ name: values.name, data: editorData,description:values.study_description })
           .then(res => {
             if (res.data.status) {
               NotificationMessage('success', 'Template Created Successfully')
