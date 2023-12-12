@@ -18,7 +18,6 @@ import {
 import { CheckCircleOutlined, CloseCircleOutlined, FileOutlined } from '@ant-design/icons'
 import { useBreadcrumbs } from '../../hooks/useBreadcrumbs'
 import ChatMain from '../../components/Chat/ChatMain'
-import DicomViewer from '../../components/DicomViewer'
 import EditStudy from '../../components/Studies/EditStudy'
 import PatientDetails from '../../components/Studies/PatientDetails'
 import StudyAudits from '../../components/Studies/StudyAudits'
@@ -32,7 +31,8 @@ import {
   filterStudyData,
   getAllStudyData,
   updateStudyStatus,
-  updateStudyStatusReported
+  updateStudyStatusReported, 
+  getInstanceData
 } from '../../apis/studiesApi'
 import AssignStudy from '../../components/Studies/AssignStudy'
 import QuickFilterModal from '../../components/QuickFilterModal'
@@ -113,6 +113,7 @@ const Dicom = () => {
   const [studyStatus, setStudyStatus] = useState('')
   const [urgentCase, setUrgentCase] = useState(false)  
   const [studyUID, setStudyUId] = useState(null) ; 
+  const [studyImagesList, setStudyImagesList] = useState([]) ; 
 
   // Normal studies information, System filter and Main filter payload information
 
@@ -266,7 +267,6 @@ const Dicom = () => {
 
   useEffect(() => {
 
-console.log("Render study page =========>");
     setSystemFilterPayload({})
     setStudyDataPayload({})
     changeBreadcrumbs([{ name: `Study Data` }])
@@ -525,15 +525,12 @@ console.log("Render study page =========>");
     {
       title: 'Images',
       dataIndex: 'images',
-      // fixed: "right", 
       width:"5%",
       render: (text, record) => (        
         <Tooltip title={`${record.patient_id} | ${record.created_at}`}>
           <FileOutlined
             className='action-icon action-icon-primary'
-            onClick={() => {
-              setImageDrawerOpen(true)
-            }}
+            onClick={() => ImageDrawerHandler(record)}
           />
         </Tooltip>
       ),
@@ -731,7 +728,6 @@ console.log("Render study page =========>");
     {
       title: 'Actions',
       dataIndex: 'actions',
-      // width:"123rem",
       fixed: 'right',
       width: window.innerWidth < 650 ? '1%' : '9%',
       render: (_, record) => (
@@ -950,12 +946,11 @@ console.log("Render study page =========>");
 
   // Function ==== onRow doubleClick handler
 
-  const handleCellDoubleClick = record => {
+  const handleCellDoubleClick = (record) => {
     if (record.status === 'Assigned' || record.status === 'Reporting') {
       updateStudyStatus({ id: record.id })
         .then(res => {
           if (res.data.status) {
-            // NotificationMessage('success', res.data.message)
           } else {
             NotificationMessage(
               'warning',
@@ -969,6 +964,41 @@ console.log("Render study page =========>");
         })
     }
   }
+
+  // Function ==== Image Drawer handler 
+
+  const ImageDrawerHandler = async (record) => {
+
+    handleCellDoubleClick(record) ; 
+
+    console.log("records id information");
+    console.log(record);
+
+    getInstanceData({ study_id: record.study.study_original_id })
+      .then(res => {
+        if (res.data.status) {
+
+          setStudyImagesList([...res.data.data]) ; 
+          setImageDrawerOpen(true) ; 
+
+        } else {
+          NotificationMessage(
+            'warning',
+            'Network request failed',
+            res.data.message
+          )
+        }
+      })
+      .catch(err =>
+        NotificationMessage(
+          'warning',
+          'Network request failed',
+          err.response.data.message
+        )
+      )
+
+  }
+
 
   return (
     <>
@@ -1144,7 +1174,11 @@ console.log("Render study page =========>");
 
 
       {/* ==== Image Drawer==== */}
-      <ImageDrawer isDrawerOpen={isImageModalOpen} setImageDrawerOpen={setImageDrawerOpen}/>
+      <ImageDrawer 
+        isDrawerOpen={isImageModalOpen} 
+        setImageDrawerOpen={setImageDrawerOpen}
+        imageList = {studyImagesList}
+      />
 
       {/* ===== Study Export option modal ======  */}
 
@@ -1241,8 +1275,8 @@ console.log("Render study page =========>");
         </Spin>
       </Modal>
 
-            {/* ==== Share Whatsapp modal ==== */}
-            <Modal
+      {/* ==== Share Whatsapp modal ==== */}
+      <Modal
         title='Whatsapp Report'
         centered
         open={isWhatsappShareModelOpen}
