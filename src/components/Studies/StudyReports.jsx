@@ -463,7 +463,7 @@ const StudyReports = ({
                     navigate(`/reports/${studyID}`)
                   }}
                 >
-                  Advanced File Report
+                    Advanced File Report
                 </Button>
               )}
             </div>

@@ -84,7 +84,7 @@ const Dicom = () => {
   // Pagination and Total page information handling
   const [pagi, setPagi] = useState({ page: 1, limit: 10 })
   const [totalPages, setTotalPages] = useState(0)
-  const [limit, setLimit] = useState(10)
+  const [limit, setLimit] = useState(localStorage.getItem("pageSize")||10)
   const [Pagination, setPagination] = useState({
     page: 1,
     limit: limit,
@@ -113,7 +113,7 @@ const Dicom = () => {
   const [studyStatus, setStudyStatus] = useState('')
   const [urgentCase, setUrgentCase] = useState(false)  
   const [studyUID, setStudyUId] = useState(null) ; 
-  const [studyImagesList, setStudyImagesList] = useState([]) ; 
+  const [studyImagesList, setStudyImagesList] = useState([]); 
 
   // Normal studies information, System filter and Main filter payload information
 

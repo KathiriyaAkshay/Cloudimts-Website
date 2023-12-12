@@ -810,11 +810,11 @@ const AddInstitution = () => {
 
                 <Col xs={24} sm={24} md={24} lg={24}>
 
-                  <div style={{display: "flex", flexDirection:"row", flexWrap: 'wrap', overflowY: "auto", height:"67vh"}}>
+                  <div className='modality-card-wrapper' >
 
                     {tableData.map((element) => {
                       return(
-                        <Card  title = {element.name} style={{width: "fit-content"}}>
+                        <Card  title = {element.name} style={{width: "fit-content",marginTop:"0.3rem"}} headerBg="#00ff00">
                           
                           <div>Reporting charge</div>
                           <Form.Item name={`${element.id}_reporting_charge`} initialValue={element.reporting_charge}>

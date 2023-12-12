@@ -1319,6 +1319,7 @@
 }
 
 .study-modal-patient-info-layout {
+  height: 25vh;
   overflow-y: auto;
   overflow-x: hidden;
 }
@@ -2325,3 +2326,19 @@ label[for="study_description"]{
 .iod-setting-div .ant-select-selector .ant-select-selection-placeholder{
   line-height:33px !important;
 }
+
+.modality-card-wrapper{
+  display:flex;
+   flex-direction:row;
+    flex-wrap: wrap;
+     overflow-y: auto;
+     height:67vh;
+     justify-content:space-between;
+     align-items:center;
+
+  .ant-card-head{
+    background-color: #33b3e9;
+    color: white;
+  }   
+}
+
