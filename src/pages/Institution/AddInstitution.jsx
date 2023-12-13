@@ -131,9 +131,6 @@ const AddInstitution = () => {
           communication_charge: 0
         }))
         setTableData(resData) 
-
-        console.log("Table data information ==========>");
-        console.log(resData);
       } else {
         NotificationMessage(
           'warning',
@@ -814,14 +811,14 @@ const AddInstitution = () => {
 
                     {tableData.map((element) => {
                       return(
-                        <Card  title = {element.name} style={{width: "fit-content",marginTop:"0.3rem"}} headerBg="#00ff00">
+                        <Card className='particular-modality-info-division' title = {element.name} style={{width: "fit-content",marginTop:"0.3rem"}} headerBg="#00ff00">
                           
-                          <div>Reporting charge</div>
+                          <div className='particular-modality-charges-title'>Reporting charge</div>
                           <Form.Item name={`${element.id}_reporting_charge`} initialValue={element.reporting_charge}>
                             <Input />
                           </Form.Item>
 
-                          <div>Communication charge</div>
+                          <div className='particular-modality-charges-title'>Communication charge</div>
                           <Form.Item name={`${element.id}_communication_charge`} initialValue={element.communication_charge}>
                             <Input />
                           </Form.Item>

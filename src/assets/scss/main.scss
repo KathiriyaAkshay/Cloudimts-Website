@@ -2329,17 +2329,38 @@ label[for="study_description"]{
 
 .modality-card-wrapper{
   display:flex;
-   flex-direction:row;
-    flex-wrap: wrap;
-     overflow-y: auto;
-     height:67vh;
-     justify-content:space-between;
-     align-items:center;
+  flex-direction:row;
+  flex-wrap: wrap;
+  overflow-y: auto;
+  height:67vh;
+  justify-content:space-between;
+  align-items:center;
+  justify-content: center;
+  margin-top: 0.30rem;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
 
   .ant-card-head{
     background-color: #33b3e9;
     color: white;
+    height: fit-content;
   }   
+
+  .particular-modality-info-division{
+    margin-top: 1rem !important;
+    margin-right: 1rem !important;
+    
+    .ant-card-body{
+      padding: 0.70rem !important;
+      padding-left: 1.5rem !important;
+      padding-right: 1.5rem !important;
+    }
+
+    .particular-modality-charges-title{
+      margin-bottom: 0.20rem;
+    }
+  }
 }
 
 .clinical-history-modal{

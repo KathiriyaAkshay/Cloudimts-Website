@@ -264,6 +264,7 @@ const AssignStudy = ({
     
       style={{
         top: 20,
+        height: '80vh'
       }}
       className="assign-study-modal clinical-history-modal" 
     >
