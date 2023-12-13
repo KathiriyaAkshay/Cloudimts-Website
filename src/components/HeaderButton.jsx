@@ -67,7 +67,9 @@ const HeaderButton = ({
     setIsSupportModalOpen,
     setIsAdvancedSearchModalOpen,
     setIsStudyExportModalOpen, 
-    setIsQuickAssignStudyModalOpen
+    setIsQuickAssignStudyModalOpen, 
+    templateOption, 
+    setTemplateOption
   } = useContext(filterDataContext)
   const { setSelectedItem } = useContext(ReportDataContext)
   const { billingFilterData, setBillingFilterData } =
@@ -91,10 +93,12 @@ const HeaderButton = ({
   useEffect(() => {
 
     if (window.location.pathname === `/reports/${id}`) {
-      retrieveTemplateOptions()
+      retrieveTemplateOptions(); 
+      console.log("Template option information =============>");
+      console.log(templateOption);
     }
 
-  }, [window.location.pathname])
+  }, [window.location.pathname, templateOption])
 
   useEffect(() => {
     if (window.location.pathname === '/studies') {
@@ -117,7 +121,7 @@ const HeaderButton = ({
   }
 
   const retrieveTemplateOptions = async () => {
-    await getReportList({ page_number: 1, page_limit: 50 })
+    await getReportList({ page_number: 1, page_limit: 500, modality: templateOption })
       .then(res => {
         if (res.data.status) {
           const resData = res.data.data?.map(data => ({
@@ -607,6 +611,7 @@ const HeaderButton = ({
       )}
       {window.location.pathname === `/reports/${id}` && (
         <div className='iod-setting-div'>
+
           <Button
             type='primary'
             onClick={() =>
@@ -622,6 +627,7 @@ const HeaderButton = ({
           >
             Study Images
           </Button>
+
           <Button
             type='primary'
             onClick={() =>
@@ -638,6 +644,7 @@ const HeaderButton = ({
           >
             Study Description
           </Button>
+
           <Button
             type='primary'
             onClick={() =>
@@ -654,6 +661,7 @@ const HeaderButton = ({
           >
             Patient Information
           </Button>
+
           <Button
             type='primary'
             onClick={() =>
@@ -670,6 +678,7 @@ const HeaderButton = ({
           >
             Institution Information
           </Button>
+
           <Button
             type='primary'
             onClick={() =>
@@ -685,7 +694,10 @@ const HeaderButton = ({
           >
             OHIF Viewer
           </Button>
+
           <Select
+            style={{width: "12rem"}}
+            className='template-selection-option-division'
             placeholder='choose template'
             options={templateOptions}
             onChange={e =>
@@ -698,6 +710,7 @@ const HeaderButton = ({
               }))
             }
           />
+
         </div>
       )}
       {window.location.pathname === '/billing' && (

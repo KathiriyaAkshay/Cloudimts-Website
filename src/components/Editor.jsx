@@ -8,6 +8,7 @@ import {
   saveAdvancedFileReport
 } from '../apis/studiesApi'
 import { ReportDataContext } from '../hooks/reportDataContext'
+import { filterDataContext } from '../hooks/filterDataContext'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 import Slider from 'react-slick'
@@ -20,7 +21,8 @@ const Editor = ({ id }) => {
   const [editorData, setEditorData] = useState('')
   const [cardDetails, setCardDetails] = useState({})
   const [isLoading, setIsLoading] = useState(false)
-  const { selectedItem, setSelectedItem } = useContext(ReportDataContext)
+  const { selectedItem, setSelectedItem } = useContext(ReportDataContext) 
+  const {templateOption, setTemplateOption} = useContext(filterDataContext)
   const [studyImageID, setStudyImageID] = useState(0)
   const [signatureImage, setSignatureImage] = useState(null)
   const [username, setUsername] = useState('')
@@ -131,6 +133,8 @@ const Editor = ({ id }) => {
       NotificationMessage('warning', 'Network request failed');
 
     } else if (responseData['status'] === true) {
+
+      setTemplateOption(responseData['data']['Modality']) ; 
 
       let Institution_id = responseData['data']['institution_id']
       let SeriesIdValue = responseData['data']['series_id']
