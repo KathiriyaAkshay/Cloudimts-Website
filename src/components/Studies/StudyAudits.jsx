@@ -252,7 +252,7 @@ const StudyAudits = ({ isModalOpen, setIsModalOpen, studyID, setStudyID }) => {
         />
 
         <div className='Study-auditing-modal-table-data'>
-          <TableWithFilter tableColumns={auditColumns} tableData={auditData} />
+          <TableWithFilter tableColumns={auditColumns} tableData={auditData} isAuditModal={true} />
         </div>
       </Spin>
     </Modal>

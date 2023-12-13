@@ -33,8 +33,8 @@ const TableWithFilter = ({
   dead,
   multiple,
   rowSelection,
-  dashboard
-
+  dashboard,
+  isAuditModal,
 }) => {
   const navigate = useNavigate();
   const [limit, setLimit] = useState(localStorage.getItem("pageSize")||10);
@@ -104,6 +104,7 @@ const TableWithFilter = ({
 
       {showDivider && <Divider />}
       <div className="ant-table-wrapper">
+        
         <Table
           dataSource={[...tableData]}
           columns={tableColumns}
@@ -128,7 +129,7 @@ const TableWithFilter = ({
             !pagination
               ? window.screen.width < 1000
                 ? { x: 500 }
-                : {y:dashboard=true?375:475}
+                : {y:dashboard?375:isAuditModal?200:465}
               : { y: 375, x: window.screen.width < 1000 ? 1000 : null }
           }
           loading={loadingTableData}

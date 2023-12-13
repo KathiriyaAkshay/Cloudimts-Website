@@ -9,7 +9,8 @@ import {
   Spin,
   Tag,
   Typography, 
-  Select
+  Select,
+  Divider
 } from 'antd'
 import React, { useEffect, useState } from 'react'
 import {
@@ -151,9 +152,9 @@ const FileReport = ({
             </List.Item>
           )}
         />
-
+<Divider />
         <Form
-          className="h-21 overflow-y-auto mt-1"
+          className="h-15 overflow-y-auto mt-1"
           labelCol={{
             span: 24
           }}

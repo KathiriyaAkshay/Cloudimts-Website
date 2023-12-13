@@ -261,6 +261,7 @@ const AssignStudy = ({
         form.resetFields();
       }}
       width={1300}
+    
       style={{
         top: 20,
       }}
