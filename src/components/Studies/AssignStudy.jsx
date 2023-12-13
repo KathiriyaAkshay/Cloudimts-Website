@@ -265,9 +265,9 @@ const AssignStudy = ({
       style={{
         top: 20,
       }}
-      className="assign-study-modal"
+      className="assign-study-modal clinical-history-modal" 
     >
-      <Spin spinning={isLoading}>
+      <Spin spinning={isLoading} >
         <div
           style={{
             background: "#ebf7fd",
@@ -288,7 +288,7 @@ const AssignStudy = ({
         </div>
 
         <List
-          style={{ marginTop: "8px" }}
+          style={{ marginTop: "8px", height: "20vh" }}
           grid={{
             gutter: 5,
             column: 2,
