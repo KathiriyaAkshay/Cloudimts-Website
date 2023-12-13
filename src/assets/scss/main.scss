@@ -2347,3 +2347,12 @@ label[for="study_description"]{
     height: 95vh
   }
 }
+
+.simplified-report-modal{
+  .ant-modal-content{
+    height: 90vh;
+  }
+  .simplied-report-input{
+    height: auto;
+  }
+}

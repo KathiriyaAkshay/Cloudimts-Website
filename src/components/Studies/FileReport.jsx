@@ -109,6 +109,7 @@ const FileReport = ({
       width={1000}
       centered
       okText='Save Report'
+      className='simplified-report-modal'
     >
       <Spin spinning={isLoading}>
         <div
@@ -124,7 +125,7 @@ const FileReport = ({
         </div>
 
         <List
-          style={{ marginTop: '8px' }}
+          style={{ marginTop: '8px', height:"22vh" }}
           grid={{
             gutter: 5,
             column: 2
@@ -152,9 +153,10 @@ const FileReport = ({
             </List.Item>
           )}
         />
-<Divider />
+        <Divider />
+
         <Form
-          className="h-15 overflow-y-auto mt-1"
+          className="simplied-report-input"
           labelCol={{
             span: 24
           }}
