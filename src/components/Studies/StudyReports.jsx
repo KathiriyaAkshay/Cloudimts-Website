@@ -214,6 +214,7 @@ const StudyReports = ({
               />
             </Tooltip>
           )}
+          
           {/* ===== Email share option ====== */}
 
           {record.report_type === 'Advanced report' && (
@@ -462,7 +463,7 @@ const StudyReports = ({
                     navigate(`/reports/${studyID}`)
                   }}
                 >
-                  Advanced File Report
+                    Advanced File Report
                 </Button>
               )}
             </div>

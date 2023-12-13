@@ -33,11 +33,11 @@ const TableWithFilter = ({
   dead,
   multiple,
   rowSelection,
-  dashboard
-
+  dashboard,
+  isAuditModal,
 }) => {
   const navigate = useNavigate();
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(localStorage.getItem("pageSize")||10);
   const [userRole, setUserRole] = useState(null);
   const [Pagination, setPagination] = useState({
     page: 1,
@@ -104,6 +104,7 @@ const TableWithFilter = ({
 
       {showDivider && <Divider />}
       <div className="ant-table-wrapper">
+        
         <Table
           dataSource={[...tableData]}
           columns={tableColumns}
@@ -112,11 +113,11 @@ const TableWithFilter = ({
             !pagination
               ? {
                   current: Pagination.page,
-                  pageSize: localStorage.getItem("pageSize")||Pagination.limit,
+                  pageSize:Pagination.limit,
                   total: totalRecords,
-                  pageSizeOptions: [5,10, 25, 50, 100, 200, 500],
+                  pageSizeOptions: [10, 25, 50, 100, 200, 500],
                   showSizeChanger: totalRecords >= 0,
-                  onChange: (page = 1, pageSize = limit) => {
+                  onChange: (page = 1, pageSize = Pagination.limit) => {
                     localStorage.setItem("pageSize",pageSize)
                     setPagination({ ...Pagination, page, limit: pageSize });
                   },
@@ -128,7 +129,7 @@ const TableWithFilter = ({
             !pagination
               ? window.screen.width < 1000
                 ? { x: 500 }
-                : {y:dashboard=true?375:475}
+                : {y:dashboard?375:isAuditModal?200:465}
               : { y: 375, x: window.screen.width < 1000 ? 1000 : null }
           }
           loading={loadingTableData}

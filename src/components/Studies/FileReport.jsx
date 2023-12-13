@@ -9,7 +9,8 @@ import {
   Spin,
   Tag,
   Typography, 
-  Select
+  Select,
+  Divider
 } from 'antd'
 import React, { useEffect, useState } from 'react'
 import {
@@ -108,6 +109,7 @@ const FileReport = ({
       width={1000}
       centered
       okText='Save Report'
+      className='simplified-report-modal'
     >
       <Spin spinning={isLoading}>
         <div
@@ -121,8 +123,9 @@ const FileReport = ({
         >
           Patient Info
         </div>
+
         <List
-          style={{ marginTop: '8px' }}
+          style={{ marginTop: '8px', height:"22vh" }}
           grid={{
             gutter: 5,
             column: 2
@@ -150,8 +153,10 @@ const FileReport = ({
             </List.Item>
           )}
         />
+        <Divider />
+
         <Form
-        className="h-21 overflow-y-auto mt-1"
+          className="simplied-report-input"
           labelCol={{
             span: 24
           }}
@@ -160,6 +165,7 @@ const FileReport = ({
           }}
           form={form}
           onFinish={handleSubmit}
+          style={{borderTop: "1px"}}
         >
           <Row gutter={15}>
 
@@ -224,7 +230,9 @@ const FileReport = ({
 
           </Row>
         </Form>
+
       </Spin>
+
     </Modal>
   )
 }

@@ -54,7 +54,7 @@ const AddTemplate = () => {
   const handleSubmit = (values) => {
     if (editorData.trim() !== '') {
       if (!id) {
-        insertNewTemplate({ name: values.name, data: editorData })
+        insertNewTemplate({ name: values.name, data: editorData,description:values.study_description })
           .then(res => {
             if (res.data.status) {
               NotificationMessage('success', 'Template Created Successfully')
@@ -72,7 +72,7 @@ const AddTemplate = () => {
           )
       } else {
        
-        updateReport({ id, update_data: editorData, update_report_name: values.name })
+        updateReport({ id, update_data: editorData, update_report_name: values.name})
           .then(res => {
             if (res.data.status) {
               NotificationMessage('success', 'Template Updated Successfully')
@@ -124,16 +124,9 @@ const AddTemplate = () => {
                   placeholder='Enter Template Name'
                 />
               </Form.Item>
-            </Col>
-            <Col
-              lg={16}
-              md={16}
-              sm={16}
-              style={{ height: 'calc(100vh - 300px)', overflow: 'auto' }}
-            >
-                  <Form.Item
+              <Form.Item
                     name="study_description"
-                    label="Modality Study Description"
+                    label="Modality Description"
                     className="category-select"
 
                     rules={[
@@ -154,6 +147,14 @@ const AddTemplate = () => {
                         }
                       />
                   </Form.Item>
+            </Col>
+            <Col
+              lg={16}
+              md={16}
+              sm={16}
+              style={{ height: 'calc(100vh - 300px)', overflow: 'auto' }}
+            >
+              
               <Form.Item label='Create Template'>
                 <CKEditor
                   editor={ClassicEditor}

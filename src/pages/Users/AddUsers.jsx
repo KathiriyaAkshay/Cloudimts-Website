@@ -661,8 +661,8 @@ const AddUsers = () => {
                 
                 <Col xs={24} sm={12} md={12} lg={8}>
                   <Form.Item
-                    name='Remote Address'
-                    label='Remote Address'
+                    name='remote_address'
+                    label='remote_address'
                     rules={[
                       {
                         whitespace: true,

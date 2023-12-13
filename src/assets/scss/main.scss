@@ -1271,7 +1271,7 @@
 .assign-study-modal {
   .ant-modal-body {
     max-height: calc(100vh - 150px) !important;
-    overflow-y: auto;
+    overflow-y: hidden;
   }
 }
 
@@ -1319,6 +1319,7 @@
 }
 
 .study-modal-patient-info-layout {
+  height: 31vh;
   overflow-y: auto;
   overflow-x: hidden;
 }
@@ -1338,6 +1339,8 @@
   padding-top: 1rem;
   border-top: 1px solid #c4c4c4;
   margin-top: 1rem;
+  overflow-x: auto;
+  height: 45vh;
 }
 
 .assign-study-modal {
@@ -2299,7 +2302,7 @@ margin-top: 8px !important;
 }
 
 .h-9{
-  height: 9rem;
+  height: 13rem;
 }
 
 
@@ -2322,4 +2325,34 @@ label[for="study_description"]{
 
 .iod-setting-div .ant-select-selector .ant-select-selection-placeholder{
   line-height:33px !important;
+}
+
+.modality-card-wrapper{
+  display:flex;
+   flex-direction:row;
+    flex-wrap: wrap;
+     overflow-y: auto;
+     height:67vh;
+     justify-content:space-between;
+     align-items:center;
+
+  .ant-card-head{
+    background-color: #33b3e9;
+    color: white;
+  }   
+}
+
+.clinical-history-modal{
+  .ant-modal-content{
+    height: 95vh
+  }
+}
+
+.simplified-report-modal{
+  .ant-modal-content{
+    height: 90vh;
+  }
+  .simplied-report-input{
+    height: auto;
+  }
 }

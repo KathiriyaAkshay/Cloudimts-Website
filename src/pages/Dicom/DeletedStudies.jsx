@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useBreadcrumbs } from '../../hooks/useBreadcrumbs'
 import { Popconfirm, Space, Table, Tag, Tooltip } from 'antd'
-import DicomViewer from '../../components/DicomViewer'
 import { backupStudy, fetchDeletedStudies } from '../../apis/studiesApi'
 import { MdRestore } from 'react-icons/md'
 import NotificationMessage from '../../components/NotificationMessage'
@@ -46,10 +45,6 @@ const DeletedStudies = () => {
       // filter: values,
       page_size: currentPagination.limit || 10,
       page_number: currentPagination.page,
-      //   all_premission_id: JSON.parse(localStorage.getItem("all_permission_id")),
-      //   all_assign_id: JSON.parse(localStorage.getItem("all_assign_id")),
-      //   deleted: false,
-      //   deleted_skip: true,
       sort_option: false
     })
       .then(res => {
@@ -132,7 +127,7 @@ const DeletedStudies = () => {
               ? 'cyan'
               : text === 'ViewReport'
               ? 'lime'
-              : text === 'Reporting'
+              : text === 'InReporting'
               ? 'magenta'
               : text === 'CloseStudy'
               ? 'red'
@@ -212,17 +207,7 @@ const DeletedStudies = () => {
       dataSource={studyData}
       columns={columns}
       scroll={{y  :475}}
-      expandable={{
-        expandedRowRender: record => (
-          <p style={{ margin: 0 }}>
-            <DicomViewer dicomUrl={record?.study?.study_original_id} />
-            {/* {retrieveStudyInstance(record?.study?.study_original_id)} */}
-          </p>
-        )
-      }}
-      //   rowSelection={rowSelection}
       onRow={onRow}
-      // onPaginationChange={retrieveStudyData}
       loading={isLoading}
       pagination={{
         current: Pagination.page,

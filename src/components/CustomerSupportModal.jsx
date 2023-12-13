@@ -103,11 +103,10 @@ const CustomerSupportModal = ({ show, setShow }) => {
             </Tabs.TabPane>
             <Tabs.TabPane key={'3'} tab='Remote Support'>
               <Row gutter={15}>
-                <TableWithFilter
-                  tableColumns={RemoteColumns}
-                  tableData={tableData?.filter(data => data?.option === 3)}
-                  pagination
-                />
+                <p style={{fontWeight:"600",fontSize:"1.1rem"}}>
+                  We offer remote support through AnyDesk. If you encounter any difficulties with our services, 
+                  please contact us via email or phone. We will make an effort to resolve the issue by connecting remotely
+                </p>
               </Row>
             </Tabs.TabPane>
           </Tabs>

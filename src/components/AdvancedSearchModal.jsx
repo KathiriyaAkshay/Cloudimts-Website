@@ -34,8 +34,8 @@ const AdvancedSearchModal = ({
       value: 'Assigned'
     },
     {
-      label: 'Reporting',
-      value: 'Reporting'
+      label: 'InReporting',
+      value: 'InReporting'
     },
     {
       label: 'Reported',

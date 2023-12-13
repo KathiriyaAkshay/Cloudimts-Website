@@ -15,10 +15,9 @@ import {
   Input,
   Switch
 } from 'antd'
-import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons'
+import { CheckCircleOutlined, CloseCircleOutlined, FileOutlined, PictureOutlined } from '@ant-design/icons'
 import { useBreadcrumbs } from '../../hooks/useBreadcrumbs'
 import ChatMain from '../../components/Chat/ChatMain'
-import DicomViewer from '../../components/DicomViewer'
 import EditStudy from '../../components/Studies/EditStudy'
 import PatientDetails from '../../components/Studies/PatientDetails'
 import StudyAudits from '../../components/Studies/StudyAudits'
@@ -32,7 +31,8 @@ import {
   filterStudyData,
   getAllStudyData,
   updateStudyStatus,
-  updateStudyStatusReported
+  updateStudyStatusReported, 
+  getInstanceData
 } from '../../apis/studiesApi'
 import AssignStudy from '../../components/Studies/AssignStudy'
 import QuickFilterModal from '../../components/QuickFilterModal'
@@ -59,6 +59,7 @@ import { saveAs } from 'file-saver'
 import * as XLSX from 'xlsx'
 import AssignStudyModified from '../../components/Studies/AssignStudyModified'
 import EditSeriesId from '../../components/EditSeriesId'
+import ImageDrawer from './ImageDrawer'
 const BASE_URL = import.meta.env.VITE_APP_SOCKET_BASE_URL
 const Dicom = () => {
   // Modal related useState
@@ -67,6 +68,7 @@ const Dicom = () => {
   const [isStudyModalOpen, setIsStudyModalOpen] = useState(false)
   const [isReportModalOpen, setIsReportModalOpen] = useState(false)
   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false)
+  const [isImageModalOpen,setImageDrawerOpen]=useState(false)
   const [isAssignModifiedModalOpen, setIsAssignModifiedModalOpen] = useState(true)
   const [isEditSeriesIdModifiedOpen, setIsEditSeriesIdModifiedOpen] = useState(false) ; 
 
@@ -82,7 +84,7 @@ const Dicom = () => {
   // Pagination and Total page information handling
   const [pagi, setPagi] = useState({ page: 1, limit: 10 })
   const [totalPages, setTotalPages] = useState(0)
-  const [limit, setLimit] = useState(10)
+  const [limit, setLimit] = useState(localStorage.getItem("pageSize")||10)
   const [Pagination, setPagination] = useState({
     page: 1,
     limit: limit,
@@ -111,6 +113,7 @@ const Dicom = () => {
   const [studyStatus, setStudyStatus] = useState('')
   const [urgentCase, setUrgentCase] = useState(false)  
   const [studyUID, setStudyUId] = useState(null) ; 
+  const [studyImagesList, setStudyImagesList] = useState([]); 
 
   // Normal studies information, System filter and Main filter payload information
 
@@ -264,7 +267,6 @@ const Dicom = () => {
 
   useEffect(() => {
 
-console.log("Render study page =========>");
     setSystemFilterPayload({})
     setStudyDataPayload({})
     changeBreadcrumbs([{ name: `Study Data` }])
@@ -520,6 +522,19 @@ console.log("Render study page =========>");
   }
 
   const columns = [
+    {
+      title: 'Images',
+      dataIndex: 'images',
+      width:"5%",
+      render: (text, record) => (        
+        <Tooltip title={`${record.patient_id} | ${record.created_at}`}>
+          <PictureOutlined
+            className='action-icon action-icon-primary'
+            onClick={() => ImageDrawerHandler(record)}
+          />
+        </Tooltip>
+      ),
+    },
 
     checkPermissionStatus('View Patient id') && {
       title: "Patient's Id",
@@ -544,6 +559,7 @@ console.log("Render study page =========>");
     checkPermissionStatus('View Patient name') && {
       title: "Patient's Name",
       dataIndex: 'name',
+      width:"12%",
       className: `${
         checkPermissionStatus('View Patient name') ? '' : 'column-display-none'
       }`, 
@@ -588,7 +604,7 @@ console.log("Render study page =========>");
                 ? 'cyan'
                 : text === 'ViewReport'
                 ? 'lime'
-                : text === 'Reporting'
+                : text === 'InReporting'
                 ? 'magenta'
                 : text === 'ClosedStudy'
                 ? 'red'
@@ -620,12 +636,15 @@ console.log("Render study page =========>");
 
     {
       title: 'Study date',
-      dataIndex: 'created_at'
+      dataIndex: 'created_at',
+      width:"10%",
     },
 
     {
       title: 'Update at',
-      dataIndex: 'updated_at'
+      dataIndex: 'updated_at',
+      width:"10%",
+
     },
 
     checkPermissionStatus('View Institution name') && {
@@ -709,9 +728,8 @@ console.log("Render study page =========>");
     {
       title: 'Actions',
       dataIndex: 'actions',
-      // width:"123rem",
       fixed: 'right',
-      width: window.innerWidth < 650 ? '1%' : '9%',
+      width: window.innerWidth < 650 ? '1%' : '10%',
       render: (_, record) => (
         <Space style={{ display: 'flex', justifyContent: 'space-evenly' }}>
           {/* ==== Clinical History option ====  */}
@@ -928,12 +946,11 @@ console.log("Render study page =========>");
 
   // Function ==== onRow doubleClick handler
 
-  const handleCellDoubleClick = record => {
-    if (record.status === 'Assigned' || record.status === 'Reporting') {
+  const handleCellDoubleClick = (record) => {
+    if (record.status === 'Assigned' || record.status === 'InReporting') {
       updateStudyStatus({ id: record.id })
         .then(res => {
           if (res.data.status) {
-            // NotificationMessage('success', res.data.message)
           } else {
             NotificationMessage(
               'warning',
@@ -948,6 +965,41 @@ console.log("Render study page =========>");
     }
   }
 
+  // Function ==== Image Drawer handler 
+
+  const ImageDrawerHandler = async (record) => {
+
+    handleCellDoubleClick(record) ; 
+
+    console.log("records id information");
+    console.log(record);
+
+    getInstanceData({ study_id: record.study.study_original_id })
+      .then(res => {
+        if (res.data.status) {
+
+          setStudyImagesList([...res.data.data]) ; 
+          setImageDrawerOpen(true) ; 
+
+        } else {
+          NotificationMessage(
+            'warning',
+            'Network request failed',
+            res.data.message
+          )
+        }
+      })
+      .catch(err =>
+        NotificationMessage(
+          'warning',
+          'Network request failed',
+          err.response.data.message
+        )
+      )
+
+  }
+
+
   return (
     <>
 
@@ -955,14 +1007,8 @@ console.log("Render study page =========>");
         className='Study-table'
         dataSource={studyData}
         columns={columns}
-        scroll={{ y: 475, x: 2800 }}
-        expandable={{
-          expandedRowRender: record => (
-            <p style={{ margin: 0 }}>
-              <DicomViewer dicomUrl={record?.study?.study_original_id} />
-            </p>
-          )
-        }}
+        scroll={{ y: 475, x: 2000 }}
+
         rowSelection={rowSelection}
         onRow={onRow}
         loading={isLoading}
@@ -1126,6 +1172,14 @@ console.log("Render study page =========>");
         setStudyID={setStudyID}
       />
 
+
+      {/* ==== Image Drawer==== */}
+      <ImageDrawer 
+        isDrawerOpen={isImageModalOpen} 
+        setImageDrawerOpen={setImageDrawerOpen}
+        imageList = {studyImagesList}
+      />
+
       {/* ===== Study Export option modal ======  */}
 
       <Modal
@@ -1221,8 +1275,8 @@ console.log("Render study page =========>");
         </Spin>
       </Modal>
 
-            {/* ==== Share Whatsapp modal ==== */}
-            <Modal
+      {/* ==== Share Whatsapp modal ==== */}
+      <Modal
         title='Whatsapp Report'
         centered
         open={isWhatsappShareModelOpen}
@@ -1242,7 +1296,6 @@ console.log("Render study page =========>");
               span: 24
             }}
             form={form}
-            // onFinish={handleSubmitWhatsapp}
             className='mt'
           >
             <Row gutter={15}>

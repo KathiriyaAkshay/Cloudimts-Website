@@ -35,8 +35,8 @@ const StudyFilterModal = ({
       value: 'Assigned'
     },
     {
-      label: 'Reporting',
-      value: 'Reporting'
+      label: 'InReporting',
+      value: 'InReporting'
     },
     {
       label: 'Reported',

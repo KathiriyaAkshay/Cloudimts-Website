@@ -34,9 +34,6 @@ const { Step } = Steps
 const AddInstitution = () => {
   const { id } = useParams() ; 
 
-  console.log("Institution id information ");
-  console.log(id);
-
   const { changeBreadcrumbs } = useBreadcrumbs()
 
   const [currentStep, setCurrentStep] = useState(0)
@@ -123,7 +120,6 @@ const AddInstitution = () => {
   }
 
   const retrieveModalityData = async () => { 
-    console.log("fetch institution modality =====?");
     const auth = 'Bearer ' + `${token}`
     await API.get('/institute/v1/institute-modality', {
       headers: { Authorization: auth }
@@ -134,7 +130,10 @@ const AddInstitution = () => {
           reporting_charge: 0,
           communication_charge: 0
         }))
-        setTableData(resData)
+        setTableData(resData) 
+
+        console.log("Table data information ==========>");
+        console.log(resData);
       } else {
         NotificationMessage(
           'warning',
@@ -443,34 +442,6 @@ const AddInstitution = () => {
     setIsModalOpen(false)
   }
 
-  const columns = [
-    {
-      title: 'Modality',
-      dataIndex: 'name',
-      width: '50%'
-    },
-    {
-      title: 'Reporting Charge',
-      dataIndex: 'reporting_charge',
-      render: (text, record) => (
-        <Form.Item name={`${record.id}_reporting_charge`} initialValue={text}>
-          <Input />
-        </Form.Item>
-      )
-    },
-    {
-      title: 'Communication Charge',
-      dataIndex: 'communication_charge',
-      render: (text, record) => (
-        <Form.Item
-          name={`${record.id}_communication_charge`}
-          initialValue={text}
-        >
-          <Input />
-        </Form.Item>
-      )
-    }
-  ]
 
   const reportColumns = [
     {
@@ -836,14 +807,31 @@ const AddInstitution = () => {
               onFinish={handleSubmit}
             >
               <Row>
-                {/* <Col xs={0} sm={0} md={4} lg={5}></Col> */}
+
                 <Col xs={24} sm={24} md={24} lg={24}>
-                  <TableWithFilter
-                    tableColumns={columns}
-                    tableData={tableData}
-                    pagination
-                  />
+
+                  <div className='modality-card-wrapper' >
+
+                    {tableData.map((element) => {
+                      return(
+                        <Card  title = {element.name} style={{width: "fit-content",marginTop:"0.3rem"}} headerBg="#00ff00">
+                          
+                          <div>Reporting charge</div>
+                          <Form.Item name={`${element.id}_reporting_charge`} initialValue={element.reporting_charge}>
+                            <Input />
+                          </Form.Item>
+
+                          <div>Communication charge</div>
+                          <Form.Item name={`${element.id}_communication_charge`} initialValue={element.communication_charge}>
+                            <Input />
+                          </Form.Item>
+                        </Card> 
+                      )
+                    })}
+
+                  </div>
                 </Col>
+                
                 <Col xs={24} sm={24} md={24} lg={24} className='justify-end mt'>
                  
                   <Button type='primary' onClick={handlePrevStep}

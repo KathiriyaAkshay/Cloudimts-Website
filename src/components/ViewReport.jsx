@@ -2,12 +2,15 @@ import { CKEditor } from '@ckeditor/ckeditor5-react'
 import { Button, Card } from 'antd'
 import React, { useEffect, useState } from 'react'
 import { downloadAdvancedFileReport } from '../apis/studiesApi'
-import NotificationMessage from './NotificationMessage'
-import { useNavigate } from 'react-router-dom'
+import NotificationMessage from './NotificationMessage' 
+import APIHandler from '../apis/apiHandler' ; 
+import { useNavigate } from 'react-router-dom' ; 
+import { Spin } from 'antd'
 
 const ViewReport = ({ id }) => {
   const [editorData, setEditorData] = useState('')
-  const navigate = useNavigate()
+  const navigate = useNavigate() ; 
+  const [loading, setLoading] = useState(false) ; 
 
   useEffect(() => {
     retrieveReportData()
@@ -17,7 +20,7 @@ const ViewReport = ({ id }) => {
     await downloadAdvancedFileReport({ id })
       .then(res => {
         if (res.data.status) {
-          setEditorData(res.data.data.report)
+          setEditorData(res.data.message)
         } else {
           NotificationMessage(
             'warning',
@@ -29,9 +32,38 @@ const ViewReport = ({ id }) => {
       .catch(err => NotificationMessage('warning', err.response.data.message))
   }
 
+  const UpdateReportHandler = async () => {
+
+    setLoading(true) ; 
+
+    let requestPayload = {
+      id: id, 
+      report: editorData
+    };  
+
+    let responseData = await APIHandler("POST", requestPayload, "studies/v1/update-report"); 
+    
+    if (responseData === false){
+
+      NotificationMessage("warning", "Network request failed") ; 
+    
+    } else if (responseData['status'] === true){
+
+      NotificationMessage("success", "Update report successfully") ; 
+    
+    } else {
+
+      NotificationMessage("warning", responseData['message']) ; 
+    }
+    
+    setLoading(false) ; 
+  }
+
   return (
     <div>
+      
       <div
+      
         style={{
           display: 'flex',
           justifyContent: 'flex-end',
@@ -39,19 +71,25 @@ const ViewReport = ({ id }) => {
           marginBottom: '10px'
         }}
       >
+        <Button type="primary" onClick={() => UpdateReportHandler()}>Update report</Button>
         <Button onClick={() => navigate(-1)}>Back</Button>
+      
       </div>
-      <Card className='Advance-view-report-layout'>
-        <CKEditor
-          editor={ClassicEditor}
-          data={editorData}
-          disabled
-          onChange={(event, editor) => {
-            const data = editor.getData()
-            setEditorData(data)
-          }}
-        />
-      </Card>
+
+      <Spin spinning = {loading}>
+        <Card className='Advance-view-report-layout'>
+          <CKEditor
+            editor={ClassicEditor}
+            data={editorData}
+            onChange={(event, editor) => {
+              const data = editor.getData()
+              setEditorData(data)
+            }}
+          />
+        </Card>
+
+      </Spin>
+
     </div>
   )
 }
