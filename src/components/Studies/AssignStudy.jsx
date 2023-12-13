@@ -263,6 +263,7 @@ const AssignStudy = ({
       width={1300}
       style={{
         top: 20,
+        height: '80vh'
       }}
       className="assign-study-modal"
     >
