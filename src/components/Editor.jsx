@@ -42,7 +42,12 @@ const Editor = ({ id }) => {
   const [seriesId, setSeriesId] = useState(null);
 
   const [form] = Form.useForm();
-  const [reportStudyDescription, setReportStudyDescription] = useState(null);
+  const [reportStudyDescription, setReportStudyDescription] = useState(null); 
+
+  const studyUIDInformation = `https://viewer.cloudimts.com/viewer/` + localStorage.getItem("studyUIDValue") ; 
+
+  console.log("Stud UID information ========>");
+  console.log(studyUIDInformation);
 
   useEffect(() => {
     setSelectedItem(prev => ({
@@ -445,7 +450,7 @@ const Editor = ({ id }) => {
                         OHIF viewer
                       </Typography>
                       <Divider />
-                      <iframe src="https://viewer.cloudimts.com/viewer/1.2.392.200036.9116.2.2.2.1762658034.1589977474.281820" width="95%" height="1000px"></iframe>
+                      <iframe src={studyUIDInformation} width="95%" height="1000px"></iframe>
                     </>
                   )}
 

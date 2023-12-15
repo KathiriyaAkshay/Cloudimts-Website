@@ -36,6 +36,8 @@ const FilterDataProvider = ({ children }) => {
 
   const [templateOption, setTemplateOption] = useState(null); 
 
+  const [studyUIDValue, setStudyUIDValue] = useState(null) ; 
+
 
   return (
     <filterDataContext.Provider
@@ -65,7 +67,9 @@ const FilterDataProvider = ({ children }) => {
         isQuickAssignStudyModalOpen, 
         setIsQuickAssignStudyModalOpen, 
         templateOption, 
-        setTemplateOption
+        setTemplateOption, 
+        studyUIDValue, 
+        setStudyUIDValue
       }}
     >
       {children}
