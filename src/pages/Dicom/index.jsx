@@ -99,8 +99,11 @@ const Dicom = () => {
   // Permission information context
   const { permissionData } = useContext(UserPermissionContext)
 
-  const { isStudyExportModalOpen, setIsStudyExportModalOpen, isQuickAssignStudyModalOpen, 
-    setIsQuickAssignStudyModalOpen } = useContext(filterDataContext)
+  const { isStudyExportModalOpen, 
+    setIsStudyExportModalOpen, 
+    isQuickAssignStudyModalOpen, 
+    setIsQuickAssignStudyModalOpen, 
+    setStudyUIDValue } = useContext(filterDataContext)
 
   // Modal passing attributes information
 
@@ -758,7 +761,8 @@ const Dicom = () => {
                   setIsReportModalOpen(true)
                   setPatientId(record.patient_id)
                   setPatientName(record.name) 
-                  setStudyUId(record.study?.study_uid)
+                  setStudyUId(record.study?.study_uid) 
+                  localStorage.setItem("studyUIDValue", record.study?.study_uid) ; 
                 }}
               />
             </Tooltip>
@@ -970,9 +974,6 @@ const Dicom = () => {
   const ImageDrawerHandler = async (record) => {
 
     handleCellDoubleClick(record) ; 
-
-    console.log("records id information");
-    console.log(record);
 
     getInstanceData({ study_id: record.study.study_original_id })
       .then(res => {

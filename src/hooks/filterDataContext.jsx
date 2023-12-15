@@ -32,7 +32,12 @@ const FilterDataProvider = ({ children }) => {
 
   const [isStudyExportModalOpen, setIsStudyExportModalOpen] = useState(false) ; 
 
-  const [isQuickAssignStudyModalOpen, setIsQuickAssignStudyModalOpen ] = useState(false) ; 
+  const [isQuickAssignStudyModalOpen, setIsQuickAssignStudyModalOpen ] = useState(false) ;  
+
+  const [templateOption, setTemplateOption] = useState(null); 
+
+  const [studyUIDValue, setStudyUIDValue] = useState(null) ; 
+
 
   return (
     <filterDataContext.Provider
@@ -60,7 +65,11 @@ const FilterDataProvider = ({ children }) => {
         isStudyExportModalOpen, 
         setIsStudyExportModalOpen, 
         isQuickAssignStudyModalOpen, 
-        setIsQuickAssignStudyModalOpen
+        setIsQuickAssignStudyModalOpen, 
+        templateOption, 
+        setTemplateOption, 
+        studyUIDValue, 
+        setStudyUIDValue
       }}
     >
       {children}

@@ -8,6 +8,7 @@ import {
   saveAdvancedFileReport
 } from '../apis/studiesApi'
 import { ReportDataContext } from '../hooks/reportDataContext'
+import { filterDataContext } from '../hooks/filterDataContext'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 import Slider from 'react-slick'
@@ -20,7 +21,8 @@ const Editor = ({ id }) => {
   const [editorData, setEditorData] = useState('')
   const [cardDetails, setCardDetails] = useState({})
   const [isLoading, setIsLoading] = useState(false)
-  const { selectedItem, setSelectedItem } = useContext(ReportDataContext)
+  const { selectedItem, setSelectedItem } = useContext(ReportDataContext) 
+  const {templateOption, setTemplateOption} = useContext(filterDataContext)
   const [studyImageID, setStudyImageID] = useState(0)
   const [signatureImage, setSignatureImage] = useState(null)
   const [username, setUsername] = useState('')
@@ -40,7 +42,12 @@ const Editor = ({ id }) => {
   const [seriesId, setSeriesId] = useState(null);
 
   const [form] = Form.useForm();
-  const [reportStudyDescription, setReportStudyDescription] = useState(null);
+  const [reportStudyDescription, setReportStudyDescription] = useState(null); 
+
+  const studyUIDInformation = `https://viewer.cloudimts.com/viewer/` + localStorage.getItem("studyUIDValue") ; 
+
+  console.log("Stud UID information ========>");
+  console.log(studyUIDInformation);
 
   useEffect(() => {
     setSelectedItem(prev => ({
@@ -131,6 +138,8 @@ const Editor = ({ id }) => {
       NotificationMessage('warning', 'Network request failed');
 
     } else if (responseData['status'] === true) {
+
+      setTemplateOption(responseData['data']['Modality']) ; 
 
       let Institution_id = responseData['data']['institution_id']
       let SeriesIdValue = responseData['data']['series_id']
@@ -441,7 +450,7 @@ const Editor = ({ id }) => {
                         OHIF viewer
                       </Typography>
                       <Divider />
-                      <iframe src="https://viewer.cloudimts.com/viewer/1.2.392.200036.9116.2.2.2.1762658034.1589977474.281820" width="95%" height="1000px"></iframe>
+                      <iframe src={studyUIDInformation} width="95%" height="1000px"></iframe>
                     </>
                   )}
 

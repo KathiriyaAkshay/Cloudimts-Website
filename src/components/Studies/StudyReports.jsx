@@ -27,10 +27,9 @@ import {
 import ImageCarousel from './ImageCarousel'
 import { useNavigate } from 'react-router-dom'
 import { UserPermissionContext } from '../../hooks/userPermissionContext'
-import jsPDF from 'jspdf'
 import APIHandler from '../../apis/apiHandler' ; 
-import NotificationMessage from "../NotificationMessage";
-
+import NotificationMessage from "../NotificationMessage"; 
+import { filterDataContext } from "../../hooks/filterDataContext";
 
 const StudyReports = ({
   isReportModalOpen,
@@ -48,7 +47,10 @@ const StudyReports = ({
   patientName, 
   studyUIDInformation
 }) => {
-  const ViEWER_URL = import.meta.env.ORTHANC_VIEWER_URL ; 
+  const ViEWER_URL = import.meta.env.ORTHANC_VIEWER_URL ;  
+
+  console.log("Study UID information ======>");
+  console.log(studyUIDInformation);
 
   const [modalData, setModalData] = useState([])
   const [isLoading, setIsLoading] = useState(false)
@@ -63,6 +65,7 @@ const StudyReports = ({
   const [normalReportImages, setNormalReportImages] = useState([])
   const [normalReportModalData, setNormalReportModalData] = useState({}) 
   const [normalReportClosedLoading, setNormalReportClosedLoading] = useState(false) ; 
+  const { studyUIDValue, setStudyUIDValue } =useContext(filterDataContext)
 
   useEffect(() => {
     if (studyID && isReportModalOpen) {
