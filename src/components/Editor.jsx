@@ -310,6 +310,14 @@ const Editor = ({ id }) => {
   const StudyDescriptionChangeHandler = (selectionOption) => {
     setReportStudyDescription(selectionOption);
   }
+
+  const scrollToBottom=()=>{
+    var scrollingDiv = document.getElementById("scrollingDiv");
+
+
+      scrollingDiv.scrollTop = scrollingDiv.scrollHeight;
+    
+  }
   return (
     <>
       <div>
@@ -319,7 +327,7 @@ const Editor = ({ id }) => {
         >
           <Spin spinning={isLoading}>
             <Row gutter={30}>
-              <Col xs={24} sm={12} md={selectedItem.isOhifViewerSelected ? 12 : 7}>
+              <Col xs={24} sm={12} md={selectedItem.isOhifViewerSelected ? 9 : 7}>
                 <div className='report-details-div'>
 
                   {/* ==== Show Patient details ====  */}
@@ -446,11 +454,10 @@ const Editor = ({ id }) => {
 
                   {selectedItem?.isOhifViewerSelected && (
                     <>
-                      <Typography className='card-heading'>
-                        OHIF viewer
-                      </Typography>
-                      <Divider />
-                      <iframe src={studyUIDInformation} width="95%" height="1000px"></iframe>
+                      <div style={{width:"100%",height:"100%",overflowY:"auto"  }} onBeforeInput={scrollToBottom}>
+                      <iframe src={studyUIDInformation} width="100%" height="800px" className='ohif-container'></iframe>
+
+                      </div>
                     </>
                   )}
 
@@ -470,7 +477,7 @@ const Editor = ({ id }) => {
                 </div>
               </Col>
 
-              <Col xs={24} sm={12} md={selectedItem.isOhifViewerSelected ? 12 : 17} className='report-editor-div'>
+              <Col xs={24} sm={12} md={selectedItem.isOhifViewerSelected ? 15 : 17} className='report-editor-div'>
 
                 <Form
                   labelCol={{
