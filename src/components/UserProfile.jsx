@@ -2,7 +2,8 @@ import {
   LogoutOutlined,
   MailOutlined,
   UserOutlined,
-  SyncOutlined
+  SyncOutlined,
+  DownloadOutlined
 } from "@ant-design/icons";
 import {
   Avatar,
@@ -119,6 +120,19 @@ const UserProfile = () => {
           >
             <BiSupport />
           </Button>
+
+
+          {/* ==== download option ==== */}
+          <Tooltip title="Download App">
+          <Button
+          onClick={()=>{navigate("/downloads")}}
+            type="primary"
+            style={{ display: "flex", gap: "8px", alignItems: "center" }}
+          >
+          <DownloadOutlined />
+          </Button>
+  </Tooltip>
+         
 
           {/* ==== User option icon ====  */}
 
