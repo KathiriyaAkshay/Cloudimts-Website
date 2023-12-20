@@ -400,7 +400,7 @@ const Institution = () => {
         placement="right"
         onClose={() => setIsDrawerOpen(false)}
         open={isDrawerOpen}
-        width={800}
+        width={700}
         className='Institution-logs-table'
       >
         <TableWithFilter tableData={logsData} tableColumns={logsColumn} />

@@ -417,7 +417,7 @@ const Users = () => {
         placement='right'
         onClose={() => setIsDrawerOpen(false)}
         open={isDrawerOpen}
-        width={700}
+        width={600}
       >
         <TableWithFilter 
           tableData={logsData} 
