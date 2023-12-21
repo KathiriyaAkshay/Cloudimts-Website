@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Breadcrumb, Layout, Menu, theme, Divider, Row, Steps, Button } from 'antd';
 import { Tabs } from 'antd';
+import { Link } from 'react-router-dom';
 
 import logo from '../../assets/images/Imageinet-logo.png'
 const { Header, Content, Footer } = Layout;
@@ -54,7 +55,10 @@ const App = () => {
                     
                 }}
             >
-                <img  src={logo} height={"40px"} width={"60px"}/>
+
+                <Link to={"./studies"}>
+                    <img  src={logo} height={"40px"} width={"60px"}/>
+                </Link>
              
                 <Divider type='vertical' className='vertical-divider' />
 
