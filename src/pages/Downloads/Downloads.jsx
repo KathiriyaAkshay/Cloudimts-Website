@@ -188,7 +188,7 @@ const App = () => {
                                                 style={{ width: "max-content" }}
                                             >
                                                 <a  target='_blank' 
-                                                    href='https://imagenet-dicom-image.s3.ap-south-1.amazonaws.com/documentation/Cloudimts-installation.exe'
+                                                    href='https://imagenet-dicom-image.s3.ap-south-1.amazonaws.com/exe/Cloudimts-setup.exe'
                                                     download = "Cloudimts_installation.exe"
                                                 >
                                                 Download exe
