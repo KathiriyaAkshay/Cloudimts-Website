@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Breadcrumb, Layout, Menu, theme, Divider, Row, Steps, Button } from 'antd';
 import { Tabs } from 'antd';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import logo from '../../assets/images/Imageinet-logo.png'
 const { Header, Content, Footer } = Layout;
@@ -25,22 +25,37 @@ const items = [
 
 const App = () => {
 
-    const [windowsTitle, setWindowsTitle] = useState("To upload your local study to a cloud server, are you prepared to download the Cloudimts exe file? Set up Cloudimts on your local computer by following these instructions.") ; 
-    const [applicationTitle, setApplicationTitle] = useState("Download our application and submit your study report from your phone") ; 
-    const [tabActivationKey, setTabActivationKey] = useState('1') ; 
+    const navigate = useNavigate();
+
+
+  const goBack = () => {
+    // Check if there is a previous entry in the history stack
+    if (window.history.length >= 2) {
+      navigate(-2);
+    } else if (window.history.length == 1) {
+      navigate(-1);
+    } else {
+      // If no previous page exists, navi gate to a default path
+      navigate('/institutions');
+    }
+  }
+
+    const [windowsTitle, setWindowsTitle] = useState("To upload your local study to a cloud server, are you prepared to download the Cloudimts exe file? Set up Cloudimts on your local computer by following these instructions.");
+    const [applicationTitle, setApplicationTitle] = useState("Download our application and submit your study report from your phone");
+    const [tabActivationKey, setTabActivationKey] = useState('1');
 
     const {
         token: { colorBgContainer, borderRadiusLG },
-    } = theme.useToken(); 
+    } = theme.useToken();
 
     const HandleTabChange = (activationKey) => {
 
-        setTabActivationKey(activationKey) ; 
-        if (activationKey === "3" || activationKey === "4"){
+        setTabActivationKey(activationKey);
+        if (activationKey === "3" || activationKey === "4") {
 
         }
     }
-    
+
     return (
         <Layout id="download-page-main">
 
@@ -50,16 +65,30 @@ const App = () => {
                 style={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: "0.8rem", 
-                    paddingLeft: "0.5rem"
-                    
+                    gap: "0.8rem",
+                    paddingLeft: "0.5rem",
+                    position: "relative"
                 }}
             >
 
-                <Link to={"./studies"}>
-                    <img  src={logo} height={"40px"} width={"60px"}/>
-                </Link>
-             
+                <div className="header-logo-downloads" style={
+                    {
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        height: "100%",
+                        width: "5rem",
+                        padding: ".3rem"
+                    }
+
+                }>
+                    <Link to={"./studies"} >
+                        <img src={logo} height={"100%"} width={"70px"} />
+                    </Link>
+
+                </div>
+
+
                 <Divider type='vertical' className='vertical-divider' />
 
                 <div style={{
@@ -68,11 +97,28 @@ const App = () => {
                     color: '#000',
                     justifyContent: 'center'
                 }}>
-                    Download Instructions   
+                    Download Instructions
+                </div>
+
+                <div
+                    style={{
+                        position: "absolute",
+                        right: "2rem"
+                    }}
+                >
+                    <Button
+                        type='primary'
+                        htmlType='submit'
+                        style={{ width: "max-content" }}
+                        onClick={()=>goBack("4")}
+                    >
+                       Go Back
+                    </Button>
+
                 </div>
 
             </Header>
-            
+
             {/* ====== Content component =====  */}
 
             <Content
@@ -93,14 +139,14 @@ const App = () => {
                     }}
                 >
 
-                    <div style={{width: "35%"}}>
+                    <div style={{ width: "35%", display: "flex", flexDirection: "column", justifyContent: "space-evenly" }}>
 
                         <div className='download-page-advertise'>
 
                             <div>
                                 <img src={logo} width="130px" height="70px" />
                             </div>
-                            
+
                             <div className='download-typography'>
                                 Download Our Software!
                             </div>
@@ -108,18 +154,18 @@ const App = () => {
                         </div>
 
                         <div className='download-description'>
-                            {   (tabActivationKey === "1" || tabActivationKey == "2")?windowsTitle:
+                            {(tabActivationKey === "1" || tabActivationKey == "2") ? windowsTitle :
                                 applicationTitle}
                         </div>
 
                     </div>
 
-                    <div style={{width: "65%"}}>
-                        
+                    <div style={{ width: "65%" }}>
+
                         <div style={{ marginTop: "1rem" }}>
 
                             <Tabs defaultActiveKey='1' onChange={HandleTabChange}>
-                                
+
                                 {/* === Exe download step instuctions ===  */}
 
                                 <Tabs.TabPane key={'1'} tab='Windows DICOM Uploader'>
@@ -140,25 +186,25 @@ const App = () => {
                                                         title: 'Step 1 : Set up Orthanc on your machine by following the necessary installation steps',
                                                         description: (
                                                             <p className='particular-steps-instruction'>
-                                                                Installation guide: 
-                                                                <a  target='_blank' 
+                                                                Installation guide:
+                                                                <a target='_blank'
                                                                     href='https://imagenet-dicom-image.s3.ap-south-1.amazonaws.com/documentation/Orthanc+download+setup+guide+(1).pdf'
-                                                                    style={{marginLeft: '0.5rem'}}>
-                                                                        Guide
+                                                                    style={{ marginLeft: '0.5rem' }}>
+                                                                    Guide
                                                                 </a>
                                                             </p>
                                                         ),
                                                     },
-                                                    
+
                                                     {
                                                         title: 'Step 2 : Apply network configuration in Orthanc for enable revice study in local machine',
                                                         description: (
                                                             <p className='particular-steps-instruction'>
-                                                                Installation guide: 
-                                                                <a  target='_blank' 
+                                                                Installation guide:
+                                                                <a target='_blank'
                                                                     href='https://imagenet-dicom-image.s3.ap-south-1.amazonaws.com/documentation/Network+configuration+information.pdf'
-                                                                    style={{marginLeft: '0.5rem'}}>
-                                                                        Guide
+                                                                    style={{ marginLeft: '0.5rem' }}>
+                                                                    Guide
                                                                 </a>
                                                             </p>
                                                         ),
@@ -168,11 +214,11 @@ const App = () => {
                                                         title: 'Step 3: Download Cloudimts exe',
                                                         description: (
                                                             <p className='particular-steps-instruction'>
-                                                                Installation guide: 
-                                                                <a  target='_blank' 
+                                                                Installation guide:
+                                                                <a target='_blank'
                                                                     href='https://imagenet-dicom-image.s3.ap-south-1.amazonaws.com/documentation/Cloudimts+installation+guide.pdf'
-                                                                    style={{marginLeft: '0.5rem'}}>
-                                                                        Guide
+                                                                    style={{ marginLeft: '0.5rem' }}>
+                                                                    Guide
                                                                 </a>
                                                             </p>
                                                         ),
@@ -187,11 +233,11 @@ const App = () => {
                                                 htmlType='submit'
                                                 style={{ width: "max-content" }}
                                             >
-                                                <a  target='_blank' 
+                                                <a target='_blank'
                                                     href='https://imagenet-dicom-image.s3.ap-south-1.amazonaws.com/exe/Cloudimts-setup.exe'
-                                                    download = "Cloudimts_installation.exe"
+                                                    download="Cloudimts_installation.exe"
                                                 >
-                                                Download exe
+                                                    Download exe
                                                 </a>
                                             </Button>
 
@@ -202,24 +248,24 @@ const App = () => {
                                                 htmlType='submit'
                                                 style={{ width: "max-content", marginLeft: "1rem" }}
                                             >
-                                                <a  target='_blank' 
+                                                <a target='_blank'
                                                     href='https://imagenet-dicom-image.s3.ap-south-1.amazonaws.com/documentation/Cloudimts+exe+documentation.pdf'
-                                                    download = "Cloudimts_installation.exe"
+                                                    download="Cloudimts_installation.exe"
                                                 >
-                                                Download DICOM user guide
+                                                    Download DICOM user guide
                                                 </a>
                                             </Button>
 
                                         </div>
 
                                     </Row>
-                                
+
                                 </Tabs.TabPane>
 
                                 {/* ==== Application download steps instructions ====  */}
 
                                 <Tabs.TabPane key={'2'} tab='MAC DICOM Uploader'>
-                                    
+
                                     <Row gutter={15}>
 
                                         <div style={{ width: "100%" }}>
@@ -238,12 +284,12 @@ const App = () => {
                                                 ]}
                                             />
                                         </div>
-                                    
+
                                     </Row>
-                                
+
                                 </Tabs.TabPane>
 
-                                
+
                                 <Tabs.TabPane key={'3'} tab='Android application'>
 
                                     <Row gutter={15}>
@@ -269,7 +315,7 @@ const App = () => {
                                         </div>
 
                                     </Row>
-                                
+
                                 </Tabs.TabPane>
 
                                 <Tabs.TabPane key={'4'} tab='IOS application'>
@@ -296,12 +342,12 @@ const App = () => {
                                         </div>
 
                                     </Row>
-                                
+
                                 </Tabs.TabPane>
 
                             </Tabs>
                         </div>
-                    
+
                     </div>
 
 

@@ -2430,3 +2430,29 @@ label[for="study_description"]{
     font-size: 0.90rem;
   }
 }
+
+.header-logo-downloads a{
+  height: 2.8rem !important;
+}
+
+:where(.css-dev-only-do-not-override-15rg2km).ant-select-single.ant-select-show-arrow .ant-select-selection-item, :where(.css-dev-only-do-not-override-15rg2km).ant-select-single.ant-select-show-arrow .ant-select-selection-placeholder {
+    line-height: 45px;
+}
+
+/* tile uploaded pictures */
+.upload-list-inline .ant-upload-list-item {
+  float: left;
+  margin-inline-end: 8px;
+}
+
+.ant-upload-rtl.upload-list-inline .ant-upload-list-item {
+  float: right;
+}
+
+.upload-list-inline{
+ display: flex;
+  flex-direction: row;
+  gap:1rem;
+  justify-content: space-evenly;
+   align-items: center;
+}
