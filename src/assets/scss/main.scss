@@ -2460,3 +2460,7 @@ label[for="study_description"]{
 :where(.css-dev-only-do-not-override-15rg2km).ant-table-wrapper .ant-table{
   color: #000 !important;
 }
+
+form.ant-form .ant-form-item .ant-form-item-label label{
+  opacity: 1  !important;
+}
