@@ -1021,7 +1021,7 @@ const Dicom = () => {
           expandRowByClick:true,
           expandedRowRender: (record) => (
             <>
-             <Space style={{ display: 'flex', justifyContent: 'space-evenly',margin:"0.5rem 0rem",gap:"1.2rem" }}>
+             <Space style={{ display: 'flex', justifyContent: 'flex-start',margin:"0.5rem 0rem",gap:"1.5rem" }}>
 
                 <Tooltip title={`${record.patient_id} | ${record.created_at}`}>
                   <BsChat
