@@ -23,9 +23,28 @@ import NotificationMessage from "../../components/NotificationMessage";
 import dayjs from "dayjs";
 import UploadImage from "../../components/UploadImage";
 import { uploadImage } from "../../apis/studiesApi";
-import { UploadOutlined } from '@ant-design/icons';
+import { LoadingOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
 
-const { Step } = Steps
+const { Step } = Steps;
+
+
+const getBase64 = (img, callback) => {
+  const reader = new FileReader();
+  reader.addEventListener('load', () => callback(reader.result));
+  reader.readAsDataURL(img);
+};
+const beforeUpload = (file) => {
+  const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+  if (!isJpgOrPng) {
+    message.error('You can only upload JPG/PNG file!');
+  }
+  const isLt2M = file.size / 1024 / 1024 < 2;
+  if (!isLt2M) {
+    message.error('Image must smaller than 2MB!');
+  }
+  return isJpgOrPng && isLt2M;
+};
+
 
 const AddUsers = () => {
   const [currentStep, setCurrentStep] = useState(0)
@@ -443,7 +462,44 @@ const AddUsers = () => {
         </Form.Item>
       )
     }
-  ]
+  ];
+
+
+  //upload image functionality
+
+  const [profileLoading, setProfileLoading] = useState(false);
+  const [imageUrl, setImageUrl] = useState();
+  const handleProfileChange = (info) => {
+    if (info.file.status === 'uploading') {
+      setProfileLoading(true);
+      return;
+    }
+    if (info.file.status === 'done') {
+      // Get this url from response in real world.
+      getBase64(info.file.originFileObj, (url) => {
+        setProfileLoading(false);
+        setImageUrl(url);
+      });
+    }
+  };
+  const uploadButton = (
+    <button
+      style={{
+        border: 0,
+        background: 'none',
+      }}
+      type="button"
+    >
+      {profileLoading ? <LoadingOutlined /> : <PlusOutlined />}
+      <div
+        style={{
+          marginTop: 8,
+        }}
+      >
+        Upload Profile Picture
+      </div>
+    </button>
+  );
 
   return (
     <div className='secondary-table'>
@@ -458,11 +514,11 @@ const AddUsers = () => {
             position: "absolute",
             left: 0,
             bottom: 0,
-            zIndex:999,
+            zIndex: 999,
           }}>
-            <div style={{cursor:"pointer"}} onClick={()=>setCurrentStep(4)}> 
+          <div style={{ cursor: "pointer" }} onClick={() => setCurrentStep(4)}>
             Skip To Last
-            </div>
+          </div>
         </div>
         <Spin spinning={isLoading}>
 
@@ -493,6 +549,35 @@ const AddUsers = () => {
               style={{ marginTop: "20px" }}
             >
               <Row gutter={15}>
+                <Col xs={4} sm={4} md={4} lg={3}>
+
+
+
+                  <Upload
+                    name="avatar"
+                    listType="picture-card"
+                    className="avatar-uploader"
+                    showUploadList={false}
+                    action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
+                    beforeUpload={beforeUpload}
+                    onChange={handleProfileChange}
+                  >
+                    {imageUrl ? (
+                      <img
+                        src={imageUrl}
+                        alt="avatar"
+                        style={{
+                          width: '100%',
+                        }}
+                      />
+                    ) : (
+                      uploadButton
+                    )}
+                  </Upload>
+
+
+
+                </Col>
                 <Col xs={4} sm={4} md={4} lg={2}>
 
                   <Form.Item
@@ -507,7 +592,7 @@ const AddUsers = () => {
 
                 </Col>
 
-                <Col xs={4} sm={4} md={4} lg={4}>
+                <Col xs={4} sm={4} md={4} lg={16}>
 
                   <Form.Item
                     name='allow_offline_download'
@@ -520,25 +605,8 @@ const AddUsers = () => {
                   </Form.Item>
 
                 </Col>
-                <Col xs={4} sm={4} md={4} lg={4}>
-
-                  <div >
-                    <Upload
-                      action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
-                      listType="picture"
-                      className="upload-list-inline"
-                      
-                    >
-                      <Button icon={<UploadOutlined />}>Upload</Button>
-                    </Upload>
-
-                  </div>
 
 
-                </Col>
-                <Col xs={4} sm={4} md={4} lg={17}>
-
-                </Col>
 
 
                 <Col xs={24} sm={12} md={12} lg={8}>
