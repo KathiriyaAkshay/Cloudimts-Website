@@ -16,6 +16,7 @@ import {
 import { UserPermissionContext } from '../../hooks/userPermissionContext'
 import NotificationMessage from '../../components/NotificationMessage'
 import APIHandler from '../../apis/apiHandler'
+import { convertToDDMMYYYY, modifyDate } from '../../helpers/utils'
 
 const Institution = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -51,6 +52,7 @@ const Institution = () => {
     })
       .then(res => {
         // Check if the response status is true
+        res.data.data = modifyDate(res.data.data)
         if (res.data.status) {
         setTotalPages(res.data.total_object)
         setInstitutionData(res.data.data)

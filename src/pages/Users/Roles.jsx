@@ -9,6 +9,7 @@ import API from '../../apis/getApi'
 import NotificationMessage from '../../components/NotificationMessage'
 import { TbLockAccess } from 'react-icons/tb'
 import { UserRoleContext } from '../../hooks/usersRolesContext'
+import { convertToDDMMYYYY, modifyDate } from '../../helpers/utils'
 
 const Roles = () => {
   const [currentPage, setCurrentPage] = useState(1)
@@ -37,6 +38,18 @@ const Roles = () => {
     setIsRoleModalOpen(true)
   }
 
+const modifyUserDate = data => {
+  return data.map(item => {
+    return {
+      ...item,
+      created_at: convertToDDMMYYYY(item?.created_at),
+      updated_at: convertToDDMMYYYY(item?.updated_at),
+      role_created_at: convertToDDMMYYYY(item?.role_created_at),
+      role_updated_at: convertToDDMMYYYY(item?.role_updated_at)
+    }
+  })
+}
+
 
   const retrieveRoleData = async () => {
     setIsLoading(true)
@@ -47,7 +60,8 @@ const Roles = () => {
     )
       .then(res => {
         if (res.data.status) {
-          setTableData(res.data.data)
+            const data = modifyUserDate(res.data.data)
+          setTableData(data)
         } else {
           NotificationMessage(
             'warning',

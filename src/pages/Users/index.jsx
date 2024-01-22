@@ -30,6 +30,7 @@ import {
 import { UserPermissionContext } from '../../hooks/userPermissionContext'
 import NotificationMessage from '../../components/NotificationMessage'
 import APIHandler from "../../apis/apiHandler" ; 
+import { modifyDate } from '../../helpers/utils'
 
 const Users = () => {
   
@@ -77,7 +78,8 @@ const Users = () => {
             username: item.user.username,
             email: item.user.email
           }))
-          setTableData(resData)
+          const data = modifyDate(resData)
+          setTableData(data)
           setTotalPages(res.data.total_object)
         } else {
           NotificationMessage(

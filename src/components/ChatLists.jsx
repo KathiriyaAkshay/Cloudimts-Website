@@ -5,6 +5,7 @@ import NormalCase from '../assets/images/normalCase.png'
 import { Divider, Typography } from 'antd'
 import { getAllChatList } from '../apis/studiesApi'
 import NotificationMessage from './NotificationMessage'
+import { convertToDDMMYYYY } from '../helpers/utils'
 
 const ChatLists = ({ setSeriesId, setStudyId, setPersonName, studyId, setUrgentCase }) => {
   const [chatListData, setChatListData] = useState([])
@@ -188,7 +189,7 @@ const ChatLists = ({ setSeriesId, setStudyId, setPersonName, studyId, setUrgentC
                             <span style={{ color: '#A6A6A6', fontWeight: 600 }}>
                               Latest chat -{' '}
                             </span>
-                            {data.latest_timestamp}
+                            {convertToDDMMYYYY(data.latest_timestamp)}
                           </Typography>
                         </div>
                       </>

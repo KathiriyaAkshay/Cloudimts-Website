@@ -12,6 +12,7 @@ import { UserEmailContext } from '../../hooks/userEmailContext'
 import EmailFilterModal from '../../components/EmailFilterModal'
 import { deleteEmail, emailFilterData } from '../../apis/studiesApi'
 import { UserPermissionContext } from '../../hooks/userPermissionContext'
+import { modifyDate } from '../../helpers/utils'
 
 const Email = () => {
   const [emailData, setEmailData] = useState([])
@@ -88,7 +89,8 @@ const Email = () => {
     })
       .then(res => {
         if (res.data.status) {
-          setEmailData(res.data.data)
+            const updatedData = modifyDate(res.data.data)
+          setEmailData(updatedData)
           setTotalPages(res.data.total_object)
         } else {
           NotificationMessage(
