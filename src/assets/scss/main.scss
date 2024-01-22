@@ -2456,3 +2456,7 @@ label[for="study_description"]{
   justify-content: space-evenly;
    align-items: center;
 }
+
+.form-step-0 :where(.css-dev-only-do-not-override-15rg2km).ant-upload-wrapper.ant-upload-picture-card-wrapper .ant-upload.ant-upload-select{
+  height: 5.5rem;
+}

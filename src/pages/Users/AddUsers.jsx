@@ -546,7 +546,7 @@ const AddUsers = () => {
               }}
               form={form}
               onFinish={handleSubmit}
-              className="mt"
+              className="mt form-step-0"
               style={{ marginTop: "20px" }}
             >
               <Row gutter={15}>
