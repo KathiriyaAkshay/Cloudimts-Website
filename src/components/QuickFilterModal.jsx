@@ -187,7 +187,7 @@ const QuickFilterModal = ({
                 },
               ]}
             >
-              <DatePicker format={"YYYY-MM-DD"} />
+              <DatePicker format={"DD-MM-YYYY"} />
             </Form.Item>
           </Col>
         </Row>

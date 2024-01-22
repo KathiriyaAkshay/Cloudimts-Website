@@ -3,6 +3,7 @@ import { useBreadcrumbs } from '../../hooks/useBreadcrumbs'
 import { getStudyLogs } from '../../apis/studiesApi'
 import TableWithFilter from '../../components/TableWithFilter'
 import { Tag } from 'antd'
+import { convertToDDMMYYYY } from '../../helpers/utils'
 
 const StudyLogs = () => {
   const [isLoading, setIsLoading] = useState(false)
@@ -53,26 +54,19 @@ const StudyLogs = () => {
     {
       title: 'Perform User',
       dataIndex: 'perform_user'
-      // sorter: (a, b) => {},
-      // editable: true,
     },
     {
       title: 'Target User',
       dataIndex: 'target_user'
-      // sorter: (a, b) => {},
-      // editable: true,
     },
     {
       title: 'Time',
-      dataIndex: 'time'
-      // sorter: (a, b) => {},
-      // editable: true,
+      dataIndex: 'time', 
+      render: (text, record) => convertToDDMMYYYY(record?.time)
     },
     {
       title: 'Event Display',
       dataIndex: 'event_display',
-      // sorter: (a, b) => {},
-      // editable: true,
       render: text => (
         <Tag
           color={

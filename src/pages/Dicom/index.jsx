@@ -62,6 +62,7 @@ import * as XLSX from 'xlsx'
 import AssignStudyModified from '../../components/Studies/AssignStudyModified'
 import EditSeriesId from '../../components/EditSeriesId'
 import ImageDrawer from './ImageDrawer'
+import { convertToDDMMYYYY } from '../../helpers/utils'
 const BASE_URL = import.meta.env.VITE_APP_SOCKET_BASE_URL
 const Dicom = () => {
   // Modal related useState
@@ -641,12 +642,14 @@ const Dicom = () => {
       title: 'Study date',
       dataIndex: 'created_at',
       width:"10%",
+      render: (text, record) => convertToDDMMYYYY(record?.created_at)
     },
 
     {
       title: 'Update at',
       dataIndex: 'updated_at',
       width:"10%",
+      render: (text, record) => convertToDDMMYYYY(record?.updated_at)
 
     },
 

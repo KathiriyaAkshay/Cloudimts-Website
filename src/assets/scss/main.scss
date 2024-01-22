@@ -2456,3 +2456,7 @@ label[for="study_description"]{
   justify-content: space-evenly;
    align-items: center;
 }
+
+:where(.css-dev-only-do-not-override-15rg2km).ant-table-wrapper .ant-table{
+  color: #000 !important;
+}

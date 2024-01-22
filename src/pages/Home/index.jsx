@@ -6,6 +6,7 @@ import { getDashboardData, getDashboardTableData } from '../../apis/studiesApi'
 import { GrNewWindow, GrOverview, GrUserSettings } from 'react-icons/gr'
 import { BsFillFileTextFill } from 'react-icons/bs'
 import TableWithFilter from '../../components/TableWithFilter'
+import { convertToDDMMYYYY } from '../../helpers/utils'
 
 function Home () {
   const { Title, Text } = Typography
@@ -96,7 +97,8 @@ function Home () {
     },
     {
       title: 'Performed Time',
-      dataIndex: 'time'
+      dataIndex: 'time', 
+      render: (text, record) => convertToDDMMYYYY(record?.time)
     },
     {
       title: 'Performed User',

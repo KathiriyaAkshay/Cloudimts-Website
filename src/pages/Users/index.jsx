@@ -30,7 +30,8 @@ import {
 import { UserPermissionContext } from '../../hooks/userPermissionContext'
 import NotificationMessage from '../../components/NotificationMessage'
 import APIHandler from "../../apis/apiHandler" ; 
-import { modifyDate } from '../../helpers/utils'
+import { modifyDate } from '../../helpers/utils' ; 
+import { convertToDDMMYYYY } from '../../helpers/utils'
 
 const Users = () => {
   
@@ -247,7 +248,7 @@ const Users = () => {
       dataIndex: 'created_at',
       className: `${
         checkPermissionStatus('View Created time') ? '' : 'column-display-none'
-      }`
+      }`, 
     },
     
     checkPermissionStatus('View last updated time') && {
