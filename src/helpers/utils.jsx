@@ -1,3 +1,5 @@
+import moment from 'moment'
+
 export const getBase64 = (file) =>
   new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -59,6 +61,26 @@ export const chatSettingPopUp = [
   //   name: "Delete Chat",
   // },
 ];
+export const convertToDDMMYYYY = time => {
+  // Parse the input date and time using moment
+  const momentObject = moment(time, 'YYYY-MM-DD HH:mm:ss')
+
+  // Format the moment object to "DD-MM-YYYY" format
+  const formattedDate = momentObject.format('DD-MM-YYYY HH: mm: ss')
+  if(formattedDate=='Invalid date') return '-'
+  return formattedDate
+}
+
+export const modifyDate = data => {
+  return data.map(item => {
+    return {
+      ...item,
+      created_at: convertToDDMMYYYY(item?.created_at),
+      updated_at: convertToDDMMYYYY(item?.updated_at)
+    }
+  })
+}
+
 
 export const descriptionOptions = [
   { label: "Abdomen", value: "Abdomen" },

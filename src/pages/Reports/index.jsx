@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom'
 import { UserPermissionContext } from '../../hooks/userPermissionContext'
 import APIHandler from '../../apis/apiHandler'
 import NotificationMessage from '../../components/NotificationMessage'
+import { modifyDate } from '../../helpers/utils'
 
 const index = () => {
   const [reportsData, setReportsData] = useState([])
@@ -32,7 +33,8 @@ const index = () => {
     getReportList({ page_number: currentPagination.page, page_limit: 10 })
       .then(res => {
         if (res.data.status) {
-          setReportsData(res.data.data)
+          const updatedData = modifyDate(res.data.data)
+          setReportsData(updatedData)
         } else {
           NotificationMessage(
             'warning',

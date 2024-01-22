@@ -10,6 +10,7 @@ import DeleteActionIcon from '../../components/DeleteActionIcon'
 import { UserPermissionContext } from '../../hooks/userPermissionContext'
 import NotificationMessage from '../../components/NotificationMessage'
 import APIHandler from '../../apis/apiHandler'
+import { modifyDate } from '../../helpers/utils'
 
 const index = () => {
   const [filterData, setFilterData] = useState([])
@@ -35,6 +36,7 @@ const index = () => {
     getFilterList()
       .then(res => {
         if (res.data.status) {
+            res.data.data = modifyDate(res.data.data)
           setFilterData(res.data.data)
         } else {
           NotificationMessage(

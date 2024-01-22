@@ -4,6 +4,7 @@ import { Popconfirm, Space, Table, Tag, Tooltip } from 'antd'
 import { backupStudy, fetchDeletedStudies } from '../../apis/studiesApi'
 import { MdRestore } from 'react-icons/md'
 import NotificationMessage from '../../components/NotificationMessage'
+import { modifyDate } from '../../helpers/utils'
 
 const DeletedStudies = () => {
   const { changeBreadcrumbs } = useBreadcrumbs()
@@ -21,7 +22,7 @@ const DeletedStudies = () => {
   const [expandedRows, setExpandedRows] = useState([])
   const [pagi, setPagi] = useState({ page: 1, limit: 10 })
   const [studyIdArray, setStudyIdArray] = useState([])
-
+console.log(studyData,' PPPPPPPPPPPPPPPPPPPPP')
   useEffect(() => {
     setPagi(Pagination)
 
@@ -57,7 +58,8 @@ const DeletedStudies = () => {
             study_id: data?.study?.id,
             key: data.id
           }))
-          setStudyData(resData)
+          const finalData = modifyDate(resData)
+          setStudyData(finalData)
           setTotalPages(res.data.total_object)
         } else {
           NotificationMessage(
