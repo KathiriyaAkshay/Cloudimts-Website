@@ -448,19 +448,21 @@ const AddUsers = () => {
   return (
     <div className='secondary-table'>
       <Card>
-        <div className='w-100'
+        <div
           style={{
             marginLeft: "0.7rem",
             marginBottom: "1.3rem",
             fontWeight: "600",
             fontSize: "1rem",
             color: "#00a0e3",
-            cursor: "pointer",
             position: "absolute",
             left: 0,
-            bottom: 0
+            bottom: 0,
+            zIndex:999,
           }}>
-          Skip To Last
+            <div style={{cursor:"pointer"}} onClick={()=>setCurrentStep(4)}> 
+            Skip To Last
+            </div>
         </div>
         <Spin spinning={isLoading}>
 
