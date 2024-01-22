@@ -3,7 +3,8 @@ import { useBreadcrumbs } from '../../hooks/useBreadcrumbs'
 import { getUsersLogs, userLogsFilter } from '../../apis/studiesApi'
 import TableWithFilter from '../../components/TableWithFilter'
 import UserLogsFilter from '../../components/UserLogsFilter'
-import { Tag } from 'antd'
+import { Tag } from 'antd' 
+import { convertToDDMMYYYY } from '../../helpers/utils'
 
 const UsersLogs = () => {
   const [tableData, setTableData] = useState([])
@@ -104,7 +105,8 @@ const UsersLogs = () => {
     },
     {
       title: 'Time',
-      dataIndex: 'time'
+      dataIndex: 'time', 
+      render: (text, record) => convertToDDMMYYYY(record?.time)
     }
   ]
 

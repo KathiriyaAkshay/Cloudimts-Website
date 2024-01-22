@@ -5,6 +5,7 @@ import { useBreadcrumbs } from '../../hooks/useBreadcrumbs'
 import InstitutionLogsFilter from '../../components/InstitutionLogsFilter'
 import { instituteLogsFilter } from '../../apis/studiesApi'
 import { Tag } from 'antd'
+import { convertToDDMMYYYY } from '../../helpers/utils'
 
 const InstitutionLogs = () => {
   const [institutionData, setInstitutionData] = useState([])
@@ -112,7 +113,8 @@ const InstitutionLogs = () => {
     },
     {
       title: 'Time',
-      dataIndex: 'time'
+      dataIndex: 'time', 
+      render: (text, record) => convertToDDMMYYYY(record?.time)
     }
   ]
 

@@ -3,7 +3,8 @@ import TableWithFilter from '../../components/TableWithFilter'
 import { fetchRoleLogs } from '../../apis/studiesApi'
 import RoleLogsFilter from '../../components/RoleLogsFilter'
 import { useBreadcrumbs } from '../../hooks/useBreadcrumbs'
-import { Tag } from 'antd'
+import { Tag } from 'antd' 
+import { convertToDDMMYYYY } from '../../helpers/utils'
 
 const RoleLogs = () => {
   const [tableData, setTableData] = useState([])
@@ -96,7 +97,8 @@ const RoleLogs = () => {
     },
     {
       title: 'Time',
-      dataIndex: 'time'
+      dataIndex: 'time', 
+      render: (text, record) => convertToDDMMYYYY(record?.time)
     }
   ]
 

@@ -161,7 +161,7 @@ const UserFilterModal = ({ name, setInstitutionData, retrieveUsersData }) => {
                 },
               ]}
             >
-              <DatePicker format={"YYYY-MM-DD"} />
+              <DatePicker format={"DD-MM-YYYY"} />
             </Form.Item>
           </Col>
           <Col xs={24} lg={12}>
