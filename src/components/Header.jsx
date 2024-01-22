@@ -306,7 +306,7 @@ const BasicLayout = ({ children }) => {
               <Divider type='vertical' className='vertical-divider' />
 
               <Breadcrumb
-                separator='|'
+                separator='/'
                 style={{
                   fontSize: '18px',
                   fontWeight: 500,

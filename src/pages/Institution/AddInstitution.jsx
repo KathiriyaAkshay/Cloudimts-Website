@@ -50,7 +50,7 @@ const AddInstitution = () => {
   const [institutionId, setInstitutionId] = useState(null)
 
   useEffect(() => {
-    const crumbs = [{ name: 'Institution', to: '/institutions' }]
+    const crumbs = [{ name: <span style={{color:"#0052c6"}}>Institution</span>, to: '/institutions' }]
 
     crumbs.push({
       name: id ? 'Edit' : 'Add'

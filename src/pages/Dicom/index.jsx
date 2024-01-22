@@ -13,7 +13,9 @@ import {
   Select,
   Spin,
   Input,
-  Switch
+  Switch,
+  Dropdown,
+  Badge
 } from 'antd'
 import { CheckCircleOutlined, CloseCircleOutlined, FileOutlined, PictureOutlined } from '@ant-design/icons'
 import { useBreadcrumbs } from '../../hooks/useBreadcrumbs'
@@ -22,7 +24,7 @@ import EditStudy from '../../components/Studies/EditStudy'
 import PatientDetails from '../../components/Studies/PatientDetails'
 import StudyAudits from '../../components/Studies/StudyAudits'
 import StudyReports from '../../components/Studies/StudyReports'
-import ShareStudy from '../../components/Studies/ShareStudy' 
+import ShareStudy from '../../components/Studies/ShareStudy'
 
 import {
   advanceSearchFilter,
@@ -31,7 +33,7 @@ import {
   filterStudyData,
   getAllStudyData,
   updateStudyStatus,
-  updateStudyStatusReported, 
+  updateStudyStatusReported,
   getInstanceData
 } from '../../apis/studiesApi'
 import AssignStudy from '../../components/Studies/AssignStudy'
@@ -68,9 +70,9 @@ const Dicom = () => {
   const [isStudyModalOpen, setIsStudyModalOpen] = useState(false)
   const [isReportModalOpen, setIsReportModalOpen] = useState(false)
   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false)
-  const [isImageModalOpen,setImageDrawerOpen]=useState(false)
+  const [isImageModalOpen, setImageDrawerOpen] = useState(false)
   const [isAssignModifiedModalOpen, setIsAssignModifiedModalOpen] = useState(true)
-  const [isEditSeriesIdModifiedOpen, setIsEditSeriesIdModifiedOpen] = useState(false) ; 
+  const [isEditSeriesIdModifiedOpen, setIsEditSeriesIdModifiedOpen] = useState(false);
 
   const [isShareStudyModalOpen, setIsShareStudyModalOpen] = useState(false)
 
@@ -84,7 +86,7 @@ const Dicom = () => {
   // Pagination and Total page information handling
   const [pagi, setPagi] = useState({ page: 1, limit: 10 })
   const [totalPages, setTotalPages] = useState(0)
-  const [limit, setLimit] = useState(localStorage.getItem("pageSize")||10)
+  const [limit, setLimit] = useState(localStorage.getItem("pageSize") || 10)
   const [Pagination, setPagination] = useState({
     page: 1,
     limit: limit,
@@ -99,10 +101,10 @@ const Dicom = () => {
   // Permission information context
   const { permissionData } = useContext(UserPermissionContext)
 
-  const { isStudyExportModalOpen, 
-    setIsStudyExportModalOpen, 
-    isQuickAssignStudyModalOpen, 
-    setIsQuickAssignStudyModalOpen, 
+  const { isStudyExportModalOpen,
+    setIsStudyExportModalOpen,
+    isQuickAssignStudyModalOpen,
+    setIsQuickAssignStudyModalOpen,
     setStudyUIDValue } = useContext(filterDataContext)
 
   // Modal passing attributes information
@@ -114,9 +116,9 @@ const Dicom = () => {
   const [patientId, setPatientId] = useState('')
   const [patientName, setPatientName] = useState('')
   const [studyStatus, setStudyStatus] = useState('')
-  const [urgentCase, setUrgentCase] = useState(false)  
-  const [studyUID, setStudyUId] = useState(null) ; 
-  const [studyImagesList, setStudyImagesList] = useState([]); 
+  const [urgentCase, setUrgentCase] = useState(false)
+  const [studyUID, setStudyUId] = useState(null);
+  const [studyImagesList, setStudyImagesList] = useState([]);
 
   // Normal studies information, System filter and Main filter payload information
 
@@ -130,7 +132,7 @@ const Dicom = () => {
   } = useContext(StudyDataContext)
 
   const { studyIdArray, setStudyIdArray } = useContext(StudyIdContext)
-  const { isFilterSelected, isAdvanceSearchSelected } = useContext( FilterSelectedContext ) ; 
+  const { isFilterSelected, isAdvanceSearchSelected } = useContext(FilterSelectedContext);
 
   const [quickFilterPayload, setQuickFilterPayload] = useState({})
 
@@ -140,7 +142,7 @@ const Dicom = () => {
   const [seriesIdList, setSeriesIdList] = useState([])
   const [previousSeriesResponse, setPreviousSeriesResponse] = useState(null)
 
-  const [notificationValue, setNotificationValue] = useState(0);  
+  const [notificationValue, setNotificationValue] = useState(0);
 
   const SetupGenralChatNotification = () => {
     const ws = new WebSocket(`${BASE_URL}genralChat/`)
@@ -151,31 +153,31 @@ const Dicom = () => {
 
     ws.onmessage = event => {
       try {
-        const eventData = JSON.parse(event.data) ;        
+        const eventData = JSON.parse(event.data);
 
-        if (eventData.payload.status == "new-chat"){
-          let ChatData = eventData.payload.data; 
-          if ((localStorage.getItem("currentChatId") !== ChatData.room_name) || localStorage.getItem("currentChatId") == null){
+        if (eventData.payload.status == "new-chat") {
+          let ChatData = eventData.payload.data;
+          if ((localStorage.getItem("currentChatId") !== ChatData.room_name) || localStorage.getItem("currentChatId") == null) {
             studyData.map((element) => {
-              if (element.series_id === ChatData.room_name){
-                
-                if (ChatData.urgent_case){
-                  NotificationMessage("important", 
-                  "New chat message", `Message send by ${ChatData.sender_username} for Patient - ${element.name} and StudyId - ${element.id}`, 
-                  5, 
-                  "topLeft") ;  
-                } else{
-                  NotificationMessage("success", 
-                  "New chat message", `Message send by ${ChatData.sender_username} for Patient - ${element.name} and StudyId - ${element.id}`, 
-                  5, 
-                  "topLeft") ; 
+              if (element.series_id === ChatData.room_name) {
+
+                if (ChatData.urgent_case) {
+                  NotificationMessage("important",
+                    "New chat message", `Message send by ${ChatData.sender_username} for Patient - ${element.name} and StudyId - ${element.id}`,
+                    5,
+                    "topLeft");
+                } else {
+                  NotificationMessage("success",
+                    "New chat message", `Message send by ${ChatData.sender_username} for Patient - ${element.name} and StudyId - ${element.id}`,
+                    5,
+                    "topLeft");
                 }
               }
             })
           }
-        } 
+        }
 
-      } catch (error) {}
+      } catch (error) { }
     }
 
     ws.onclose = () => {
@@ -254,8 +256,8 @@ const Dicom = () => {
     ) {
       // If not selected any filter and Systemfilter, studyDatapayload length empty than call normal reterive stuydData API
       retrieveStudyData(Pagination)
-    } else{
-      retrieveStudyData(Pagination) ; 
+    } else {
+      retrieveStudyData(Pagination);
     }
   }, [Pagination, isFilterSelected, studyDataPayload, systemFilterPayload])
 
@@ -402,15 +404,15 @@ const Dicom = () => {
             key: data.id,
             count: 0,
             institution_id: data.institution.id
-          })) ; 
+          }));
 
           // set StudyData
           setStudyData(resData);
           setTotalPages(res.data.total_object);
-        
+
           const temp = res.data.data.map(data => data?.series_id).filter(Boolean);
-        
-          setSeriesIdList([...temp]) ; 
+
+          setSeriesIdList([...temp]);
 
         } else {
           NotificationMessage(
@@ -528,8 +530,8 @@ const Dicom = () => {
     {
       title: 'Images',
       dataIndex: 'images',
-      width:"5%",
-      render: (text, record) => (        
+      width: "5%",
+      render: (text, record) => (
         <Tooltip title={`${record.patient_id} | ${record.created_at}`}>
           <PictureOutlined
             className='action-icon action-icon-primary'
@@ -542,45 +544,43 @@ const Dicom = () => {
     checkPermissionStatus('View Patient id') && {
       title: "Patient's Id",
       dataIndex: 'patient_id',
-      className: `${
-        checkPermissionStatus('View Patient id') ? '' : 'column-display-none'
-      }`, 
-      render: (text, record) => (        
-        record.urgent_case ?<>
-          <Tooltip title={`${record.patient_id} | ${record.created_at}`} style={{color: "red"}}>
-            <div style={{color: "red"}}>{text}</div>
+      className: `${checkPermissionStatus('View Patient id') ? '' : 'column-display-none'
+        }`,
+      render: (text, record) => (
+        record.urgent_case ? <>
+          <Tooltip title={`${record.patient_id} | ${record.created_at}`} style={{ color: "red" }}>
+            <div style={{ color: "red" }}>{text}</div>
           </Tooltip>
-        </>:<>
+        </> : <>
           <Tooltip title={`${record.patient_id} | ${record.created_at}`}>
             {text}
           </Tooltip>
-        
+
         </>
       ),
     },
-    
+
     checkPermissionStatus('View Patient name') && {
       title: "Patient's Name",
       dataIndex: 'name',
-      width:"12%",
-      className: `${
-        checkPermissionStatus('View Patient name') ? '' : 'column-display-none'
-      }`, 
-      render: (text, record) => (        
-        record.urgent_case ?<>
-          <Tooltip title={`${record.patient_id} | ${record.created_at}`} style={{color: "red"}}>
-            <div style={{color: "red"}}>{text}</div>
+      width: "12%",
+      className: `${checkPermissionStatus('View Patient name') ? '' : 'column-display-none'
+        }`,
+      render: (text, record) => (
+        record.urgent_case ? <>
+          <Tooltip title={`${record.patient_id} | ${record.created_at}`} style={{ color: "red" }}>
+            <div style={{ color: "red" }}>{text}</div>
           </Tooltip>
-        </>:<>
+        </> : <>
           <Tooltip title={`${record.patient_id} | ${record.created_at}`}>
             {text}
           </Tooltip>
-        
+
         </>
       ),
 
     },
-    
+
     checkPermissionStatus('Study id') && {
       title: 'Study Id',
       dataIndex: 'study_id',
@@ -653,42 +653,39 @@ const Dicom = () => {
     checkPermissionStatus('View Institution name') && {
       title: 'Institution',
       dataIndex: 'institution',
-      className: `${
-        checkPermissionStatus('View Institution name')
-          ? 'Study-count-column'
-          : 'column-display-none'
-      }`
+      className: `${checkPermissionStatus('View Institution name')
+        ? 'Study-count-column'
+        : 'column-display-none'
+        }`
     },
-    
+
     checkPermissionStatus('View Study description') && {
       title: 'Description',
       dataIndex: 'study_description',
-      className: `${
-        checkPermissionStatus('View Study description')
-          ? ''
-          : 'column-display-none'
-      }`, 
+      className: `${checkPermissionStatus('View Study description')
+        ? ''
+        : 'column-display-none'
+        }`,
       render: (text, record) => (
         <Tooltip title={`${record.patient_id} | ${record.created_at}`}>
           {text}
         </Tooltip>
       ),
     },
-    
+
     {
       title: 'Count',
       dataIndex: 'count',
       className: 'Study-count-column'
     },
-    
+
     checkPermissionStatus('Edit SeriesId option') && {
       title: 'Edit seriesid',
       dataIndex: 'chat',
-      width:"5%",
-      fixed: "right", 
-      className: `${
-        checkPermissionStatus('Edit SeriesId option') ? '' : 'column-display-none'
-      }`,
+      width: "5%",
+      fixed: "right",
+      className: `${checkPermissionStatus('Edit SeriesId option') ? '' : 'column-display-none'
+        }`,
       render: (text, record) => (
         <Tooltip title={`${record.patient_id} | ${record.created_at}`}>
           <AiTwotoneEdit
@@ -702,133 +699,132 @@ const Dicom = () => {
         </Tooltip>
       )
     },
-    
-    checkPermissionStatus('Study chat option') && {
-      title: 'Chat',
-      dataIndex: 'chat',
-      fixed: "right", 
-      width:"4%",
-      className: `${
-        checkPermissionStatus('Study chat option') ? '' : 'column-display-none'
-      }`,
-      render: (text, record) => (
-        <Tooltip title={`${record.patient_id} | ${record.created_at}`}>
-          <BsChat
-            className='action-icon action-icon-primary'
-            onClick={() => {
-              setSeriesID(record.series_id)
-              setStudyID(record.id)
-              setIsDrawerOpen(true)
-              setPersonName(`${record.study.patient_id} | ${record.name}`) 
-              setUrgentCase(record.urgent_case)
-              localStorage.setItem("currentChatId", record.series_id)
-            }}
-          />
-        </Tooltip>
-      )
-    },
-    
-    {
-      title: 'Actions',
-      dataIndex: 'actions',
-      fixed: 'right',
-      width: window.innerWidth < 650 ? '1%' : '10%',
-      render: (_, record) => (
-        <Space style={{ display: 'flex', justifyContent: 'space-evenly' }}>
-          {/* ==== Clinical History option ====  */}
 
-          {checkPermissionStatus('Study clinical history option') && (
-            <Tooltip title='Clinical History'>
-              <MdOutlineHistory
-                className='action-icon'
-                onClick={() => {
-                  setStudyID(record.id)
-                  setIsAssignModalOpen(true)
-                }}
-              />
-            </Tooltip>
-          )}
+    // checkPermissionStatus('Study chat option') && {
+    //   title: 'Chat',
+    //   dataIndex: 'chat',
+    //   fixed: "right",
+    //   width: "4%",
+    //   className: `${checkPermissionStatus('Study chat option') ? '' : 'column-display-none'
+    //     }`,
+    //   render: (text, record) => (
+    //     <Tooltip title={`${record.patient_id} | ${record.created_at}`}>
+    //       <BsChat
+    //         className='action-icon action-icon-primary'
+    //         onClick={() => {
+    //           setSeriesID(record.series_id)
+    //           setStudyID(record.id)
+    //           setIsDrawerOpen(true)
+    //           setPersonName(`${record.study.patient_id} | ${record.name}`)
+    //           setUrgentCase(record.urgent_case)
+    //           localStorage.setItem("currentChatId", record.series_id)
+    //         }}
+    //       />
+    //     </Tooltip>
+    //   )
+    // },
 
-          {/* ==== Study report option ====  */}
+    // {
+    //   title: 'Actions',
+    //   dataIndex: 'actions',
+    //   fixed: 'right',
+    //   width: window.innerWidth < 650 ? '1%' : '10%',
+    //   render: (_, record) => (
+    //     <Space style={{ display: 'flex', justifyContent: 'space-evenly' }}>
+    //       {/* ==== Clinical History option ====  */}
 
-          {checkPermissionStatus('Study data option') && (
-            <Tooltip title={'Study Report'}>
-              <IoIosDocument
-                className='action-icon'
-                onClick={() => {
-                  setStudyID(record.id)
-                  setStudyStatus(record.status)
-                  setIsReportModalOpen(true)
-                  setPatientId(record.patient_id)
-                  setPatientName(record.name) 
-                  setStudyUId(record.study?.study_uid) 
-                  localStorage.setItem("studyUIDValue", record.study?.study_uid) ; 
-                }}
-              />
-            </Tooltip>
-          )}
+    //       {checkPermissionStatus('Study clinical history option') && (
+    //         <Tooltip title='Clinical History'>
+    //           <MdOutlineHistory
+    //             className='action-icon'
+    //             onClick={() => {
+    //               setStudyID(record.id)
+    //               setIsAssignModalOpen(true)
+    //             }}
+    //           />
+    //         </Tooltip>
+    //       )}
 
-          {/* ==== Study more details option ====  */}
+    //       {/* ==== Study report option ====  */}
 
-          {checkPermissionStatus('Study more details option') && (
-            <Tooltip title={'More Details'}>
-              <BsEyeFill
-                className='action-icon'
-                onClick={() => {
-                  setStudyID(record.id)
-                  setIsStudyModalOpen(true)
-                }}
-              />
-            </Tooltip>
-          )}
+    //       {checkPermissionStatus('Study data option') && (
+    //         <Tooltip title={'Study Report'}>
+    //           <IoIosDocument
+    //             className='action-icon'
+    //             onClick={() => {
+    //               setStudyID(record.id)
+    //               setStudyStatus(record.status)
+    //               setIsReportModalOpen(true)
+    //               setPatientId(record.patient_id)
+    //               setPatientName(record.name)
+    //               setStudyUId(record.study?.study_uid)
+    //               localStorage.setItem("studyUIDValue", record.study?.study_uid);
+    //             }}
+    //           />
+    //         </Tooltip>
+    //       )}
 
-          {/* ==== Study edit option ====  */}
+    //       {/* ==== Study more details option ====  */}
 
-          {checkPermissionStatus('Study edit option') && (
-            <EditActionIcon
-              editActionHandler={() => editActionHandler(record.id)}
-            />
-          )}
+    //       {checkPermissionStatus('Study more details option') && (
+    //         <Tooltip title={'More Details'}>
+    //           <BsEyeFill
+    //             className='action-icon'
+    //             onClick={() => {
+    //               setStudyID(record.id)
+    //               setIsStudyModalOpen(true)
+    //             }}
+    //           />
+    //         </Tooltip>
+    //       )}
 
-          {/* ==== Study share option ====  */}
+    //       {/* ==== Study edit option ====  */}
 
-          {checkPermissionStatus('Study share option') && (
-            <Tooltip title='Share Study'>
-              <IoIosShareAlt
-                className='action-icon action-icon-primary'
-                onClick={() => {
-                  setStudyID(record.id)
-                  setSeriesID(record.series_id)
-                  setIsShareStudyModalOpen(true)
-                }}
-              />
-            </Tooltip>
-          )}
+    //       {checkPermissionStatus('Study edit option') && (
+    //         <EditActionIcon
+    //           editActionHandler={() => editActionHandler(record.id)}
+    //         />
+    //       )}
 
-          {/* ==== Study logs option ====  */}
+    //       {/* ==== Study share option ====  */}
 
-          {checkPermissionStatus('Study logs option') && (
-            <Tooltip title='Auditing'>
-              <AuditOutlined
-                className='action-icon action-icon-primary'
-                onClick={() => {
-                  setStudyID(record.id)
-                  setIsModalOpen(true)
-                }}
-              />
-            </Tooltip>
-          )}
+    //       {checkPermissionStatus('Study share option') && (
+    //         <Tooltip title='Share Study'>
+    //           <IoIosShareAlt
+    //             className='action-icon action-icon-primary'
+    //             onClick={() => {
+    //               setStudyID(record.id)
+    //               setSeriesID(record.series_id)
+    //               setIsShareStudyModalOpen(true)
+    //             }}
+    //           />
+    //         </Tooltip>
+    //       )}
 
-          {/* ==== Study delete option ====  */}
+    //       {/* ==== Study logs option ====  */}
 
-          {checkPermissionStatus('Study delete option') && (
-            <DeleteActionIcon
-              deleteActionHandler={() => deleteParticularStudy(record?.id)}
-            />
-          )}
-        </Space>
-      )
-    }
+    //       {checkPermissionStatus('Study logs option') && (
+    //         <Tooltip title='Auditing'>
+    //           <AuditOutlined
+    //             className='action-icon action-icon-primary'
+    //             onClick={() => {
+    //               setStudyID(record.id)
+    //               setIsModalOpen(true)
+    //             }}
+    //           />
+    //         </Tooltip>
+    //       )}
+
+    //       {/* ==== Study delete option ====  */}
+
+    //       {checkPermissionStatus('Study delete option') && (
+    //         <DeleteActionIcon
+    //           deleteActionHandler={() => deleteParticularStudy(record?.id)}
+    //         />
+    //       )}
+    //     </Space>
+    //   )
+    // }
   ].filter(Boolean)
 
   const rowSelection = {
@@ -910,7 +906,7 @@ const Dicom = () => {
   const [form] = Form.useForm()
 
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false)
-  const [isWhatsappShareModelOpen,setIsWhatsappModalOpen]=useState(false);
+  const [isWhatsappShareModelOpen, setIsWhatsappModalOpen] = useState(false);
   const [emailShareLoading, setEmailShareLoading] = useState(false)
   const [emailReportId, setEmailReportId] = useState(null)
 
@@ -973,14 +969,14 @@ const Dicom = () => {
 
   const ImageDrawerHandler = async (record) => {
 
-    handleCellDoubleClick(record) ; 
+    handleCellDoubleClick(record);
 
     getInstanceData({ study_id: record.study.study_original_id })
       .then(res => {
         if (res.data.status) {
 
-          setStudyImagesList([...res.data.data]) ; 
-          setImageDrawerOpen(true) ; 
+          setStudyImagesList([...res.data.data]);
+          setImageDrawerOpen(true);
 
         } else {
           NotificationMessage(
@@ -1009,19 +1005,138 @@ const Dicom = () => {
         dataSource={studyData}
         columns={columns}
         scroll={{ y: 475, x: 2000 }}
+        key={studyData.map(o=>o.key)}
 
         rowSelection={rowSelection}
         onRow={onRow}
         loading={isLoading}
+        expandable={{
+          // childrenColumnName:""
+          expandedRowRender: (record) => (
+            <>
+             <Space style={{ display: 'flex', justifyContent: 'flex-start',margin:"0.5rem 0rem",gap:"1.2rem" }}>
+
+                <Tooltip title={`${record.patient_id} | ${record.created_at}`}>
+                  <BsChat
+                    className='action-icon action-icon-primary'
+                    onClick={() => {
+                      setSeriesID(record.series_id)
+                      setStudyID(record.id)
+                      setIsDrawerOpen(true)
+                      setPersonName(`${record.study.patient_id} | ${record.name}`)
+                      setUrgentCase(record.urgent_case)
+                      localStorage.setItem("currentChatId", record.series_id)
+                    }}
+                  />
+                </Tooltip>
+                {/* ==== Clinical History option ====  */}
+
+                {checkPermissionStatus('Study clinical history option') && (
+                  <Tooltip title='Clinical History'>
+                    <MdOutlineHistory
+                      className='action-icon'
+                      onClick={() => {
+                        setStudyID(record.id)
+                        setIsAssignModalOpen(true)
+                      }}
+                    />
+                  </Tooltip>
+                )}
+
+                {/* ==== Study report option ====  */}
+
+                {checkPermissionStatus('Study data option') && (
+                  <Tooltip title={'Study Report'}>
+                    <IoIosDocument
+                      className='action-icon'
+                      onClick={() => {
+                        setStudyID(record.id)
+                        setStudyStatus(record.status)
+                        setIsReportModalOpen(true)
+                        setPatientId(record.patient_id)
+                        setPatientName(record.name)
+                        setStudyUId(record.study?.study_uid)
+                        localStorage.setItem("studyUIDValue", record.study?.study_uid);
+                      }}
+                    />
+                  </Tooltip>
+                )}
+
+                {/* ==== Study more details option ====  */}
+
+                {checkPermissionStatus('Study more details option') && (
+                  <Tooltip title={'More Details'}>
+                    <BsEyeFill
+                      className='action-icon'
+                      onClick={() => {
+                        setStudyID(record.id)
+                        setIsStudyModalOpen(true)
+                      }}
+                    />
+                  </Tooltip>
+                )}
+
+                {/* ==== Study edit option ====  */}
+
+                {checkPermissionStatus('Study edit option') && (
+                  <EditActionIcon
+                    editActionHandler={() => editActionHandler(record.id)}
+                  />
+                )}
+
+                {/* ==== Study share option ====  */}
+
+                {checkPermissionStatus('Study share option') && (
+                  <Tooltip title='Share Study'>
+                    <IoIosShareAlt
+                      className='action-icon action-icon-primary'
+                      onClick={() => {
+                        setStudyID(record.id)
+                        setSeriesID(record.series_id)
+                        setIsShareStudyModalOpen(true)
+                      }}
+                    />
+                  </Tooltip>
+                )}
+
+                {/* ==== Study logs option ====  */}
+
+                {checkPermissionStatus('Study logs option') && (
+                  <Tooltip title='Auditing'>
+                    <AuditOutlined
+                      className='action-icon action-icon-primary'
+                      onClick={() => {
+                        setStudyID(record.id)
+                        setIsModalOpen(true)
+                      }}
+                    />
+                  </Tooltip>
+                )}
+
+                {/* ==== Study delete option ====  */}
+
+                {checkPermissionStatus('Study delete option') && (
+                  <DeleteActionIcon
+                    deleteActionHandler={() => deleteParticularStudy(record?.id)}
+                  />
+                )}
+
+              </Space>
+
+            </>
+          ),
+          // defaultExpandedRowKeys:studyData.map(o=>o.key),
+          defaultExpandAllRows:true,
+        }}
         // Pagination handle
         pagination={{
           current: Pagination.page,
-          pageSize: localStorage.getItem("pageSize")||Pagination.limit,
+          pageSize: localStorage.getItem("pageSize") || Pagination.limit,
           total: totalPages,
           pageSizeOptions: [10, 25, 50, 100, 200, 500],
           showSizeChanger: totalPages > 10,
           onChange: (page = 1, pageSize = limit) => {
-            localStorage.setItem("pageSize",pageSize)
+            localStorage.setItem("pageSize", pageSize)
             if (Object.keys(studyDataPayload).length > 0) {
               applyMainFilter(
                 { ...studyDataPayload, page_number: page, page_size: pageSize },
@@ -1052,7 +1167,7 @@ const Dicom = () => {
           onShowSizeChange: onShowSizeChange
         }}
       />
-    
+
       {/* Edit Series Id popup */}
       <EditSeriesId
         isEditSeriesIdModifiedOpen={isEditSeriesIdModifiedOpen}
@@ -1076,7 +1191,7 @@ const Dicom = () => {
       {/* ==== Assign study option modal ====  */}
 
       <AssignStudy
-        isAssignModalOpen={isAssignModalOpen} 
+        isAssignModalOpen={isAssignModalOpen}
         setIsAssignModalOpen={setIsAssignModalOpen}
         studyID={studyID}
         setStudyID={setStudyID}
@@ -1104,7 +1219,7 @@ const Dicom = () => {
         setEmailReportId={setEmailReportId}
         patientId={patientId}
         patientName={patientName}
-        studyUIDInformation = {studyUID}
+        studyUIDInformation={studyUID}
       />
 
       <PatientDetails
@@ -1143,7 +1258,7 @@ const Dicom = () => {
           messages={messages}
           setMessages={setMessages}
           drawerValue={true}
-          urgentCase = {urgentCase}
+          urgentCase={urgentCase}
         />
       </Drawer>
 
@@ -1175,10 +1290,10 @@ const Dicom = () => {
 
 
       {/* ==== Image Drawer==== */}
-      <ImageDrawer 
-        isDrawerOpen={isImageModalOpen} 
+      <ImageDrawer
+        isDrawerOpen={isImageModalOpen}
         setImageDrawerOpen={setImageDrawerOpen}
-        imageList = {studyImagesList}
+        imageList={studyImagesList}
       />
 
       {/* ===== Study Export option modal ======  */}
@@ -1243,7 +1358,7 @@ const Dicom = () => {
         style={{ zIndex: 200 }}
         className='Report-email-share-option-modal'
       >
-        
+
         <Spin spinning={emailShareLoading}>
           <Form
             labelCol={{

@@ -1,4 +1,4 @@
-import { Button, Col, DatePicker, Form, Input, Modal, Row } from "antd";
+import { Button, Col, DatePicker, Form, Input, Modal, Row, Select } from "antd";
 import React, { useContext, useEffect } from "react";
 import { filterDataContext } from "../hooks/filterDataContext";
 import { FilterSelectedContext } from "../hooks/filterSelectedContext";
@@ -71,7 +71,7 @@ const EmailFilterModal = ({ name, setInstitutionData, retrieveEmailData }) => {
         form={form}
         onFinish={handleSubmit}
         autoComplete={"off"}
-        style={{marginTop: "12px"}}
+        style={{ marginTop: "12px" }}
       >
         <Row gutter={15}>
           <Col xs={24} lg={12}>
@@ -116,6 +116,52 @@ const EmailFilterModal = ({ name, setInstitutionData, retrieveEmailData }) => {
               ]}
             >
               <DatePicker format={"DD-MM-YYYY"} />
+            </Form.Item>
+          </Col>
+          <Col xs={24} lg={12}>
+            <Form.Item
+              name="contact_number"
+              label="Contact No."
+              rules={[
+                {
+                  required: false,
+                  whitespace: true,
+                  message: "Please enter Contact Number",
+                },
+              ]}
+            >
+              <Input placeholder="Enter Contact Number" />
+            </Form.Item>
+          </Col>
+          <Col xs={24} lg={12}>
+            <Form.Item
+              name="status"
+              label="Status"
+              rules={[
+                {
+                  required: false,
+                  whitespace: true,
+                  message: "Please enter Contact Number",
+                },
+              ]}
+            >
+              <Select
+                style={{
+                  width: "100%",
+                }}
+                placeholder="Select a Value"
+                // defaultValue="Select a Value"
+                options={[
+                  {
+                    value: 'active',
+                    label: 'Active',
+                  },
+                  {
+                    value: 'inactive',
+                    label: 'Inactive',
+                  },
+                ]}
+              />
             </Form.Item>
           </Col>
         </Row>

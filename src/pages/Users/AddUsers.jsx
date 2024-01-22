@@ -13,6 +13,7 @@ import {
   Checkbox,
   Modal,
   Spin,
+  Upload
 } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
 import { useBreadcrumbs } from "../../hooks/useBreadcrumbs";
@@ -22,7 +23,7 @@ import NotificationMessage from "../../components/NotificationMessage";
 import dayjs from "dayjs";
 import UploadImage from "../../components/UploadImage";
 import { uploadImage } from "../../apis/studiesApi";
-
+import { UploadOutlined } from '@ant-design/icons';
 
 const { Step } = Steps
 
@@ -46,7 +47,7 @@ const AddUsers = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   useEffect(() => {
-    const crumbs = [{ name: 'Users', to: '/users' }]
+    const crumbs = [{ name: <span style={{ color: "#0052c6" }}>Users</span>, to: '/users' }]
     crumbs.push({
       name: id ? 'Edit' : 'Add'
     })
@@ -97,7 +98,7 @@ const AddUsers = () => {
         }
       })
       .catch(err => {
-        NotificationMessage('warning', 'Network request failed',  err?.response?.data?.message)
+        NotificationMessage('warning', 'Network request failed', err?.response?.data?.message)
       })
   }
 
@@ -148,7 +149,7 @@ const AddUsers = () => {
         }
       })
       .catch(err => {
-        NotificationMessage('warning', 'Network request failed',  err?.response?.data?.message)
+        NotificationMessage('warning', 'Network request failed', err?.response?.data?.message)
       })
     setIsLoading(false)
   }
@@ -173,7 +174,7 @@ const AddUsers = () => {
           )
         }
       })
-      .catch(err => NotificationMessage('warning', 'Network request failed',  err?.response?.data?.message))
+      .catch(err => NotificationMessage('warning', 'Network request failed', err?.response?.data?.message))
     setIsLoading(false)
   }
 
@@ -199,7 +200,7 @@ const AddUsers = () => {
         }
       })
       .catch(err => {
-        NotificationMessage('warning', 'Network request failed',  err?.response?.data?.message)
+        NotificationMessage('warning', 'Network request failed', err?.response?.data?.message)
       })
     setIsLoading(false)
   }
@@ -229,17 +230,17 @@ const AddUsers = () => {
     setIsLoading(true)
 
     if (currentStep === 0) {
-      setIsLoading(false) ; 
+      setIsLoading(false);
       setPayload({
         ...values,
         allow_offline_download: values.allow_offline_download
           ? values.allow_offline_download
           : false,
         allow: values.allow ? values.allow : false
-      })  
-      handleNextStep() ; 
-      
-    } else if (currentStep === 1) { 
+      })
+      handleNextStep();
+
+    } else if (currentStep === 1) {
       setPayload(prev => ({
         ...prev,
         start_time: values.availability[0].format('HH:mm:ss'),
@@ -265,7 +266,7 @@ const AddUsers = () => {
             }
           })
           .catch(err =>
-            NotificationMessage('warning','Network request failed' , err.response.data.message)
+            NotificationMessage('warning', 'Network request failed', err.response.data.message)
           )
         setIsLoading(false)
       }
@@ -292,7 +293,7 @@ const AddUsers = () => {
             }
           })
           .catch(err =>
-            NotificationMessage('warning', "Network request failed" ,err.response.data.message)
+            NotificationMessage('warning', "Network request failed", err.response.data.message)
           )
         setIsLoading(false)
       }
@@ -312,7 +313,7 @@ const AddUsers = () => {
             signature_image: res.data.image_url
           }))
         } catch (err) {
-          NotificationMessage('warning',"Network request failed" ,err.response.data.message)
+          NotificationMessage('warning', "Network request failed", err.response.data.message)
         }
       }
       setPayload(prev => ({ ...prev, signature_image }))
@@ -372,7 +373,7 @@ const AddUsers = () => {
             }
           })
           .catch(err =>
-            NotificationMessage('warning', "Network request failed" ,err.response.data.message)
+            NotificationMessage('warning', "Network request failed", err.response.data.message)
           )
       } else {
         await API.post(
@@ -394,7 +395,7 @@ const AddUsers = () => {
             }
           })
           .catch(err =>
-            NotificationMessage('warning', "Network request failed" ,err.response.data.message)
+            NotificationMessage('warning', "Network request failed", err.response.data.message)
           )
       }
       setIsLoading(false)
@@ -447,22 +448,38 @@ const AddUsers = () => {
   return (
     <div className='secondary-table'>
       <Card>
+        <div
+          style={{
+            marginLeft: "0.7rem",
+            marginBottom: "1.3rem",
+            fontWeight: "600",
+            fontSize: "1rem",
+            color: "#00a0e3",
+            position: "absolute",
+            left: 0,
+            bottom: 0,
+            zIndex:999,
+          }}>
+            <div style={{cursor:"pointer"}} onClick={()=>setCurrentStep(4)}> 
+            Skip To Last
+            </div>
+        </div>
         <Spin spinning={isLoading}>
 
           <Steps current={currentStep} className="mb">
-          
+
             <Step title="Basic Info" />
             <Step title="Availability" />
             <Step title="Assigned Details" />
             <Step title="Upload Signature" />
             <Step title="Modality" />
-          
+
           </Steps>
 
           {/* ==== User basic details input information ====  */}
-          
+
           {currentStep === 0 && (
-          
+
             <Form
               labelCol={{
                 span: 24
@@ -473,36 +490,56 @@ const AddUsers = () => {
               form={form}
               onFinish={handleSubmit}
               className="mt"
-              style={{marginTop: "20px"}}
+              style={{ marginTop: "20px" }}
             >
               <Row gutter={15}>
                 <Col xs={4} sm={4} md={4} lg={2}>
-                
+
                   <Form.Item
                     name='allow'
                     label='Active'
                     valuePropName='checked'
                   >
-                
+
                     <Switch />
-                
+
                   </Form.Item>
-                
+
                 </Col>
 
-                <Col xs={4} sm={4} md={22} lg={22}>
-                
+                <Col xs={4} sm={4} md={4} lg={4}>
+
                   <Form.Item
                     name='allow_offline_download'
                     label='Allow Offline Download'
                     valuePropName='checked'
                   >
-                
+
                     <Switch />
-                
+
                   </Form.Item>
-                
+
                 </Col>
+                <Col xs={4} sm={4} md={4} lg={4}>
+
+                  <div >
+                    <Upload
+                      action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
+                      listType="picture"
+                      className="upload-list-inline"
+                      
+                    >
+                      <Button icon={<UploadOutlined />}>Upload</Button>
+                    </Upload>
+
+                  </div>
+
+
+                </Col>
+                <Col xs={4} sm={4} md={4} lg={17}>
+
+                </Col>
+
 
                 <Col xs={24} sm={12} md={12} lg={8}>
                   <Form.Item
@@ -552,7 +589,7 @@ const AddUsers = () => {
                     <Input placeholder='Enter Contact Number' />
                   </Form.Item>
                 </Col>
-                
+
                 <Col lg={8} md={12} sm={12}>
                   <Form.Item
                     label='Institution'
@@ -573,7 +610,7 @@ const AddUsers = () => {
                   </Form.Item>
                 </Col>
 
-                <Col lg={8} md={12} sm={12}>  
+                <Col lg={8} md={12} sm={12}>
                   <Form.Item
                     label='Role'
                     name='role_id'
@@ -592,7 +629,7 @@ const AddUsers = () => {
                   </Form.Item>
 
                 </Col>
-                
+
                 <Col xs={24} sm={12} md={12} lg={8}>
                   <Form.Item
                     name="city"
@@ -607,9 +644,9 @@ const AddUsers = () => {
                   >
                     <Input placeholder="Enter City" />
                   </Form.Item>
-                  
+
                 </Col>
-                
+
                 <Col xs={24} sm={12} md={12} lg={8}>
                   <Form.Item
                     name="address"
@@ -618,14 +655,14 @@ const AddUsers = () => {
                       {
                         required: true,
                         whitespace: true,
-                          message: "Please enter address",
-                        },
-                      ]}
-                    >
-                      <Input.TextArea placeholder="Enter Address" />
-                    </Form.Item>
-                  </Col>
-                
+                        message: "Please enter address",
+                      },
+                    ]}
+                  >
+                    <Input.TextArea placeholder="Enter Address" />
+                  </Form.Item>
+                </Col>
+
                 <Col xs={24} sm={12} md={12} lg={8}>
                   <Form.Item
                     name="state"
@@ -641,7 +678,7 @@ const AddUsers = () => {
                     <Input placeholder="Enter State" />
                   </Form.Item>
                 </Col>
-                
+
                 <Col xs={24} sm={12} md={12} lg={8}>
                   <Form.Item
                     name="country"
@@ -658,7 +695,7 @@ const AddUsers = () => {
                   </Form.Item>
                 </Col>
 
-                
+
                 <Col xs={24} sm={12} md={12} lg={8}>
                   <Form.Item
                     name='remote_address'
@@ -673,7 +710,7 @@ const AddUsers = () => {
                   >
                     <Input placeholder='Enter Remote Address (Platform)' />
                   </Form.Item>
-                </Col>    
+                </Col>
 
                 {!id && (
                   <>
@@ -711,7 +748,7 @@ const AddUsers = () => {
                             message: 'Please confirm your password'
                           },
                           ({ getFieldValue }) => ({
-                            validator (_, value) {
+                            validator(_, value) {
                               if (
                                 !value ||
                                 getFieldValue('password') === value
@@ -749,12 +786,12 @@ const AddUsers = () => {
                     style={{ marginLeft: '10px' }}>
                     Next
                   </Button>
-                  
+
                 </Col>
 
               </Row>
             </Form>
-          
+
           )}
 
           {currentStep === 1 && (
@@ -769,7 +806,7 @@ const AddUsers = () => {
               onFinish={handleSubmit}
             >
               <Row gutter={30}>
-                
+
                 <Col lg={12} md={12} sm={24}>
                   <Form.Item
                     label='Availability'
@@ -784,12 +821,18 @@ const AddUsers = () => {
                     <TimePicker.RangePicker />
                   </Form.Item>
                 </Col>
-                
+
                 <Col
                   lg={24}
                   md={24}
                   sm={24}
-                  className='justify-end display-flex'
+                  style={{
+                    width: "100%",
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "flex-end",
+                    alignItems: "center"
+                  }}
                 >
                   <Button type='primary' onClick={handlePrevStep}
                     className='update-button-option'>
@@ -810,7 +853,7 @@ const AddUsers = () => {
                   {id && (
                     <Button
                       type='primary'
-                      onClick={() => {handleNextStep()}}
+                      onClick={() => { handleNextStep() }}
                       style={{ marginLeft: '10px' }}
                     >
                       Next
@@ -825,7 +868,7 @@ const AddUsers = () => {
           )}
 
           {currentStep === 2 && (
-          
+
             <Form
               labelCol={{
                 span: 24
@@ -841,7 +884,7 @@ const AddUsers = () => {
                   <TableWithFilter
                     tableColumns={institutionColumn}
                     tableData={institutionOptions}
-                    className = "Institution-logs-table"
+                    className="Institution-logs-table"
                     pagination
                   />
                 </Col>
@@ -850,7 +893,7 @@ const AddUsers = () => {
                     className='update-button-option'>
                     Previous
                   </Button>
-                  
+
                   <Button
                     type='primary'
                     onClick={() => {
@@ -899,11 +942,19 @@ const AddUsers = () => {
                     imageURL={imageURL}
                   />
                 </Col>
+
+
                 <Col
                   lg={24}
                   md={24}
                   sm={24}
-                  className='justify-end display-flex'
+                  style={{
+                    width: "100%",
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "flex-end",
+                    alignItems: "center"
+                  }}
                 >
                   <Button type='primary' onClick={handlePrevStep}
                     className='update-button-option'>
@@ -932,7 +983,10 @@ const AddUsers = () => {
                       Next
                     </Button>
                   )}
+
                 </Col>
+
+
               </Row>
             </Form>
           )}
@@ -976,7 +1030,7 @@ const AddUsers = () => {
         </Spin>
 
       </Card>
-      
+
       <Modal
         centered
         title='Confirmation'
@@ -988,7 +1042,7 @@ const AddUsers = () => {
         <Spin spinning={isLoading}>
           <p>Are you sure you want to update this details?</p>
         </Spin>
-      
+
       </Modal>
     </div>
   )

@@ -78,6 +78,10 @@ const InstitutionLogs = () => {
       dataIndex: 'instituteName'
     },
     {
+      title: 'User Name',
+      dataIndex: 'username'
+    },
+    {
       title: 'Event Info',
       dataIndex: 'event_info',
       render: text => (
@@ -107,10 +111,7 @@ const InstitutionLogs = () => {
         </Tag>
       )
     },
-    {
-      title: 'User Name',
-      dataIndex: 'username'
-    },
+   
     {
       title: 'Time',
       dataIndex: 'time', 
