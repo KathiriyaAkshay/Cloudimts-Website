@@ -999,6 +999,9 @@ const Dicom = () => {
 
   }
 
+  // default selected row
+  const [selectedRow,setSelectedRow]=useState('');
+
 
   return (
     <>
@@ -1014,10 +1017,11 @@ const Dicom = () => {
         onRow={onRow}
         loading={isLoading}
         expandable={{
-          // childrenColumnName:""
+
+          expandRowByClick:true,
           expandedRowRender: (record) => (
             <>
-             <Space style={{ display: 'flex', justifyContent: 'flex-start',margin:"0.5rem 0rem",gap:"1.2rem" }}>
+             <Space style={{ display: 'flex', justifyContent: 'space-evenly',margin:"0.5rem 0rem",gap:"1.2rem" }}>
 
                 <Tooltip title={`${record.patient_id} | ${record.created_at}`}>
                   <BsChat
@@ -1128,8 +1132,11 @@ const Dicom = () => {
 
             </>
           ),
-          // defaultExpandedRowKeys:studyData.map(o=>o.key),
-          defaultExpandAllRows:true,
+          expandedRowKeys:selectedRow?[selectedRow]:[0],
+          onExpandedRowsChange	:(record)=>{
+            console.log(record)
+            setSelectedRow(record[1]);
+          },
         }}
         // Pagination handle
         pagination={{
