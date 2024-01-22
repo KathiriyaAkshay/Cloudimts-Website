@@ -133,7 +133,7 @@ const EmailFilterModal = ({ name, setInstitutionData, retrieveEmailData }) => {
               <Input placeholder="Enter Contact Number" />
             </Form.Item>
           </Col>
-          <Col xs={24} lg={12}>
+          <Col xs={24} lg={12} className="custom-select-email">
             <Form.Item
               name="status"
               label="Status"

@@ -2435,7 +2435,7 @@ label[for="study_description"]{
   height: 2.8rem !important;
 }
 
-:where(.css-dev-only-do-not-override-15rg2km).ant-select-single.ant-select-show-arrow .ant-select-selection-item, :where(.css-dev-only-do-not-override-15rg2km).ant-select-single.ant-select-show-arrow .ant-select-selection-placeholder {
+.custom-select-email .ant-select-single.ant-select-show-arrow .ant-select-selection-item{
     line-height: 45px;
 }
 
