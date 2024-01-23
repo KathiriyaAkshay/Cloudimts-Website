@@ -275,7 +275,7 @@ const Dicom = () => {
 
     setSystemFilterPayload({})
     setStudyDataPayload({})
-    changeBreadcrumbs([{ name: `Study Data` }])
+    changeBreadcrumbs([{ name: `Study` }])
     setStudyIdArray([])
   }, [])
 
@@ -528,19 +528,6 @@ const Dicom = () => {
   }
 
   const columns = [
-    {
-      title: 'Images',
-      dataIndex: 'images',
-      width: "5%",
-      render: (text, record) => (
-        <Tooltip title={`${record.patient_id} | ${record.created_at}`}>
-          <PictureOutlined
-            className='action-icon action-icon-primary'
-            onClick={() => ImageDrawerHandler(record)}
-          />
-        </Tooltip>
-      ),
-    },
 
     checkPermissionStatus('View Patient id') && {
       title: "Patient's Id",
@@ -681,153 +668,8 @@ const Dicom = () => {
       dataIndex: 'count',
       className: 'Study-count-column'
     },
+    
 
-    checkPermissionStatus('Edit SeriesId option') && {
-      title: 'Edit seriesid',
-      dataIndex: 'chat',
-      width: "5%",
-      fixed: "right",
-      className: `${checkPermissionStatus('Edit SeriesId option') ? '' : 'column-display-none'
-        }`,
-      render: (text, record) => (
-        <Tooltip title={`${record.patient_id} | ${record.created_at}`}>
-          <AiTwotoneEdit
-            className='action-icon action-icon-primary'
-            onClick={() => {
-              setSeriesID(record.series_id)
-              setStudyID(record.id)
-              setIsEditSeriesIdModifiedOpen(true)``
-            }}
-          />
-        </Tooltip>
-      )
-    },
-
-    // checkPermissionStatus('Study chat option') && {
-    //   title: 'Chat',
-    //   dataIndex: 'chat',
-    //   fixed: "right",
-    //   width: "4%",
-    //   className: `${checkPermissionStatus('Study chat option') ? '' : 'column-display-none'
-    //     }`,
-    //   render: (text, record) => (
-    //     <Tooltip title={`${record.patient_id} | ${record.created_at}`}>
-    //       <BsChat
-    //         className='action-icon action-icon-primary'
-    //         onClick={() => {
-    //           setSeriesID(record.series_id)
-    //           setStudyID(record.id)
-    //           setIsDrawerOpen(true)
-    //           setPersonName(`${record.study.patient_id} | ${record.name}`)
-    //           setUrgentCase(record.urgent_case)
-    //           localStorage.setItem("currentChatId", record.series_id)
-    //         }}
-    //       />
-    //     </Tooltip>
-    //   )
-    // },
-
-    // {
-    //   title: 'Actions',
-    //   dataIndex: 'actions',
-    //   fixed: 'right',
-    //   width: window.innerWidth < 650 ? '1%' : '10%',
-    //   render: (_, record) => (
-    //     <Space style={{ display: 'flex', justifyContent: 'space-evenly' }}>
-    //       {/* ==== Clinical History option ====  */}
-
-    //       {checkPermissionStatus('Study clinical history option') && (
-    //         <Tooltip title='Clinical History'>
-    //           <MdOutlineHistory
-    //             className='action-icon'
-    //             onClick={() => {
-    //               setStudyID(record.id)
-    //               setIsAssignModalOpen(true)
-    //             }}
-    //           />
-    //         </Tooltip>
-    //       )}
-
-    //       {/* ==== Study report option ====  */}
-
-    //       {checkPermissionStatus('Study data option') && (
-    //         <Tooltip title={'Study Report'}>
-    //           <IoIosDocument
-    //             className='action-icon'
-    //             onClick={() => {
-    //               setStudyID(record.id)
-    //               setStudyStatus(record.status)
-    //               setIsReportModalOpen(true)
-    //               setPatientId(record.patient_id)
-    //               setPatientName(record.name)
-    //               setStudyUId(record.study?.study_uid)
-    //               localStorage.setItem("studyUIDValue", record.study?.study_uid);
-    //             }}
-    //           />
-    //         </Tooltip>
-    //       )}
-
-    //       {/* ==== Study more details option ====  */}
-
-    //       {checkPermissionStatus('Study more details option') && (
-    //         <Tooltip title={'More Details'}>
-    //           <BsEyeFill
-    //             className='action-icon'
-    //             onClick={() => {
-    //               setStudyID(record.id)
-    //               setIsStudyModalOpen(true)
-    //             }}
-    //           />
-    //         </Tooltip>
-    //       )}
-
-    //       {/* ==== Study edit option ====  */}
-
-    //       {checkPermissionStatus('Study edit option') && (
-    //         <EditActionIcon
-    //           editActionHandler={() => editActionHandler(record.id)}
-    //         />
-    //       )}
-
-    //       {/* ==== Study share option ====  */}
-
-    //       {checkPermissionStatus('Study share option') && (
-    //         <Tooltip title='Share Study'>
-    //           <IoIosShareAlt
-    //             className='action-icon action-icon-primary'
-    //             onClick={() => {
-    //               setStudyID(record.id)
-    //               setSeriesID(record.series_id)
-    //               setIsShareStudyModalOpen(true)
-    //             }}
-    //           />
-    //         </Tooltip>
-    //       )}
-
-    //       {/* ==== Study logs option ====  */}
-
-    //       {checkPermissionStatus('Study logs option') && (
-    //         <Tooltip title='Auditing'>
-    //           <AuditOutlined
-    //             className='action-icon action-icon-primary'
-    //             onClick={() => {
-    //               setStudyID(record.id)
-    //               setIsModalOpen(true)
-    //             }}
-    //           />
-    //         </Tooltip>
-    //       )}
-
-    //       {/* ==== Study delete option ====  */}
-
-    //       {checkPermissionStatus('Study delete option') && (
-    //         <DeleteActionIcon
-    //           deleteActionHandler={() => deleteParticularStudy(record?.id)}
-    //         />
-    //       )}
-    //     </Space>
-    //   )
-    // }
   ].filter(Boolean)
 
   const rowSelection = {
@@ -1021,9 +863,16 @@ const Dicom = () => {
           expandRowByClick:true,
           expandedRowRender: (record) => (
             <>
-             <Space style={{ display: 'flex', justifyContent: 'flex-start',margin:"0.5rem 0rem",gap:"1.5rem" }}>
+              <Space style={{ display: 'flex', justifyContent: 'flex-start',gap:"1.5rem", marginTop: "1rem", marginLeft: "1.5rem  " }}>
 
-                <Tooltip title={`${record.patient_id} | ${record.created_at}`}>
+                <Tooltip title={`Study series`}>
+                  <PictureOutlined
+                    className='action-icon action-icon-primary'
+                    onClick={() => ImageDrawerHandler(record)}
+                  />
+                </Tooltip>
+
+                <Tooltip title={`Chat`}>
                   <BsChat
                     className='action-icon action-icon-primary'
                     onClick={() => {
@@ -1036,6 +885,7 @@ const Dicom = () => {
                     }}
                   />
                 </Tooltip>
+                
                 {/* ==== Clinical History option ====  */}
 
                 {checkPermissionStatus('Study clinical history option') && (
@@ -1115,6 +965,21 @@ const Dicom = () => {
                       onClick={() => {
                         setStudyID(record.id)
                         setIsModalOpen(true)
+                      }}
+                    />
+                  </Tooltip>
+                )}
+
+                {/* ===== Study series id edit option ====  */}
+
+                {checkPermissionStatus("Edit SeriesId option") && (
+                  <Tooltip title={`Update study id`}>
+                    <AiTwotoneEdit
+                      className='action-icon action-icon-primary'
+                      onClick={() => {
+                        setSeriesID(record.series_id)
+                        setStudyID(record.id)
+                        setIsEditSeriesIdModifiedOpen(true)``
                       }}
                     />
                   </Tooltip>
