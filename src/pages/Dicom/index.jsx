@@ -570,7 +570,7 @@ const Dicom = () => {
     },
 
     checkPermissionStatus('Study id') && {
-      title: 'Study Id',
+      title: 'ID',
       dataIndex: 'study_id',
       className: `${
         checkPermissionStatus('Study id')
