@@ -87,19 +87,13 @@ const InstitutionLogsFilter = ({ name, retrieveRoleData, setFilterValues }) => {
       open={isInstitutionLogsFilterModalOpen}
       onOk={() => form.submit()}
       onCancel={() => {
-        // setFilterValues({});
-        // form.resetFields();
         setIsInstitutionLogsFilterModalOpen(false);
-        // retrieveRoleData({ page: 1 }, {}, true);
       }}
       footer={[
         <Button
           key="back"
           onClick={() => {
-            // setFilterValues({});
-            // form.resetFields();
             setIsInstitutionLogsFilterModalOpen(false);
-            // retrieveRoleData({ page: 1 }, {}, true);
           }}
         >
           Cancel
@@ -176,7 +170,7 @@ const InstitutionLogsFilter = ({ name, retrieveRoleData, setFilterValues }) => {
                 },
               ]}
             >
-              <DatePicker format={"YYYY-MM-DD"} />
+              <DatePicker format={"DD-MM-YYYY"} />
             </Form.Item>
           </Col>
           <Col xs={24} lg={12}>

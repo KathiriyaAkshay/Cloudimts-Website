@@ -46,9 +46,6 @@ const Editor = ({ id }) => {
 
   const studyUIDInformation = `https://viewer.cloudimts.com/viewer/` + localStorage.getItem("studyUIDValue") ; 
 
-  console.log("Stud UID information ========>");
-  console.log(studyUIDInformation);
-
   useEffect(() => {
     setSelectedItem(prev => ({
       isPatientSelected: true,

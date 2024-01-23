@@ -234,7 +234,7 @@ const Users = () => {
     },
     
     checkPermissionStatus('View Institution name') && {
-      title: 'Institute',
+      title: 'Institution',
       dataIndex: 'institute_name',
       className: `${
         checkPermissionStatus('View Institution name')
@@ -334,13 +334,13 @@ const Users = () => {
     {
       title: 'Perform User',
       dataIndex: 'perform_user', 
-      width: 30
+      width: 20
     },
 
     {
       title: 'Event',
       dataIndex: 'logs_id',
-      width: 50, 
+      width: 40, 
       render: text => (
         <Tag
           color={
@@ -371,7 +371,8 @@ const Users = () => {
     {
       title: 'Time',
       dataIndex: 'time', 
-      width: 30
+      width: 30, 
+      render: (text, record) => convertToDDMMYYYY(record?.time)
     }
   ]
 
@@ -420,7 +421,7 @@ const Users = () => {
         placement='right'
         onClose={() => setIsDrawerOpen(false)}
         open={isDrawerOpen}
-        width={600}
+        width={700}
       >
         <TableWithFilter 
           tableData={logsData} 

@@ -20,7 +20,7 @@ const AddTemplate = () => {
   const { id } = useParams()
 
   useEffect(() => {
-    const crumbs = [{ name: 'Reports', to: '/reports' }]
+    const crumbs = [{ name: 'Templates', to: '/reports' }]
     if (id) {
       crumbs.push({
         name: 'Edit'
@@ -38,7 +38,7 @@ const AddTemplate = () => {
     fetchTemplate({ id })
       .then(res => {
         if (res.data.status) {
-          form.setFieldsValue({ name: res.data.data.report_name })
+          form.setFieldsValue({ name: res.data.data.report_name, study_description :res?.data?.data?.report_description })
           setEditorData(res.data.data.report_data)
         } else {
           NotificationMessage(
@@ -54,6 +54,10 @@ const AddTemplate = () => {
   const handleSubmit = (values) => {
     if (editorData.trim() !== '') {
       if (!id) {
+
+        console.log("Insert templated data values ======>");
+        console.log(values);
+
         insertNewTemplate({ name: values.name, data: editorData,description:values.study_description })
           .then(res => {
             if (res.data.status) {
@@ -72,7 +76,7 @@ const AddTemplate = () => {
           )
       } else {
        
-        updateReport({ id, update_data: editorData, update_report_name: values.name})
+        updateReport({ id, update_data: editorData, update_report_name: values.name, update_report_description: values?.study_description})
           .then(res => {
             if (res.data.status) {
               NotificationMessage('success', 'Template Updated Successfully')

@@ -34,6 +34,7 @@ const getBase64 = (img, callback) => {
   reader.addEventListener('load', () => callback(reader.result));
   reader.readAsDataURL(img);
 };
+
 const beforeUpload = (file) => {
   const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
   if (!isJpgOrPng) {
@@ -88,7 +89,7 @@ const AddUsers = () => {
     )
       .then(res => {
         if (res.data.status) {
-          const instituteData = convertToInitialObject(
+                    const instituteData = convertToInitialObject(
             res.data.data.institution_details
           )
           const modalityData = convertToInitialModalityObject(
@@ -105,7 +106,8 @@ const AddUsers = () => {
               dayjs(res.data.data.availability_end_time, 'HH:mm:ss')
             ],
             ...instituteData,
-            ...modalityData
+            ...modalityData, 
+
           }
           form.setFieldsValue(resData)
           setImageURL(res.data.data.signature_image)
@@ -250,15 +252,34 @@ const AddUsers = () => {
     setIsLoading(true)
 
     if (currentStep === 0) {
+      
+      let user_profile_image = null ; 
+      if (values?.user_profile_image?.file?.originFileObj){
+        try {
+          
+          const fromData = {
+            image: values?.user_profile_image?.file?.originFileObj
+          } ; 
+          
+          const response = await uploadImage(fromData) ; 
+          user_profile_image = response?.data?.image_url ; 
+          
+        } catch (error) {
+          NotificationMessage("warning", "Network request failed", "Failed to upload user profile image") ; 
+        }
+      }
+      
       setIsLoading(false);
       setPayload({
         ...values,
         allow_offline_download: values.allow_offline_download
           ? values.allow_offline_download
           : false,
-        allow: values.allow ? values.allow : false
+        allow: values.allow ? values.allow : false, 
+        user_profile_image: user_profile_image 
       })
-      handleNextStep();
+
+      handleNextStep(); 
 
     } else if (currentStep === 1) {
       setPayload(prev => ({
@@ -517,9 +538,12 @@ const AddUsers = () => {
             bottom: 0,
             zIndex: 999,
           }}>
-          <div style={{ cursor: "pointer" }} onClick={() => setCurrentStep(4)}>
-            Skip To Last
-          </div>
+
+          {id && (
+            <div style={{ cursor: "pointer" }} onClick={() => setCurrentStep(4)}>
+              Skip To Last
+            </div>
+          )}
         </div>
         <Spin spinning={isLoading}>
 
@@ -552,33 +576,38 @@ const AddUsers = () => {
               <Row gutter={15}>
                 <Col xs={4} sm={4} md={4} lg={3}>
 
-
-
-                  <Upload
-                    name="avatar"
-                    listType="picture-card"
-                    className="avatar-uploader"
-                    showUploadList={false}
-                    action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
-                    beforeUpload={beforeUpload}
-                    onChange={handleProfileChange}
-                    style={{
-                      width:"2rem",
-                      height:"1rem"
-                    }}
+                  <Form.Item
+                    name = "user_profile_image"
                   >
-                    {imageUrl ? (
-                      <img
-                        src={imageUrl}
-                        alt="avatar"
-                        style={{
-                          width: '100%',
-                        }}
-                      />
-                    ) : (
-                      uploadButton
-                    )}
-                  </Upload>
+
+                    <Upload
+                      name="avatar"
+                      listType="picture-card"
+                      className="avatar-uploader"
+                      showUploadList={false}
+                      action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
+                      beforeUpload={beforeUpload}
+                      onChange={handleProfileChange}
+                      style={{
+                        width:"2rem",
+                        height:"1rem"
+                      }}
+                    >
+                      {imageUrl ? (
+                        <img
+                          src={imageUrl}
+                          alt="avatar"
+                          style={{
+                            width: '100%',
+                          }}
+                        />
+                      ) : (
+                        uploadButton
+                      )}
+                    </Upload>
+
+                  </Form.Item>
+
 
 
 
