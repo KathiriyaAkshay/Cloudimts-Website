@@ -863,7 +863,9 @@ const Dicom = () => {
           expandRowByClick:true,
           expandedRowRender: (record) => (
             <>
-              <Space style={{ display: 'flex', justifyContent: 'flex-start',gap:"1.5rem", marginTop: "1rem", marginLeft: "1.5rem  " }}>
+              <Space 
+                style={{ display: 'flex', justifyContent: 'flex-start', gap: "17px", marginTop: "1rem", marginLeft: "1.5rem" }}
+                className='studyrow-option-icon'>
 
                 <Tooltip title={`Study series`}>
                   <PictureOutlined
@@ -1312,7 +1314,7 @@ const Dicom = () => {
                   name='attach_dicom'
                   label='Attach Dicom Images'
                   valuePropName='checked'
-                  initialValue={false}
+                  initialValue={true}
                 >
                   <Switch />
                 </Form.Item>

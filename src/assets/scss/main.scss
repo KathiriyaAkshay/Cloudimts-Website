@@ -2470,3 +2470,15 @@ form.ant-form .ant-form-item .ant-form-item-label label{
   width: 10rem;
   padding: 0.4rem !important;
 }
+
+.studyrow-option-icon{
+  gap: 1.5rem !important;
+}
+
+:where(.css-15rg2km).ant-table-wrapper .ant-table {
+  color: #000 !important;
+}
+
+:where(.css-dev-only-do-not-override-15rg2km).ant-tag-success {
+  color: #38ab00 !important; 
+}

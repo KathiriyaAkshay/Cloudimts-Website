@@ -7,7 +7,7 @@ const ImageDrawer = ({ isDrawerOpen, setImageDrawerOpen, imageList }) => {
 
     return (
         <Modal
-            title='Study info'
+            title='Study series'
             open={isDrawerOpen}
             onOk={() => setImageDrawerOpen(false)}
             onCancel={() => {setImageDrawerOpen(false)}}
