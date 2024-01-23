@@ -89,7 +89,7 @@ const AddUsers = () => {
     )
       .then(res => {
         if (res.data.status) {
-          const instituteData = convertToInitialObject(
+                    const instituteData = convertToInitialObject(
             res.data.data.institution_details
           )
           const modalityData = convertToInitialModalityObject(
@@ -106,7 +106,8 @@ const AddUsers = () => {
               dayjs(res.data.data.availability_end_time, 'HH:mm:ss')
             ],
             ...instituteData,
-            ...modalityData
+            ...modalityData, 
+
           }
           form.setFieldsValue(resData)
           setImageURL(res.data.data.signature_image)
