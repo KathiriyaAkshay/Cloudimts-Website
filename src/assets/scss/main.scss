@@ -2513,3 +2513,7 @@ form.ant-form .ant-form-item .ant-form-item-label label{
   background-color: #cf1322 !important;
   color:  #FFFFFF !important;
 }
+
+:where(.css-dev-only-do-not-override-15rg2km).ant-statistic .ant-statistic-content{
+  font-size: 15px !important;
+}
