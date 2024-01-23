@@ -568,7 +568,26 @@ const AddInstitution = () => {
 
   return (
     <div className='secondary-table'>
+      
       <Card>
+      <div
+          style={{
+            marginLeft: "0.7rem",
+            marginBottom: "1.3rem",
+            fontWeight: "600",
+            fontSize: "1rem",
+            color: "#00a0e3",
+            position: "absolute",
+            left: 0,
+            bottom: 0,
+            zIndex: 999,
+          }}>
+
+            <div style={{ cursor: "pointer" }} onClick={() => setCurrentStep(4)}>
+              Skip To Last
+            </div>
+          
+        </div>
         <Spin spinning={isLoading}>
           <Steps current={currentStep} className='mb'>
             <Step title='Basic Info' />
@@ -1062,13 +1081,16 @@ const AddInstitution = () => {
                   sm={24}
                   className='justify-end display-flex'
                 >
+                  <div className='w-100 d-flex justify-content-end'>
                   <Button type='primary' onClick={handlePrevStep}
-                    className='update-button-option'>
+                    className='update-button-option' style={{marginRight:"0.4rem"}}>
                     Previous
                   </Button>
                   <Button type='primary' htmlType='submit'>
                     Submit
                   </Button>
+                  </div>
+                 
                 </Col>
               </Row>
             </Form>

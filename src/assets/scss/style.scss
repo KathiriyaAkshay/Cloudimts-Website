@@ -1274,3 +1274,8 @@ header.ant-layout-header.subheader {
   justify-content: flex-end;
   gap: 10px;
 }
+
+li[data-menu-id$="deletedStudy"][class~="ant-menu-item-selected"]>svg{
+
+  color:white !important;
+}
