@@ -282,7 +282,7 @@ const Email = () => {
       {/* === Add new email modal ====  */}
 
       <Modal
-        title='Add New Email'
+        title='Add Email'
         open={isEmailModalOpen}
         onOk={() => form.submit()}
         onCancel={() => {

@@ -2435,7 +2435,7 @@ label[for="study_description"]{
   height: 2.8rem !important;
 }
 
-:where(.css-dev-only-do-not-override-15rg2km).ant-select-single.ant-select-show-arrow .ant-select-selection-item, :where(.css-dev-only-do-not-override-15rg2km).ant-select-single.ant-select-show-arrow .ant-select-selection-placeholder {
+.custom-select-email .ant-select-single.ant-select-show-arrow .ant-select-selection-item{
     line-height: 45px;
 }
 
@@ -2455,4 +2455,16 @@ label[for="study_description"]{
   gap:1rem;
   justify-content: space-evenly;
    align-items: center;
+}
+
+:where(.css-dev-only-do-not-override-15rg2km).ant-table-wrapper .ant-table{
+  color: #000 !important;
+}
+
+form.ant-form .ant-form-item .ant-form-item-label label{
+  opacity: 1  !important;
+}
+
+.form-step-0 :where(.css-dev-only-do-not-override-15rg2km).ant-upload-wrapper.ant-upload-picture-card-wrapper .ant-upload.ant-upload-select{
+  height: 5.5rem;
 }

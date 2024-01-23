@@ -19,6 +19,7 @@ const EmailFilterModal = ({ name, setInstitutionData, retrieveEmailData }) => {
       created_at__startswith:
         values?.created_at__startswith &&
         values?.created_at__startswith?.format("YYYY-MM-DD"),
+        active_status: values?.active_status === "active"?true:false
     };
     retrieveEmailData({ page: 1 }, modifiedValues);
     setIsEmailFilterModalOpen(false);
@@ -120,7 +121,7 @@ const EmailFilterModal = ({ name, setInstitutionData, retrieveEmailData }) => {
           </Col>
           <Col xs={24} lg={12}>
             <Form.Item
-              name="contact_number"
+              name="contact__icontains"
               label="Contact No."
               rules={[
                 {
@@ -133,9 +134,9 @@ const EmailFilterModal = ({ name, setInstitutionData, retrieveEmailData }) => {
               <Input placeholder="Enter Contact Number" />
             </Form.Item>
           </Col>
-          <Col xs={24} lg={12}>
+          <Col xs={24} lg={12} className="custom-select-email">
             <Form.Item
-              name="status"
+              name="active_status"
               label="Status"
               rules={[
                 {

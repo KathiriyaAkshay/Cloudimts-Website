@@ -15,7 +15,7 @@ const RoleLogs = () => {
   const { changeBreadcrumbs } = useBreadcrumbs()
 
   useEffect(() => {
-    const crumbs = [{ name: 'Roles', to: '/users/roles' }]
+    const crumbs = [{ name: <span style={{ color: "#0052c6" }}>Roles</span>, to: '/users/roles' }]
     crumbs.push({
       name: 'Role Logs'
     })
