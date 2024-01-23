@@ -22,7 +22,7 @@ const index = () => {
   const { permissionData } = useContext(UserPermissionContext)
 
   useEffect(() => {
-    changeBreadcrumbs([{ name: 'Reports' }])
+    changeBreadcrumbs([{ name: 'Templates' }])
     retrieveReportsData()
   }, [])
 
