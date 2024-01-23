@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import TableWithFilter from '../TableWithFilter'
 import { getStudyData, getStudyLogsData } from '../../apis/studiesApi'
 import moment from 'moment/moment'
+import { convertToDDMMYYYY } from '../../helpers/utils'
 
 const StudyAudits = ({ isModalOpen, setIsModalOpen, studyID, setStudyID }) => {
   const [modalData, setModalData] = useState([])
@@ -169,7 +170,8 @@ const StudyAudits = ({ isModalOpen, setIsModalOpen, studyID, setStudyID }) => {
     {
       title: 'Event time',
       dataIndex: 'time',
-      sorter: (a, b) => moment(a.time).diff(b.time)
+      sorter: (a, b) => moment(a.time).diff(b.time), 
+      render: (text, record) => convertToDDMMYYYY(record?.time)
     },
     {
       title: 'Performed User',
@@ -185,7 +187,7 @@ const StudyAudits = ({ isModalOpen, setIsModalOpen, studyID, setStudyID }) => {
   return (
     <Modal
       className='study-auditing-modal'
-      title='Study Audit Entries'
+      title='Study Auditing'
       open={isModalOpen}
       onOk={() => {
         setStudyID(null)
