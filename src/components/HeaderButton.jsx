@@ -39,6 +39,7 @@ import {
   retrieveSystemFilters
 } from '../helpers/studyDataFilter'
 import OHIFViwer from "../assets/images/menu.png"
+import APIHandler from '../apis/apiHandler'
 
 const HeaderButton = ({
   setIsModalOpen,
@@ -90,12 +91,46 @@ const HeaderButton = ({
   const [isFilterChecked, setIsFilterChecked] = useState(null)
   const [isSystemFilterChecked, setIsSystemFilterChecked] = useState(null)
 
+  const retrieveTemplateOptions = async () => {
+
+    let requestPayload = {
+      "page_number": 1,
+      "page_limit": 200, 
+      "modality": templateOption
+    } ; 
+
+    let responseData = await APIHandler("POST", requestPayload, "report/v1/submitReportlist")
+
+    if (responseData === false){
+      NotificationMessage(
+        "warning", 
+        "Network request failed"
+      )
+    
+    } else if (responseData?.status === true){
+
+      const resData = responseData?.data.map((data) => ({
+        label: data?.name, 
+        value: data?.id
+      }))
+
+      setTemplateOptions([...resData]) ; 
+
+    } else {
+
+      NotificationMessage(
+        "warning", 
+        responseData?.message, 
+        "Network request failed"
+      )
+    }
+
+  }
+
   useEffect(() => {
 
     if (window.location.pathname === `/reports/${id}`) {
       retrieveTemplateOptions(); 
-      console.log("Template option information =============>");
-      console.log(templateOption);
     }
 
   }, [window.location.pathname, templateOption])
@@ -120,31 +155,7 @@ const HeaderButton = ({
     setSystemsFilters(modifiedOptions) ; 
   }
 
-  const retrieveTemplateOptions = async () => {
-    await getReportList({ page_number: 1, page_limit: 500, modality: templateOption })
-      .then(res => {
-        if (res.data.status) {
-          const resData = res.data.data?.map(data => ({
-            label: data.name,
-            value: data.id
-          }))
-          setTemplateOptions(resData)
-        } else {
-          NotificationMessage(
-            'warning',
-            'Network request failed',
-            res.data.message
-          )
-        }
-      })
-      .catch(err =>
-        NotificationMessage(
-          'warning',
-          'Network request failed',
-          err.response.data.message
-        )
-      )
-  }
+
 
   const deleteStudyData = async () => {
 
@@ -710,7 +721,6 @@ const HeaderButton = ({
               }))
             }
           />
-
         </div>
       )}
       {window.location.pathname === '/billing' && (

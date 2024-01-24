@@ -79,6 +79,7 @@ const StudyReports = ({
     return permission
   }
 
+  // Function === Download report from URL
   function downloadPDF(pdfUrl) {
     var pdfUrl = pdfUrl;
     console.log(pdfUrl);
@@ -94,6 +95,7 @@ const StudyReports = ({
     document.body.removeChild(link);
   }
 
+  // Function ==== Complete Study request 
   const downloadReport = async (id) => { 
 
     let requestPayload = {id: studyID} ; 
@@ -112,7 +114,7 @@ const StudyReports = ({
             let report_patient_name = patientName.replace(/ /g, "-") ; 
 
             let updated_report_name = `${patientId}-${report_patient_name}-report.pdf` ; 
-            
+
             downloadPDF(report_download_url, updated_report_name) ; 
 
           } else {
@@ -131,11 +133,11 @@ const StudyReports = ({
     }
   }
 
+  // Update Report status to View
   const handleStudyStatus = async () => {
     await viewReported({ id: studyID })
       .then(res => {
         if (res.data.status) {
-          // NotificationMessage('success', res.data.message)
         } else {
           NotificationMessage(
             'warning',
@@ -157,7 +159,7 @@ const StudyReports = ({
     {
       title: 'Report Time',
       dataIndex: 'reporting_time', 
-      render: (text, record) =>  convertToDDMMYYYY(record?.reporting_time)
+      render: (text, record) =>  convertToDDMMYYYY(record?.reporting_time )
     },
 
     {
@@ -260,6 +262,7 @@ const StudyReports = ({
     }
   ]
 
+  // Function ==== Reterive particular study information 
   const retrieveStudyData = () => {
     setIsLoading(true)
     getStudyData({ id: studyID })
