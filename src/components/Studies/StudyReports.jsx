@@ -80,14 +80,12 @@ const StudyReports = ({
   }
 
   // Function === Download report from URL
-  function downloadPDF(pdfUrl) {
+  function downloadPDF(pdfUrl, pdfName) {
     var pdfUrl = pdfUrl;
-    console.log(pdfUrl);
-    var updatedFileName = 'new_filename.pdf';
 
     var link = document.createElement('a');
     link.style.display = 'none';
-    link.setAttribute('download', updatedFileName);
+    link.setAttribute('download', pdfName);
     link.setAttribute('href', pdfUrl);
 
     document.body.appendChild(link);
@@ -106,26 +104,58 @@ const StudyReports = ({
       NotificationMessage("warning", "Network request failed") ; 
     
     } else if (responseData['status'] === true){
-      await downloadAdvancedFileReport({ id })
-        .then(res => {
-          if (res.data.status) {
+
+      let responseData = await APIHandler("POST", {id: studyID}, "studies/v1/report-download") ; 
+
+      if (responseData === false){
+
+        NotificationMessage(
+          "warning", 
+          "Network request failed"
+        ); 
+      
+      } else if (responseData?.status){
+
+        let report_download_url = responseData?.message ; 
+        let report_patient_name = patientName.replace(/ /g, "-") ; 
+  
+        let updated_report_name = `${patientId}-${report_patient_name}-report.pdf` ; 
+
+        downloadPDF(report_download_url,updated_report_name) ; 
+
+      } else{
+
+        NotificationMessage(
+          "warning", 
+          "Network request failed", 
+          responseData?.message
+        )
+      }
+
+
+      // await downloadAdvancedFileReport({ id })
+      //   .then(res => {
+      //     if (res.data.status) {
+
+      //       console.log("Fetch download report related data information ");
+      //       console.log(res?.data?.data);
             
-            let report_download_url = res.data?.data?.report_url ; 
-            let report_patient_name = patientName.replace(/ /g, "-") ; 
+      //       let report_download_url = res.data?.data?.report_url ; 
+      //       let report_patient_name = patientName.replace(/ /g, "-") ; 
 
-            let updated_report_name = `${patientId}-${report_patient_name}-report.pdf` ; 
+      //       let updated_report_name = `${patientId}-${report_patient_name}-report.pdf` ; 
 
-            downloadPDF(report_download_url, updated_report_name) ; 
+      //       downloadPDF(report_download_url, updated_report_name) ; 
 
-          } else {
-            NotificationMessage(
-              'warning',
-              'Network request failed',
-              res.data.message
-            )
-          }
-        })
-        .catch(err => NotificationMessage('warning', err.response.data.message))
+      //     } else {
+      //       NotificationMessage(
+      //         'warning',
+      //         'Network request failed',
+      //         res.data.message
+      //       )
+      //     }
+      //   })
+      //   .catch(err => NotificationMessage('warning', err.response.data.message))
 
     } else{
 
