@@ -30,6 +30,7 @@ import { UserPermissionContext } from '../../hooks/userPermissionContext'
 import APIHandler from '../../apis/apiHandler' ; 
 import NotificationMessage from "../NotificationMessage"; 
 import { filterDataContext } from "../../hooks/filterDataContext";
+import { convertToDDMMYYYY } from "../../helpers/utils";
 
 const StudyReports = ({
   isReportModalOpen,
@@ -49,8 +50,6 @@ const StudyReports = ({
 }) => {
   const ViEWER_URL = import.meta.env.ORTHANC_VIEWER_URL ;  
 
-  console.log("Study UID information ======>");
-  console.log(studyUIDInformation);
 
   const [modalData, setModalData] = useState([])
   const [isLoading, setIsLoading] = useState(false)
@@ -94,7 +93,6 @@ const StudyReports = ({
     link.click();
     document.body.removeChild(link);
   }
-
 
   const downloadReport = async (id) => { 
 
@@ -158,7 +156,8 @@ const StudyReports = ({
   const columns = [
     {
       title: 'Report Time',
-      dataIndex: 'reporting_time'
+      dataIndex: 'reporting_time', 
+      render: (text, record) =>  convertToDDMMYYYY(record?.reporting_time)
     },
 
     {
@@ -425,6 +424,7 @@ const StudyReports = ({
       >
         <Spin spinning={isLoading}>
           <div className='Assign-study-upload-option-input-layout'>
+
             <div className='Report-modal-all-option-div'>
               
               {/* ==== OHIF viewer option ====  */}
@@ -469,7 +469,10 @@ const StudyReports = ({
                     Advanced File Report
                 </Button>
               )}
+
             </div>
+
+            {/* Patient data information  */}
 
             <div className='Report-modal-patient-data'>
               <div
@@ -488,6 +491,7 @@ const StudyReports = ({
                 }}
               >
                 <div>Patient Info | StudyId {studyID}</div>
+
                 <div
                   style={{ display: 'flex', gap: '20px', alignItems: 'center' }}
                 >
@@ -550,8 +554,11 @@ const StudyReports = ({
                 )}
               </div>
             </div>
+
           </div>
+
         </Spin>
+
       </Modal>
 
       <FileReport
