@@ -169,10 +169,11 @@ const BillingModal = ({ setBillingData, setIsLoading, setCharges }) => {
       )
     
     } else {
-      
+
       setIsLoading(true);
   
       // Set Userinput selection in localStorage 
+
       let FilterValues = {
         'fromdate': values?.from_date?.format("YYYY-MM-DD"), 
         "todate": values?.to_date?.format("YYYY-MM-DD"), 
@@ -201,9 +202,6 @@ const BillingModal = ({ setBillingData, setIsLoading, setCharges }) => {
           ? true
           : false,
       };
-  
-      console.log("Billing data payload request information ========>");
-      console.log(modifiedObj);
       
       getBillingData(modifiedObj)
         .then((res) => {
@@ -226,10 +224,8 @@ const BillingModal = ({ setBillingData, setIsLoading, setCharges }) => {
         })
         .catch((err) =>  NotificationMessage('warning', 'Network request failed', err.response.data.message));
       setIsLoading(false);
-      
 
     }
-
 
   };
 
