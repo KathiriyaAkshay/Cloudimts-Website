@@ -13,7 +13,7 @@ const StudyLogs = () => {
   const { changeBreadcrumbs } = useBreadcrumbs()
 
   useEffect(() => {
-    const crumbs = [{ name: <span style={{ color: "#0052c6" }}>Studies</span>, to: '/studies' }]
+    const crumbs = [{ name: <span style={{ color: "#0052c6" }}>Study</span>, to: '/studies' }]
     crumbs.push({
       name: 'Study Logs'
     })
