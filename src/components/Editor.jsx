@@ -71,7 +71,7 @@ const Editor = ({ id }) => {
     }
   }, [selectedItem?.templateId])
 
-  // ==== Fetch All templates names list
+  // ==== Fetch particular template information 
 
   const retrieveTemplateData = async () => {
     await fetchTemplate({ id: selectedItem?.templateId })
@@ -197,7 +197,6 @@ const Editor = ({ id }) => {
   }, [seriesId])
 
   const convertPatientDataToTable = () => {
-    console.log(selectedItem);
     const data =
       selectedItem.isPatientSelected && !isPatientInformationInserted
         ? `<div>
@@ -474,7 +473,8 @@ const Editor = ({ id }) => {
                 </div>
               </Col>
 
-              <Col xs={24} sm={12} md={selectedItem.isOhifViewerSelected ? 15 : 17} className='report-editor-div'>
+              <Col xs={24} sm={12} md={selectedItem.isOhifViewerSelected ? 15 : 17} 
+                className='report-editor-div'>
 
                 <Form
                   labelCol={{

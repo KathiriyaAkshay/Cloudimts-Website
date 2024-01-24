@@ -30,6 +30,7 @@ import { UserPermissionContext } from '../../hooks/userPermissionContext'
 import APIHandler from '../../apis/apiHandler' ; 
 import NotificationMessage from "../NotificationMessage"; 
 import { filterDataContext } from "../../hooks/filterDataContext";
+import { convertToDDMMYYYY } from "../../helpers/utils";
 
 const StudyReports = ({
   isReportModalOpen,
@@ -49,8 +50,6 @@ const StudyReports = ({
 }) => {
   const ViEWER_URL = import.meta.env.ORTHANC_VIEWER_URL ;  
 
-  console.log("Study UID information ======>");
-  console.log(studyUIDInformation);
 
   const [modalData, setModalData] = useState([])
   const [isLoading, setIsLoading] = useState(false)
@@ -80,14 +79,13 @@ const StudyReports = ({
     return permission
   }
 
-  function downloadPDF(pdfUrl) {
+  // Function === Download report from URL
+  function downloadPDF(pdfUrl, pdfName) {
     var pdfUrl = pdfUrl;
-    console.log(pdfUrl);
-    var updatedFileName = 'new_filename.pdf';
 
     var link = document.createElement('a');
     link.style.display = 'none';
-    link.setAttribute('download', updatedFileName);
+    link.setAttribute('download', pdfName);
     link.setAttribute('href', pdfUrl);
 
     document.body.appendChild(link);
@@ -95,7 +93,7 @@ const StudyReports = ({
     document.body.removeChild(link);
   }
 
-
+  // Function ==== Complete Study request 
   const downloadReport = async (id) => { 
 
     let requestPayload = {id: studyID} ; 
@@ -106,26 +104,58 @@ const StudyReports = ({
       NotificationMessage("warning", "Network request failed") ; 
     
     } else if (responseData['status'] === true){
-      await downloadAdvancedFileReport({ id })
-        .then(res => {
-          if (res.data.status) {
-            
-            let report_download_url = res.data?.data?.report_url ; 
-            let report_patient_name = patientName.replace(/ /g, "-") ; 
 
-            let updated_report_name = `${patientId}-${report_patient_name}-report.pdf` ; 
-            
-            downloadPDF(report_download_url, updated_report_name) ; 
+      let responseData = await APIHandler("POST", {id: studyID}, "studies/v1/report-download") ; 
 
-          } else {
-            NotificationMessage(
-              'warning',
-              'Network request failed',
-              res.data.message
-            )
-          }
-        })
-        .catch(err => NotificationMessage('warning', err.response.data.message))
+      if (responseData === false){
+
+        NotificationMessage(
+          "warning", 
+          "Network request failed"
+        ); 
+      
+      } else if (responseData?.status){
+
+        let report_download_url = responseData?.message ; 
+        let report_patient_name = patientName.replace(/ /g, "-") ; 
+  
+        let updated_report_name = `${patientId}-${report_patient_name}-report.pdf` ; 
+
+        downloadPDF(report_download_url,updated_report_name) ; 
+
+      } else{
+
+        NotificationMessage(
+          "warning", 
+          "Network request failed", 
+          responseData?.message
+        )
+      }
+
+
+      // await downloadAdvancedFileReport({ id })
+      //   .then(res => {
+      //     if (res.data.status) {
+
+      //       console.log("Fetch download report related data information ");
+      //       console.log(res?.data?.data);
+            
+      //       let report_download_url = res.data?.data?.report_url ; 
+      //       let report_patient_name = patientName.replace(/ /g, "-") ; 
+
+      //       let updated_report_name = `${patientId}-${report_patient_name}-report.pdf` ; 
+
+      //       downloadPDF(report_download_url, updated_report_name) ; 
+
+      //     } else {
+      //       NotificationMessage(
+      //         'warning',
+      //         'Network request failed',
+      //         res.data.message
+      //       )
+      //     }
+      //   })
+      //   .catch(err => NotificationMessage('warning', err.response.data.message))
 
     } else{
 
@@ -133,11 +163,11 @@ const StudyReports = ({
     }
   }
 
+  // Update Report status to View
   const handleStudyStatus = async () => {
     await viewReported({ id: studyID })
       .then(res => {
         if (res.data.status) {
-          // NotificationMessage('success', res.data.message)
         } else {
           NotificationMessage(
             'warning',
@@ -158,7 +188,8 @@ const StudyReports = ({
   const columns = [
     {
       title: 'Report Time',
-      dataIndex: 'reporting_time'
+      dataIndex: 'reporting_time', 
+      render: (text, record) =>  convertToDDMMYYYY(record?.reporting_time )
     },
 
     {
@@ -261,6 +292,7 @@ const StudyReports = ({
     }
   ]
 
+  // Function ==== Reterive particular study information 
   const retrieveStudyData = () => {
     setIsLoading(true)
     getStudyData({ id: studyID })
@@ -425,6 +457,7 @@ const StudyReports = ({
       >
         <Spin spinning={isLoading}>
           <div className='Assign-study-upload-option-input-layout'>
+
             <div className='Report-modal-all-option-div'>
               
               {/* ==== OHIF viewer option ====  */}
@@ -469,7 +502,10 @@ const StudyReports = ({
                     Advanced File Report
                 </Button>
               )}
+
             </div>
+
+            {/* Patient data information  */}
 
             <div className='Report-modal-patient-data'>
               <div
@@ -488,6 +524,7 @@ const StudyReports = ({
                 }}
               >
                 <div>Patient Info | StudyId {studyID}</div>
+
                 <div
                   style={{ display: 'flex', gap: '20px', alignItems: 'center' }}
                 >
@@ -550,8 +587,11 @@ const StudyReports = ({
                 )}
               </div>
             </div>
+
           </div>
+
         </Spin>
+
       </Modal>
 
       <FileReport
