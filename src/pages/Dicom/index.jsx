@@ -161,12 +161,12 @@ const Dicom = () => {
                 if (ChatData.urgent_case) {
                   NotificationMessage("important",
                     "New chat message", `Message send by ${ChatData.sender_username} for Patient - ${element.name} and StudyId - ${element.id}`,
-                    5,
+                    6,
                     "topLeft");
                 } else {
                   NotificationMessage("success",
                     "New chat message", `Message send by ${ChatData.sender_username} for Patient - ${element.name} and StudyId - ${element.id}`,
-                    5,
+                    6,
                     "topLeft");
                 }
               }
@@ -1141,6 +1141,7 @@ const Dicom = () => {
           setIsDrawerOpen(false)
           setMessages([])
           setPersonName(null)
+          localStorage.removeItem("currentChatId")
         }}
         open={isDrawerOpen}
         className='chat-drawer'
