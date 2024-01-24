@@ -22,7 +22,8 @@ import {
   PlusOutlined,
   SearchOutlined,
   DeleteOutlined, 
-  ReloadOutlined
+  ReloadOutlined,
+  ExportOutlined
 } from '@ant-design/icons'
 import { handleDownloadPDF, handleExport } from '../helpers/billingTemplate'
 import { BillingDataContext } from '../hooks/billingDataContext'
@@ -530,10 +531,13 @@ const HeaderButton = ({
           {/* ==== Study export option ====  */}
 
           <Button
-            type='primary'
+            type='export'
             onClick={() => setIsStudyExportModalOpen(true)}
+            style={{
+              
+            }}
           >
-            Study Export
+            <ExportOutlined style={{marginRight:"0.4rem"}}/> Study Export
           </Button>
 
           {/* ==== Assign study option division =====  */}

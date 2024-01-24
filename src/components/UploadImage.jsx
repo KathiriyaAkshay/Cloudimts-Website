@@ -20,14 +20,28 @@ const UploadImage = ({
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewTitle, setPreviewTitle] = useState("");
 
+  const beforeUpload = (file) => {
+    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+    if (!isJpgOrPng) {
+      message.error('You can only upload JPG/PNG file!');
+      setImageUploadError('error')
+      return false;
+    }
+    const isLt2M = file.size / 1024 / 1024 < 2;
+    if (!isLt2M) {
+      message.error('Image must smaller than 2MB!');
+      setImageUploadError('error');
+      return false;
+    }
+    return true;
+  };
+
   useEffect(() => {
     setFile(imageURL);
   }, [imageURL]);
   const handleImagePreviewCancel = () => setPreviewOpen((prev) => false);
-
-  console.log(multipleImageFile);
-
   const handleImagePreview = async (file) => {
+    console.log(imageUploadError);
     if (
       !imageUploadError ||
       imageUploadError === "" ||
@@ -66,7 +80,8 @@ const UploadImage = ({
           onDrop={(_) => {}}
           onChange={(info, _) => {
             switch (info.file.status) {
-              case "error":
+              case "error" :
+                console.log(info.file.status);
                 setImageUploadError(info.file.response);
                 // NotificationMessage("error", info.file.response);
                 break;
@@ -89,6 +104,7 @@ const UploadImage = ({
                 setImageFile();
                 break;
               default:
+                console.log("rer");
             }
           }}
         >
