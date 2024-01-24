@@ -18,8 +18,6 @@ const StudyLogs = () => {
       name: 'Study Logs'
     })
     changeBreadcrumbs(crumbs)
-    // setRole(localStorage.getItem("role"))
-    // retrieveStudyData();
   }, [])
 
   const retrieveStudyData = pagination => {
