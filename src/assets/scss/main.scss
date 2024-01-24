@@ -2517,3 +2517,16 @@ form.ant-form .ant-form-item .ant-form-item-label label{
 :where(.css-dev-only-do-not-override-15rg2km).ant-statistic .ant-statistic-content{
   font-size: 15px !important;
 }
+
+.ant-btn-export{
+  background-color: #00ad68 !important;
+  color:white !important; 
+  font-weight: 500 !important;
+  font-size: 1rem;
+}
+
+.ant-btn-export:hover{
+  border-color: #00ad68 !important;
+  background-color: white !important;
+  color:#00ad68 !important;
+}
