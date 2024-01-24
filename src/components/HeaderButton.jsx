@@ -533,7 +533,7 @@ const HeaderButton = ({
             type='primary'
             onClick={() => setIsStudyExportModalOpen(true)}
           >
-            Study Export
+            Study export
           </Button>
 
           {/* ==== Assign study option division =====  */}
@@ -541,7 +541,7 @@ const HeaderButton = ({
             type='primary'
             onClick={() => QuickAssignStudyModalHandler()}
           >
-            Assign Study
+            Assign study
           </Button>
 
           {/* ==== Advance search option ====  */}
@@ -554,7 +554,7 @@ const HeaderButton = ({
             onClick={() => setIsAdvancedSearchModalOpen(true)}
           >
             <SearchOutlined style={{ fontWeight: '500' }} />
-            Advance Search
+            Advance search
           </Button>
 
           {/* ==== Quick Filter option ====  */}
@@ -564,7 +564,7 @@ const HeaderButton = ({
             onClick={() => setIsStudyFilterModalOpen(true)}
             className={`btn-icon-div ${isFilterSelected && 'filter-selected'}`}
           >
-            <FilterOutlined style={{ fontWeight: '500' }} /> Quick Filter
+            <FilterOutlined style={{ fontWeight: '500' }} /> Quick filter
           </Button>
 
           {/* ==== Filter option ====  */}
@@ -594,7 +594,7 @@ const HeaderButton = ({
           {/* ==== Study logs option ====  */}
 
           <Button type='primary' onClick={() => navigate('/study-logs')}>
-            Study Logs
+            Study logs
           </Button>
         </div>
       )}

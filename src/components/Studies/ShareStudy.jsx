@@ -605,7 +605,7 @@ const ShareStudy = ({
             label='Active'
             valuePropName='checked'
           >
-            <Switch />
+            <Switch defaultChecked/>
           </Form.Item>
 
         </Form>

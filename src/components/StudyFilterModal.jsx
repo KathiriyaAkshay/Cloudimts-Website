@@ -208,7 +208,7 @@ const StudyFilterModal = ({
       createNewFilter(modifiedObj)
         .then(res => {
           if (res.data.status) {
-            NotificationMessage('success', 'New Filter Created Successfully')
+            NotificationMessage('success', 'New filter ')
             setIsFilterModalOpen(false)
             form.resetFields()
             retrieveFilterOptions()
@@ -352,7 +352,7 @@ const StudyFilterModal = ({
                   }
                 ]}
               >
-                <DatePicker format={'YYYY-MM-DD'} />
+                <DatePicker format={'DD-MM-YYYY'} />
               </Form.Item>
             </Col>
             <Col xs={24} lg={12}>
@@ -366,7 +366,7 @@ const StudyFilterModal = ({
                   }
                 ]}
               >
-                <DatePicker format={'YYYY-MM-DD'} />
+                <DatePicker format={'DD-MM-YYYY'} />
               </Form.Item>
             </Col>
             <Col xs={24} lg={12}>

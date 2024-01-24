@@ -2470,3 +2470,50 @@ form.ant-form .ant-form-item .ant-form-item-label label{
   width: 10rem;
   padding: 0.4rem !important;
 }
+
+.studyrow-option-icon{
+  gap: 1.5rem !important;
+}
+
+:where(.css-15rg2km).ant-table-wrapper .ant-table {
+  color: #000 !important;
+}
+
+// Study new status tag color information 
+:where(.css-dev-only-do-not-override-15rg2km).ant-tag-success {
+  color: #FFFFFF !important; 
+  background-color: #59b32c !important;
+}
+
+// Study Assinged status tag color information 
+:where(.css-dev-only-do-not-override-15rg2km).ant-tag-blue {
+  background-color: #296cd9 !important;
+  color: #FFFFFF !important;
+}
+
+// Study ViewReport status tag color information 
+:where(.css-dev-only-do-not-override-15rg2km).ant-tag-lime {
+  background-color: #7cb305 !important;
+  color:  #FFFFFF !important;
+}
+
+// Study Viewed status tag color information 
+:where(.css-dev-only-do-not-override-15rg2km).ant-tag-cyan {
+  background-color: #08979c !important;
+  color:  #FFFFFF !important;
+  border: 1px solid #08979c;
+}
+
+:where(.css-dev-only-do-not-override-15rg2km).ant-tag-magenta{
+  background-color: #c41d7f !important;
+  color: #FFFFFF !important;
+}
+
+:where(.css-dev-only-do-not-override-15rg2km).ant-tag-red{
+  background-color: #cf1322 !important;
+  color:  #FFFFFF !important;
+}
+
+:where(.css-dev-only-do-not-override-15rg2km).ant-statistic .ant-statistic-content{
+  font-size: 15px !important;
+}

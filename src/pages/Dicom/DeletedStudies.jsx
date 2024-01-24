@@ -22,7 +22,6 @@ const DeletedStudies = () => {
   const [expandedRows, setExpandedRows] = useState([])
   const [pagi, setPagi] = useState({ page: 1, limit: 10 })
   const [studyIdArray, setStudyIdArray] = useState([])
-console.log(studyData,' PPPPPPPPPPPPPPPPPPPPP')
   useEffect(() => {
     setPagi(Pagination)
 
@@ -43,7 +42,6 @@ console.log(studyData,' PPPPPPPPPPPPPPPPPPPPP')
     setIsLoading(true)
     const currentPagination = pagination || pagi
     fetchDeletedStudies({
-      // filter: values,
       page_size: currentPagination.limit || 10,
       page_number: currentPagination.page,
       sort_option: false
@@ -104,7 +102,7 @@ console.log(studyData,' PPPPPPPPPPPPPPPPPPPPP')
 
   const columns = [
     {
-      title: "Patient's Id",
+      title: "Patient Id",
       dataIndex: 'patient_id'
     },
     {
@@ -112,7 +110,7 @@ console.log(studyData,' PPPPPPPPPPPPPPPPPPPPP')
       dataIndex: 'name'
     },
     {
-      title: 'Study Id',
+      title: 'Id',
       dataIndex: 'study_id'
     },
     {
@@ -146,7 +144,7 @@ console.log(studyData,' PPPPPPPPPPPPPPPPPPPPP')
       dataIndex: 'modality'
     },
     {
-      title: 'Date Time',
+      title: 'Study date',
       dataIndex: 'created_at'
     },
     {
@@ -171,7 +169,6 @@ console.log(studyData,' PPPPPPPPPPPPPPPPPPPPP')
           >
             <MdRestore
               className='action-icon'
-              // onClick={() => backupStudyData(record.id)}
             />
           </Popconfirm>
         </Tooltip>
@@ -181,7 +178,6 @@ console.log(studyData,' PPPPPPPPPPPPPPPPPPPPP')
 
   const onRow = record => ({
     onClick: () => handleRowClick(record)
-    // onDoubleClick: () => handleCellDoubleClick(record),
   })
 
   const rowSelection = {
