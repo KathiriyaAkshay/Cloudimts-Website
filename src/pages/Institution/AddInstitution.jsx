@@ -13,7 +13,8 @@ import {
   Select,
   Spin,
   InputNumber,
-  Modal
+  Modal,
+  Empty
 } from 'antd'
 
 import { useNavigate, useParams } from 'react-router-dom'
@@ -32,12 +33,13 @@ import CustomReportHeaderGenerator from './Popup'
 const { Step } = Steps
 
 const AddInstitution = () => {
-  const { id } = useParams() ; 
+  const { id } = useParams();
 
   const { changeBreadcrumbs } = useBreadcrumbs()
 
   const [currentStep, setCurrentStep] = useState(0)
   const [tableData, setTableData] = useState([])
+  const [chargesName,setChargesName]=useState("");
   const [form] = Form.useForm()
   const navigate = useNavigate()
   const token = localStorage.getItem('token')
@@ -50,7 +52,7 @@ const AddInstitution = () => {
   const [institutionId, setInstitutionId] = useState(null)
 
   useEffect(() => {
-    const crumbs = [{ name: <span style={{color:"#0052c6"}}>Institution</span>, to: '/institutions' }]
+    const crumbs = [{ name: <span style={{ color: "#0052c6" }}>Institution</span>, to: '/institutions' }]
 
     crumbs.push({
       name: id ? 'Edit' : 'Add'
@@ -58,15 +60,15 @@ const AddInstitution = () => {
 
     changeBreadcrumbs(crumbs)
 
-      if (id) {
-        retrieveInstitutionData()
-        retrieveModalityData()
-        retrieveRadiologistData()
-      } else {
-        retrieveModalityData()
-        retrieveRadiologistData()
-      }
-}, [])
+    if (id) {
+      retrieveInstitutionData()
+      retrieveModalityData()
+      retrieveRadiologistData()
+    } else {
+      // retrieveModalityData()
+      retrieveRadiologistData()
+    }
+  }, [])
 
   const convertToInitialObject = data => {
     let initialObject = {}
@@ -119,7 +121,7 @@ const AddInstitution = () => {
     setIsLoading(false)
   }
 
-  const retrieveModalityData = async () => { 
+  const retrieveModalityData = async () => {
     const auth = 'Bearer ' + `${token}`
     await API.get('/institute/v1/institute-modality', {
       headers: { Authorization: auth }
@@ -130,7 +132,9 @@ const AddInstitution = () => {
           reporting_charge: 0,
           communication_charge: 0
         }))
-        setTableData(resData) 
+
+        // commited this code that sets charges data automatically so if the api is only limited to this use case than we can remove this
+        // setTableData(resData) 
       } else {
         NotificationMessage(
           'warning',
@@ -196,7 +200,7 @@ const AddInstitution = () => {
       setPayload(resData)
       if (id) {
 
-        setIsLoading(true) ; 
+        setIsLoading(true);
 
         await API.post(
           '/institute/v1/institute-details-update',
@@ -215,16 +219,16 @@ const AddInstitution = () => {
             }
           })
           .catch(err =>
-            NotificationMessage('warning', 'Network request failed',err?.response?.data?.message)
+            NotificationMessage('warning', 'Network request failed', err?.response?.data?.message)
           )
         setIsLoading(false)
       }
 
-      handleNextStep() ; 
+      handleNextStep();
 
     } else if (currentStep === 1) {
       setPayload(prev => ({ ...prev, ...convertToObject(values) }))
-      
+
       if (id) {
         setIsLoading(true)
         await API.post(
@@ -304,7 +308,7 @@ const AddInstitution = () => {
           })
         setIsLoading(false)
       }
-      handleNextStep() ; 
+      handleNextStep();
 
     } else if (currentStep === 3) {
       setPayload(prev => ({
@@ -402,8 +406,8 @@ const AddInstitution = () => {
           .catch(err => {
             NotificationMessage('warning', 'Network request failed', err?.response?.data?.message)
           })
-      
-        } else {
+
+      } else {
         setIsLoading(true)
         await API.post(
           '/institute/v1/institute-create',
@@ -519,13 +523,13 @@ const AddInstitution = () => {
     },
     ...(id !== null && id !== undefined
       ? [
-          {
-            report_option: 'Report dataset',
-            report_option_value: false,
-            value_field: 'edit-option',
-            report_value: 'report_dataset_value'
-          }
-        ]
+        {
+          report_option: 'Report dataset',
+          report_option_value: false,
+          value_field: 'edit-option',
+          report_value: 'report_dataset_value'
+        }
+      ]
       : [])
   ]
 
@@ -568,9 +572,9 @@ const AddInstitution = () => {
 
   return (
     <div className='secondary-table'>
-      
+
       <Card>
-      <div
+        <div
           style={{
             marginLeft: "0.7rem",
             marginBottom: "1.3rem",
@@ -583,10 +587,10 @@ const AddInstitution = () => {
             zIndex: 999,
           }}>
 
-            <div style={{ cursor: "pointer" }} onClick={() => setCurrentStep(4)}>
-              Skip To Last
-            </div>
-          
+          <div style={{ cursor: "pointer" }} onClick={() => setCurrentStep(4)}>
+            Skip To Last
+          </div>
+
         </div>
         <Spin spinning={isLoading}>
           <Steps current={currentStep} className='mb'>
@@ -609,7 +613,7 @@ const AddInstitution = () => {
               form={form}
               onFinish={handleSubmit}
               className='mt'
-              style = {{marginTop : "25px"}}
+              style={{ marginTop: "25px" }}
             >
               <Row gutter={15}>
                 <Col xs={24} sm={12} md={12} lg={6}>
@@ -823,15 +827,18 @@ const AddInstitution = () => {
               onFinish={handleSubmit}
             >
               <Row>
-
+                <Col span={4}>
+                  <Input placeholder='Enter Charges Name' value={chargesName} onChange={(e)=>{setChargesName(e.target.value)}}/>
+                </Col>
+                <Button onClick={()=>{setTableData([...tableData,{name:chargesName,reporting_charge: 0,communication_charge: 0}])}}>+ Add Charge</Button>
                 <Col xs={24} sm={24} md={24} lg={24}>
 
                   <div className='modality-card-wrapper' >
 
-                    {tableData.map((element) => {
-                      return(
-                        <Card className='particular-modality-info-division' title = {element.name} style={{width: "fit-content",marginTop:"0.3rem"}} headerBg="#00ff00">
-                          
+                    {tableData.length ? tableData.map((element) => {
+                      return (
+                        <Card className='particular-modality-info-division' title={element.name} style={{ width: "fit-content", marginTop: "0.3rem" }} headerBg="#00ff00">
+
                           <div className='particular-modality-charges-title'>Reporting charge</div>
                           <Form.Item name={`${element.id}_reporting_charge`} initialValue={element.reporting_charge}>
                             <Input />
@@ -841,15 +848,15 @@ const AddInstitution = () => {
                           <Form.Item name={`${element.id}_communication_charge`} initialValue={element.communication_charge}>
                             <Input />
                           </Form.Item>
-                        </Card> 
+                        </Card>
                       )
-                    })}
+                    }):<Empty/>}
 
                   </div>
                 </Col>
-                
+
                 <Col xs={24} sm={24} md={24} lg={24} className='justify-end mt'>
-                 
+
                   <Button type='primary' onClick={handlePrevStep}
                     className='update-button-option'>
                     Previous
@@ -1082,15 +1089,15 @@ const AddInstitution = () => {
                   className='justify-end display-flex'
                 >
                   <div className='w-100 d-flex justify-content-end'>
-                  <Button type='primary' onClick={handlePrevStep}
-                    className='update-button-option' style={{marginRight:"0.4rem"}}>
-                    Previous
-                  </Button>
-                  <Button type='primary' htmlType='submit'>
-                    Submit
-                  </Button>
+                    <Button type='primary' onClick={handlePrevStep}
+                      className='update-button-option' style={{ marginRight: "0.4rem" }}>
+                      Previous
+                    </Button>
+                    <Button type='primary' htmlType='submit'>
+                      Submit
+                    </Button>
                   </div>
-                 
+
                 </Col>
               </Row>
             </Form>
