@@ -29,7 +29,8 @@ import {
 } from '../../apis/studiesApi'
 import CustomReportHeaderGenerator from './Popup'
 
-const { Step } = Steps
+const { Step } = Steps;
+const { Option } = Select;
 
 const AddInstitution = () => {
   const { id } = useParams();
@@ -48,6 +49,25 @@ const AddInstitution = () => {
 
   const [reportSettingModal, setReportSettingModal] = useState(false)
   const [institutionId, setInstitutionId] = useState(null)
+
+  const [selectedRadiologists, setSelectedRadiologists] = useState([]);
+  const [selectAll, setSelectAll] = useState(false);
+
+  const handleSelectAll = () => {
+    if (selectAll) {
+      setSelectedRadiologists([]);
+    } else {
+      const allRadiologistValues = radiologistOptions.map(option => option.value);
+      setSelectedRadiologists(allRadiologistValues);
+    }
+    setSelectAll(!selectAll);
+  };
+
+  const handleChange = (selectedValues) => {
+    setSelectedRadiologists(selectedValues);
+    setSelectAll(selectedValues.length === radiologistOptions.length);
+  };
+
 
   useEffect(() => {
     const crumbs = [{ name: <span style={{ color: "#0052c6" }}>Institution</span>, to: '/institutions' }]
@@ -145,11 +165,13 @@ const AddInstitution = () => {
     getRadiologistList({ role_id: localStorage.getItem('role_id') }).then(
       res => {
         if (res.data.status) {
+
           const resData = res.data.data.map(data => ({
             label: data.name,
             value: data.id
           }))
-          setRadiologistOptions(resData)
+          setRadiologistOptions(resData);
+
         } else {
           NotificationMessage(
             'warning',
@@ -505,12 +527,7 @@ const AddInstitution = () => {
       value_field: 'switch',
       report_value: 'institution_info_header'
     },
-    {
-      report_option: 'Attach QR Code to report',
-      report_option_value: false,
-      value_field: 'switch',
-      report_value: 'attach_qr_code'
-    },
+
     {
       report_option: 'Show patient info as',
       report_option_value: '',
@@ -583,11 +600,14 @@ const AddInstitution = () => {
             zIndex: 999,
           }}>
 
-          <div 
-            className='skip-to-last-option'
-            onClick={() => setCurrentStep(5)}>
-            Skip To Last
-          </div>
+          {id && (
+            <div
+              className='skip-to-last-option'
+              onClick={() => setCurrentStep(5)}>
+              Skip To Last
+            </div>
+          )}
+
 
         </div>
         <Spin spinning={isLoading}>
@@ -831,7 +851,6 @@ const AddInstitution = () => {
 
                   </div>
                 </Col>
-
                 <Col xs={24} sm={24} md={24} lg={24} className='justify-end mt'>
 
                   <Button type='primary' onClick={handlePrevStep}
@@ -983,17 +1002,19 @@ const AddInstitution = () => {
                   >
                     <Select
                       placeholder='Select Radiologist'
-                      options={radiologistOptions}
                       showSearch
                       mode='multiple'
+                      options={radiologistOptions}
                       filterSort={(optionA, optionB) =>
-                        (optionA?.label ?? '')
-                          .toLowerCase()
-                          .localeCompare((optionB?.label ?? '').toLowerCase())
+                        (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
                       }
-                    />
+                      value={selectedRadiologists}
+                      onChange={handleChange}
+                    >
+                    </Select>
                   </Form.Item>
                 </Col>
+
                 <Col lg={24} md={24} sm={24} className='justify-end'>
                   <Button type='primary' onClick={handlePrevStep}
                     className='update-button-option'>
