@@ -145,10 +145,11 @@ const PatientDetails = ({
       width={1000}
       centered
       footer = {null}
+      className="study-more-details"
     >
       <Spin spinning={isLoading}>
         <div
-          style={{
+          style={{  
             background: "#ebf7fd",
             fontWeight: "600",
             padding: "10px 24px",
