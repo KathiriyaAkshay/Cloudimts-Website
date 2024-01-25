@@ -880,9 +880,7 @@ const Dicom = () => {
           expandRowByClick:true,
           expandedRowRender: (record) => (
             <>
-              <Space 
-                style={{ display: 'flex', justifyContent: 'flex-start', gap: "17px", marginTop: "1rem", marginLeft: "1.5rem" }}
-                className='studyrow-option-icon'>
+             <Space style={{ display: 'flex', justifyContent: 'space-evenly',margin:"0.5rem 0rem" }}>
 
                 <Tooltip title={`Study series`}>
                   <PictureOutlined
@@ -1016,11 +1014,7 @@ const Dicom = () => {
 
             </>
           ),
-          expandedRowKeys:selectedRow?[selectedRow]:[0],
-          onExpandedRowsChange	:(record)=>{
-            console.log(record)
-            setSelectedRow(record[1]);
-          },
+          defaultExpandAllRows:studyData.map(e=>e.key),
         }}
         // Pagination handle
         pagination={{
