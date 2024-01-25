@@ -2566,3 +2566,14 @@ form.ant-form .ant-form-item .ant-form-item-label label{
 .ant-tag{
   border-radius: 10px !important;
 }
+
+// Skip to last option 
+
+.skip-to-last-option{
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.skip-to-last-option:hover{
+  color: #003b55;
+}

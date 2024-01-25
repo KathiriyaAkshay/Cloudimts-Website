@@ -232,12 +232,7 @@ const Institution = () => {
           : 'column-display-none'
       }`
     },
-    
-    {
-      title: 'Country',
-      dataIndex: 'country'
-    },
-    
+        
     {
       title: 'Allocated Storage',
       dataIndex: 'allocated_storage'
