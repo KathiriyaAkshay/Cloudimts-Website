@@ -535,59 +535,7 @@ const Dicom = () => {
 
   const columns = [
 
-    // Patient id column 
-
-    checkPermissionStatus('View Patient id') && {
-      title: "Patient's Id",
-      dataIndex: 'patient_id',
-      className: `${checkPermissionStatus('View Patient id') ? '' : 'column-display-none'}`,
-      render: (text, record) => (
-        record.urgent_case ? <>
-          <Tooltip title={`${record.patient_id} | ${record.created_at}`} style={{ color: "red" }}>
-            <div style={{ color: "red" }}>{text}</div>
-          </Tooltip>
-        </> : <>
-          <Tooltip title={`${record.patient_id} | ${record.created_at}`}>
-            {text}
-          </Tooltip>
-
-        </>
-      ),
-    },
-
-    // Patient name
-    checkPermissionStatus('View Patient name') && {
-      title: "Patient's Name",
-      dataIndex: 'name',
-      width: "12%",
-      className: `${checkPermissionStatus('View Patient name') ? '' : 'column-display-none'}`,
-      render: (text, record) => (
-        record.urgent_case ? <>
-          <Tooltip title={`${record.patient_id} | ${record.created_at}`} style={{ color: "red" }}>
-            <div style={{ color: "red" }}>{text}</div>
-          </Tooltip>
-        </> : <>
-          <Tooltip title={`${record.patient_id} | ${record.created_at}`}>
-            {text}
-          </Tooltip>
-
-        </>
-      ),
-
-    },
-
-    // Study id information 
-    checkPermissionStatus('Study id') && {
-      title: 'ID',
-      dataIndex: 'study_id',
-      className: `${
-        checkPermissionStatus('Study id')
-          ? 'Study-count-column'
-          : 'column-display-none'
-      }`
-    },
-
-    // Study status information 
+    // Column = 1. Study status
     {
       title: 'Status',
       dataIndex: 'status',
@@ -623,7 +571,49 @@ const Dicom = () => {
       )
     },
 
-    // Study Modality information 
+    // Colnmn = 2.  Patient id 
+
+    checkPermissionStatus('View Patient id') && {
+      title: "Patient's Id",
+      dataIndex: 'patient_id',
+      className: `${checkPermissionStatus('View Patient id') ? '' : 'column-display-none'}`,
+      render: (text, record) => (
+        record.urgent_case ? <>
+          <Tooltip title={`${record.patient_id} | ${record.created_at}`} style={{ color: "red" }}>
+            <div style={{ color: "red" }}>{text}</div>
+          </Tooltip>
+        </> : <>
+          <Tooltip title={`${record.patient_id} | ${record.created_at}`}>
+            {text}
+          </Tooltip>
+
+        </>
+      ),
+    },
+
+    // Column = 3. Patient name
+
+    checkPermissionStatus('View Patient name') && {
+      title: "Patient's Name",
+      dataIndex: 'name',
+      width: "12%",
+      className: `${checkPermissionStatus('View Patient name') ? '' : 'column-display-none'}`,
+      render: (text, record) => (
+        record.urgent_case ? <>
+          <Tooltip title={`${record.patient_id} | ${record.created_at}`} style={{ color: "red" }}>
+            <div style={{ color: "red" }}>{text}</div>
+          </Tooltip>
+        </> : <>
+          <Tooltip title={`${record.patient_id} | ${record.created_at}`}>
+            {text}
+          </Tooltip>
+
+        </>
+      ),
+
+    },
+
+    // Column = 4. Modality 
     {
       title: 'Modality',
       dataIndex: 'modality',
@@ -634,37 +624,8 @@ const Dicom = () => {
         </Tooltip>
       ),
     },
-
-    // Study date information 
-    {
-      title: 'Study date',
-      dataIndex: 'created_at',
-      width:"10%",
-      render: (text, record) => convertToDDMMYYYY(record?.created_at)
-    },
-
-
-    // Study update date information 
-    {
-      title: 'Update at',
-      dataIndex: 'updated_at',
-      width:"10%",
-      render: (text, record) => convertToDDMMYYYY(record?.updated_at)
-
-    },
-
-
-    // Institution name information 
-    checkPermissionStatus('View Institution name') && {
-      title: 'Institution',
-      dataIndex: 'institution',
-      className: `${checkPermissionStatus('View Institution name')
-        ? 'Study-count-column'
-        : 'column-display-none'
-        }`
-    },
-
-    // Study description information 
+    
+    // Column = 5. Study description
     checkPermissionStatus('View Study description') && {
       title: 'Description',
       dataIndex: 'study_description',
@@ -678,6 +639,37 @@ const Dicom = () => {
         </Tooltip>
       ),
     },
+
+    // Column = 6. Reference id 
+    checkPermissionStatus('Study id') && {
+      title: 'Reference id',
+      dataIndex: 'study_id',
+      className: `${
+        checkPermissionStatus('Study id')
+          ? 'Study-count-column'
+          : 'column-display-none'
+      }`
+    },
+
+    // Column = 7. Study date information 
+    {
+      title: 'Study date',
+      dataIndex: 'created_at',
+      width:"10%",
+      render: (text, record) => convertToDDMMYYYY(record?.created_at)
+    },
+
+    // Column = 8. Institution name
+    checkPermissionStatus('View Institution name') && {
+      title: 'Institution',
+      dataIndex: 'institution',
+      className: `${checkPermissionStatus('View Institution name')
+        ? 'Study-count-column'
+        : 'column-display-none'
+        }`
+    },
+
+
 
 
     // Study count information
@@ -1017,10 +1009,7 @@ const Dicom = () => {
             </>
           ),
           expandedRowKeys:selectedRow?[selectedRow]:[0],
-          onExpandedRowsChange	:(record)=>{
-            console.log(record)
-            setSelectedRow(record[1]);
-          },
+          defaultExpandAllRows: studyData.map((element) => element.key)
         }}
         // Pagination handle
         pagination={{
