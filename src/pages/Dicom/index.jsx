@@ -899,7 +899,7 @@ const Dicom = () => {
                 {/* ==== Clinical History option ====  */}
 
                 {checkPermissionStatus('Study clinical history option') && (
-                  <Tooltip title='Clinical History'>
+                  <Tooltip title={`${record?.assign_user !== null?`${record?.assign_user} =>`:""} Clinical History`}>
                     <MdOutlineHistory
                       className='action-icon'
                       onClick={() => {
@@ -913,7 +913,7 @@ const Dicom = () => {
                 {/* ==== Study report option ====  */}
 
                 {checkPermissionStatus('Study data option') && (
-                  <Tooltip title={'Study Report'}>
+                  <Tooltip title={`${record?.assign_user !== null?`${record?.assign_user} =>`:""} Study Report`}>
                     <IoIosDocument
                       className='action-icon'
                       onClick={() => {
@@ -932,7 +932,7 @@ const Dicom = () => {
                 {/* ==== Study more details option ====  */}
 
                 {checkPermissionStatus('Study more details option') && (
-                  <Tooltip title={'More Details'}>
+                  <Tooltip title={`${record?.assign_user !== null?`${record?.assign_user} =>`:""} More Details`}>
                     <BsEyeFill
                       className='action-icon'
                       onClick={() => {
@@ -947,6 +947,7 @@ const Dicom = () => {
 
                 {checkPermissionStatus('Study edit option') && (
                   <EditActionIcon
+                    assign_user = {record?.assign_user}
                     editActionHandler={() => editActionHandler(record.id)}
                   />
                 )}
@@ -954,7 +955,7 @@ const Dicom = () => {
                 {/* ==== Study share option ====  */}
 
                 {checkPermissionStatus('Study share option') && (
-                  <Tooltip title='Share Study'>
+                  <Tooltip title={`${record?.assign_user !== null?`${record?.assign_user} =>`:""} Share Study`}>
                     <IoIosShareAlt
                       className='action-icon action-icon-primary'
                       onClick={() => {
@@ -969,7 +970,7 @@ const Dicom = () => {
                 {/* ==== Study logs option ====  */}
 
                 {checkPermissionStatus('Study logs option') && (
-                  <Tooltip title='Auditing'>
+                  <Tooltip title={`${record?.assign_user !== null?`${record?.assign_user} =>`:""} Auditing`}>
                     <AuditOutlined
                       className='action-icon action-icon-primary'
                       onClick={() => {
@@ -999,6 +1000,7 @@ const Dicom = () => {
 
                 {checkPermissionStatus('Study delete option') && (
                   <DeleteActionIcon
+                    assign_user={record?.assign_user}
                     deleteActionHandler={() => deleteParticularStudy(record?.id)}
                   />
                 )}
