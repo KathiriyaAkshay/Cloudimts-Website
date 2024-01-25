@@ -873,7 +873,7 @@ const Dicom = () => {
           expandRowByClick:true,
           expandedRowRender: (record) => (
             <>
-             <Space style={{ display: 'flex', justifyContent: 'space-evenly',margin:"0.5rem 0rem" }}>
+             <Space style={{ display: 'flex',margin:"0.5rem 0rem" }} className='studyrow-option-icon'>
 
                 <Tooltip title={`Study series`}>
                   <PictureOutlined

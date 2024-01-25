@@ -96,65 +96,23 @@ const ShareStudy = ({
               value: resData?.Patient_id
             },
             {
-              name: 'Referring Physician Name',
-              value: resData?.Referring_physician_name
-            },
-            {
               name: "Patient's Name",
               value: resData?.Patient_name
             },
 
             {
-              name: "Assign study time", 
-              value: resData?.study_assign_time
-            }, 
-  
-            {
-              name:"Assign study username", 
-              value: resData?.study_assign_username
-            }, 
-            
-            {
-              name: 'Performing Physician Name',
-              value: resData?.Performing_physician_name
-            },
-            {
-              name: 'Accession Number',
-              value: resData?.Accession_number
-            },
-            {
-              name: 'Modality',
-              value: resData?.Modality
-            },
-            {
-              name: 'Gender',
-              value: resData?.Gender
-            },
-            {
-              name: 'Date of birth',
-              value: resData?.DOB
-            },
-            {
               name: 'Study Description',
               value: resData?.Study_description
             },
-          
+
             {
-              name: 'Body Part',
-              value: resData?.Study_body_part
-            },
+              name: 'Modality',
+              value: resData?.Modality
+            }, 
             {
-              name: 'Study UID',
-              value: resData?.Study_UID
-            },
-            {
-              name: 'Series UID',
-              value: resData?.Series_UID
-            },
-            {
-              name: "Patient's comments",
-              value: resData?.Patient_comments
-            },
+              name: "Reference id", 
+              value: studyID
+            }
           ]
           setModalData(modifiedData)
           setStudyData(resData)
