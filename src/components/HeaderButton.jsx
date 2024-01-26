@@ -216,13 +216,18 @@ const HeaderButton = ({
     })
   }
 
+  // ===== Filter list ===== // 
+
   const content = (
+
     <Collapse
       bordered={true}
       expandIconPosition='end'
       className='setting-main-div'
       accordion
     >
+
+      {/* ===== System filter list =====  */}
 
       <Collapse.Panel
         header='Normal filter'
@@ -292,10 +297,14 @@ const HeaderButton = ({
             </Checkbox>
           </div>
         ))}
+        
       </Collapse.Panel>
+      
+      {/* ===== Owner added filter list ======  */}
 
       <Collapse.Panel
-        header='Filters'
+        style={{marginTop: "0.60rem"}}
+        header='Other filters'
         key='1'
         className='setting-panel mb-0 mt-3 admin-panel-filter-option-list'
       >
@@ -370,6 +379,7 @@ const HeaderButton = ({
         )}
       </Collapse.Panel>
     </Collapse>
+  
   )
 
   return (
