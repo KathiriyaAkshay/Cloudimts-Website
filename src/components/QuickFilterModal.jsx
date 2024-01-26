@@ -6,20 +6,17 @@ import NotificationMessage from "./NotificationMessage";
 import { useState } from "react";
 import API from "../apis/getApi";
 
-const QuickFilterModal = ({
-  name,
-  retrieveStudyData,
-  quickFilterStudyData,
-}) => {
+const QuickFilterModal = ({ name, retrieveStudyData, quickFilterStudyData }) => {
 
-  const { isStudyFilterModalOpen, setIsStudyFilterModalOpen } =useContext(filterDataContext);
+  const { isStudyFilterModalOpen, setIsStudyFilterModalOpen } = useContext(filterDataContext);
+  const { setIsFilterSelected, setIsAdvanceSearchSelected, isFilterSelected } = useContext(FilterSelectedContext);
+
   const [form] = Form.useForm();
 
-  const { setIsFilterSelected, setIsAdvanceSearchSelected, isFilterSelected, isAdvanceSearchSelected } = useContext(FilterSelectedContext);
   const [institutionOptions, setInstitutionOptions] = useState([])
 
   const retrieveInstitutionData = async () => {
-    const token = localStorage.getItem('token') ; 
+    const token = localStorage.getItem('token');
     await API.get('/user/v1/fetch-institution-list', {
       headers: { Authorization: `Bearer ${token}` }
     })
@@ -34,7 +31,7 @@ const QuickFilterModal = ({
         } else {
           NotificationMessage(
             'warning',
-            'Network request failed',
+            'Quick Filter',
             res.data.message
           )
         }
@@ -42,22 +39,17 @@ const QuickFilterModal = ({
       .catch(err =>
         NotificationMessage(
           'warning',
-          'Network request failed',
+          'Quick Filter',
           err.response.data.message
         )
       )
+  }
+
+  useEffect(() => {
+    if (isStudyFilterModalOpen) {
+      retrieveInstitutionData();
     }
-    
-  useEffect(() => {
-    retrieveInstitutionData() ; 
-    setIsFilterSelected(false);
-  }, []);
-
-  useEffect(() => {
-    retrieveInstitutionData() ; 
-  }, [name]) ; 
-
-
+  }, [isStudyFilterModalOpen]);
 
   const handleSubmit = (values) => {
     quickFilterStudyData({ page: 1 }, values);
@@ -80,7 +72,7 @@ const QuickFilterModal = ({
       footer={[
 
         // ==== Cancel option ==== 
-        
+
         <Button
           key="back"
           onClick={() => {
@@ -105,7 +97,7 @@ const QuickFilterModal = ({
         </Button>,
 
         // ==== Apply filter option 
-        
+
         <Button key="submit" type="primary" onClick={() => form.submit()}>
           Apply
         </Button>,
@@ -233,8 +225,11 @@ const QuickFilterModal = ({
               <DatePicker format={"DD-MM-YYYY"} />
             </Form.Item>
           </Col>
+
         </Row>
+
       </Form>
+
     </Modal>
   );
 };

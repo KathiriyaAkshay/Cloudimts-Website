@@ -1176,15 +1176,12 @@ const Dicom = () => {
 
       {/* ==== Quick Filter option modal ====  */}
 
-      {isStudyFilterModalOpen && (
-        <QuickFilterModal
-          name={'Study Quick Filter'}
-          retrieveStudyData={retrieveStudyData}
-          setStudyData={setStudyData}
-          quickFilterStudyData={quickFilterStudyData}
-        />
-
-      )}
+      <QuickFilterModal
+        name={'Study Quick Filter'}
+        retrieveStudyData={retrieveStudyData}
+        setStudyData={setStudyData}
+        quickFilterStudyData={quickFilterStudyData}
+      />
 
       {/* ==== Advance filter option modal =====  */}
 
