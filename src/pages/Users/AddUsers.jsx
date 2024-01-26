@@ -62,9 +62,7 @@ const AddUsers = () => {
   const { id } = useParams()
   const [imageFile, setImageFile] = useState(null)
   const [imageURL, setImageURL] = useState(null)
-  const [value, setValues] = useState({
-    url: undefined
-  })
+  const [value, setValues] = useState([])
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   useEffect(() => {
@@ -341,11 +339,13 @@ const AddUsers = () => {
       handleNextStep()
     } else if (currentStep === 3) {
       setIsLoading(true)
-      let signature_image = ''
-      if (values.url.file.originFileObj) {
+      let signature_image = '' ; 
+
+      if (value?.length > 0){
+
         try {
           const formData = {
-            image: values.url.file.originFileObj
+            image: value[0]?.url
           }
           const res = await uploadImage(formData)
           signature_image = res.data.image_url
@@ -356,7 +356,9 @@ const AddUsers = () => {
         } catch (err) {
           NotificationMessage('warning', "Network request failed", err.response.data.message)
         }
+        
       }
+
       setPayload(prev => ({ ...prev, signature_image }))
       if (id) {
         await API.post(
@@ -384,7 +386,7 @@ const AddUsers = () => {
           )
       }
       setIsLoading(false)
-      handleNextStep()
+      handleNextStep() ; 
     } else if (currentStep === 4) {
       setIsLoading(true)
       const modalityData = { ...convertModalityToObject(values) }
@@ -1023,7 +1025,6 @@ const AddUsers = () => {
                     imageURL={imageURL}
                   />
                 </Col>
-
 
                 <Col
                   lg={24}

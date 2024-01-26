@@ -202,7 +202,7 @@ const UploadImage = ({
                 break;
               case "done":
                 setImageUploadError("");
-                setFile();
+                // setFile(info?.file);
                 setValues((prev) => ([
                   ...prev,
                   {url: info?.file?.originFileObj}
