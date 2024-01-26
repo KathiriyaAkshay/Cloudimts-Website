@@ -12,7 +12,7 @@ import {
   Row,
   Space,
   Spin,
-  Tooltip, 
+  Tooltip,
   Popconfirm
 } from "antd";
 import { useContext, useState } from "react";
@@ -38,6 +38,7 @@ const UserProfile = () => {
     setShowDrawer((prev) => value);
   };
 
+  // Logout request option handler 
   const logoutHandler = async () => {
 
     let requestPayload = {};
@@ -65,6 +66,7 @@ const UserProfile = () => {
 
   };
 
+  // User information fetch handler 
   const ProfileInfomationOpener = async () => {
 
     setShowDrawer(true);
@@ -80,6 +82,9 @@ const UserProfile = () => {
       NotificationMessage("warning", "Network request failed");
 
     } else if (responseData['status'] === true) {
+
+      console.log("User information data =======>");
+      console.log(responseData?.data);
 
       setProfileInformation({ ...responseData['data'] });
 
@@ -124,15 +129,15 @@ const UserProfile = () => {
 
           {/* ==== download option ==== */}
           <Tooltip title="Download App">
-          <Button
-          onClick={()=>{navigate("/downloads")}}
-            type="primary"
-            style={{ display: "flex", gap: "8px", alignItems: "center" }}
-          >
-          <DownloadOutlined />
-          </Button>
-  </Tooltip>
-         
+            <Button
+              onClick={() => { navigate("/downloads") }}
+              type="primary"
+              style={{ display: "flex", gap: "8px", alignItems: "center" }}
+            >
+              <DownloadOutlined />
+            </Button>
+          </Tooltip>
+
 
           {/* ==== User option icon ====  */}
 
@@ -162,41 +167,46 @@ const UserProfile = () => {
         className="User-profile-drawer"
       >
 
-        <Spin spinning={profileSpinner}>  
+        <Spin spinning={profileSpinner}>
 
-          {/* ==== Logout option ====  */}
+          {/* User image  */}
           <div style={{ width: "100%", textAlign: "center" }}>
-            <img src={UserImage} alt="user_profile" width="100px" height="100px" />
-
-          </div>
-          <div className="usermeta heading user-profile-div-first" style={{fontSize: "1rem"}}>
-              {profileInformation?.username}
+            <img src={profileInformation?.user_profile_image === null?UserImage:profileInformation?.user_profile_image} alt="user_profile" width="100px" height="100px" />
           </div>
 
+
+          {/* Username information  */}
+          <div className="usermeta heading user-profile-div-first" style={{ fontSize: "1rem" }}>
+            {profileInformation?.username}
+          </div>
+
+          {/* User emailaddress information  */}
           <div className="usermeta heading user-profile-div-second" >
-          <MailOutlined style={{color:"black",fontSize:"1.2rem"}}/> <span className="user-profile-information-span">{profileInformation?.email}</span>
-
+            <MailOutlined style={{ color: "black", fontSize: "1.2rem" }} /> <span className="user-profile-information-span">{profileInformation?.email}</span>
           </div>
+
+          {/* Account create time information  */}
           <div className="usermeta heading user-profile-div-second"  >
 
-          <Tooltip title="Joining Date">
-            <SyncOutlined style={{color:"black",fontSize:"1.2rem"}}/> 
-          </Tooltip>
+            <Tooltip title="Joining Date">
+              <SyncOutlined style={{ color: "black", fontSize: "1.2rem" }} />
+            </Tooltip>
 
-          <span className="user-profile-information-span">{joinedDate}</span>
+            <span className="user-profile-information-span">{joinedDate}</span>
 
           </div>
 
-
-          <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center",marginTop:"2rem"}}>
+          {/* User logout option  */}
+          <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", marginTop: "2rem" }}>
             <Button
               type="primary"
               className="Logout-option-button"
               onClick={logoutHandler}
             >
-              <LogoutOutlined />  
-              <span style={{marginLeft: "10px"}}>Logout</span>
+              <LogoutOutlined />
+              <span style={{ marginLeft: "10px" }}>Logout</span>
             </Button>
+
           </div>
 
         </Spin>
