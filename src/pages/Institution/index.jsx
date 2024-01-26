@@ -373,7 +373,8 @@ const Institution = () => {
     {
       title: 'Time',
       dataIndex: 'time', 
-      width: 25
+      width: 25,
+      render: (text, record) => convertToDDMMYYYY(record?.time)
     }
   ]
 
@@ -399,7 +400,7 @@ const Institution = () => {
         placement="right"
         onClose={() => setIsDrawerOpen(false)}
         open={isDrawerOpen}
-        width={700}
+        width={900}
         className='Institution-logs-table'
       >
         <TableWithFilter tableData={logsData} tableColumns={logsColumn} />
