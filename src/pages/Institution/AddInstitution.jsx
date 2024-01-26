@@ -13,7 +13,8 @@ import {
   Select,
   Spin,
   InputNumber,
-  Modal
+  Modal,
+  Empty
 } from 'antd'
 
 import { useNavigate, useParams } from 'react-router-dom'
@@ -39,6 +40,7 @@ const AddInstitution = () => {
 
   const [currentStep, setCurrentStep] = useState(0)
   const [tableData, setTableData] = useState([])
+  const [chargesName,setChargesName]=useState("");
   const [form] = Form.useForm()
   const navigate = useNavigate()
   const token = localStorage.getItem('token')
@@ -83,7 +85,7 @@ const AddInstitution = () => {
       retrieveModalityData()
       retrieveRadiologistData()
     } else {
-      retrieveModalityData()
+      // retrieveModalityData()
       retrieveRadiologistData()
     }
   }, [])
@@ -150,7 +152,9 @@ const AddInstitution = () => {
           reporting_charge: 0,
           communication_charge: 0
         }))
-        setTableData(resData)
+
+        // commited this code that sets charges data automatically so if the api is only limited to this use case than we can remove this
+        // setTableData(resData) 
       } else {
         NotificationMessage(
           'warning',
@@ -827,12 +831,15 @@ const AddInstitution = () => {
               onFinish={handleSubmit}
             >
               <Row>
-
+                <Col span={4}>
+                  <Input placeholder='Enter Charges Name' value={chargesName} onChange={(e)=>{setChargesName(e.target.value)}}/>
+                </Col>
+                <Button onClick={()=>{setTableData([...tableData,{name:chargesName,reporting_charge: 0,communication_charge: 0}])}}>+ Add Charge</Button>
                 <Col xs={24} sm={24} md={24} lg={24}>
 
                   <div className='modality-card-wrapper' >
 
-                    {tableData.map((element) => {
+                    {tableData.length ? tableData.map((element) => {
                       return (
                         <Card className='particular-modality-info-division' title={element.name} style={{ width: "fit-content", marginTop: "0.3rem" }} headerBg="#00ff00">
 
@@ -847,7 +854,7 @@ const AddInstitution = () => {
                           </Form.Item>
                         </Card>
                       )
-                    })}
+                    }):<Empty/>}
 
                   </div>
                 </Col>
