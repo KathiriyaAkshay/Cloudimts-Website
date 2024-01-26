@@ -1083,7 +1083,8 @@ const Dicom = () => {
         seriesId={seriesID}
         setPagination={setPagination}
       />
-
+      
+      {/* Edit Study details modal  */}
 
       <EditStudy
         isEditModalOpen={isEditModalOpen}

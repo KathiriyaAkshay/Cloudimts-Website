@@ -1,6 +1,7 @@
 import { List, Modal, Spin, Tag, Typography } from "antd";
 import React, { useEffect, useState } from "react";
 import { getMoreDetails } from "../../apis/studiesApi";
+import NotificationMessage from "../NotificationMessage";
 
 const PatientDetails = ({
   isStudyModalOpen,
@@ -113,14 +114,14 @@ const PatientDetails = ({
         } else {
           NotificationMessage(
             'warning',
-            'Network request failed',
+            'Study more details',
             res.data.message
           )
         }
       })
       .catch((err) => NotificationMessage(
         'warning',
-        'Network request failed',
+        'Study more details',
         err.response.data.message
       )
       );
@@ -149,7 +150,6 @@ const PatientDetails = ({
       centered
       footer={null}
       className="study-more-details"
-    // style={{height: "90vh"}}
     >
       <Spin spinning={isLoading}>
         <div
