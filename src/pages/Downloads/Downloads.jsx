@@ -28,17 +28,17 @@ const App = () => {
     const navigate = useNavigate();
 
 
-  const goBack = () => {
-    // Check if there is a previous entry in the history stack
-    if (window.history.length >= 2) {
-      navigate(-2);
-    } else if (window.history.length == 1) {
-      navigate(-1);
-    } else {
-      // If no previous page exists, navi gate to a default path
-      navigate('/institutions');
+    const goBack = () => {
+        navigate(-1);
+        // Check if there is a previous entry in the history stack
+        if (window.history.length >= 2) {
+        navigate(-2);
+        } else if (window.history.length == 1) {
+        } else {
+        // If no previous page exists, navi gate to a default path
+        navigate('/institutions');
+        }
     }
-  }
 
     const [windowsTitle, setWindowsTitle] = useState("To upload your local study to a cloud server, are you prepared to download the Cloudimts exe file? Set up Cloudimts on your local computer by following these instructions.");
     const [applicationTitle, setApplicationTitle] = useState("Download our application and submit your study report from your phone");
