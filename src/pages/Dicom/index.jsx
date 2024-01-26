@@ -1112,6 +1112,8 @@ const Dicom = () => {
         referenceId = {studyReferenceId}
       />
 
+      {/* Study report modal  */}
+      
       <StudyReports
         isReportModalOpen={isReportModalOpen}
         setIsReportModalOpen={setIsReportModalOpen}

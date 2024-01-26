@@ -6,7 +6,7 @@ import {
   Spin,
   Tag,
   Tooltip,
-  Typography, 
+  Typography,
   Popconfirm
 } from "antd";
 import React, { useContext, useEffect, useState } from "react";
@@ -20,14 +20,14 @@ import { BsEyeFill } from 'react-icons/bs'
 import {
   DownloadOutlined,
   MailOutlined,
-  WhatsAppOutlined, 
+  WhatsAppOutlined,
   CloseCircleFilled
 } from '@ant-design/icons'
 import ImageCarousel from './ImageCarousel'
 import { useNavigate } from 'react-router-dom'
 import { UserPermissionContext } from '../../hooks/userPermissionContext'
-import APIHandler from '../../apis/apiHandler' ; 
-import NotificationMessage from "../NotificationMessage"; 
+import APIHandler from '../../apis/apiHandler';
+import NotificationMessage from "../NotificationMessage";
 import { filterDataContext } from "../../hooks/filterDataContext";
 import { convertToDDMMYYYY } from "../../helpers/utils";
 
@@ -43,12 +43,14 @@ const StudyReports = ({
   isWhatsappShareModelOpen,
   setEmailReportId,
   patientId,
-  patientName, 
-  studyUIDInformation, 
+  patientName,
+  studyUIDInformation,
   referenceId
 }) => {
-  const ViEWER_URL = import.meta.env.ORTHANC_VIEWER_URL ;  
 
+  const navigate = useNavigate();
+
+  const { permissionData } = useContext(UserPermissionContext)
 
   const [modalData, setModalData] = useState([])
   const [isLoading, setIsLoading] = useState(false)
@@ -56,14 +58,11 @@ const StudyReports = ({
   const [tableData, setTableData] = useState([])
   const [studyImages, setStudyImages] = useState([])
   const [show, setShow] = useState(false)
-  const navigate = useNavigate()
-  const { permissionData } = useContext(UserPermissionContext)
   const [isViewReportModalOpen, setIsViewReportModalOpen] = useState(false)
 
   const [normalReportImages, setNormalReportImages] = useState([])
-  const [normalReportModalData, setNormalReportModalData] = useState({}) 
-  const [normalReportClosedLoading, setNormalReportClosedLoading] = useState(false) ; 
-  const { studyUIDValue, setStudyUIDValue } =useContext(filterDataContext)
+  const [normalReportModalData, setNormalReportModalData] = useState({})
+  const [normalReportClosedLoading, setNormalReportClosedLoading] = useState(false);
 
   useEffect(() => {
     if (studyID && isReportModalOpen) {
@@ -93,40 +92,40 @@ const StudyReports = ({
   }
 
   // Function ==== Complete Study request 
-  const downloadReport = async (id) => { 
+  const downloadReport = async (id) => {
 
-    let requestPayload = {id: studyID} ; 
+    let requestPayload = { id: studyID };
 
-    let responseData = await APIHandler('POST', requestPayload, 'studies/v1/complete-study') ; 
+    let responseData = await APIHandler('POST', requestPayload, 'studies/v1/complete-study');
 
-    if (responseData === false){
-      NotificationMessage("warning", "Network request failed") ; 
-    
-    } else if (responseData['status'] === true){
+    if (responseData === false) {
+      NotificationMessage("warning", "Network request failed");
 
-      let responseData = await APIHandler("POST", {id: studyID}, "studies/v1/report-download") ; 
+    } else if (responseData['status'] === true) {
 
-      if (responseData === false){
+      let responseData = await APIHandler("POST", { id: studyID }, "studies/v1/report-download");
+
+      if (responseData === false) {
 
         NotificationMessage(
-          "warning", 
+          "warning",
           "Network request failed"
-        ); 
-      
-      } else if (responseData?.status){
+        );
 
-        let report_download_url = responseData?.message ; 
-        let report_patient_name = patientName.replace(/ /g, "-") ; 
-  
-        let updated_report_name = `${patientId}-${report_patient_name}-report.pdf` ; 
+      } else if (responseData?.status) {
 
-        downloadPDF(report_download_url,updated_report_name) ; 
+        let report_download_url = responseData?.message;
+        let report_patient_name = patientName.replace(/ /g, "-");
 
-      } else{
+        let updated_report_name = `${patientId}-${report_patient_name}-report.pdf`;
+
+        downloadPDF(report_download_url, updated_report_name);
+
+      } else {
 
         NotificationMessage(
-          "warning", 
-          "Network request failed", 
+          "warning",
+          "Network request failed",
           responseData?.message
         )
       }
@@ -138,7 +137,7 @@ const StudyReports = ({
 
       //       console.log("Fetch download report related data information ");
       //       console.log(res?.data?.data);
-            
+
       //       let report_download_url = res.data?.data?.report_url ; 
       //       let report_patient_name = patientName.replace(/ /g, "-") ; 
 
@@ -156,13 +155,13 @@ const StudyReports = ({
       //   })
       //   .catch(err => NotificationMessage('warning', err.response.data.message))
 
-    } else{
+    } else {
 
-      NotificationMessage("warning", "Network request failed", responseData['message']) ; 
+      NotificationMessage("warning", "Network request failed", responseData['message']);
     }
   }
 
-  // Update Report status to View
+  // Update Report status to ViewReporring
   const handleStudyStatus = async () => {
     await viewReported({ id: studyID })
       .then(res => {
@@ -183,113 +182,6 @@ const StudyReports = ({
         )
       )
   }
-
-  const columns = [
-    {
-      title: 'Report Time',
-      dataIndex: 'reporting_time', 
-      render: (text, record) =>  convertToDDMMYYYY(record?.reporting_time )
-    },
-
-    {
-      title: 'Report By',
-      dataIndex: 'report_by',
-      render: (text, record) => record?.report_by?.username
-    },
-
-    {
-      title: 'Study Description',
-      dataIndex: 'study_description'
-    },
-
-    {
-      title: 'Report Type',
-      dataIndex: 'report_type'
-    },
-
-
-    {
-      title: 'Actions',
-      dataIndex: 'actions',
-      fixed: 'right',
-      width: window.innerWidth < 650 ? '1%' : '20%',
-      render: (text, record) => (
-        <Space style={{ display: 'flex', justifyContent: 'space-evenly' }}>
-          
-          {/* ===== View report option ======   */}
-
-          <Tooltip title={'View'}>
-            <BsEyeFill
-              className='action-icon'
-              onClick={async () => {
-                await handleStudyStatus()
-                record.report_type === 'Advanced report' &&
-                  navigate(`/reports/${record.id}/view`)
-                if (record.report_type === 'Normal report') {
-                  setIsViewReportModalOpen(true)
-                  setNormalReportImages(
-                    record?.normal_report_data?.report_attach_data
-                  )
-                  setNormalReportModalData(record)
-                } 
-              }}
-            />
-          </Tooltip>
-
-          {/* ==== Download report option =====  */}
-
-          {record.report_type === 'Advanced report' && (
-            
-            <Tooltip title={'Download'}>
-              <DownloadOutlined
-                className='action-icon'
-                onClick={() => downloadReport(record.id)}
-              />
-            </Tooltip>
-          )}
-          
-          {/* ===== Email share option ====== */}
-
-          {record.report_type === 'Advanced report' && (
-            <Tooltip title={'Email'}>
-              <MailOutlined
-                className='action-icon'
-                onClick={() => EmailShareModalOpen(record.id)}
-              />
-            </Tooltip>
-          )}
-
-          {/* ==== Whatsapp share option ====  */}
-
-          {record.report_type === 'Advanced report' && (
-            <Tooltip title={'Whatsapp'}>
-              <WhatsAppOutlined className='action-icon'
-              onClick={() => isWhatsappShareModelOpen(true)}
-              />
-            </Tooltip>
-          )}
-
-          {/* ==== Close report option handler ====  */}
-
-          {record.report_type !== 'Advanced report' && (
-            <Popconfirm
-              title = "Closed study"
-              description = {"Are you sure you want to closed this study ?"}
-              okText = "Yes"
-              cancelText = "No" 
-              okButtonProps={{
-                loading: normalReportClosedLoading
-              }}
-              onConfirm={() => ClosedStudyHandler(record.id)}
-            >
-              <CloseCircleFilled style={{color: "red"}} className='action-icon' />
-            </Popconfirm>
-          )}
-
-        </Space>
-      )
-    }
-  ]
 
   // Function ==== Reterive particular study information 
   const retrieveStudyData = () => {
@@ -313,15 +205,15 @@ const StudyReports = ({
             },
 
             {
-              name: "Assign study time", 
+              name: "Assign study time",
               value: resData?.study_assign_time
-            }, 
-  
+            },
+
             {
-              name: "Assign study username", 
-              value: resData?.study_assign_username 
-            }, 
-            
+              name: "Assign study username",
+              value: resData?.study_assign_username
+            },
+
             {
               name: 'Performing Physician Name',
               value: resData?.Performing_physician_name
@@ -396,44 +288,151 @@ const StudyReports = ({
     isEmailShareModalOpen(true)
   }
 
-  const ClosedStudyHandler = async (id) => {  
+  const ClosedStudyHandler = async (id) => {
 
-    setNormalReportClosedLoading(true) ; 
+    setNormalReportClosedLoading(true);
 
-    let requestPayload = {id: studyID} ; 
+    let requestPayload = { id: studyID };
 
-    let responseData = await APIHandler('POST', requestPayload, 'studies/v1/complete-study') ; 
+    let responseData = await APIHandler('POST', requestPayload, 'studies/v1/complete-study');
 
-    setNormalReportClosedLoading(false) ; 
+    setNormalReportClosedLoading(false);
 
-    if (responseData === false){
+    if (responseData === false) {
 
-      NotificationMessage("warning", "Network request failed") ; 
-    
-    } else if (responseData['status'] === true){
+      NotificationMessage("warning", "Network request failed");
 
-      NotificationMessage("success", "Closed study successfully") ; 
-      setIsReportModalOpen(false) ; 
-    
-    } else{
+    } else if (responseData['status'] === true) {
+
+      NotificationMessage("success", "Closed study successfully");
+      setIsReportModalOpen(false);
+
+    } else {
 
       NotificationMessage("warning", "Network request failed", responseData['message'])
     }
   }
 
   const OHIFViewerHandler = () => {
-    
-    let url = `https://viewer.cloudimts.com/viewer/${studyUIDInformation}` ; 
-    window.open(url, "_blank") ; 
+
+    let url = `https://viewer.cloudimts.com/viewer/${studyUIDInformation}`;
+    window.open(url, "_blank");
   }
 
   const WeasisViewerHandler = () => {
 
     const originalString = '$dicom:rs --url "https://viewer.cloudimts.com/orthanc" -r "patientID=5Yp0E"';
     let encodedString = encodeURIComponent(originalString);
-    encodedString = "weasis://" + encodedString ; 
-    window.open(encodedString , "_blank") ; 
+    encodedString = "weasis://" + encodedString;
+    window.open(encodedString, "_blank");
   }
+
+  const columns = [
+    {
+      title: 'Report Time',
+      dataIndex: 'reporting_time',
+      render: (text, record) => convertToDDMMYYYY(record?.reporting_time)
+    },
+
+    {
+      title: 'Report By',
+      dataIndex: 'report_by',
+      render: (text, record) => record?.report_by?.username
+    },
+
+    {
+      title: 'Study Description',
+      dataIndex: 'study_description'
+    },
+
+    {
+      title: 'Report Type',
+      dataIndex: 'report_type'
+    },
+
+
+    {
+      title: 'Actions',
+      dataIndex: 'actions',
+      fixed: 'right',
+      width: window.innerWidth < 650 ? '1%' : '20%',
+      render: (text, record) => (
+        <Space style={{ display: 'flex', justifyContent: 'space-evenly' }}>
+
+          {/* ===== View report option ======   */}
+
+          <Tooltip title={'View'}>
+            <BsEyeFill
+              className='action-icon'
+              onClick={async () => {
+                await handleStudyStatus()
+                record.report_type === 'Advanced report' &&
+                  navigate(`/reports/${record.id}/view`)
+                if (record.report_type === 'Normal report') {
+                  setIsViewReportModalOpen(true)
+                  setNormalReportImages(
+                    record?.normal_report_data?.report_attach_data
+                  )
+                  setNormalReportModalData(record)
+                }
+              }}
+            />
+          </Tooltip>
+
+          {/* ==== Download report option =====  */}
+
+          {record.report_type === 'Advanced report' && (
+
+            <Tooltip title={'Download'}>
+              <DownloadOutlined
+                className='action-icon'
+                onClick={() => downloadReport(record.id)}
+              />
+            </Tooltip>
+          )}
+
+          {/* ===== Email share option ====== */}
+
+          {record.report_type === 'Advanced report' && (
+            <Tooltip title={'Email'}>
+              <MailOutlined
+                className='action-icon'
+                onClick={() => EmailShareModalOpen(record.id)}
+              />
+            </Tooltip>
+          )}
+
+          {/* ==== Whatsapp share option ====  */}
+
+          {record.report_type === 'Advanced report' && (
+            <Tooltip title={'Whatsapp'}>
+              <WhatsAppOutlined className='action-icon'
+                onClick={() => isWhatsappShareModelOpen(true)}
+              />
+            </Tooltip>
+          )}
+
+          {/* ==== Close report option handler ====  */}
+
+          {record.report_type !== 'Advanced report' && (
+            <Popconfirm
+              title="Closed study"
+              description={"Are you sure you want to closed this study ?"}
+              okText="Yes"
+              cancelText="No"
+              okButtonProps={{
+                loading: normalReportClosedLoading
+              }}
+              onConfirm={() => ClosedStudyHandler(record.id)}
+            >
+              <CloseCircleFilled style={{ color: "red" }} className='action-icon' />
+            </Popconfirm>
+          )}
+
+        </Space>
+      )
+    }
+  ]
 
   return (
     <>
@@ -458,7 +457,7 @@ const StudyReports = ({
           <div className='Assign-study-upload-option-input-layout'>
 
             <div className='Report-modal-all-option-div'>
-              
+
               {/* ==== OHIF viewer option ====  */}
 
               <Button key='back' className='Report-modal-option-button'
@@ -468,7 +467,7 @@ const StudyReports = ({
 
               {/* ==== Weasis Viewer option =====  */}
 
-              <Button key='back' className='Report-modal-option-button' 
+              <Button key='back' className='Report-modal-option-button'
                 onClick={WeasisViewerHandler}>
                 Weasis viewer
               </Button>
@@ -498,7 +497,7 @@ const StudyReports = ({
                     navigate(`/reports/${studyID}`)
                   }}
                 >
-                    Advanced File Report
+                  Advanced File Report
                 </Button>
               )}
 
@@ -558,16 +557,16 @@ const StudyReports = ({
                     >
                       {item.name}:
                       {item.name === "Patient's id" ||
-                      item.name === "Patient's Name" ||
-                      item.name === "Study UID" ||
-                      item.name === "Institution Name" ||
-                      item.name === "Series UID" || 
-                      item.name === "Assign study time" || 
-                      item.name === "Assign study username"? (
+                        item.name === "Patient's Name" ||
+                        item.name === "Study UID" ||
+                        item.name === "Institution Name" ||
+                        item.name === "Series UID" ||
+                        item.name === "Assign study time" ||
+                        item.name === "Assign study username" ? (
                         <Tag color="#87d068">{item.value}</Tag>
                       ) : (
                         <Typography style={{ fontWeight: '400' }}>
-                          {item.value !== undefined && item.value !== null && 
+                          {item.value !== undefined && item.value !== null &&
                             item.value
                           }
                         </Typography>
@@ -596,7 +595,7 @@ const StudyReports = ({
       <FileReport
         isFileReportModalOpen={isFileReportModalOpen}
         setIsFileReportModalOpen={setIsFileReportModalOpen}
-        setReportModalOpen = {setIsReportModalOpen}
+        setReportModalOpen={setIsReportModalOpen}
         studyID={studyID}
         modalData={modalData}
       />
