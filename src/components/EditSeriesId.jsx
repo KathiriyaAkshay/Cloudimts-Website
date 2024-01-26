@@ -75,7 +75,7 @@ const EditSeriesId = ({
           <div>StudyId - {studyID}</div>
         </div>
 
-        <div className='Study-modal-input-option-division' style={{ borderTop: '0px', paddingTop: 0 }} >
+        <div className='Study-edit-series-id-division' style={{ borderTop: '0px', paddingTop: 0 }} >
           <div className='assign_studies_all_id_list'>
             {studyIdArray.map(element => {
               return (

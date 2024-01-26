@@ -1330,10 +1330,28 @@
   overflow-x: hidden;
 }
 
+.Assign-study-reports-option-input-layout{
+  display: flex;
+  flex-direction: row;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
 .Assign-study-specific-option {
   width: 95%;
   padding-left: 0.8rem;
   padding-right: 0.8rem;
+}
+
+.study-modal-patient-audit-info-layout{
+  height: max-content;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.edit-study-id-input-layout{
+  display: flex;
+  flex-direction: column;
 }
 
 .Study-modal-input-option-division {
@@ -1342,6 +1360,13 @@
   margin-top: 1rem;
   overflow-x: auto;
   height: 69vh !important;}
+
+.Study-edit-series-id-division {
+    padding-top: 1rem;
+    border-top: 1px solid #c4c4c4;
+    margin-top: 1rem;
+    overflow-x: auto;
+  }
 
 .assign-study-modal {
   height: 95vh !important;

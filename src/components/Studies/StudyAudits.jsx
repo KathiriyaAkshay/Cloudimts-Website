@@ -227,7 +227,7 @@ const StudyAudits = ({ isModalOpen, setIsModalOpen, studyID, setStudyID }) => {
             gutter: 5,
             column: 2
           }}
-          className='queue-status-list study-modal-patient-info-layout'
+          className='queue-status-list study-modal-patient-audit-info-layout'
           dataSource={modalData?.filter(data => data.name !== 'urgent_case')}
           renderItem={item => (
             <List.Item className='queue-number-list'>
