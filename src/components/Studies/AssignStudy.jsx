@@ -262,14 +262,14 @@ const AssignStudy = ({
         form.resetFields();
       }}
       width={1300}
-    
+
       style={{
         top: 20,
         height: '80vh'
       }}
-      className="assign-study-modal clinical-history-modal" 
+      className="assign-study-modal clinical-history-modal"
     >
-      <Spin spinning={isLoading} >
+      <Spin spinning={isLoading}  style={{height:"100%"}}>
         <div
           style={{
             background: "#ebf7fd",
@@ -288,148 +288,154 @@ const AssignStudy = ({
               ?.urgent_case && <Tag color="error">Urgent</Tag>}
           </div>
         </div>
-
-        <List
-          style={{ marginTop: "8px", height: "20vh" }}
-          grid={{
-            gutter: 5,
-            column: 2,
-          }}
-          className="assign-queue-status-list study-modal-patient-info-layout"
-          dataSource={modalData?.filter((data) => data.name !== "urgent_case")}
-          renderItem={(item) => (
-            <List.Item className="queue-number-list">
-              <Typography
-                style={{ display: "flex", gap: "2px", fontWeight: "600",flexWrap:"wrap" }}
-              >
-                {item.name}:
-                {item.name === "Patient's id" ||
-                item.name === "Patient's Name" ||
-                item.name === "Study UID" ||
-                item.name === "Institution Name" ||
-                item.name === "Series UID" ||
-                item.name === "Assign study time" ||
-                item.name === "Assign study username" ? (
-                  // console.log()
-                  item.value !== undefined?<>
-                    <Tag color="#87d068" className="Assign-study-info-tag">
+        <div style={{ display: "flex", flexDirection: "row", height: "100%" }}>
+          <List
+            style={{ marginTop: "8px", height: "20vh", width: "50%", height: "100%" }}
+            grid={{
+              gutter: 5,
+              column: 2,
+            }}
+            className="assign-queue-status-list study-modal-patient-info-layout"
+            dataSource={modalData?.filter((data) => data.name !== "urgent_case")}
+            renderItem={(item) => (
+              <List.Item className="queue-number-list">
+                <Typography
+                  style={{ display: "flex", gap: "2px", fontWeight: "600", flexWrap: "wrap" }}
+                >
+                  {item.name}:
+                  {item.name === "Patient's id" ||
+                    item.name === "Patient's Name" ||
+                    item.name === "Study UID" ||
+                    item.name === "Institution Name" ||
+                    item.name === "Series UID" ||
+                    item.name === "Assign study time" ||
+                    item.name === "Assign study username" ? (
+                    // console.log()
+                    item.value !== undefined ? <>
+                      <Tag color="#87d068" className="Assign-study-info-tag">
+                        {item.value}
+                      </Tag>
+                    </> : <></>
+                  ) : (
+                    <Typography style={{ fontWeight: "400" }}>
                       {item.value}
-                    </Tag>
-                  </>:<></>
-                ) : (
-                  <Typography style={{ fontWeight: "400" }}>
-                    {item.value}
-                  </Typography>
-                )}
-              </Typography>
-            </List.Item>
-          )}
-        />
+                    </Typography>
+                  )}
+                </Typography>
+              </List.Item>
+            )}
+          />
 
-        <div className="Study-modal-input-option-division">
-          <Form
-            labelCol={{
-              span: 24,
-            }}
-            wrapperCol={{
-              span: 24,
-            }}
-            form={form}
-            onFinish={handleSubmit}
-            className="mt"
-          >
-            <div className="Assign-study-upload-option-input-layout">
-              <div className="Assign-study-specific-option">
-                <Form.Item
-                  label="Choose Radiologist"
-                  name="radiologist"
-                  className="category-select"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please select radiologist",
-                    },
-                  ]}
-                >
-                  <Select
-                    placeholder="Select Radiologist"
-                    options={options}
-                    showSearch
-                    filterSort={(optionA, optionB) =>
-                      (optionA?.label ?? "")
-                        .toLowerCase()
-                        .localeCompare((optionB?.label ?? "").toLowerCase())
-                    }
+          <div className="Study-modal-input-option-division" style={{ width: "50%", height: "100%" }}>
+            <Form
+              labelCol={{
+                span: 24,
+              }}
+              wrapperCol={{
+                span: 24,
+              }}
+              // layout="horizotal"
+              form={form}
+              onFinish={handleSubmit}
+              className="mt"
+              style={{ height: "100%" }}
+            >
+              <div className="Assign-study-upload-option-input-layout">
+                <div className="Assign-study-specific-option">
+                  <Form.Item
+                    label="Choose Radiologist"
+                    name="radiologist"
+                    className="category-select"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please select radiologist",
+                      },
+                    ]}
+                  >
+                    <Select
+                      placeholder="Select Radiologist"
+                      options={options}
+                      showSearch
+                      filterSort={(optionA, optionB) =>
+                        (optionA?.label ?? "")
+                          .toLowerCase()
+                          .localeCompare((optionB?.label ?? "").toLowerCase())
+                      }
+                    />
+                  </Form.Item>
+
+                  <Form.Item
+                    name="study_description"
+                    label="Modality Study Description"
+                    className="category-select"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please select Modality Study Description",
+                      },
+                    ]}
+                  >
+                    <Select
+                      placeholder="Select Study Description"
+                      options={descriptionOptions}
+                      showSearch
+                      filterSort={(optionA, optionB) =>
+                        (optionA?.label ?? "")
+                          .toLowerCase()
+                          .localeCompare((optionB?.label ?? "").toLowerCase())
+                      }
+                    />
+                  </Form.Item>
+
+                  <Form.Item
+                    name="study_history"
+                    label="Clinical History"
+                    rules={[
+                      {
+                        required: true,
+                        whitespace: true,
+                        message: "Please enter clinical history",
+                      },
+                    ]}
+                  >
+                    <Input.TextArea placeholder="Enter Clinical History" />
+                  </Form.Item>
+                </div>
+
+                <div className="Assign-study-specific-option">
+                  <Form.Item
+                    name="urgent_case"
+                    label="Report Required"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please select Report Required",
+                      },
+                    ]}
+                  >
+                    <Radio.Group>
+                      <Radio value={false}>Regular</Radio>
+                      <Radio value={true}>Urgent</Radio>
+                    </Radio.Group>
+                  </Form.Item>
+
+                  <UploadImage
+                    multipleImage={true}
+                    multipleImageFile={multipleImageFile}
+                    values={value}
+                    setValues={setValues}
+                    imageFile={imageFile}
+                    setImageFile={setImageFile}
                   />
-                </Form.Item>
-
-                <Form.Item
-                  name="study_description"
-                  label="Modality Study Description"
-                  className="category-select"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please select Modality Study Description",
-                    },
-                  ]}
-                >
-                  <Select
-                    placeholder="Select Study Description"
-                    options={descriptionOptions}
-                    showSearch
-                    filterSort={(optionA, optionB) =>
-                      (optionA?.label ?? "")
-                        .toLowerCase()
-                        .localeCompare((optionB?.label ?? "").toLowerCase())
-                    }
-                  />
-                </Form.Item>
-
-                <Form.Item
-                  name="study_history"
-                  label="Clinical History"
-                  rules={[
-                    {
-                      required: true,
-                      whitespace: true,
-                      message: "Please enter clinical history",
-                    },
-                  ]}
-                >
-                  <Input.TextArea placeholder="Enter Clinical History" />
-                </Form.Item>
+                </div>
               </div>
+            </Form>
+          </div>
 
-              <div className="Assign-study-specific-option">
-                <Form.Item
-                  name="urgent_case"
-                  label="Report Required"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please select Report Required",
-                    },
-                  ]}
-                >
-                  <Radio.Group>
-                    <Radio value={false}>Regular</Radio>
-                    <Radio value={true}>Urgent</Radio>
-                  </Radio.Group>
-                </Form.Item>
 
-                <UploadImage
-                  multipleImage={true}
-                  multipleImageFile={multipleImageFile}
-                  values={value}
-                  setValues={setValues}
-                  imageFile={imageFile}
-                  setImageFile={setImageFile}
-                />
-              </div>
-            </div>
-          </Form>
         </div>
+
       </Spin>
     </Modal>
   );
