@@ -100,7 +100,13 @@ const Dicom = () => {
   const { permissionData } = useContext(UserPermissionContext)
 
   // Particular model related useContext information
-  const { isStudyExportModalOpen, setIsStudyExportModalOpen, isQuickAssignStudyModalOpen, setIsQuickAssignStudyModalOpen} = useContext(filterDataContext)
+  const { 
+    isStudyExportModalOpen, 
+    setIsStudyExportModalOpen,
+    isQuickAssignStudyModalOpen, 
+    setIsQuickAssignStudyModalOpen, 
+    isAdvancedSearchModalOpen, 
+    isStudyFilterModalOpen} = useContext(filterDataContext)
 
   // Normal studies information, System filter and Main filter payload information
   const {
@@ -1157,20 +1163,26 @@ const Dicom = () => {
 
       {/* ==== Quick Filter option modal ====  */}
 
-      <QuickFilterModal
-        name={'Study Quick Filter'}
-        retrieveStudyData={retrieveStudyData}
-        setStudyData={setStudyData}
-        quickFilterStudyData={quickFilterStudyData}
-      />
+      {isStudyFilterModalOpen && (
+        <QuickFilterModal
+          name={'Study Quick Filter'}
+          retrieveStudyData={retrieveStudyData}
+          setStudyData={setStudyData}
+          quickFilterStudyData={quickFilterStudyData}
+        />
+
+      )}
 
       {/* ==== Advance filter option modal =====  */}
 
-      <AdvancedSearchModal
-        name={'Advance Search'}
-        retrieveStudyData={retrieveStudyData}
-        advanceSearchFilterData={advanceSearchFilterData}
-      />
+      {isAdvancedSearchModalOpen && (
+        <AdvancedSearchModal
+          name={'Advance Search'}
+          retrieveStudyData={retrieveStudyData}
+          advanceSearchFilterData={advanceSearchFilterData}
+        />
+      )}
+
 
       {/* ==== Assign quick studies ====  */}
 

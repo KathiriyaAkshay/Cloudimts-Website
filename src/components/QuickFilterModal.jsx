@@ -1,7 +1,10 @@
-import { Button, Col, DatePicker, Form, Input, Modal, Row } from "antd";
+import { Button, Col, DatePicker, Form, Input, Modal, Row, Select } from "antd";
 import React, { useContext, useEffect } from "react";
 import { filterDataContext } from "../hooks/filterDataContext";
 import { FilterSelectedContext } from "../hooks/filterSelectedContext";
+import NotificationMessage from "./NotificationMessage";
+import { useState } from "react";
+import API from "../apis/getApi";
 
 const QuickFilterModal = ({
   name,
@@ -13,10 +16,49 @@ const QuickFilterModal = ({
   const [form] = Form.useForm();
 
   const { setIsFilterSelected, setIsAdvanceSearchSelected, isFilterSelected, isAdvanceSearchSelected } = useContext(FilterSelectedContext);
+  const [institutionOptions, setInstitutionOptions] = useState([])
 
+  const retrieveInstitutionData = async () => {
+    console.log("Quick search filter data ==========?");
+    const token = localStorage.getItem('token') ; 
+    await API.get('/user/v1/fetch-institution-list', {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then(res => {
+        if (res.data.status) {
+          const resData = res.data.data.map(item => ({
+            ...item,
+            label: item.name,
+            value: item.id
+          }))
+          setInstitutionOptions(resData)
+        } else {
+          NotificationMessage(
+            'warning',
+            'Network request failed',
+            res.data.message
+          )
+        }
+      })
+      .catch(err =>
+        NotificationMessage(
+          'warning',
+          'Network request failed',
+          err.response.data.message
+        )
+      )
+    }
+    
   useEffect(() => {
+    retrieveInstitutionData() ; 
     setIsFilterSelected(false);
   }, []);
+
+  useEffect(() => {
+    retrieveInstitutionData() ; 
+  }, [name]) ; 
+
+
 
   const handleSubmit = (values) => {
     quickFilterStudyData({ page: 1 }, values);
@@ -160,7 +202,7 @@ const QuickFilterModal = ({
 
           <Col xs={24} lg={12}>
             <Form.Item
-              name="institution__name__icontains"
+              name="institution__name"
               label="Institution Name"
               rules={[
                 {
@@ -170,7 +212,10 @@ const QuickFilterModal = ({
                 },
               ]}
             >
-              <Input placeholder="Enter Institution Name" />
+              <Select
+                placeholder='Select Institution'
+                options={institutionOptions}
+              />
             </Form.Item>
           </Col>
 

@@ -83,6 +83,7 @@ const AdvancedSearchModal = ({
   }
 
   const retrieveInstitutionData = async () => {
+    console.log("Advance search filter data ===================>");
     const token = localStorage.getItem('token')
     await API.get('/user/v1/fetch-institution-list', {
       headers: { Authorization: `Bearer ${token}` }
