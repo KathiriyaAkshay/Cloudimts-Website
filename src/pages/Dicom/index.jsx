@@ -13,7 +13,8 @@ import {
   Spin,
   Input,
   Switch,
-  Statistic
+  Statistic, 
+  Button
 } from 'antd'
 import { CheckCircleOutlined, CloseCircleOutlined, FileOutlined, PictureOutlined } from '@ant-design/icons'
 import { useBreadcrumbs } from '../../hooks/useBreadcrumbs'
@@ -61,6 +62,9 @@ import AssignStudyModified from '../../components/Studies/AssignStudyModified'
 import EditSeriesId from '../../components/EditSeriesId'
 import ImageDrawer from './ImageDrawer'
 import { convertToDDMMYYYY } from '../../helpers/utils'
+import OHIFViewer from "../../assets/images/menu.png" ; 
+import WeasisViewer from "../../assets/images/Weasis.png" ; 
+
 const BASE_URL = import.meta.env.VITE_APP_SOCKET_BASE_URL
 const Dicom = () => {
 
@@ -877,7 +881,7 @@ const Dicom = () => {
           expandRowByClick:true,
           expandedRowRender: (record) => (
             <>
-             <Space style={{ display: 'flex',margin:"0.5rem 0rem" }} className='studyrow-option-icon'>
+             <Space style={{ display: 'flex', marginTop: "0.8rem"}} className='studyrow-option-icon'>
 
                 <Tooltip title={`Study series`}>
                   <PictureOutlined
@@ -898,6 +902,14 @@ const Dicom = () => {
                       localStorage.setItem("currentChatId", record.series_id)
                     }}
                   />
+                </Tooltip>
+
+                <Tooltip title={`OHIF Viewer`}>
+                    <img src={OHIFViewer} className='ohif-viwer-option-icon'/>
+                </Tooltip>
+
+                <Tooltip title={`Weasis Viewer`}>
+                    <img src={WeasisViewer} className='Weasis-viewer-option-icon'/>
                 </Tooltip>
                 
                 {/* ==== Clinical History option ====  */}
