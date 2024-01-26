@@ -7,6 +7,7 @@ const PatientDetails = ({
   setIsStudyModalOpen,
   studyID,
   setStudyID,
+  referenceId
 }) => {
   const [modalData, setModalData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -160,7 +161,7 @@ const PatientDetails = ({
             alignItems: "center",
           }}
         >
-          <div>Patient Info | StudyId {studyID}</div>
+          <div>Patient Info | Reference id : {referenceId}</div>
           <div style={{ display: "flex", gap: "20px", alignItems: "center",flexWrap:"wrap" }}>
             {modalData.find((data) => data.name === "Urgent Case")?.value && (
               <Tag color="error">Urgent</Tag>

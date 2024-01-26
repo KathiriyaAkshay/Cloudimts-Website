@@ -22,7 +22,8 @@ const ShareStudy = ({
   isShareStudyModalOpen,
   setIsShareStudyModalOpen,
   studyID,
-  setStudyID
+  setStudyID, 
+  referenceId
 }) => {
   const token = localStorage.getItem('token')
     
@@ -111,7 +112,7 @@ const ShareStudy = ({
             }, 
             {
               name: "Reference id", 
-              value: studyID
+              value: referenceId
             }
           ]
           setModalData(modifiedData)

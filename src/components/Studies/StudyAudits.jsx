@@ -5,7 +5,7 @@ import { getStudyData, getStudyLogsData } from '../../apis/studiesApi'
 import moment from 'moment/moment'
 import { convertToDDMMYYYY } from '../../helpers/utils'
 
-const StudyAudits = ({ isModalOpen, setIsModalOpen, studyID, setStudyID }) => {
+const StudyAudits = ({ isModalOpen, setIsModalOpen, studyID, setStudyID, referenceId }) => {
   const [modalData, setModalData] = useState([])
   const [isLoading, setIsLoading] = useState(false)
   const [auditData, setAuditData] = useState([])
@@ -214,7 +214,7 @@ const StudyAudits = ({ isModalOpen, setIsModalOpen, studyID, setStudyID }) => {
             alignItems: 'center'
           }}
         >
-          <div>Patient Info | StudyId {studyID}</div>
+          <div>Patient Info | Reference id : {referenceId}</div>
           <div style={{ display: 'flex', gap: '20px', alignItems: 'center'}}>
             {modalData.find(data => data.name === 'urgent_case')?.value
               ?.urgent_case && <Tag color='error'>Urgent</Tag>}

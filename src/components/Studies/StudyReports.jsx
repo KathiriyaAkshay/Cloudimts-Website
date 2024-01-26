@@ -11,7 +11,6 @@ import {
 } from "antd";
 import React, { useContext, useEffect, useState } from "react";
 import {
-  downloadAdvancedFileReport,
   getStudyData,
   viewReported
 } from '../../apis/studiesApi'
@@ -37,7 +36,6 @@ const StudyReports = ({
   setIsReportModalOpen,
   studyID,
   setStudyID,
-  studyStatus,  
   setStudyStatus,
   studyStatusHandler,
   pageNumberHandler,
@@ -46,7 +44,8 @@ const StudyReports = ({
   setEmailReportId,
   patientId,
   patientName, 
-  studyUIDInformation
+  studyUIDInformation, 
+  referenceId
 }) => {
   const ViEWER_URL = import.meta.env.ORTHANC_VIEWER_URL ;  
 
@@ -523,7 +522,7 @@ const StudyReports = ({
                   paddingRight: '10px'
                 }}
               >
-                <div>Patient Info | StudyId {studyID}</div>
+                <div>Patient Info | Reference id : {referenceId}</div>
 
                 <div
                   style={{ display: 'flex', gap: '20px', alignItems: 'center' }}

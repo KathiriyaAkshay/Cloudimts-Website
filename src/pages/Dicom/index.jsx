@@ -922,6 +922,7 @@ const Dicom = () => {
                         setPatientId(record.patient_id)
                         setPatientName(record.name)
                         setStudyUId(record.study?.study_uid)
+                        setStudyReferenceId(record?.refernce_id)
                         localStorage.setItem("studyUIDValue", record.study?.study_uid);
                       }}
                     />
@@ -937,6 +938,7 @@ const Dicom = () => {
                       onClick={() => {
                         setStudyID(record.id)
                         setIsStudyModalOpen(true)
+                        setStudyReferenceId(record?.refernce_id)
                       }}
                     />
                   </Tooltip>
@@ -961,6 +963,7 @@ const Dicom = () => {
                         setStudyID(record.id)
                         setSeriesID(record.series_id)
                         setIsShareStudyModalOpen(true)
+                        setStudyReferenceId(record?.refernce_id)
                       }}
                     />
                   </Tooltip>
@@ -975,6 +978,7 @@ const Dicom = () => {
                       onClick={() => {
                         setStudyID(record.id)
                         setIsModalOpen(true)
+                        setStudyReferenceId(record?.refernce_id)
                       }}
                     />
                   </Tooltip>
@@ -989,7 +993,8 @@ const Dicom = () => {
                       onClick={() => {
                         setSeriesID(record.series_id)
                         setStudyID(record.id)
-                        setIsEditSeriesIdModifiedOpen(true)``
+                        setIsEditSeriesIdModifiedOpen(true)
+                        setStudyReferenceId(record?.refernce_id)
                       }}
                     />
                   </Tooltip>
@@ -1009,6 +1014,7 @@ const Dicom = () => {
             </>
           ),
         }}
+
         // Pagination handle
         pagination={{
           current: Pagination.page,
@@ -1084,6 +1090,7 @@ const Dicom = () => {
         setIsModalOpen={setIsModalOpen}
         studyID={studyID}
         setStudyID={setStudyID}
+        referenceId = {studyReferenceId}
       />
 
       <StudyReports
@@ -1102,6 +1109,7 @@ const Dicom = () => {
         patientId={patientId}
         patientName={patientName}
         studyUIDInformation={studyUID}
+        referenceId = {studyReferenceId}
       />
 
       <PatientDetails
@@ -1109,6 +1117,7 @@ const Dicom = () => {
         setIsStudyModalOpen={setIsStudyModalOpen}
         studyID={studyID}
         setStudyID={setStudyID}
+        referenceId={studyReferenceId}
       />
 
       <ShareStudy
@@ -1117,6 +1126,7 @@ const Dicom = () => {
         studyID={studyID}
         setStudyID={setStudyID}
         seriesId={seriesID}
+        referenceId = {studyReferenceId}
       />
 
       <Drawer
