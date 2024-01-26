@@ -310,9 +310,11 @@ const Institution = () => {
       width: window.innerWidth < 650 ? '1%' : '10%',
       render: (_, record) => (
         <Space style={{ display: "flex", justifyContent: "space-evenly" }}>
+          
           <EditActionIcon
             editActionHandler={() => editActionHandler(record.id)}
           />
+
           <Tooltip title={"View Logs"}>
             <EyeFilled
               className="action-icon action-icon-primary"

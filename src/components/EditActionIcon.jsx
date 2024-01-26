@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Space, Tooltip, Typography } from "antd";
 import { FaEdit } from "react-icons/fa";
 
-const EditActionIcon = ({ editActionHandler, assign_user }) => {
+const EditActionIcon = ({ editActionHandler, assign_user}) => {
   const [role, setRole] = useState(null);
 
   useEffect(() => {
@@ -14,7 +14,7 @@ const EditActionIcon = ({ editActionHandler, assign_user }) => {
     <Space>
       <Typography.Link onClick={editActionHandler} 
         className="action-column">
-        <Tooltip title={`${assign_user !== null?`${assign_user} =>`:""} Edit`}>
+        <Tooltip title={`${assign_user !== null && assign_user !== undefined?`${assign_user} =>`:""} Edit`}>
           <FaEdit className="action-icon"/>
         </Tooltip>
       </Typography.Link>
