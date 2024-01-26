@@ -907,8 +907,9 @@ const Dicom = () => {
                 </Tooltip>
                 
                 {/* Option3 === OHIF viewer option  */}
-                <Tooltip title={`OHIF Viewer`}>
+                <Tooltip title={`${record?.assign_user !== null ? `${record?.assign_user} =>` : ""} OHIF Viewer`}>
                   <img src={OHIFViewer} 
+                    style={{cursor: "pointer"}}
                     className='ohif-viwer-option-icon'
                     onClick={() => {
                       window.open( `https://viewer.cloudimts.com/viewer/${record?.study?.study_uid}`, "_blank")
@@ -916,12 +917,11 @@ const Dicom = () => {
                 </Tooltip>
 
                 {/* Option4 === Weasis viewer option  */}
-                <Tooltip title={`Weasis Viewer`}>
-                  <img src={WeasisViewer} className='Weasis-viewer-option-icon' />
+                <Tooltip title={`${record?.assign_user !== null ? `${record?.assign_user} =>` : ""} Weasis Viewer`}>
+                  <img src={WeasisViewer} className='Weasis-viewer-option-icon' style={{cursor: "pointer"}} />
                 </Tooltip>
 
-                {/* ==== Clinical History option ====  */}
-
+                {/* Option5 === Clinical history option  */}
                 {checkPermissionStatus('Study clinical history option') && (
                   <Tooltip title={`${record?.assign_user !== null ? `${record?.assign_user} =>` : ""} Clinical History`}>
                     <MdOutlineHistory
@@ -935,8 +935,7 @@ const Dicom = () => {
                   </Tooltip>
                 )}
 
-                {/* ==== Study report option ====  */}
-
+                {/* Option6 === Study report  */}
                 {checkPermissionStatus('Study data option') && (
                   <Tooltip title={`${record?.assign_user !== null ? `${record?.assign_user} =>` : ""} Study Report`}>
                     <IoIosDocument
@@ -955,8 +954,7 @@ const Dicom = () => {
                   </Tooltip>
                 )}
 
-                {/* ==== Study more details option ====  */}
-
+                {/* Option7 === Study more details option  */}
                 {checkPermissionStatus('Study more details option') && (
                   <Tooltip title={`${record?.assign_user !== null ? `${record?.assign_user} =>` : ""} More Details`}>
                     <BsEyeFill
@@ -970,8 +968,7 @@ const Dicom = () => {
                   </Tooltip>
                 )}
 
-                {/* ==== Study edit option ====  */}
-
+                {/* Option8 === Study edit option  */}
                 {checkPermissionStatus('Study edit option') && (
                   <EditActionIcon
                     assign_user={record?.assign_user}
@@ -979,8 +976,7 @@ const Dicom = () => {
                   />
                 )}
 
-                {/* ==== Study share option ====  */}
-
+                {/* Option9 === Study share option  */}
                 {checkPermissionStatus('Study share option') && (
                   <Tooltip title={`${record?.assign_user !== null ? `${record?.assign_user} =>` : ""} Share Study`}>
                     <IoIosShareAlt
@@ -995,8 +991,7 @@ const Dicom = () => {
                   </Tooltip>
                 )}
 
-                {/* ==== Study logs option ====  */}
-
+                {/* Option10 === Study Auditing option  */}
                 {checkPermissionStatus('Study logs option') && (
                   <Tooltip title={`${record?.assign_user !== null ? `${record?.assign_user} =>` : ""} Auditing`}>
                     <AuditOutlined
@@ -1026,8 +1021,7 @@ const Dicom = () => {
                   </Tooltip>
                 )} */}
 
-                {/* ==== Study delete option ====  */}
-
+                {/* Option11 === Study delete option  */}
                 {checkPermissionStatus('Study delete option') && (
                   <DeleteActionIcon
                     assign_user={record?.assign_user}
