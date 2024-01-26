@@ -87,6 +87,7 @@ const AddUsers = () => {
     )
       .then(res => {
         if (res.data.status) {
+
           const instituteData = convertToInitialObject(
             res.data.data.institution_details
           )
@@ -108,6 +109,7 @@ const AddUsers = () => {
 
           }
           form.setFieldsValue(resData)
+          setImageUrl(res?.data?.data?.profile_image);
           setImageURL(res.data.data.signature_image)
         } else {
           NotificationMessage(
@@ -339,9 +341,9 @@ const AddUsers = () => {
       handleNextStep()
     } else if (currentStep === 3) {
       setIsLoading(true)
-      let signature_image = '' ; 
+      let signature_image = '';
 
-      if (value?.length > 0){
+      if (value?.length > 0) {
 
         try {
           const formData = {
@@ -356,7 +358,7 @@ const AddUsers = () => {
         } catch (err) {
           NotificationMessage('warning', "Network request failed", err.response.data.message)
         }
-        
+
       }
 
       setPayload(prev => ({ ...prev, signature_image }))
@@ -386,7 +388,7 @@ const AddUsers = () => {
           )
       }
       setIsLoading(false)
-      handleNextStep() ; 
+      handleNextStep();
     } else if (currentStep === 4) {
       setIsLoading(true)
       const modalityData = { ...convertModalityToObject(values) }
@@ -493,13 +495,13 @@ const AddUsers = () => {
 
   const [profileLoading, setProfileLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState();
+
   const handleProfileChange = (info) => {
     if (info.file.status === 'uploading') {
       setProfileLoading(true);
       return;
     }
     if (info.file.status === 'done') {
-      // Get this url from response in real world.
       getBase64(info.file.originFileObj, (url) => {
         setProfileLoading(false);
         setImageUrl(url);
@@ -526,7 +528,7 @@ const AddUsers = () => {
   );
 
   return (
-    <div className='secondary-table' style={{marginTop: "-20px"}}>
+    <div className='secondary-table' style={{ marginTop: "-20px" }}>
       <Card className='user-creation-card'>
         <div
           style={{
