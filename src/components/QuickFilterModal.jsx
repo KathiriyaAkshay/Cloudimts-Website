@@ -19,7 +19,6 @@ const QuickFilterModal = ({
   const [institutionOptions, setInstitutionOptions] = useState([])
 
   const retrieveInstitutionData = async () => {
-    console.log("Quick search filter data ==========?");
     const token = localStorage.getItem('token') ; 
     await API.get('/user/v1/fetch-institution-list', {
       headers: { Authorization: `Bearer ${token}` }
@@ -27,9 +26,9 @@ const QuickFilterModal = ({
       .then(res => {
         if (res.data.status) {
           const resData = res.data.data.map(item => ({
-            ...item,
+            // ...item,
             label: item.name,
-            value: item.id
+            value: item.name
           }))
           setInstitutionOptions(resData)
         } else {
@@ -207,7 +206,6 @@ const QuickFilterModal = ({
               rules={[
                 {
                   required: false,
-                  whitespace: true,
                   message: "Please enter Institution Name",
                 },
               ]}
