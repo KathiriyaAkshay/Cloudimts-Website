@@ -123,7 +123,7 @@ const SupportModal = ({ retrieveSupportData, setSupportId, supportId }) => {
           autoComplete={'off'}
         >
           <Tabs
-            onChange={e => setCurrentTab(e)}
+            onChange={e => {setCurrentTab(e) ; form.resetFields() ; }}
             defaultActiveKey={`${currentTab}`}
           >
             <Tabs.TabPane key={'1'} tab='Email Support'>

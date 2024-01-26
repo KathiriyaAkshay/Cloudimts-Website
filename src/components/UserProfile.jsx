@@ -188,26 +188,16 @@ const UserProfile = () => {
           </div>
 
 
-          <Popconfirm
-            title = "Logout"
-            description = "Are you sure you want to Logout"
-            onConfirm={() => logoutHandler()}
-            okText = "Yes"
-            cancelText = "No"
-          >
-
-            <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center",marginTop:"2rem"}}>
-              <Button
-                type="primary"
-                className="Logout-option-button"
-              >
-                <LogoutOutlined />  
-                <span style={{marginLeft: "10px"}}>Logout</span>
-              </Button>
-            </div>
-
-          </Popconfirm>
-
+          <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center",marginTop:"2rem"}}>
+            <Button
+              type="primary"
+              className="Logout-option-button"
+              onClick={logoutHandler}
+            >
+              <LogoutOutlined />  
+              <span style={{marginLeft: "10px"}}>Logout</span>
+            </Button>
+          </div>
 
         </Spin>
 
