@@ -1094,7 +1094,7 @@ const Dicom = () => {
         setStudyID={setStudyID}
       />
 
-      {/* ==== Assign study option modal ====  */}
+      {/* Assign study modal  */}
 
       <AssignStudy
         isAssignModalOpen={isAssignModalOpen}

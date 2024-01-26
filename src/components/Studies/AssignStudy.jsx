@@ -29,41 +29,50 @@ const AssignStudy = ({
   setStudyID,
   studyReference
 }) => {
+
   const [modalData, setModalData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [options, setOptions] = useState([]);
   const [multipleImageFile, setMultipleImageFile] = useState([]);
-  const [form] = Form.useForm();
-  const [value, setValues] = useState({ url: undefined });
+  const [value, setValues] = useState([]);
   const [imageFile, setImageFile] = useState(null);
+
+  const [form] = Form.useForm();
 
   const handleSubmit = async (values) => {
     setIsLoading(true);
+
     const payloadObj = omit(values, ["radiologist", "url"]);
     const images = [];
-    if (values?.url?.fileList) {
-      for (const data of values?.url?.fileList) {
+
+    if (value?.length !== null) {
+      
+      for (const data of value) {
         try {
           const formData = {
-            image: data?.originFileObj,
+            image: data?.url  ,
           };
 
           const res = await uploadImage(formData);
           images.push(res.data.image_url);
+    
         } catch (err) {
           console.error(err);
         }
       }
     }
+    
     try {
+
       const modifiedPayload = {
         ...payloadObj,
         id: studyID,
         assign_user: values.radiologist,
         study_data: {
-          images: !values?.url ? multipleImageFile : images,
+          images: [...multipleImageFile, ...images],
         },
       };
+    
       await postAssignStudy(modifiedPayload)
         .then((res) => {
           if (res.data.status) {
@@ -92,13 +101,6 @@ const AssignStudy = ({
     setIsLoading(false);
   };
 
-  useEffect(() => {
-    if (studyID && isAssignModalOpen) {
-      retrieveStudyData();
-      retrieveAssignStudyDetails();
-    }
-  }, [studyID]);
-
   const retrieveAssignStudyDetails = async () => {
     setIsLoading(true);
     await fetchAssignStudy({ id: studyID })
@@ -114,7 +116,7 @@ const AssignStudy = ({
         } else {
           NotificationMessage(
             "warning",
-            "Network request failed",
+            "Assign Study",
             res.data.message
           );
         }
@@ -122,7 +124,7 @@ const AssignStudy = ({
       .catch((err) =>
         NotificationMessage(
           "warning",
-          "Network request failed",
+          "Assign Study",
           err.response.data.message
         )
       );
@@ -234,7 +236,7 @@ const AssignStudy = ({
         } else {
           NotificationMessage(
             "warning",
-            "Network request failed",
+            "Assign Study",
             res.data.message
           );
         }
@@ -242,12 +244,21 @@ const AssignStudy = ({
       .catch((err) =>
         NotificationMessage(
           "warning",
-          "Network request failed",
+          "Assign Study",
           err.response.data.message
         )
       );
     setIsLoading(false);
   };
+
+
+  useEffect(() => {
+    if (studyID && isAssignModalOpen) {
+      retrieveStudyData();
+      retrieveAssignStudyDetails();
+    }
+  }, [studyID]);
+
 
   return (
     <Modal
@@ -269,7 +280,7 @@ const AssignStudy = ({
       }}
       className="assign-study-modal clinical-history-modal"
     >
-      <Spin spinning={isLoading}  style={{height:"100%"}}>
+      <Spin spinning={isLoading} style={{ height: "100%" }}>
         <div
           style={{
             background: "#ebf7fd",
@@ -290,7 +301,7 @@ const AssignStudy = ({
         </div>
         <div style={{ display: "flex", flexDirection: "row", height: "100%" }}>
           <List
-            style={{ marginTop: "8px", width: "50%"}}
+            style={{ marginTop: "8px", width: "50%" }}
             grid={{
               gutter: 1,
               column: 1,
@@ -302,25 +313,24 @@ const AssignStudy = ({
                 <Typography
                   style={{ display: "flex", gap: "2px", fontWeight: "600", flexWrap: "wrap" }}
                 >
-                  <div style={{width:"29%"}}>{item.name}</div><div style={{width:"4%"}}>:</div><div style={{width:"60%"}}>
-                  {item.name === "Patient's id" ||
-                    item.name === "Patient's Name" ||
-                    item.name === "Study UID" ||
-                    item.name === "Institution Name" ||
-                    item.name === "Series UID" ||
-                    item.name === "Assign study time" ||
-                    item.name === "Assign study username" ? (
-                    // console.log()
-                    item.value !== undefined ? <>
-                      <Tag color="#87d068" className="Assign-study-info-tag">
+                  <div style={{ width: "29%" }}>{item.name}</div><div style={{ width: "4%" }}>:</div><div style={{ width: "60%" }}>
+                    {item.name === "Patient's id" ||
+                      item.name === "Patient's Name" ||
+                      item.name === "Study UID" ||
+                      item.name === "Institution Name" ||
+                      item.name === "Series UID" ||
+                      item.name === "Assign study time" ||
+                      item.name === "Assign study username" ? (
+                      item.value !== undefined ? <>
+                        <Tag color="#87d068" className="Assign-study-info-tag">
+                          {item.value}
+                        </Tag>
+                      </> : <></>
+                    ) : (
+                      <Typography style={{ fontWeight: "400" }}>
                         {item.value}
-                      </Tag>
-                    </> : <></>
-                  ) : (
-                    <Typography style={{ fontWeight: "400" }}>
-                      {item.value}
-                    </Typography>
-                  )}
+                      </Typography>
+                    )}
                   </div>
                 </Typography>
               </List.Item>
@@ -335,7 +345,6 @@ const AssignStudy = ({
               wrapperCol={{
                 span: 24,
               }}
-              // layout="horizotal"
               form={form}
               onFinish={handleSubmit}
               className="mt"
@@ -343,6 +352,9 @@ const AssignStudy = ({
             >
               <div className="Assign-study-upload-option-input-layout">
                 <div className="Assign-study-specific-option">
+
+                  {/* Radiologist selection dropDown  */}
+
                   <Form.Item
                     label="Choose Radiologist"
                     name="radiologist"
@@ -366,6 +378,8 @@ const AssignStudy = ({
                     />
                   </Form.Item>
 
+                  {/* Study description  */}
+
                   <Form.Item
                     name="study_description"
                     label="Modality Study Description"
@@ -388,6 +402,8 @@ const AssignStudy = ({
                       }
                     />
                   </Form.Item>
+                  
+                  {/* Clinical history information  */}
 
                   <Form.Item
                     name="study_history"
@@ -402,9 +418,13 @@ const AssignStudy = ({
                   >
                     <Input.TextArea placeholder="Enter Clinical History" />
                   </Form.Item>
+
                 </div>
 
                 <div className="Assign-study-specific-option">
+                  
+                  {/* Uregent case information  */}
+
                   <Form.Item
                     name="urgent_case"
                     label="Report Required"
@@ -421,6 +441,8 @@ const AssignStudy = ({
                     </Radio.Group>
                   </Form.Item>
 
+                  {/* Upload image information  */}
+
                   <UploadImage
                     multipleImage={true}
                     multipleImageFile={multipleImageFile}
@@ -428,6 +450,7 @@ const AssignStudy = ({
                     setValues={setValues}
                     imageFile={imageFile}
                     setImageFile={setImageFile}
+                    setMultipleImageFile={setMultipleImageFile}
                   />
                 </div>
               </div>
