@@ -592,6 +592,8 @@ const StudyReports = ({
 
       </Modal>
 
+      {/* Simplified report option modal  */}
+
       <FileReport
         isFileReportModalOpen={isFileReportModalOpen}
         setIsFileReportModalOpen={setIsFileReportModalOpen}
@@ -600,7 +602,15 @@ const StudyReports = ({
         modalData={modalData}
       />
 
-      <ImageCarousel studyImages={studyImages} show={show} setShow={setShow} />
+      {/* Study reference image information  */}
+
+      <ImageCarousel 
+        studyImages={studyImages} 
+        show={show} 
+        setShow={setShow} 
+      />
+
+      {/* Simplified report reference image information  */}
 
       <ImageCarousel
         studyImages={normalReportImages}

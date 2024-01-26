@@ -1,5 +1,5 @@
 import { DeleteOutlined, InboxOutlined } from "@ant-design/icons";
-import { Col, Form, Image, Input, Modal, Row, Button } from "antd";
+import { Col, Form, Image, Input, Modal, Row, Button, Tooltip } from "antd";
 import Dragger from "antd/es/upload/Dragger";
 import React, { useEffect, useState } from "react";
 import { dummyRequest, getBase64 } from "../helpers/utils";
@@ -54,6 +54,17 @@ const UploadImage = ({
   function isPDF(url) {
     const fileExtension = url.split('.').pop().toLowerCase();
     return fileExtension === 'pdf';
+  }
+
+  function getFileNameFromURL(url) {
+    // Extract the last part of the URL after the last slash
+    const pathSegments = url.split('/');
+    const lastSegment = pathSegments[pathSegments.length - 1];
+  
+    // Extract the file name using a regular expression to remove query parameters
+    const fileName = lastSegment.replace(/[\?|#].*$/, '');
+  
+    return fileName;
   }
 
   // Download option button handler
@@ -113,15 +124,19 @@ const UploadImage = ({
 
                     <div className="Reference-option-button-layout">
 
-                      <Button danger className="Reference-download-option-button"
-                        icon = {<DeleteOutlined/>}
-                        onClick={() => DeleteOptionHandler(data)}>
-                      </Button>
+                      <Tooltip title = {getFileNameFromURL(data)}>
+                        <Button danger className="Reference-download-option-button"
+                          icon = {<DeleteOutlined/>}
+                          onClick={() => DeleteOptionHandler(data)}>
+                        </Button>
+                      </Tooltip>
 
-                      <Button type="primary" className="Reference-download-option-button"
-                        icon = {<DownloadOutlined/>}
-                        onClick={() => handleDownload(data)}>
-                      </Button>
+                      <Tooltip title = {getFileNameFromURL(data)}>
+                        <Button type="primary" className="Reference-download-option-button"
+                          icon = {<DownloadOutlined/>}
+                          onClick={() => handleDownload(data)}>
+                        </Button>
+                      </Tooltip>
                     </div>
 
                     <Image
@@ -138,15 +153,19 @@ const UploadImage = ({
 
                     <div className="Reference-option-button-layout">
 
-                      <Button danger className="Reference-download-option-button"
-                        icon = {<DeleteOutlined/>}
-                        onClick={() => DeleteOptionHandler(data)}>
-                      </Button>
+                      <Tooltip title = {getFileNameFromURL(data)}>
+                        <Button danger className="Reference-download-option-button"
+                          icon = {<DeleteOutlined/>}
+                          onClick={() => DeleteOptionHandler(data)}>
+                        </Button>
+                      </Tooltip>
 
-                      <Button type="primary" className="Reference-download-option-button"
-                        icon = {<DownloadOutlined/>}
-                        onClick={() => handleDownload(data)}>
-                      </Button>
+                      <Tooltip title = {getFileNameFromURL(data)}>
+                        <Button type="primary" className="Reference-download-option-button"
+                          icon = {<DownloadOutlined/>}
+                          onClick={() => handleDownload(data)}>
+                        </Button>
+                      </Tooltip>
 
                     </div>
 
