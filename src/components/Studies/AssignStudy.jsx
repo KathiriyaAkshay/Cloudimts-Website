@@ -46,22 +46,22 @@ const AssignStudy = ({
     const images = [];
 
     if (value?.length !== null) {
-      
+
       for (const data of value) {
         try {
           const formData = {
-            image: data?.url  ,
+            image: data?.url,
           };
 
           const res = await uploadImage(formData);
           images.push(res.data.image_url);
-    
+
         } catch (err) {
           console.error(err);
         }
       }
     }
-    
+
     try {
 
       const modifiedPayload = {
@@ -72,7 +72,7 @@ const AssignStudy = ({
           images: [...multipleImageFile, ...images],
         },
       };
-    
+
       await postAssignStudy(modifiedPayload)
         .then((res) => {
           if (res.data.status) {
@@ -402,7 +402,7 @@ const AssignStudy = ({
                       }
                     />
                   </Form.Item>
-                  
+
                   {/* Clinical history information  */}
 
                   <Form.Item
@@ -422,7 +422,7 @@ const AssignStudy = ({
                 </div>
 
                 <div className="Assign-study-specific-option">
-                  
+
                   {/* Uregent case information  */}
 
                   <Form.Item
