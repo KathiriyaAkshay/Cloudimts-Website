@@ -1319,18 +1319,19 @@
 }
 
 .study-modal-patient-info-layout {
-  height: 31vh;
+  height: 69vh;
   overflow-y: auto;
   overflow-x: hidden;
-}
+} 
 
 .Assign-study-upload-option-input-layout {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
+  overflow-x: hidden;
 }
 
 .Assign-study-specific-option {
-  width: 50%;
+  width: 95%;
   padding-left: 0.8rem;
   padding-right: 0.8rem;
 }

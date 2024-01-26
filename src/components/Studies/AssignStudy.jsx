@@ -290,10 +290,10 @@ const AssignStudy = ({
         </div>
         <div style={{ display: "flex", flexDirection: "row", height: "100%" }}>
           <List
-            style={{ marginTop: "8px", height: "20vh", width: "50%", height: "100%" }}
+            style={{ marginTop: "8px", width: "50%"}}
             grid={{
-              gutter: 5,
-              column: 2,
+              gutter: 1,
+              column: 1,
             }}
             className="assign-queue-status-list study-modal-patient-info-layout"
             dataSource={modalData?.filter((data) => data.name !== "urgent_case")}
@@ -302,7 +302,7 @@ const AssignStudy = ({
                 <Typography
                   style={{ display: "flex", gap: "2px", fontWeight: "600", flexWrap: "wrap" }}
                 >
-                  {item.name}:
+                  <div style={{width:"29%"}}>{item.name}</div><div style={{width:"4%"}}>:</div><div style={{width:"60%"}}>
                   {item.name === "Patient's id" ||
                     item.name === "Patient's Name" ||
                     item.name === "Study UID" ||
@@ -321,6 +321,7 @@ const AssignStudy = ({
                       {item.value}
                     </Typography>
                   )}
+                  </div>
                 </Typography>
               </List.Item>
             )}
