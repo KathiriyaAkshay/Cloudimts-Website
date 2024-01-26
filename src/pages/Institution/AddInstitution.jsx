@@ -14,7 +14,8 @@ import {
   Spin,
   InputNumber,
   Modal,
-  Empty
+  Empty,
+  Table
 } from 'antd'
 
 import { useNavigate, useParams } from 'react-router-dom'
@@ -465,6 +466,24 @@ const AddInstitution = () => {
     setIsModalOpen(false)
   }
 
+  const ModalityChargeColumn = [
+    {
+      title: "Modality", 
+      dataIndex: "name"
+    }, 
+    {
+      title: "Reporting charge", 
+      dataIndex: "reporting_charge"
+    }, 
+    {
+      title: "Communication charge", 
+      dataIndex: "communication_charge"
+    }, 
+    {
+      title: "Delete"
+    }
+  ]
+
 
   const reportColumns = [
     {
@@ -831,15 +850,29 @@ const AddInstitution = () => {
               onFinish={handleSubmit}
             >
               <Row>
-                <Col span={4}>
-                  <Input placeholder='Enter Charges Name' value={chargesName} onChange={(e)=>{setChargesName(e.target.value)}}/>
-                </Col>
-                <Button onClick={()=>{setTableData([...tableData,{name:chargesName,reporting_charge: 0,communication_charge: 0}])}}>+ Add Charge</Button>
+                
+                <div className='Add_institution_charge_input_layout'>
+
+                  <Col span={16}>
+                    <Input placeholder='Enter Charges Name' 
+                    value={chargesName} onChange={(e)=>{setChargesName(e.target.value)}}/>
+                  </Col>
+
+                  <Button style={{marginLeft: "0.80rem"}} onClick={()=>{
+                    setTableData([...tableData,{name:chargesName,reporting_charge: 0,communication_charge: 0}])}}>+ Add Charge</Button>
+
+                </div>
+                
                 <Col xs={24} sm={24} md={24} lg={24}>
 
-                  <div className='modality-card-wrapper' >
+                  <Table
+                    columns={ModalityChargeColumn}
+                    dataSource={tableData}
+                  />
+                  {/* <div className='modality-card-wrapper' style={{height: "50vh"}}> */}
 
-                    {tableData.length ? tableData.map((element) => {
+
+                    {/* {tableData.length ? tableData.map((element) => {
                       return (
                         <Card className='particular-modality-info-division' title={element.name} style={{ width: "fit-content", marginTop: "0.3rem" }} headerBg="#00ff00">
 
@@ -854,10 +887,11 @@ const AddInstitution = () => {
                           </Form.Item>
                         </Card>
                       )
-                    }):<Empty/>}
+                    }):<Empty/>} */}
 
-                  </div>
+                  {/* </div> */}
                 </Col>
+
                 <Col xs={24} sm={24} md={24} lg={24} className='justify-end mt'>
 
                   <Button type='primary' onClick={handlePrevStep}
