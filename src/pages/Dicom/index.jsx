@@ -116,7 +116,8 @@ const Dicom = () => {
   const { isFilterSelected, isAdvanceSearchSelected } = useContext(FilterSelectedContext);
 
   // Modal passing attributes information
-  const [studyID, setStudyID] = useState(null)
+  const [studyID, setStudyID] = useState(null) ; 
+  const [studyReferenceId, setStudyReferenceId] = useState(null) ; 
   const [seriesID, setSeriesID] = useState(null)
   const [personName, setPersonName] = useState(null)
   const [studyExportLoading, setStudyExportLoading] = useState(false)
@@ -643,7 +644,7 @@ const Dicom = () => {
     // Column = 6. Reference id 
     checkPermissionStatus('Study id') && {
       title: 'Reference id',
-      dataIndex: 'study_id',
+      dataIndex: 'refernce_id',
       className: `${
         checkPermissionStatus('Study id')
           ? 'Study-count-column'
@@ -668,9 +669,6 @@ const Dicom = () => {
         : 'column-display-none'
         }`
     },
-
-
-
 
     // Study count information
     {
@@ -905,6 +903,7 @@ const Dicom = () => {
                       onClick={() => {
                         setStudyID(record.id)
                         setIsAssignModalOpen(true)
+                        setStudyReferenceId(record?.refernce_id)
                       }}
                     />
                   </Tooltip>
@@ -1077,6 +1076,7 @@ const Dicom = () => {
         setIsAssignModalOpen={setIsAssignModalOpen}
         studyID={studyID}
         setStudyID={setStudyID}
+        studyReference = {studyReferenceId}
       />
 
       <StudyAudits

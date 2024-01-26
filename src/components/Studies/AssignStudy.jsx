@@ -27,6 +27,7 @@ const AssignStudy = ({
   setIsAssignModalOpen,
   studyID,
   setStudyID,
+  studyReference
 }) => {
   const [modalData, setModalData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -281,7 +282,7 @@ const AssignStudy = ({
             alignItems: "center",
           }}
         >
-          <div>Patient Info | StudyId {studyID}</div>
+          <div>Patient Info | Reference id : {studyReference}</div>
           <div style={{ display: "flex", gap: "20px", alignItems: "center" }}>
             {modalData.find((data) => data.name === "urgent_case")?.value
               ?.urgent_case && <Tag color="error">Urgent</Tag>}

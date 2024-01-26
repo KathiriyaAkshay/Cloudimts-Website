@@ -2581,3 +2581,11 @@ form.ant-form .ant-form-item .ant-form-item-label label{
 .study-more-details .ant-modal-content{
   height: 93vh !important;
 }
+
+// Clinical history information modal 
+
+.clinical-history-division{
+  display: flex;
+  flex-direction: row;
+  height: 90vh;
+}
