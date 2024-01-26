@@ -1,4 +1,4 @@
-import { Col, Modal, Row, Image } from "antd";
+import { Col, Modal, Row, Image, Button, Tooltip } from "antd";
 import React from "react";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -11,6 +11,7 @@ import {
   ZoomInOutlined,
   ZoomOutOutlined,
 } from '@ant-design/icons';
+import PDFOptionIcon from "../../assets/images/pdf-file.png" ; 
 
 const ImageCarousel = ({
   studyImages,
@@ -20,24 +21,47 @@ const ImageCarousel = ({
   studyData,
 }) => {
 
-  const onDownload = () => {
-    fetch(src)
-      .then((response) => response.blob())
-      .then((blob) => {
-        const url = URL.createObjectURL(new Blob([blob]));
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = 'image.png';
-        document.body.appendChild(link);
-        link.click();
-        URL.revokeObjectURL(url);
-        link.remove();
-    });
+  console.log(studyImages);
+
+  function isPDF(url) {
+    const fileExtension = url.split('.').pop().toLowerCase();
+    return fileExtension === 'pdf';
+  }
+
+  function getFileNameFromURL(url) {
+    // Extract the last part of the URL after the last slash
+    const pathSegments = url.split('/');
+    const lastSegment = pathSegments[pathSegments.length - 1];
+  
+    // Extract the file name using a regular expression to remove query parameters
+    const fileName = lastSegment.replace(/[\?|#].*$/, '');
+  
+    return fileName;
+  }
+
+  const onDownload = (imageUrl) => {
+    // fetch(src)
+    //   .then((response) => response.blob())
+    //   .then((blob) => {
+    //     const url = URL.createObjectURL(new Blob([blob]));
+    //     const link = document.createElement('a');
+    //     link.href = url;
+    //     link.download = 'image.png';
+    //     document.body.appendChild(link);
+    //     link.click();
+    //     URL.revokeObjectURL(url);
+    //     link.remove();
+    // });
+
+    const link = document.createElement('a');
+    link.href = imageUrl;
+    link.target = "_blank" ; 
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
   return (
 
-    // Simplified report view option modal 
-    
     <Modal
       title={showStudyData ? "Normal Report" : "Study Images"}
       open={show}
@@ -90,8 +114,15 @@ const ImageCarousel = ({
         >
           {studyImages?.map((image) => (
             <>
+
+              <Tooltip title = {getFileNameFromURL(image)}>
+                <Button style={{marginLeft: "auto", marginBottom: "0.50rem"}} 
+                  icon= {<DownloadOutlined/>}
+                  onClick={() => onDownload(image)}></Button>
+              </Tooltip>
+
               <Image
-                src={image}
+                src={isPDF(image)?PDFOptionIcon:image}
                 alt="image"
                 style={{ width: "500px", height: "300px" }}
                 preview={{
@@ -109,7 +140,6 @@ const ImageCarousel = ({
                       <RotateRightOutlined onClick={onRotateRight} />
                       <ZoomOutOutlined disabled={scale === 1} onClick={onZoomOut} />
                       <ZoomInOutlined disabled={scale === 50} onClick={onZoomIn} />
-                      <DownloadOutlined onClick={onDownload} />
                     </Space>
                   ),
                 }}

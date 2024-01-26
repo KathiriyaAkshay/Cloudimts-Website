@@ -13,7 +13,9 @@ import {
   Select,
   Spin,
   InputNumber,
-  Modal
+  Modal,
+  Empty,
+  Table
 } from 'antd'
 
 import { useNavigate, useParams } from 'react-router-dom'
@@ -29,18 +31,24 @@ import {
 } from '../../apis/studiesApi'
 import CustomReportHeaderGenerator from './Popup'
 
-const { Step } = Steps
+const { Step } = Steps;
 
 const AddInstitution = () => {
-  const { id } = useParams() ; 
+  const token = localStorage.getItem('token')
+  const { id } = useParams();
+
+  const navigate = useNavigate();
 
   const { changeBreadcrumbs } = useBreadcrumbs()
 
+  const [form] = Form.useForm()
+
   const [currentStep, setCurrentStep] = useState(0)
   const [tableData, setTableData] = useState([])
-  const [form] = Form.useForm()
-  const navigate = useNavigate()
-  const token = localStorage.getItem('token')
+  
+  const [chargesName, setChargesName] = useState("");
+  const [chargesId, setChargesId] = useState(0) ; 
+
   const [payload, setPayload] = useState({})
   const [isLoading, setIsLoading] = useState(false)
   const [radiologistOptions, setRadiologistOptions] = useState([])
@@ -49,34 +57,17 @@ const AddInstitution = () => {
   const [reportSettingModal, setReportSettingModal] = useState(false)
   const [institutionId, setInstitutionId] = useState(null)
 
-  useEffect(() => {
-    const crumbs = [{ name: <span style={{color:"#0052c6"}}>Institution</span>, to: '/institutions' }]
+  const [selectedRadiologists, setSelectedRadiologists] = useState([]);
+  const [selectAll, setSelectAll] = useState(false);
 
-    crumbs.push({
-      name: id ? 'Edit' : 'Add'
-    })
 
-    changeBreadcrumbs(crumbs)
+  const handleChange = (selectedValues) => {
+    setSelectedRadiologists(selectedValues);
+    setSelectAll(selectedValues.length === radiologistOptions.length);
+  };
 
-      if (id) {
-        retrieveInstitutionData()
-        retrieveModalityData()
-        retrieveRadiologistData()
-      } else {
-        retrieveModalityData()
-        retrieveRadiologistData()
-      }
-}, [])
 
-  const convertToInitialObject = data => {
-    let initialObject = {}
-    for (let i = 1; i <= 47; i++) {
-      initialObject[`${i}_reporting_charge`] = data[i].reporting_charge
-      initialObject[`${i}_communication_charge`] = data[i].communication_charge
-    }
-    return initialObject
-  }
-
+  // Fetch Institution data 
   const retrieveInstitutionData = async () => {
     setIsLoading(true)
 
@@ -87,11 +78,20 @@ const AddInstitution = () => {
     )
       .then(res => {
         if (res.data.status) {
-          const modalityData = convertToInitialObject(res.data.data.modality)
+
+          // Set Moality charges information
+          let tempData = [] ; 
+          for (let key in res?.data?.data?.modality){
+            tempData.push({
+              id: key, 
+              reporting_charge: res?.data?.data?.modality[key]?.reporting_charge, 
+              communication_charge: res?.data?.data?.modality[key]?.communication_charge
+            })
+          }
+          setTableData([...tempData]) ; 
 
           const formData = {
             ...res.data.data,
-            ...modalityData,
             contract_valid_date: dayjs(res.data.data.contract_valid_date),
             radiologist: res.data?.blocked_user?.map(data => data.id),
             house_radiologist: res.data?.in_house_radiologist?.map(
@@ -104,8 +104,8 @@ const AddInstitution = () => {
               res.data.data?.report_settings?.show_patient_info?.with_border &&
               'TABLE_WITH_BORDER',
             modify_study_id: res.data?.data?.modify_study_id
-          }
-          form.setFieldsValue(formData)
+          };
+          form.setFieldsValue(formData);
         } else {
           NotificationMessage(
             'warning',
@@ -119,37 +119,18 @@ const AddInstitution = () => {
     setIsLoading(false)
   }
 
-  const retrieveModalityData = async () => { 
-    const auth = 'Bearer ' + `${token}`
-    await API.get('/institute/v1/institute-modality', {
-      headers: { Authorization: auth }
-    }).then(res => {
-      if (res.data.status) {
-        const resData = res.data.data.map(item => ({
-          ...item,
-          reporting_charge: 0,
-          communication_charge: 0
-        }))
-        setTableData(resData) 
-      } else {
-        NotificationMessage(
-          'warning',
-          'Network request failed',
-          res.data.message
-        )
-      }
-    })
-  }
-
+  // Fetch Radiologist data 
   const retrieveRadiologistData = () => {
     getRadiologistList({ role_id: localStorage.getItem('role_id') }).then(
       res => {
         if (res.data.status) {
+
           const resData = res.data.data.map(data => ({
             label: data.name,
             value: data.id
           }))
-          setRadiologistOptions(resData)
+          setRadiologistOptions(resData);
+
         } else {
           NotificationMessage(
             'warning',
@@ -161,6 +142,21 @@ const AddInstitution = () => {
     )
   }
 
+  useEffect(() => {
+    const crumbs = [{ name: <span style={{ color: "#0052c6" }}>Institution</span>, to: '/institutions' }]
+    crumbs.push({
+      name: id ? 'Edit' : 'Add'
+    });
+    changeBreadcrumbs(crumbs)
+
+    if (id) {
+      retrieveInstitutionData()
+      retrieveRadiologistData()
+    } else {
+      retrieveRadiologistData()
+    }
+  }, [])
+
   const handleNextStep = () => {
     setCurrentStep(prevStep => prevStep + 1)
   }
@@ -169,19 +165,51 @@ const AddInstitution = () => {
     setCurrentStep(prevStep => prevStep - 1)
   }
 
-  const convertToObject = data => {
-    let modifiedObject = { modality: {} }
-    for (let i = 1; i <= tableData.length; i++) {
-      modifiedObject.modality[i] = {
-        reporting_charge: data[`${i}_reporting_charge`],
-        communication_charge: data[`${i}_communication_charge`]
-      }
+  const validateInput = (rule, value, callback) => {
+    if (value !== undefined && value !== null && isNaN(value)) {
+      callback('Please enter a valid number')
+    } else {
+      callback()
     }
-    return modifiedObject
+  }
+
+  const OpenInstitutionReportSettingModal = () => {
+    setInstitutionId(id)
+    setReportSettingModal(true)
+  }
+
+  // Add new modality charges handler
+  const AddModalityDataHandler = () => {
+
+    let alreadInsert = 0 ; 
+
+    tableData.map((element) => {
+      if (element?.id === chargesName){
+        NotificationMessage(
+          "warning", 
+          "Already insert this Modality"
+        ) ; 
+          
+        alreadInsert = 1;  
+      }
+    })
+
+    if (alreadInsert == 0){
+      setTableData([...tableData, 
+        { 
+          id: chargesName, 
+          reporting_charge: 0, 
+          communication_charge: 0
+      }])
+
+      setChargesId((prev) => prev + 1) ; 
+    }
+
   }
 
   const handleSubmit = async values => {
     if (currentStep === 0) {
+
       const resData = {
         ...values,
         contract_valid_date: values.contract_valid_date.format('YYYY-MM-DD'),
@@ -192,11 +220,12 @@ const AddInstitution = () => {
         allow_offline_download: values.allow_offline_download
           ? values.allow_offline_download
           : false
-      }
-      setPayload(resData)
-      if (id) {
+      } ; 
 
-        setIsLoading(true) ; 
+      setPayload(resData)
+      
+      if (id) {
+        setIsLoading(true);
 
         await API.post(
           '/institute/v1/institute-details-update',
@@ -215,23 +244,44 @@ const AddInstitution = () => {
             }
           })
           .catch(err =>
-            NotificationMessage('warning', 'Network request failed',err?.response?.data?.message)
+            NotificationMessage('warning', 'Network request failed', err?.response?.data?.message)
           )
         setIsLoading(false)
+
       }
 
-      handleNextStep() ; 
+      handleNextStep();
 
     } else if (currentStep === 1) {
-      setPayload(prev => ({ ...prev, ...convertToObject(values) }))
       
+      // Update Modality details object 
+      let modality_details = {} ; 
+      tableData.map((element) => {
+        modality_details[element?.id] = {
+          'reporting_charge':  values[`${element?.id}_reporting_charge`] , 
+          "communication_charge": values[`${element?.id}_communication_charge`]
+        }
+      }) ; 
+
+      setPayload(prev => ({ ...prev, modality: modality_details}))
+
       if (id) {
         setIsLoading(true)
+
+        // Update Modality details object 
+        let modality_details = {} ; 
+        tableData.map((element) => {
+          modality_details[element?.id] = {
+            'reporting_charge':  values[`${element?.id}_reporting_charge`] , 
+            "communication_charge": values[`${element?.id}_communication_charge`]
+          }
+        }) ; 
+
         await API.post(
           '/institute/v1/institute-modality-update',
           {
             id: id,
-            modality_details: { ...convertToObject(values).modality }
+            modality_details: modality_details
           },
           { headers: { Authorization: `Bearer ${token}` } }
         )
@@ -304,7 +354,7 @@ const AddInstitution = () => {
           })
         setIsLoading(false)
       }
-      handleNextStep() ; 
+      handleNextStep();
 
     } else if (currentStep === 3) {
       setPayload(prev => ({
@@ -402,8 +452,8 @@ const AddInstitution = () => {
           .catch(err => {
             NotificationMessage('warning', 'Network request failed', err?.response?.data?.message)
           })
-      
-        } else {
+
+      } else {
         setIsLoading(true)
         await API.post(
           '/institute/v1/institute-create',
@@ -439,7 +489,7 @@ const AddInstitution = () => {
     setIsModalOpen(false)
   }
 
-
+  // Institution report setting column 
   const reportColumns = [
     {
       title: 'Report Options',
@@ -498,6 +548,7 @@ const AddInstitution = () => {
     }
   ]
 
+  // Institution report column data
   const reportTableData = [
     {
       report_option: 'Attach institution info to report header',
@@ -505,12 +556,7 @@ const AddInstitution = () => {
       value_field: 'switch',
       report_value: 'institution_info_header'
     },
-    {
-      report_option: 'Attach QR Code to report',
-      report_option_value: false,
-      value_field: 'switch',
-      report_value: 'attach_qr_code'
-    },
+
     {
       report_option: 'Show patient info as',
       report_option_value: '',
@@ -519,16 +565,17 @@ const AddInstitution = () => {
     },
     ...(id !== null && id !== undefined
       ? [
-          {
-            report_option: 'Report dataset',
-            report_option_value: false,
-            value_field: 'edit-option',
-            report_value: 'report_dataset_value'
-          }
-        ]
+        {
+          report_option: 'Report dataset',
+          report_option_value: false,
+          value_field: 'edit-option',
+          report_value: 'report_dataset_value'
+        }
+      ]
       : [])
   ]
 
+  // Institution upload setting column information 
   const uploadSettingsColumns = [
     {
       title: 'Upload Option',
@@ -546,6 +593,7 @@ const AddInstitution = () => {
     }
   ]
 
+  // Institution upload setting column data 
   const uploadSettingsData = [
     {
       upload_option: 'Modify Study seriesId for Re-upload ',
@@ -553,24 +601,13 @@ const AddInstitution = () => {
     }
   ]
 
-  const validateInput = (rule, value, callback) => {
-    if (value !== undefined && value !== null && isNaN(value)) {
-      callback('Please enter a valid number')
-    } else {
-      callback()
-    }
-  }
 
-  const OpenInstitutionReportSettingModal = () => {
-    setInstitutionId(id)
-    setReportSettingModal(true)
-  }
 
   return (
     <div className='secondary-table'>
-      
+
       <Card>
-      <div
+        <div
           style={{
             marginLeft: "0.7rem",
             marginBottom: "1.3rem",
@@ -583,10 +620,15 @@ const AddInstitution = () => {
             zIndex: 999,
           }}>
 
-            <div style={{ cursor: "pointer" }} onClick={() => setCurrentStep(4)}>
+          {id && (
+            <div
+              className='skip-to-last-option'
+              onClick={() => setCurrentStep(5)}>
               Skip To Last
             </div>
-          
+          )}
+
+
         </div>
         <Spin spinning={isLoading}>
           <Steps current={currentStep} className='mb'>
@@ -598,6 +640,8 @@ const AddInstitution = () => {
             <Steps title='In house Radiologist' />
           </Steps>
 
+
+          {/* Institution details information input  */}
           {currentStep === 0 && (
             <Form
               labelCol={{
@@ -609,7 +653,7 @@ const AddInstitution = () => {
               form={form}
               onFinish={handleSubmit}
               className='mt'
-              style = {{marginTop : "25px"}}
+              style={{ marginTop: "25px" }}
             >
               <Row gutter={15}>
                 <Col xs={24} sm={12} md={12} lg={6}>
@@ -668,7 +712,7 @@ const AddInstitution = () => {
                       }
                     ]}
                   >
-                    <DatePicker />
+                    <DatePicker format={"DD-MM-YYYY"} />
                   </Form.Item>
                 </Col>
                 <Col xs={24} sm={12} md={12} lg={6}>
@@ -760,28 +804,10 @@ const AddInstitution = () => {
                     <InputNumber placeholder='Enter storage allocated Limit' type='number' />
                   </Form.Item>
                 </Col>
-                <Col xs={4} sm={4} md={4} lg={2}>
-                  <Form.Item
-                    name='active_status'
-                    label='Active'
-                    valuePropName='checked'
-                  >
-                    <Switch />
-                  </Form.Item>
-                </Col>
                 <Col xs={4} sm={4} md={4} lg={3}>
                   <Form.Item
                     name='active_whatsapp'
                     label='Active Whatsapp'
-                    valuePropName='checked'
-                  >
-                    <Switch />
-                  </Form.Item>
-                </Col>
-                <Col xs={4} sm={4} md={4} lg={4}>
-                  <Form.Item
-                    name='allow_offline_download'
-                    label='Allow Offline Download'
                     valuePropName='checked'
                   >
                     <Switch />
@@ -808,9 +834,11 @@ const AddInstitution = () => {
                   )}
                 </Col>
               </Row>
+
             </Form>
           )}
 
+          {/* Institution modality charge input  */}
           {currentStep === 1 && (
             <Form
               labelCol={{
@@ -824,32 +852,45 @@ const AddInstitution = () => {
             >
               <Row>
 
+                <div className='Add_institution_charge_input_layout'>
+
+                  <Col span={16}>
+                    <Input placeholder='Enter Charges Name'
+                      value={chargesName} onChange={(e) => { setChargesName(e.target.value) }} />
+                  </Col>
+
+                  <Button style={{ marginLeft: "0.80rem" }} onClick={() => AddModalityDataHandler()}>+ Add Charge</Button>
+
+                </div>
+
                 <Col xs={24} sm={24} md={24} lg={24}>
 
-                  <div className='modality-card-wrapper' >
+                  <div className='modality-card-wrapper'>
 
                     {tableData.map((element) => {
                       return(
-                        <Card className='particular-modality-info-division' title = {element.name} style={{width: "fit-content",marginTop:"0.3rem"}} headerBg="#00ff00">
-                          
+                        <Card className='particular-modality-info-division' title={element.id} style={{ width: "fit-content", marginTop: "0.3rem" }} headerBg="#00ff00">
+
                           <div className='particular-modality-charges-title'>Reporting charge</div>
+                          
                           <Form.Item name={`${element.id}_reporting_charge`} initialValue={element.reporting_charge}>
-                            <Input />
+                            <Input type='number' />
                           </Form.Item>
 
                           <div className='particular-modality-charges-title'>Communication charge</div>
+                          
                           <Form.Item name={`${element.id}_communication_charge`} initialValue={element.communication_charge}>
-                            <Input />
+                            <Input type='number'/>
                           </Form.Item>
-                        </Card> 
-                      )
-                    })}
 
+                        </Card>
+                    )
+                    })}
                   </div>
                 </Col>
-                
+
                 <Col xs={24} sm={24} md={24} lg={24} className='justify-end mt'>
-                 
+
                   <Button type='primary' onClick={handlePrevStep}
                     className='update-button-option'>
                     Previous
@@ -879,6 +920,7 @@ const AddInstitution = () => {
             </Form>
           )}
 
+          {/* Institution report setting option input  */}
           {currentStep === 2 && (
             <Form
               labelCol={{
@@ -927,6 +969,7 @@ const AddInstitution = () => {
             </Form>
           )}
 
+          {/* Institution upload setting option input  */}
           {currentStep === 3 && (
             <Form
               labelCol={{ span: 24 }}
@@ -974,6 +1017,7 @@ const AddInstitution = () => {
             </Form>
           )}
 
+          {/* Institution blocked user input  */}
           {currentStep === 4 && (
             <Form
               labelCol={{
@@ -999,17 +1043,19 @@ const AddInstitution = () => {
                   >
                     <Select
                       placeholder='Select Radiologist'
-                      options={radiologistOptions}
                       showSearch
                       mode='multiple'
+                      options={radiologistOptions}
                       filterSort={(optionA, optionB) =>
-                        (optionA?.label ?? '')
-                          .toLowerCase()
-                          .localeCompare((optionB?.label ?? '').toLowerCase())
+                        (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
                       }
-                    />
+                      value={selectedRadiologists}
+                      onChange={handleChange}
+                    >
+                    </Select>
                   </Form.Item>
                 </Col>
+
                 <Col lg={24} md={24} sm={24} className='justify-end'>
                   <Button type='primary' onClick={handlePrevStep}
                     className='update-button-option'>
@@ -1039,6 +1085,7 @@ const AddInstitution = () => {
             </Form>
           )}
 
+          {/* Institution inhouse radiologist option input  */}
           {currentStep === 5 && (
             <Form
               labelCol={{
@@ -1082,20 +1129,22 @@ const AddInstitution = () => {
                   className='justify-end display-flex'
                 >
                   <div className='w-100 d-flex justify-content-end'>
-                  <Button type='primary' onClick={handlePrevStep}
-                    className='update-button-option' style={{marginRight:"0.4rem"}}>
-                    Previous
-                  </Button>
-                  <Button type='primary' htmlType='submit'>
-                    Submit
-                  </Button>
+                    <Button type='primary' onClick={handlePrevStep}
+                      className='update-button-option' style={{ marginRight: "0.4rem" }}>
+                      Previous
+                    </Button>
+                    <Button type='primary' htmlType='submit'>
+                      Submit
+                    </Button>
                   </div>
-                 
+
                 </Col>
               </Row>
             </Form>
           )}
+
         </Spin>
+
       </Card>
 
       <Modal

@@ -62,9 +62,7 @@ const AddUsers = () => {
   const { id } = useParams()
   const [imageFile, setImageFile] = useState(null)
   const [imageURL, setImageURL] = useState(null)
-  const [value, setValues] = useState({
-    url: undefined
-  })
+  const [value, setValues] = useState([])
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   useEffect(() => {
@@ -89,7 +87,8 @@ const AddUsers = () => {
     )
       .then(res => {
         if (res.data.status) {
-                    const instituteData = convertToInitialObject(
+
+          const instituteData = convertToInitialObject(
             res.data.data.institution_details
           )
           const modalityData = convertToInitialModalityObject(
@@ -106,10 +105,11 @@ const AddUsers = () => {
               dayjs(res.data.data.availability_end_time, 'HH:mm:ss')
             ],
             ...instituteData,
-            ...modalityData, 
+            ...modalityData,
 
           }
           form.setFieldsValue(resData)
+          setImageUrl(res?.data?.data?.profile_image);
           setImageURL(res.data.data.signature_image)
         } else {
           NotificationMessage(
@@ -252,34 +252,34 @@ const AddUsers = () => {
     setIsLoading(true)
 
     if (currentStep === 0) {
-      
-      let user_profile_image = null ; 
-      if (values?.user_profile_image?.file?.originFileObj){
+
+      let user_profile_image = null;
+      if (values?.user_profile_image?.file?.originFileObj) {
         try {
-          
+
           const fromData = {
             image: values?.user_profile_image?.file?.originFileObj
-          } ; 
-          
-          const response = await uploadImage(fromData) ; 
-          user_profile_image = response?.data?.image_url ; 
-          
+          };
+
+          const response = await uploadImage(fromData);
+          user_profile_image = response?.data?.image_url;
+
         } catch (error) {
-          NotificationMessage("warning", "Network request failed", "Failed to upload user profile image") ; 
+          NotificationMessage("warning", "Network request failed", "Failed to upload user profile image");
         }
       }
-      
+
       setIsLoading(false);
       setPayload({
         ...values,
         allow_offline_download: values.allow_offline_download
           ? values.allow_offline_download
           : false,
-        allow: values.allow ? values.allow : false, 
-        user_profile_image: user_profile_image 
+        allow: values.allow ? values.allow : false,
+        user_profile_image: user_profile_image
       })
 
-      handleNextStep(); 
+      handleNextStep();
 
     } else if (currentStep === 1) {
       setPayload(prev => ({
@@ -341,11 +341,13 @@ const AddUsers = () => {
       handleNextStep()
     } else if (currentStep === 3) {
       setIsLoading(true)
-      let signature_image = ''
-      if (values.url.file.originFileObj) {
+      let signature_image = '';
+
+      if (value?.length > 0) {
+
         try {
           const formData = {
-            image: values.url.file.originFileObj
+            image: value[0]?.url
           }
           const res = await uploadImage(formData)
           signature_image = res.data.image_url
@@ -356,7 +358,9 @@ const AddUsers = () => {
         } catch (err) {
           NotificationMessage('warning', "Network request failed", err.response.data.message)
         }
+
       }
+
       setPayload(prev => ({ ...prev, signature_image }))
       if (id) {
         await API.post(
@@ -384,7 +388,7 @@ const AddUsers = () => {
           )
       }
       setIsLoading(false)
-      handleNextStep()
+      handleNextStep();
     } else if (currentStep === 4) {
       setIsLoading(true)
       const modalityData = { ...convertModalityToObject(values) }
@@ -491,13 +495,13 @@ const AddUsers = () => {
 
   const [profileLoading, setProfileLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState();
+
   const handleProfileChange = (info) => {
     if (info.file.status === 'uploading') {
       setProfileLoading(true);
       return;
     }
     if (info.file.status === 'done') {
-      // Get this url from response in real world.
       getBase64(info.file.originFileObj, (url) => {
         setProfileLoading(false);
         setImageUrl(url);
@@ -524,8 +528,8 @@ const AddUsers = () => {
   );
 
   return (
-    <div className='secondary-table'>
-      <Card>
+    <div className='secondary-table' style={{ marginTop: "-20px" }}>
+      <Card className='user-creation-card'>
         <div
           style={{
             marginLeft: "0.7rem",
@@ -571,15 +575,13 @@ const AddUsers = () => {
               form={form}
               onFinish={handleSubmit}
               className="mt form-step-0"
-              style={{ marginTop: "20px" }}
             >
               <Row gutter={15}>
                 <Col xs={4} sm={4} md={4} lg={3}>
 
                   <Form.Item
-                    name = "user_profile_image"
+                    name="user_profile_image"
                   >
-
                     <Upload
                       name="avatar"
                       listType="picture-card"
@@ -589,8 +591,8 @@ const AddUsers = () => {
                       beforeUpload={beforeUpload}
                       onChange={handleProfileChange}
                       style={{
-                        width:"2rem",
-                        height:"1rem"
+                        width: "2rem",
+                        height: "1rem"
                       }}
                     >
                       {imageUrl ? (
@@ -605,22 +607,6 @@ const AddUsers = () => {
                         uploadButton
                       )}
                     </Upload>
-
-                  </Form.Item>
-
-
-
-
-                </Col>
-                <Col xs={4} sm={4} md={4} lg={2}>
-
-                  <Form.Item
-                    name='allow'
-                    label='Active'
-                    valuePropName='checked'
-                  >
-
-                    <Switch />
 
                   </Form.Item>
 
@@ -639,9 +625,6 @@ const AddUsers = () => {
                   </Form.Item>
 
                 </Col>
-
-
-
 
                 <Col xs={24} sm={12} md={12} lg={8}>
                   <Form.Item
@@ -1044,7 +1027,6 @@ const AddUsers = () => {
                     imageURL={imageURL}
                   />
                 </Col>
-
 
                 <Col
                   lg={24}

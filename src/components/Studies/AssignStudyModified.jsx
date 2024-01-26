@@ -20,7 +20,7 @@ const AssignStudyModified = ({
   const [isLoading, setIsLoading] = useState(false);
   const [options, setOptions] = useState([]);
   const [form] = Form.useForm();
-  const { studyIdArray, setStudyIdArray } = useContext(StudyIdContext) ; 
+  const { studyIdArray, setStudyIdArray, studyReferenceIdArray } = useContext(StudyIdContext) ; 
 
   // Fetch radiologist name based on Institution id
 
@@ -73,6 +73,7 @@ const AssignStudyModified = ({
 
   return (
     <Modal
+      className="quick-assign-study-modal"
       title="Quick Assign study"  
       open={isAssignModifiedModalOpen}
       centered
@@ -85,6 +86,7 @@ const AssignStudyModified = ({
         form.resetFields();
       }}
       width={"40%"}
+      
     >
       <Spin spinning={isLoading}>
         <div
@@ -99,13 +101,13 @@ const AssignStudyModified = ({
             alignItems: "center",
           }}
         >
-          <div>Assign Studyid</div>
+          <div>Reference ids</div>
         </div>
 
-        <div className="Study-modal-input-option-division"  style={{borderTop: "0px", paddingTop: 0}}>
+        <div style={{marginTop: "1rem"}}>
 
           <div className="assign_studies_all_id_list">
-            {studyIdArray.map((element) => {
+            {studyReferenceIdArray.map((element) => {
               return(
                 <div className="particular_assign_study_id_information">
                   {element}

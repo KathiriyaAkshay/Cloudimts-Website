@@ -1,15 +1,132 @@
 import { List, Modal, Spin, Tag, Typography } from "antd";
 import React, { useEffect, useState } from "react";
 import { getMoreDetails } from "../../apis/studiesApi";
+import NotificationMessage from "../NotificationMessage";
 
 const PatientDetails = ({
   isStudyModalOpen,
   setIsStudyModalOpen,
   studyID,
   setStudyID,
+  referenceId
 }) => {
   const [modalData, setModalData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+
+  // Function reterive study more details information 
+  const retrieveStudyData = () => {
+    setIsLoading(true);
+    getMoreDetails({ id: studyID })
+      .then((res) => {
+        if (res.data.status) {
+          const resData = res.data.data;
+          const modifiedData = [
+            {
+              name: "Patient's Id",
+              value: resData?.Patient_id,
+            },
+            {
+              name: "Referring Physician Name",
+              value: resData?.Referring_physician_name,
+            },
+            {
+              name: "Patient's Name",
+              value: resData?.Patient_name,
+            },
+            {
+              name: "Performing Physician Name",
+              value: resData?.Performing_physician_name,
+            },
+            {
+              name: "Previous Patient's Id",
+              value: resData?.Previous_patient_id,
+            },
+
+            {
+              name: "Assign study time",
+              value: resData?.study_assign_time
+            },
+
+            {
+              name: "Assign study username",
+              value: resData?.study_assign_username
+            },
+
+            {
+              name: "Accession Number",
+              value: resData?.Accession_number,
+            },
+            {
+              name: "Previous Patient's Name",
+              value: resData?.Previous_patient_name,
+            },
+            {
+              name: "Modality",
+              value: resData?.Modality,
+            },
+            {
+              name: "Gender",
+              value: resData?.Gender,
+            },
+
+            {
+              name: "Date of birth",
+              value: resData?.DOB,
+            },
+            {
+              name: "Study Description",
+              value: resData?.Study_description,
+            },
+            {
+              name: "Institution Name",
+              value: resData?.institution?.Institution_name,
+            },
+            {
+              name: "Body Part",
+              value: resData?.Study_body_part,
+            },
+            {
+              name: "Created At",
+              value: resData?.Created_at,
+            },
+            {
+              name: "Reporting Time",
+              value: resData?.reporting_time,
+            },
+            {
+              name: "Urgent Case",
+              value: resData?.urgent_case,
+            },
+            {
+              name: "Study UID",
+              value: resData?.Study_UID,
+            },
+            {
+              name: "Series UID",
+              value: resData?.Series_UID,
+            },
+            {
+              name: "Patient's comments",
+              value: resData?.Patient_comments,
+            },
+          ];
+          setModalData(modifiedData);
+        } else {
+          NotificationMessage(
+            'warning',
+            'Study more details',
+            res.data.message
+          )
+        }
+      })
+      .catch((err) => NotificationMessage(
+        'warning',
+        'Study more details',
+        err.response.data.message
+      )
+      );
+    setIsLoading(false);
+  };
 
   useEffect(() => {
     if (studyID && isStudyModalOpen) {
@@ -17,119 +134,6 @@ const PatientDetails = ({
     }
   }, [studyID]);
 
-  const retrieveStudyData = () => {
-    setIsLoading(true);
-    getMoreDetails({ id: studyID })
-      .then((res) => {
-         if (res.data.status) {
-        const resData = res.data.data;
-        const modifiedData = [
-          {
-            name: "Patient's Id",
-            value: resData?.Patient_id,
-          },
-          {
-            name: "Referring Physician Name",
-            value: resData?.Referring_physician_name,
-          },
-          {
-            name: "Patient's Name",
-            value: resData?.Patient_name,
-          },
-          {
-            name: "Performing Physician Name",
-            value: resData?.Performing_physician_name,
-          },
-          {
-            name: "Previous Patient's Id",
-            value: resData?.Previous_patient_id,
-          },
-          
-          {
-            name: "Assign study time", 
-            value: resData?.study_assign_time
-          }, 
-
-          {
-            name: "Assign study username", 
-            value: resData?.study_assign_username
-          }, 
-
-          {
-            name: "Accession Number",
-            value: resData?.Accession_number,
-          },
-          {
-            name: "Previous Patient's Name",
-            value: resData?.Previous_patient_name,
-          },
-          {
-            name: "Modality",
-            value: resData?.Modality,
-          },
-          {
-            name: "Gender",
-            value: resData?.Gender,
-          },
- 
-          {
-            name: "Date of birth",
-            value: resData?.DOB,
-          },
-          {
-            name: "Study Description",
-            value: resData?.Study_description,
-          },
-          {
-            name: "Institution Name",
-            value: resData?.institution?.Institution_name,
-          },
-          {
-            name: "Body Part",
-            value: resData?.Study_body_part,
-          },
-          {
-            name: "Created At",
-            value: resData?.Created_at,
-          },
-          {
-            name: "Reporting Time",
-            value: resData?.reporting_time,
-          },
-          {
-            name: "Urgent Case",
-            value: resData?.urgent_case,
-          },
-          {
-            name: "Study UID",
-            value: resData?.Study_UID,
-          },
-          {
-            name: "Series UID",
-            value: resData?.Series_UID,
-          },
-          {
-            name: "Patient's comments",
-            value: resData?.Patient_comments,
-          },  
-        ];
-        setModalData(modifiedData);
-         } else {
-          NotificationMessage(
-            'warning',
-            'Network request failed',
-            res.data.message
-          )
-        }
-      })
-      .catch((err) => NotificationMessage(
-  'warning',
-  'Network request failed',
-  err.response.data.message
-)
-);
-    setIsLoading(false);
-  };
   return (
     <Modal
       title="Patient Details"
@@ -144,7 +148,8 @@ const PatientDetails = ({
       }}
       width={1000}
       centered
-      footer = {null}
+      footer={null}
+      className="study-more-details"
     >
       <Spin spinning={isLoading}>
         <div
@@ -159,8 +164,8 @@ const PatientDetails = ({
             alignItems: "center",
           }}
         >
-          <div>Patient Info | StudyId {studyID}</div>
-          <div style={{ display: "flex", gap: "20px", alignItems: "center",flexWrap:"wrap" }}>
+          <div>Patient Info | Reference id : {referenceId}</div>
+          <div style={{ display: "flex", gap: "20px", alignItems: "center", flexWrap: "wrap" }}>
             {modalData.find((data) => data.name === "Urgent Case")?.value && (
               <Tag color="error">Urgent</Tag>
             )}
@@ -177,16 +182,16 @@ const PatientDetails = ({
           renderItem={(item) => (
             <List.Item className="queue-number-list">
               <Typography
-                style={{ display: "flex", gap: "4px", fontWeight: "600",flexWrap:"wrap" }}
+                style={{ display: "flex", gap: "4px", fontWeight: "600", flexWrap: "wrap" }}
               >
                 {item.name}:
                 {item.name === "Patient's id" ||
-                item.name === "Patient's Name" ||
-                item.name === "Study UID" ||
-                item.name === "Institution Name" ||
-                item.name === "Series UID" || 
-                item.name === "Assign study time" || 
-                item.name === "Assign study username"? (
+                  item.name === "Patient's Name" ||
+                  item.name === "Study UID" ||
+                  item.name === "Institution Name" ||
+                  item.name === "Series UID" ||
+                  item.name === "Assign study time" ||
+                  item.name === "Assign study username" ? (
                   <Tag color="#87d068">{item.value}</Tag>
                 ) : (
                   <Typography style={{ fontWeight: "400" }}>

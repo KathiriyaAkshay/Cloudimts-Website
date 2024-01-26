@@ -1,22 +1,55 @@
-import { Button, Col, DatePicker, Form, Input, Modal, Row } from "antd";
+import { Button, Col, DatePicker, Form, Input, Modal, Row, Select } from "antd";
 import React, { useContext, useEffect } from "react";
 import { filterDataContext } from "../hooks/filterDataContext";
 import { FilterSelectedContext } from "../hooks/filterSelectedContext";
+import NotificationMessage from "./NotificationMessage";
+import { useState } from "react";
+import API from "../apis/getApi";
 
-const QuickFilterModal = ({
-  name,
-  retrieveStudyData,
-  quickFilterStudyData,
-}) => {
+const QuickFilterModal = ({ name, retrieveStudyData, quickFilterStudyData }) => {
 
-  const { isStudyFilterModalOpen, setIsStudyFilterModalOpen } =useContext(filterDataContext);
+  const { isStudyFilterModalOpen, setIsStudyFilterModalOpen } = useContext(filterDataContext);
+  const { setIsFilterSelected, setIsAdvanceSearchSelected, isFilterSelected } = useContext(FilterSelectedContext);
+
   const [form] = Form.useForm();
 
-  const { setIsFilterSelected, setIsAdvanceSearchSelected, isFilterSelected, isAdvanceSearchSelected } = useContext(FilterSelectedContext);
+  const [institutionOptions, setInstitutionOptions] = useState([])
+
+  const retrieveInstitutionData = async () => {
+    const token = localStorage.getItem('token');
+    await API.get('/user/v1/fetch-institution-list', {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then(res => {
+        if (res.data.status) {
+          const resData = res.data.data.map(item => ({
+            // ...item,
+            label: item.name,
+            value: item.name
+          }))
+          setInstitutionOptions(resData)
+        } else {
+          NotificationMessage(
+            'warning',
+            'Quick Filter',
+            res.data.message
+          )
+        }
+      })
+      .catch(err =>
+        NotificationMessage(
+          'warning',
+          'Quick Filter',
+          err.response.data.message
+        )
+      )
+  }
 
   useEffect(() => {
-    setIsFilterSelected(false);
-  }, []);
+    if (isStudyFilterModalOpen) {
+      retrieveInstitutionData();
+    }
+  }, [isStudyFilterModalOpen]);
 
   const handleSubmit = (values) => {
     quickFilterStudyData({ page: 1 }, values);
@@ -39,7 +72,7 @@ const QuickFilterModal = ({
       footer={[
 
         // ==== Cancel option ==== 
-        
+
         <Button
           key="back"
           onClick={() => {
@@ -64,7 +97,7 @@ const QuickFilterModal = ({
         </Button>,
 
         // ==== Apply filter option 
-        
+
         <Button key="submit" type="primary" onClick={() => form.submit()}>
           Apply
         </Button>,
@@ -160,17 +193,19 @@ const QuickFilterModal = ({
 
           <Col xs={24} lg={12}>
             <Form.Item
-              name="institution__name__icontains"
+              name="institution__name"
               label="Institution Name"
               rules={[
                 {
                   required: false,
-                  whitespace: true,
                   message: "Please enter Institution Name",
                 },
               ]}
             >
-              <Input placeholder="Enter Institution Name" />
+              <Select
+                placeholder='Select Institution'
+                options={institutionOptions}
+              />
             </Form.Item>
           </Col>
 
@@ -190,8 +225,11 @@ const QuickFilterModal = ({
               <DatePicker format={"DD-MM-YYYY"} />
             </Form.Item>
           </Col>
+
         </Row>
+
       </Form>
+
     </Modal>
   );
 };

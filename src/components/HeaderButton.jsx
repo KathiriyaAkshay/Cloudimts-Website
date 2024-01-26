@@ -216,17 +216,97 @@ const HeaderButton = ({
     })
   }
 
+  // ===== Filter list ===== // 
+
   const content = (
+
     <Collapse
       bordered={true}
       expandIconPosition='end'
       className='setting-main-div'
       accordion
     >
+
+      {/* ===== System filter list =====  */}
+
       <Collapse.Panel
-        header='Filters'
+        header='Normal filter'
+        key='2'
+        className='setting-panel mb-0  normal-filter-option-list'
+      >
+        {systemFilters?.map(data => (
+          <div key={data?.key}>
+            <Checkbox
+              name={data?.label}
+              key={data?.key}
+              checked={isSystemFilterChecked === data?.key}
+              onClick={() => {
+                setIsFilterChecked(null)
+                setIsSystemFilterChecked(data?.key)
+                if (data?.key === isSystemFilterChecked) {
+                  setIsSystemFilterChecked(null)
+                  setSystemFilterPayload({})
+                } else {
+                  const option = data?.key?.split(' ')[0]
+                  const filterOption = data?.key?.split(' ')[1]
+                  setSystemFilterPayload({
+                    option,
+                    page_number: 1,
+                    page_size: 10,
+                    deleted_skip: false,
+                    filter:
+                      filterOption !== 'undefined'
+                        ? {
+                            status__icontains: filterOption
+                          }
+                        : {},
+                    all_premission_id: JSON.parse(
+                      localStorage.getItem('all_permission_id')
+                    ),
+                    all_assign_id: JSON.parse(
+                      localStorage.getItem('all_assign_id')
+                    )
+                  })
+                  applySystemFilter(
+                    {
+                      option,
+                      page_number: 1,
+                      page_size: 10,
+                      deleted_skip: false,
+                      filter:
+                        filterOption !== 'undefined'
+                          ? {
+                              status__icontains: filterOption
+                            }
+                          : {},
+                      all_premission_id: JSON.parse(
+                        localStorage.getItem('all_permission_id')
+                      ),
+                      all_assign_id: JSON.parse(
+                        localStorage.getItem('all_assign_id')
+                      )
+                    },
+                    setStudyData
+                  )
+                }
+                setStudyDataPayload({})
+                setIsAdvanceSearchSelected(false)
+              }}
+            >
+              {data?.label}
+            </Checkbox>
+          </div>
+        ))}
+        
+      </Collapse.Panel>
+      
+      {/* ===== Owner added filter list ======  */}
+
+      <Collapse.Panel
+        style={{marginTop: "0.60rem"}}
+        header='Other filters'
         key='1'
-        className='setting-panel mb-0 admin-panel-filter-option-list'
+        className='setting-panel mb-0 mt-3 admin-panel-filter-option-list'
       >
         {filterOptions?.map(data => (
           <div 
@@ -298,77 +378,8 @@ const HeaderButton = ({
           </>
         )}
       </Collapse.Panel>
-
-      <Collapse.Panel
-        header='Normmal filter'
-        key='2'
-        className='setting-panel mb-0  normal-filter-option-list'
-      >
-        {systemFilters?.map(data => (
-          <div key={data?.key}>
-            <Checkbox
-              name={data?.label}
-              key={data?.key}
-              checked={isSystemFilterChecked === data?.key}
-              onClick={() => {
-                setIsFilterChecked(null)
-                setIsSystemFilterChecked(data?.key)
-                if (data?.key === isSystemFilterChecked) {
-                  setIsSystemFilterChecked(null)
-                  setSystemFilterPayload({})
-                } else {
-                  const option = data?.key?.split(' ')[0]
-                  const filterOption = data?.key?.split(' ')[1]
-                  setSystemFilterPayload({
-                    option,
-                    page_number: 1,
-                    page_size: 10,
-                    deleted_skip: false,
-                    filter:
-                      filterOption !== 'undefined'
-                        ? {
-                            status__icontains: filterOption
-                          }
-                        : {},
-                    all_premission_id: JSON.parse(
-                      localStorage.getItem('all_permission_id')
-                    ),
-                    all_assign_id: JSON.parse(
-                      localStorage.getItem('all_assign_id')
-                    )
-                  })
-                  applySystemFilter(
-                    {
-                      option,
-                      page_number: 1,
-                      page_size: 10,
-                      deleted_skip: false,
-                      filter:
-                        filterOption !== 'undefined'
-                          ? {
-                              status__icontains: filterOption
-                            }
-                          : {},
-                      all_premission_id: JSON.parse(
-                        localStorage.getItem('all_permission_id')
-                      ),
-                      all_assign_id: JSON.parse(
-                        localStorage.getItem('all_assign_id')
-                      )
-                    },
-                    setStudyData
-                  )
-                }
-                setStudyDataPayload({})
-                setIsAdvanceSearchSelected(false)
-              }}
-            >
-              {data?.label}
-            </Checkbox>
-          </div>
-        ))}
-      </Collapse.Panel>
     </Collapse>
+  
   )
 
   return (
@@ -491,10 +502,13 @@ const HeaderButton = ({
             )}
         </div>
       )}
+      
+      {/* ====== Study page ======  */}
+
       {window.location.pathname === '/studies' && (
         <div className='iod-setting-div'>
 
-          {/* ==== Delete study option ====  */}
+          {/* Option1 === Delete Study  */}
 
           <Popconfirm
             title = "Delete study"
@@ -512,7 +526,7 @@ const HeaderButton = ({
           </Popconfirm>
 
 
-          {/* ==== Reload option ====  */}
+          {/* Option2 === Reload Study  */}
 
           <Popconfirm
             title = "Reload page"
@@ -528,7 +542,7 @@ const HeaderButton = ({
             </Button>
           </Popconfirm>
 
-          {/* ===== OHIF Viwer option =====  */}
+          {/* Option3 ==== OHIF Viewer  */}
 
           {studyIdArray.length === 1 && (
             <Button onClick={OpenOHIFViwerOptionHandler}>
@@ -538,8 +552,7 @@ const HeaderButton = ({
 
           )}
 
-
-          {/* ==== Study export option ====  */}
+          {/* Option4 ==== Study Export option  */}
 
           <Button
             type='export'
@@ -551,7 +564,8 @@ const HeaderButton = ({
             <ExportOutlined style={{marginRight:"0.4rem"}}/> Study Export
           </Button>
 
-          {/* ==== Assign study option division =====  */}
+          {/* Option5 ==== Assign Study option  */}
+          
           <Button
             type='primary'
             onClick={() => QuickAssignStudyModalHandler()}
@@ -559,8 +573,8 @@ const HeaderButton = ({
             Assign study
           </Button>
 
-          {/* ==== Advance search option ====  */}
-
+          {/* Option6 ==== Advance search filter option  */}
+        
           <Button
             type='primary'
             className={`btn-icon-div ${
@@ -572,7 +586,7 @@ const HeaderButton = ({
             Advance search
           </Button>
 
-          {/* ==== Quick Filter option ====  */}
+          {/* Option7 ==== Quick Search filter option  */}
 
           <Button
             type='primary'
@@ -582,7 +596,7 @@ const HeaderButton = ({
             <FilterOutlined style={{ fontWeight: '500' }} /> Quick filter
           </Button>
 
-          {/* ==== Filter option ====  */}
+          {/* Option8 ==== Normal filter option  */}
 
           <div style={{ position: 'relative' }}>
             <Popover
@@ -606,13 +620,14 @@ const HeaderButton = ({
             </Popover>
           </div>
 
-          {/* ==== Study logs option ====  */}
+          {/* Option9 ==== Study logs information  */}
 
           <Button type='primary' onClick={() => navigate('/study-logs')}>
             Study logs
           </Button>
         </div>
       )}
+
       {window.location.pathname === '/reports' && (
         <div className='iod-setting-div'>
           <Button

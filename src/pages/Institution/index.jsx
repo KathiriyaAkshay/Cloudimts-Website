@@ -232,12 +232,7 @@ const Institution = () => {
           : 'column-display-none'
       }`
     },
-    
-    {
-      title: 'Country',
-      dataIndex: 'country'
-    },
-    
+        
     {
       title: 'Allocated Storage',
       dataIndex: 'allocated_storage'
@@ -315,9 +310,11 @@ const Institution = () => {
       width: window.innerWidth < 650 ? '1%' : '10%',
       render: (_, record) => (
         <Space style={{ display: "flex", justifyContent: "space-evenly" }}>
+          
           <EditActionIcon
             editActionHandler={() => editActionHandler(record.id)}
           />
+
           <Tooltip title={"View Logs"}>
             <EyeFilled
               className="action-icon action-icon-primary"
@@ -376,7 +373,8 @@ const Institution = () => {
     {
       title: 'Time',
       dataIndex: 'time', 
-      width: 25
+      width: 25,
+      render: (text, record) => convertToDDMMYYYY(record?.time)
     }
   ]
 
@@ -402,7 +400,7 @@ const Institution = () => {
         placement="right"
         onClose={() => setIsDrawerOpen(false)}
         open={isDrawerOpen}
-        width={700}
+        width={900}
         className='Institution-logs-table'
       >
         <TableWithFilter tableData={logsData} tableColumns={logsColumn} />

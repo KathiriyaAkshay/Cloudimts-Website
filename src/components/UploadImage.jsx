@@ -1,18 +1,24 @@
 import { DeleteOutlined, InboxOutlined } from "@ant-design/icons";
-import { Col, Form, Image, Input, Modal, Row } from "antd";
+import { Col, Form, Image, Input, Modal, Row, Button, Tooltip } from "antd";
 import Dragger from "antd/es/upload/Dragger";
 import React, { useEffect, useState } from "react";
 import { dummyRequest, getBase64 } from "../helpers/utils";
+import PDFFileIcon from "../assets/images/pdf-file.png" ; 
+import { DownloadOutlined } from "@ant-design/icons";
 
 const UploadImage = ({
   imageFile,
   setImageFile,
-  values,
   setValues,
   imageURL,
   multipleImage,
   multipleImageFile,
+  setMultipleImageFile
 }) => {
+
+  console.log("Multiple image file information =====>");
+  console.log(multipleImageFile);
+
   const [file, setFile] = useState(imageURL);
   const [imageUploadError, setImageUploadError] = useState("");
   const [imageLoaded, setImageLoaded] = useState(false);
@@ -20,28 +26,14 @@ const UploadImage = ({
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewTitle, setPreviewTitle] = useState("");
 
-  const beforeUpload = (file) => {
-    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
-    if (!isJpgOrPng) {
-      message.error('You can only upload JPG/PNG file!');
-      setImageUploadError('error')
-      return false;
-    }
-    const isLt2M = file.size / 1024 / 1024 < 2;
-    if (!isLt2M) {
-      message.error('Image must smaller than 2MB!');
-      setImageUploadError('error');
-      return false;
-    }
-    return true;
-  };
-
   useEffect(() => {
     setFile(imageURL);
   }, [imageURL]);
+  
   const handleImagePreviewCancel = () => setPreviewOpen((prev) => false);
+
+  // Image Preview option handle 
   const handleImagePreview = async (file) => {
-    console.log(imageUploadError);
     if (
       !imageUploadError ||
       imageUploadError === "" ||
@@ -58,6 +50,42 @@ const UploadImage = ({
     }
   };
 
+  // Check Particular URL stand for PDF or not 
+  function isPDF(url) {
+    const fileExtension = url.split('.').pop().toLowerCase();
+    return fileExtension === 'pdf';
+  }
+
+  function getFileNameFromURL(url) {
+    // Extract the last part of the URL after the last slash
+    const pathSegments = url.split('/');
+    const lastSegment = pathSegments[pathSegments.length - 1];
+  
+    // Extract the file name using a regular expression to remove query parameters
+    const fileName = lastSegment.replace(/[\?|#].*$/, '');
+  
+    return fileName;
+  }
+
+  // Download option button handler
+  const handleDownload = (imageUrl) => {
+    const link = document.createElement('a');
+    link.href = imageUrl;
+    link.target = "_blank" ; 
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  // Delete option handler 
+
+  const DeleteOptionHandler = (data) => {
+    const newArray = multipleImageFile.filter(url => url !== data);
+    setMultipleImageFile(newArray)
+
+  }
+
+
   return (
     <>
       <Form.Item
@@ -69,39 +97,118 @@ const UploadImage = ({
         valuePropName="value1"
         preserve={false}
       >
+        {file && (
+          <Row
+            className="ant-upload-list-item"
+            style={{ gap: "20px", marginBottom: "20px" }}
+            align="middle"
+          >
+            <>
+              <Image
+                style={{ width: "100px", height: "100px" }}
+                src={file}
+                onLoad={() => setImageLoaded(true)}
+                alt="file"
+              />
+            </>
+          </Row>
+        )}
+
+        <div>
+          {multipleImageFile?.length > 0 && (
+            <Row className="ant-upload-list-item">
+              {multipleImageFile.map((data) => (
+
+                isPDF(data)?<>
+                  <Col xs={4} className="Report-reference-document">
+
+                    <div className="Reference-option-button-layout">
+
+                      <Tooltip title = {getFileNameFromURL(data)}>
+                        <Button danger className="Reference-download-option-button"
+                          icon = {<DeleteOutlined/>}
+                          onClick={() => DeleteOptionHandler(data)}>
+                        </Button>
+                      </Tooltip>
+
+                      <Tooltip title = {getFileNameFromURL(data)}>
+                        <Button type="primary" className="Reference-download-option-button"
+                          icon = {<DownloadOutlined/>}
+                          onClick={() => handleDownload(data)}>
+                        </Button>
+                      </Tooltip>
+                    </div>
+
+                    <Image
+                      style={{ width: "100px", height: "100px" }}
+                      src={PDFFileIcon}
+                      onLoad={() => setImageLoaded(true)}
+                      alt="file"
+                      className="Reference-image"
+                    />
+                  </Col>
+
+                </>:<>
+                  <Col xs={4} className="Report-reference-document">
+
+                    <div className="Reference-option-button-layout">
+
+                      <Tooltip title = {getFileNameFromURL(data)}>
+                        <Button danger className="Reference-download-option-button"
+                          icon = {<DeleteOutlined/>}
+                          onClick={() => DeleteOptionHandler(data)}>
+                        </Button>
+                      </Tooltip>
+
+                      <Tooltip title = {getFileNameFromURL(data)}>
+                        <Button type="primary" className="Reference-download-option-button"
+                          icon = {<DownloadOutlined/>}
+                          onClick={() => handleDownload(data)}>
+                        </Button>
+                      </Tooltip>
+
+                    </div>
+
+                    <Image
+                      style={{ width: "100px", height: "100px" }}
+                      src={data}
+                      onLoad={() => setImageLoaded(true)}
+                      alt="file"
+                      className="Reference-image"
+                    />
+                  </Col>
+                </>
+              ))}
+            </Row>
+          )}
+        </div>
+
         <Dragger
           name="url"
           multiple={multipleImage ? true : false}
-          accept=".png, .jpeg, .jpg"
+          accept=".png,.jpeg,.jpg,.pdf,.docx"
           listType="picture-card"
           maxCount={multipleImage ? 10 : 1}
           customRequest={dummyRequest}
           onPreview={handleImagePreview}
-          onDrop={(_) => {}}
+          onDrop={(_) => { }}
           onChange={(info, _) => {
             switch (info.file.status) {
-              case "error" :
+              case "error":
                 console.log(info.file.status);
                 setImageUploadError(info.file.response);
-                // NotificationMessage("error", info.file.response);
                 break;
               case "uploading":
                 break;
               case "done":
                 setImageUploadError("");
-                setFile();
-                setValues((prev) => ({
+                // setFile(info?.file);
+                setValues((prev) => ([
                   ...prev,
-                  url: imageFile,
-                }));
+                  {url: info?.file?.originFileObj}
+                ]));
                 break;
               case "removed":
-                setImageUploadError("");
-                setValues((prev) => ({
-                  ...prev,
-                  url: undefined,
-                }));
-                setImageFile();
                 break;
               default:
                 console.log("rer");
@@ -113,40 +220,14 @@ const UploadImage = ({
           </p>
           <p className="ant-upload-text">Drag & drop files or Browse</p>
           <p className="ant-upload-hint">
-            Supported formates: JPG, JPEG, PNG, SVG
+            Supported formates: JPG, JPEG, PNG, PDF, DOCX
           </p>
         </Dragger>
+
       </Form.Item>
-      {file && (
-        <Row
-          className="ant-upload-list-item"
-          style={{ gap: "20px", marginBottom: "20px" }}
-          align="middle"
-        >
-          <>
-            <Image
-              style={{ width: "100px", height: "100px" }}
-              src={file}
-              onLoad={() => setImageLoaded(true)}
-              alt="file"
-            />
-          </>
-        </Row>
-      )}
-      {multipleImageFile?.length > 0 && (
-        <Row className="ant-upload-list-item">
-          {multipleImageFile.map((data) => (
-            <Col xs={6}>
-              <Image
-                style={{ width: "100px", height: "100px" }}
-                src={data}
-                onLoad={() => setImageLoaded(true)}
-                alt="file"
-              />
-            </Col>
-          ))}
-        </Row>
-      )}
+      
+      {/* Image preview modal  */}
+
       <Modal
         open={previewOpen}
         onCancel={handleImagePreviewCancel}

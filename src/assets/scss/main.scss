@@ -1319,29 +1319,54 @@
 }
 
 .study-modal-patient-info-layout {
-  height: 31vh;
+  height: 69vh;
   overflow-y: auto;
   overflow-x: hidden;
-}
+} 
 
 .Assign-study-upload-option-input-layout {
   display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+}
+
+.Assign-study-reports-option-input-layout{
+  display: flex;
   flex-direction: row;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .Assign-study-specific-option {
-  width: 50%;
+  width: 95%;
   padding-left: 0.8rem;
   padding-right: 0.8rem;
 }
 
+.study-modal-patient-audit-info-layout{
+  height:14rem;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.edit-study-id-input-layout{
+  display: flex;
+  flex-direction: column;
+}
+
 .Study-modal-input-option-division {
   padding-top: 1rem;
-  border-top: 1px solid #c4c4c4;
+  border-left: 1px solid #c4c4c4;
   margin-top: 1rem;
   overflow-x: auto;
-  height: 45vh;
-}
+  height: 69vh !important;}
+
+.Study-edit-series-id-division {
+    padding-top: 1rem;
+    border-top: 1px solid #c4c4c4;
+    margin-top: 1rem;
+    overflow-x: auto;
+  }
 
 .assign-study-modal {
   height: 95vh !important;
@@ -2309,8 +2334,11 @@ margin-top: 8px !important;
 .ohif-viwer-option-icon{
   height: 16px;
   width: 16px;
-  margin-top: auto;
-  margin-bottom: auto;
+}
+
+.Weasis-viewer-option-icon{
+  height: 20px;
+  width: 20px;
 }
 
 .Advance-view-report-layout .ant-card-body{
@@ -2332,7 +2360,7 @@ label[for="study_description"]{
   flex-direction:row;
   flex-wrap: wrap;
   overflow-y: auto;
-  height:67vh;
+  height:58vh;
   justify-content:space-between;
   align-items:center;
   justify-content: center;
@@ -2365,7 +2393,8 @@ label[for="study_description"]{
 
 .clinical-history-modal{
   .ant-modal-content{
-    height: 95vh
+    height: 95vh;
+    // overflow-x: auto;
   }
 }
 
@@ -2561,4 +2590,82 @@ form.ant-form .ant-form-item .ant-form-item-label label{
   border-color: #00ad68 !important;
   background-color: white !important;
   color:#00ad68 !important;
+}
+
+.ant-tag{
+  border-radius: 10px !important;
+}
+
+// Skip to last option 
+
+.skip-to-last-option{
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.skip-to-last-option:hover{
+  color: #003b55;
+}
+
+.study-more-details .ant-modal-content{
+  height: 93vh !important;
+}
+
+// Clinical history information modal 
+
+.clinical-history-division{
+  display: flex;
+  flex-direction: row;
+  height: 90vh;
+}
+
+// Add Institution reporting charge input information 
+
+.Add_institution_charge_input_layout{
+  display: flex;
+  flex-direction:row;
+  padding-top: 0.80rem;
+  padding-bottom: 0.80rem;
+}
+
+// Quick assign study modal
+
+.quick-assign-study-modal .ant-modal-body{
+  height: 35vh !important;
+  overflow-y: hidden !important;
+}
+
+.Report-reference-document{
+  margin-bottom: 0.8rem;
+  margin-top: 0.5rem;
+  margin-right: 0.8rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.Reference-option-button-layout{
+  justify-content: right;
+  text-align: right;
+  margin-bottom: -1.2rem;
+  z-index: 100;
+}
+
+.Reference-download-option-button{
+  margin-bottom: 0.7rem;
+  margin-left: auto;
+  margin-left: 0.5rem;
+  z-index: 100;
+}
+
+.Reference-image{
+  height: 5rem !important;
+}
+
+.study-more-details .ant-modal-body{
+  max-height: 87vh !important;
+}
+
+.user-creation-card{
+  max-height: 87vh !important ; 
+  overflow-y: hidden;
 }

@@ -1,7 +1,6 @@
 import {
   Col,
   Form,
-  Input,
   List,
   Modal,
   Radio,
@@ -34,7 +33,7 @@ const FileReport = ({
   const [form] = Form.useForm()
   const [imageFile, setImageFile] = useState(null)
   const [imageURL, setImageURL] = useState(null)
-  const [value, setValues] = useState({ url: undefined})
+  const [value, setValues] = useState([])
 
   // ===== Simplified report option handling ====== // 
 
@@ -77,14 +76,15 @@ const FileReport = ({
     const report_attach_data = [] ; 
 
     try {
-      for (const data of values.url.fileList) {
+
+      for (const data of value){
 
         try {
-
-          const formData = {image: data.originFileObj} ; 
+  
+          const formData = {image: data.url} ; 
           const res = await uploadImage(formData)
           report_attach_data.push(res.data.image_url)
-
+  
         } catch (err) {}
       }
     } catch (error) {

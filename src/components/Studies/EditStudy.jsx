@@ -42,7 +42,7 @@ const EditStudy = ({
         } else {
           NotificationMessage(
             'warning',
-            'Network request failed',
+            'Edit study',
             res.data.message
           )
         }
@@ -50,7 +50,7 @@ const EditStudy = ({
       .catch(err =>
         NotificationMessage(
           'warning',
-          'Network request failed',
+          'Edit study',
           err.response.data.message
         )
       )
@@ -77,7 +77,7 @@ const EditStudy = ({
         } else {
           NotificationMessage(
             'warning',
-            'Network request failed',
+            'Edit study',
             res.data.message
           )
         }
@@ -85,7 +85,7 @@ const EditStudy = ({
       .catch(err =>
         NotificationMessage(
           'warning',
-          'Network request failed',
+          'Edit study',
           err.response.data.message
         )
       )
@@ -165,7 +165,6 @@ const EditStudy = ({
                 label='Accession Number'
                 rules={[
                   {
-                    required: true,
                     whitespace: true,
                     message: 'Please enter Accession Number'
                   }
@@ -181,11 +180,6 @@ const EditStudy = ({
               <Form.Item
                 name='dob'
                 label='Date of Birth'
-                rules={[
-                  {
-                    message: 'Please enter DOB'
-                  }
-                ]}
               >
                 <DatePicker format={'DD/MM/YYYY'} />
               </Form.Item>

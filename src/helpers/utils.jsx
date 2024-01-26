@@ -9,15 +9,18 @@ export const getBase64 = (file) =>
   });
 
 export const dummyRequest = ({ file, onSuccess, onError }) => {
+
+  console.log("File type informaiton ========>");
+  console.log(file.type);
+
   if (
     file.type === "image/png" ||
     file.type === "image/jpeg" ||
     file.type === "image/jpg" ||
-    file.type === "video/mp4" ||
-    file.type === "image/svg+xml"
+    file.type === "application/pdf" 
   ) {
-    if (file.size > 1024 * 1024 * 3) {
-      onError(null, "Please select image smaller than 3 MB");
+    if (file.size > 1024 * 1024 * 5) {
+      onError(null, "Please select image smaller than 5 MB");
     } else {
       onSuccess("ok");
     }

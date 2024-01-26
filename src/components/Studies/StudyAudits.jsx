@@ -2,10 +2,11 @@ import { List, Modal, Spin, Tag, Typography } from 'antd'
 import React, { useEffect, useState } from 'react'
 import TableWithFilter from '../TableWithFilter'
 import { getStudyData, getStudyLogsData } from '../../apis/studiesApi'
-import moment from 'moment/moment'
-import { convertToDDMMYYYY } from '../../helpers/utils'
+import moment from 'moment/moment' 
+import { convertToDDMMYYYY } from '../../helpers/utils' ; 
+import NotificationMessage from '../NotificationMessage'
 
-const StudyAudits = ({ isModalOpen, setIsModalOpen, studyID, setStudyID }) => {
+const StudyAudits = ({ isModalOpen, setIsModalOpen, studyID, setStudyID, referenceId }) => {
   const [modalData, setModalData] = useState([])
   const [isLoading, setIsLoading] = useState(false)
   const [auditData, setAuditData] = useState([])
@@ -214,7 +215,7 @@ const StudyAudits = ({ isModalOpen, setIsModalOpen, studyID, setStudyID }) => {
             alignItems: 'center'
           }}
         >
-          <div>Patient Info | StudyId {studyID}</div>
+          <div>Patient Info | Reference id : {referenceId}</div>
           <div style={{ display: 'flex', gap: '20px', alignItems: 'center'}}>
             {modalData.find(data => data.name === 'urgent_case')?.value
               ?.urgent_case && <Tag color='error'>Urgent</Tag>}
@@ -227,7 +228,7 @@ const StudyAudits = ({ isModalOpen, setIsModalOpen, studyID, setStudyID }) => {
             gutter: 5,
             column: 2
           }}
-          className='queue-status-list study-modal-patient-info-layout'
+          className='queue-status-list study-modal-patient-audit-info-layout'
           dataSource={modalData?.filter(data => data.name !== 'urgent_case')}
           renderItem={item => (
             <List.Item className='queue-number-list'>

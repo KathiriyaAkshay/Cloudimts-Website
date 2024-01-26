@@ -36,7 +36,6 @@ const TableWithFilter = ({
   dashboard,
   isAuditModal,
 }) => {
-  const navigate = useNavigate();
   const [limit, setLimit] = useState(localStorage.getItem("pageSize")||10);
   const [userRole, setUserRole] = useState(null);
   const [Pagination, setPagination] = useState({

@@ -3,7 +3,8 @@ import {
   MailOutlined,
   UserOutlined,
   SyncOutlined,
-  DownloadOutlined
+  DownloadOutlined, 
+  UploadOutlined
 } from "@ant-design/icons";
 import {
   Avatar,
@@ -12,8 +13,9 @@ import {
   Row,
   Space,
   Spin,
-  Tooltip, 
-  Popconfirm
+  Tooltip,
+  Upload, 
+  message
 } from "antd";
 import { useContext, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -23,6 +25,7 @@ import { BiSupport } from "react-icons/bi";
 import APIHandler from "../apis/apiHandler";
 import NotificationMessage from "./NotificationMessage";
 import UserImage from '../assets/images/ProfileImg.png';
+import { uploadImage } from "../apis/studiesApi";
 
 const UserProfile = () => {
   const [showDrawer, setShowDrawer] = useState(false);
@@ -38,6 +41,66 @@ const UserProfile = () => {
     setShowDrawer((prev) => value);
   };
 
+  const [fileList, setFileList] = useState([]);
+  const [uploading, setUploading] = useState(false);
+
+  const handleUpload = async () => {
+
+    const formData = {
+      image: fileList[0]
+    } ; 
+
+    try {
+      
+      let response = await uploadImage(formData) ; 
+      let user_profile_image = response?.data?.image_url ; 
+       
+      let requestPayload = {"profile_image": user_profile_image} ; 
+      let responseData = await APIHandler("POST", requestPayload, "user/v1/update-user-profile") ; 
+  
+      if (responseData === false){
+  
+        message.error("Network request failed") ; 
+      
+      } else if (responseData?.status === true){
+  
+        message.success("Update profile image successfully") ; 
+        setFileList([]) ; 
+        setProfileInformation({...profileInformation, user_profile_image: user_profile_image}) ; 
+        
+      } else {
+  
+        message.warning(responseData?.message) ; 
+   
+      }
+    } catch (error) {
+      
+    }
+
+  };
+
+  const props = {
+    multiple: false, 
+    onRemove: (file) => {
+      const index = fileList.indexOf(file);
+      const newFileList = fileList.slice();
+      newFileList.splice(index, 1);
+      setFileList(newFileList);
+    },
+
+    beforeUpload: (file) => {
+      if (fileList?.length >= 1){
+        message.warning("You can only select one profile image at a time") ; 
+      } else {
+        setFileList([...fileList, file]);
+      }
+      return false;
+    },
+
+    fileList,
+  };
+
+  // Logout request option handler 
   const logoutHandler = async () => {
 
     let requestPayload = {};
@@ -65,6 +128,7 @@ const UserProfile = () => {
 
   };
 
+  // User information fetch handler 
   const ProfileInfomationOpener = async () => {
 
     setShowDrawer(true);
@@ -124,15 +188,15 @@ const UserProfile = () => {
 
           {/* ==== download option ==== */}
           <Tooltip title="Download App">
-          <Button
-          onClick={()=>{navigate("/downloads")}}
-            type="primary"
-            style={{ display: "flex", gap: "8px", alignItems: "center" }}
-          >
-          <DownloadOutlined />
-          </Button>
-  </Tooltip>
-         
+            <Button
+              onClick={() => { navigate("/downloads") }}
+              type="primary"
+              style={{ display: "flex", gap: "8px", alignItems: "center" }}
+            >
+              <DownloadOutlined />
+            </Button>
+          </Tooltip>
+
 
           {/* ==== User option icon ====  */}
 
@@ -162,52 +226,67 @@ const UserProfile = () => {
         className="User-profile-drawer"
       >
 
-        <Spin spinning={profileSpinner}>  
+        <Spin spinning={profileSpinner}>
 
-          {/* ==== Logout option ====  */}
+          {/* User image  */}
           <div style={{ width: "100%", textAlign: "center" }}>
-            <img src={UserImage} alt="user_profile" width="100px" height="100px" />
-
-          </div>
-          <div className="usermeta heading user-profile-div-first" style={{fontSize: "1rem"}}>
-              {profileInformation?.username}
+            <img src={profileInformation?.user_profile_image === null?UserImage:profileInformation?.user_profile_image} alt="user_profile" width="100px" height="100px" />
           </div>
 
+          {/* Username information  */}
+          <div className="usermeta heading user-profile-div-first" style={{ fontSize: "1rem" }}>
+            {profileInformation?.username}
+          </div>
+
+          {/* Update profile image option input  */}
+          <div style={{textAlign: "center", marginTop: "16px"}}>
+
+            <Upload {...props}>
+              <Button icon={<UploadOutlined />}>Update Profile image</Button>
+            </Upload>
+
+            <Button
+              type="primary"
+              onClick={handleUpload}
+              disabled={fileList.length === 0}
+              loading={uploading}
+              style={{
+                marginTop: 16,
+              }}
+            >
+              {uploading ? 'Uploading' : 'Update profile'}
+            </Button>
+          </div>
+
+
+          {/* User emailaddress information  */}
           <div className="usermeta heading user-profile-div-second" >
-          <MailOutlined style={{color:"black",fontSize:"1.2rem"}}/> <span className="user-profile-information-span">{profileInformation?.email}</span>
-
+            <MailOutlined style={{ color: "black", fontSize: "1.2rem" }} /> <span className="user-profile-information-span">{profileInformation?.email}</span>
           </div>
+
+          {/* Account create time information  */}
           <div className="usermeta heading user-profile-div-second"  >
 
-          <Tooltip title="Joining Date">
-            <SyncOutlined style={{color:"black",fontSize:"1.2rem"}}/> 
-          </Tooltip>
+            <Tooltip title="Joining Date">
+              <SyncOutlined style={{ color: "black", fontSize: "1.2rem" }} />
+            </Tooltip>
 
-          <span className="user-profile-information-span">{joinedDate}</span>
+            <span className="user-profile-information-span">{joinedDate}</span>
 
           </div>
 
+          {/* User logout option  */}
+          <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", marginTop: "2rem" }}>
+            <Button
+              type="primary"
+              className="Logout-option-button"
+              onClick={logoutHandler}
+            >
+              <LogoutOutlined />
+              <span style={{ marginLeft: "10px" }}>Logout</span>
+            </Button>
 
-          <Popconfirm
-            title = "Logout"
-            description = "Are you sure you want to Logout"
-            onConfirm={() => logoutHandler()}
-            okText = "Yes"
-            cancelText = "No"
-          >
-
-            <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center",marginTop:"2rem"}}>
-              <Button
-                type="primary"
-                className="Logout-option-button"
-              >
-                <LogoutOutlined />  
-                <span style={{marginLeft: "10px"}}>Logout</span>
-              </Button>
-            </div>
-
-          </Popconfirm>
-
+          </div>
 
         </Spin>
 

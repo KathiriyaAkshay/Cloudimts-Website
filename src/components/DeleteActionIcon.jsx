@@ -1,11 +1,11 @@
 import { BsTrashFill } from "react-icons/bs";
 import { Popconfirm, Space, Tooltip, Typography } from "antd";
 
-const DeleteActionIcon = ({ deleteActionHandler, title }) => {
+const DeleteActionIcon = ({ deleteActionHandler, title, assign_user }) => {
   return (
     <Space>
       <Typography.Link className="action-column">
-        <Tooltip title={title ? title : "Delete"}>
+        <Tooltip title={`${assign_user !== null && assign_user !== undefined?`${assign_user} =>`:""} Delete`}>
           <Popconfirm
             title="Are you sure to delete this study?"
             onConfirm={deleteActionHandler}
