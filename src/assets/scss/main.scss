@@ -1337,11 +1337,10 @@
 
 .Study-modal-input-option-division {
   padding-top: 1rem;
-  border-top: 1px solid #c4c4c4;
+  border-left: 1px solid #c4c4c4;
   margin-top: 1rem;
   overflow-x: auto;
-  height: 45vh;
-}
+  height: 69vh !important;}
 
 .assign-study-modal {
   height: 95vh !important;
@@ -2365,7 +2364,8 @@ label[for="study_description"]{
 
 .clinical-history-modal{
   .ant-modal-content{
-    height: 95vh
+    height: 95vh;
+    // overflow-x: auto;
   }
 }
 
