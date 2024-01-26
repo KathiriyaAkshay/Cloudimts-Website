@@ -1005,7 +1005,7 @@ const Dicom = () => {
 
                 {/* ===== Study series id edit option ====  */}
 
-                {checkPermissionStatus("Edit SeriesId option") && (
+                {/* {checkPermissionStatus("Edit SeriesId option") && (
                   <Tooltip title={`Update study id`}>
                     <AiTwotoneEdit
                       className='action-icon action-icon-primary'
@@ -1017,7 +1017,7 @@ const Dicom = () => {
                       }}
                     />
                   </Tooltip>
-                )}
+                )} */}
 
                 {/* ==== Study delete option ====  */}
 
@@ -1075,6 +1075,7 @@ const Dicom = () => {
       />
 
       {/* Edit Series Id popup */}
+
       <EditSeriesId
         isEditSeriesIdModifiedOpen={isEditSeriesIdModifiedOpen}
         setIsEditSeriesIdModifiedOpen={setIsEditSeriesIdModifiedOpen}
@@ -1143,6 +1144,8 @@ const Dicom = () => {
         setStudyID={setStudyID}
         referenceId={studyReferenceId}
       />
+
+      {/* ==== Share study option modal ====  */}
 
       <ShareStudy
         isShareStudyModalOpen={isShareStudyModalOpen}

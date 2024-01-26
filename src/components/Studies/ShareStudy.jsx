@@ -14,7 +14,7 @@ import {
   Tag,
   Typography
 } from 'antd'
-import { MdEmail,MdOutlineWhatsapp } from 'react-icons/md'
+import { MdEmail, MdOutlineWhatsapp } from 'react-icons/md'
 import NotificationMessage from '../NotificationMessage'
 import APIHandler from '../../apis/apiHandler'
 import API from '../../apis/getApi'
@@ -22,11 +22,11 @@ const ShareStudy = ({
   isShareStudyModalOpen,
   setIsShareStudyModalOpen,
   studyID,
-  setStudyID, 
+  setStudyID,
   referenceId
 }) => {
   const token = localStorage.getItem('token')
-    
+
   const [modalData, setModalData] = useState([])
   const [isLoading, setIsLoading] = useState(false)
   const [roleOptions, setRoleOptions] = useState([])
@@ -109,9 +109,9 @@ const ShareStudy = ({
             {
               name: 'Modality',
               value: resData?.Modality
-            }, 
+            },
             {
-              name: "Reference id", 
+              name: "Reference id",
               value: referenceId
             }
           ]
@@ -202,24 +202,24 @@ const ShareStudy = ({
     >
       <span>Share Study</span>
       <div>
-      <Button style={{ background: 'transparent', border: '1px solid #fff' }}>
-        <MdEmail
-          className='action-icon'
-          style={{ color: '#fff' }}
-          onClick={() => setIsEmailModalOpen(true)}
-        />
-      </Button>
+        <Button style={{ background: 'transparent', border: '1px solid #fff' }}>
+          <MdEmail
+            className='action-icon'
+            style={{ color: '#fff' }}
+            onClick={() => setIsEmailModalOpen(true)}
+          />
+        </Button>
 
-      <Button style={{ background: 'transparent', border: '1px solid #fff',marginLeft:"0.3rem" }}>
-        <MdOutlineWhatsapp
-          className='action-icon'
-          style={{ color: '#fff' }}
-          onClick={() => setIsWhatsappModalOpen(true)}
-        />
-      </Button>
+        <Button style={{ background: 'transparent', border: '1px solid #fff', marginLeft: "0.3rem" }}>
+          <MdOutlineWhatsapp
+            className='action-icon'
+            style={{ color: '#fff' }}
+            onClick={() => setIsWhatsappModalOpen(true)}
+          />
+        </Button>
       </div>
-     
-      
+
+
     </div>
   )
 
@@ -227,7 +227,7 @@ const ShareStudy = ({
 
   const handleSubmit = async (values) => {
 
-    if (values.active_status === undefined){
+    if (values.active_status === undefined) {
       values.active_status = false
     }
 
@@ -239,7 +239,7 @@ const ShareStudy = ({
         if (res.data.status) {
           NotificationMessage('success', 'Email Added Successfully')
           form.resetFields()
-          setIsNewEmailModalOpen(false) ; 
+          setIsNewEmailModalOpen(false);
         } else {
           NotificationMessage(
             'warning',
@@ -319,23 +319,22 @@ const ShareStudy = ({
             dataSource={modalData}
             renderItem={item => (
               <List.Item
-                className={`queue-number-list ${
-                  item.name === 'Series UID' || item.name === 'Study UID'
+                className={`queue-number-list ${item.name === 'Series UID' || item.name === 'Study UID'
                     ? 'full-width'
                     : 'half-width'
-                }`}
+                  }`}
               >
                 <Typography
-                  style={{ display: 'flex', gap: '4px', fontWeight: '600',flexWrap:"wrap" }}
+                  style={{ display: 'flex', gap: '4px', fontWeight: '600', flexWrap: "wrap" }}
                 >
                   {item.name}:
                   {item.name === "Patient's id" ||
-                  item.name === "Patient's Name" ||
-                  item.name === "Study UID" ||
-                  item.name === "Institution Name" ||
-                  item.name === "Series UID" || 
-                  item.name === "Assign study time" || 
-                  item.name === "Assign study username"? (
+                    item.name === "Patient's Name" ||
+                    item.name === "Study UID" ||
+                    item.name === "Institution Name" ||
+                    item.name === "Series UID" ||
+                    item.name === "Assign study time" ||
+                    item.name === "Assign study username" ? (
                     <Tag color="#87d068">{item.value}</Tag>
                   ) : (
                     <Typography style={{ fontWeight: '400' }}>
@@ -408,7 +407,7 @@ const ShareStudy = ({
                 >
                   <Switch />
                 </Form.Item>
-                <Button type="primary" onClick={()=>setIsNewEmailModalOpen(true)}>Add New Email</Button>
+                <Button type="primary" onClick={() => setIsNewEmailModalOpen(true)}>Add New Email</Button>
 
               </Col>
             </Row>
@@ -472,7 +471,7 @@ const ShareStudy = ({
           </Form>
         </Spin>
       </Modal>
-      
+
       {/* ==== Add Email Model ==== */}
       <Modal
         title='Add New Email'
@@ -492,7 +491,7 @@ const ShareStudy = ({
           }}
           form={form}
           onFinish={handleSubmit}
-          style={{marginTop: "12px"}}
+          style={{ marginTop: "12px" }}
         >
           <Form.Item
             name='full_name'
@@ -564,7 +563,7 @@ const ShareStudy = ({
             label='Active'
             valuePropName='checked'
           >
-            <Switch defaultChecked/>
+            <Switch defaultChecked />
           </Form.Item>
 
         </Form>
