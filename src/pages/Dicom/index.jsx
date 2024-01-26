@@ -1085,8 +1085,6 @@ const Dicom = () => {
       />
 
 
-      {/* ==== Edit study details option modal =====  */}
-
       <EditStudy
         isEditModalOpen={isEditModalOpen}
         setIsEditModalOpen={setIsEditModalOpen}
@@ -1113,7 +1111,7 @@ const Dicom = () => {
       />
 
       {/* Study report modal  */}
-      
+
       <StudyReports
         isReportModalOpen={isReportModalOpen}
         setIsReportModalOpen={setIsReportModalOpen}
@@ -1132,6 +1130,8 @@ const Dicom = () => {
         studyUIDInformation={studyUID}
         referenceId = {studyReferenceId}
       />
+
+      {/* Study more details option modal  */}
 
       <PatientDetails
         isStudyModalOpen={isStudyModalOpen}
