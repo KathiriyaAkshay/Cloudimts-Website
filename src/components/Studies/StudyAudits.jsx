@@ -2,8 +2,9 @@ import { List, Modal, Spin, Tag, Typography } from 'antd'
 import React, { useEffect, useState } from 'react'
 import TableWithFilter from '../TableWithFilter'
 import { getStudyData, getStudyLogsData } from '../../apis/studiesApi'
-import moment from 'moment/moment'
-import { convertToDDMMYYYY } from '../../helpers/utils'
+import moment from 'moment/moment' 
+import { convertToDDMMYYYY } from '../../helpers/utils' ; 
+import NotificationMessage from '../NotificationMessage'
 
 const StudyAudits = ({ isModalOpen, setIsModalOpen, studyID, setStudyID, referenceId }) => {
   const [modalData, setModalData] = useState([])
