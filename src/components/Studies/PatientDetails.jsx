@@ -149,7 +149,7 @@ const PatientDetails = ({
       centered
       footer={null}
       className="study-more-details"
-      style={{height: "90vh"}}
+      // style={{height: "90vh"}}
     >
       <Spin spinning={isLoading}>
         <div
