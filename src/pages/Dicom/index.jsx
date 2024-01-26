@@ -226,15 +226,17 @@ const Dicom = () => {
           })
 
           const temp = res.data.data
-            .map(data => data?.series_id)
-            .filter(Boolean)
+            .map(data => data?.study?.study_original_id)
+            .filter(Boolean) ; temp
+
+          const uniqueItem = [...new Set(temp)] ;
 
           // Set StudyData
           setStudyData(modifiedData)
           setTotalPages(res.data.total_object)
 
           // Set Studies series count for countinues Instance count
-          setSeriesIdList([...temp]);
+          setSeriesIdList([...uniqueItem]);
         } else {
           NotificationMessage(
             'warning',
@@ -306,14 +308,15 @@ const Dicom = () => {
       // Update Study data
       setStudyData(prev => {
         return prev.map(element => {
-          let series_id = element.series_id
-          let foundSeriesData = responseData['data'].find(
-            serisData => serisData.series_id === series_id
-          )
-          if (foundSeriesData) {
-            return { ...element, count: foundSeriesData.series_instance }
+          let study_id = element.study?.study_original_id ; 
+
+          if (Object.keys(responseData?.data).includes(study_id)){
+            return {...element, count : `${responseData?.data[study_id]?.series_count}/${responseData?.data[study_id]?.instance_count}`}
+          } else{
+            console.log("Not match study id");
+            return {...element, count: `0/0`}
           }
-          return element
+         
         })
       });
 
@@ -382,9 +385,12 @@ const Dicom = () => {
 
           // Setup Series id list 
           const temp = res.data.data
-            .map(data => data?.series_id)
+            .map(data => data?.study?.study_original_id)
             .filter(Boolean);
-          setSeriesIdList([...temp]);
+
+          const uniqueItem = [...new Set(temp)] ;
+          setSeriesIdList([...uniqueItem]);
+
         } else {
           NotificationMessage(
             'warning',
@@ -429,8 +435,9 @@ const Dicom = () => {
           setTotalPages(res.data.total_object);
 
           // Setup temp series id list 
-          const temp = res.data.data.map(data => data?.series_id).filter(Boolean);
-          setSeriesIdList([...temp]);
+          const temp = res.data.data.map(data => data?.study?.study_original_id).filter(Boolean);
+          const uniqueItem = [...new Set(temp)] ;
+          setSeriesIdList([...uniqueItem]);
 
         } else {
           NotificationMessage(
