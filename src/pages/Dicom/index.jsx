@@ -913,21 +913,6 @@ const Dicom = () => {
                   />
                 </Tooltip>
                 
-                {/* Option3 === OHIF viewer option  */}
-                <Tooltip title={`${record?.assign_user !== null ? `${record?.assign_user} =>` : ""} OHIF Viewer`}>
-                  <img src={OHIFViewer} 
-                    style={{cursor: "pointer"}}
-                    className='ohif-viwer-option-icon'
-                    onClick={() => {
-                      window.open( `https://viewer.cloudimts.com/viewer/${record?.study?.study_uid}`, "_blank")
-                    }} />
-                </Tooltip>
-
-                {/* Option4 === Weasis viewer option  */}
-                <Tooltip title={`${record?.assign_user !== null ? `${record?.assign_user} =>` : ""} Weasis Viewer`}>
-                  <img src={WeasisViewer} className='Weasis-viewer-option-icon' style={{cursor: "pointer"}} />
-                </Tooltip>
-
                 {/* Option5 === Clinical history option  */}
                 {checkPermissionStatus('Study clinical history option') && (
                   <Tooltip title={`${record?.assign_user !== null ? `${record?.assign_user} =>` : ""} Clinical History`}>
@@ -1035,6 +1020,21 @@ const Dicom = () => {
                     deleteActionHandler={() => deleteParticularStudy(record?.id)}
                   />
                 )}
+
+                {/* Option3 === OHIF viewer option  */}
+                <Tooltip title={`${record?.assign_user !== null ? `${record?.assign_user} =>` : ""} OHIF Viewer`}>
+                  <img src={OHIFViewer} 
+                    style={{cursor: "pointer"}}
+                    className='ohif-viwer-option-icon'
+                    onClick={() => {
+                      window.open( `https://viewer.cloudimts.com/viewer/${record?.study?.study_uid}`, "_blank")
+                    }} />
+                </Tooltip>
+
+                {/* Option4 === Weasis viewer option  */}
+                <Tooltip title={`${record?.assign_user !== null ? `${record?.assign_user} =>` : ""} Weasis Viewer`}>
+                  <img src={WeasisViewer} className='Weasis-viewer-option-icon' style={{cursor: "pointer"}} />
+                </Tooltip>
 
               </Space>
 
