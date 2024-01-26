@@ -3,20 +3,16 @@ import React, { useContext, useEffect, useState } from 'react'
 import { filterDataContext } from '../hooks/filterDataContext'
 import { FilterSelectedContext } from '../hooks/filterSelectedContext'
 import { getModalityList, getRadiologistList } from '../apis/studiesApi'
-import API from '../apis/getApi'
+import API from '../apis/getApi';
+import NotificationMessage from './NotificationMessage';
 
-const AdvancedSearchModal = ({
-  name,
-  retrieveStudyData,
-  advanceSearchFilterData
-}) => {
-  const { isAdvancedSearchModalOpen, setIsAdvancedSearchModalOpen } =
-    useContext(filterDataContext)
-  const [form] = Form.useForm()
+const AdvancedSearchModal = ({ name, retrieveStudyData, advanceSearchFilterData }) => {
 
-  const { setIsFilterSelected, setIsAdvanceSearchSelected } = useContext(
-    FilterSelectedContext
-  )
+  const { isAdvancedSearchModalOpen, setIsAdvancedSearchModalOpen } = useContext(filterDataContext);
+  const { setIsFilterSelected, setIsAdvanceSearchSelected } = useContext(FilterSelectedContext);
+
+  const [form] = Form.useForm();
+
   const [institutionOptions, setInstitutionOptions] = useState([])
   const [radiologistOptions, setRadiologistOptions] = useState([])
   const [modalityOptions, setModalityOptions] = useState([])
@@ -51,14 +47,6 @@ const AdvancedSearchModal = ({
     }
   ])
 
-  useEffect(() => {
-    setIsFilterSelected(false)
-    setIsAdvanceSearchSelected(false)
-    retrieveInstitutionData()
-    retrieveModalityData()
-    retrieveRadiologistData()
-  }, [])
-
   const handleSubmit = values => {
     const modifiedValues = {
       ...values,
@@ -83,8 +71,7 @@ const AdvancedSearchModal = ({
   }
 
   const retrieveInstitutionData = async () => {
-    console.log("Advance search filter data ===================>");
-    const token = localStorage.getItem('token')
+    const token = localStorage.getItem('token');
     await API.get('/user/v1/fetch-institution-list', {
       headers: { Authorization: `Bearer ${token}` }
     })
@@ -95,11 +82,11 @@ const AdvancedSearchModal = ({
             label: item.name,
             value: item.id
           }))
-          setInstitutionOptions(resData)
+          setInstitutionOptions(resData);
         } else {
           NotificationMessage(
             'warning',
-            'Network request failed',
+            'Advanced Search',
             res.data.message
           )
         }
@@ -107,7 +94,7 @@ const AdvancedSearchModal = ({
       .catch(err =>
         NotificationMessage(
           'warning',
-          'Network request failed',
+          'Advanced Search',
           err.response.data.message
         )
       )
@@ -125,7 +112,7 @@ const AdvancedSearchModal = ({
         } else {
           NotificationMessage(
             'warning',
-            'Network request failed',
+            'Advanced Search',
             res.data.message
           )
         }
@@ -133,7 +120,7 @@ const AdvancedSearchModal = ({
       .catch(err =>
         NotificationMessage(
           'warning',
-          'Network request failed',
+          'Advanced Search',
           err.response.data.message
         )
       )
@@ -151,7 +138,7 @@ const AdvancedSearchModal = ({
         } else {
           NotificationMessage(
             'warning',
-            'Network request failed',
+            'Advanced Search',
             res.data.message
           )
         }
@@ -159,11 +146,19 @@ const AdvancedSearchModal = ({
       .catch(err =>
         NotificationMessage(
           'warning',
-          'Network request failed',
+          'Advanced Search',
           err.response.data.message
         )
       )
   }
+
+  useEffect(() => {
+    if (isAdvancedSearchModalOpen) {
+      retrieveInstitutionData()
+      retrieveModalityData()
+      retrieveRadiologistData()
+    }
+  }, [isAdvancedSearchModalOpen]);
 
   return (
     <Modal
@@ -370,7 +365,7 @@ const AdvancedSearchModal = ({
                 }
               ]}
             >
-              <DatePicker format={'YYYY-MM-DD'} />
+              <DatePicker format={'DD-MM-YYYY'} />
             </Form.Item>
           </Col>
         </Row>

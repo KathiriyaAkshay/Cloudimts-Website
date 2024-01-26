@@ -1,14 +1,16 @@
 import { createContext, useEffect, useState } from 'react'
 import { fetchPermissions } from '../apis/studiesApi'
-import { Spin } from 'antd'
+import { Spin } from 'antd' ; 
+import NotificationMessage from '../components/NotificationMessage';
 
 export const UserPermissionContext = createContext()
 
 const UserPermissionProvider = ({ children }) => {
-  const [permissionData, setPermissionData] = useState({})
+
   const role_id = localStorage.getItem('role_id')
-  const [isLoading, setIsLoading] = useState(false)
-  const token = localStorage.getItem('token')
+  
+  const [permissionData, setPermissionData] = useState({}) ; 
+  const [isLoading, setIsLoading] = useState(false) ; 
 
   useEffect(() => {
     setIsLoading(true)

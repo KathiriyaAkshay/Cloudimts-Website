@@ -492,10 +492,13 @@ const HeaderButton = ({
             )}
         </div>
       )}
+      
+      {/* ====== Study page ======  */}
+
       {window.location.pathname === '/studies' && (
         <div className='iod-setting-div'>
 
-          {/* ==== Delete study option ====  */}
+          {/* Option1 === Delete Study  */}
 
           <Popconfirm
             title = "Delete study"
@@ -513,7 +516,7 @@ const HeaderButton = ({
           </Popconfirm>
 
 
-          {/* ==== Reload option ====  */}
+          {/* Option2 === Reload Study  */}
 
           <Popconfirm
             title = "Reload page"
@@ -529,7 +532,7 @@ const HeaderButton = ({
             </Button>
           </Popconfirm>
 
-          {/* ===== OHIF Viwer option =====  */}
+          {/* Option3 ==== OHIF Viewer  */}
 
           {studyIdArray.length === 1 && (
             <Button onClick={OpenOHIFViwerOptionHandler}>
@@ -539,8 +542,7 @@ const HeaderButton = ({
 
           )}
 
-
-          {/* ==== Study export option ====  */}
+          {/* Option4 ==== Study Export option  */}
 
           <Button
             type='export'
@@ -552,7 +554,8 @@ const HeaderButton = ({
             <ExportOutlined style={{marginRight:"0.4rem"}}/> Study Export
           </Button>
 
-          {/* ==== Assign study option division =====  */}
+          {/* Option5 ==== Assign Study option  */}
+          
           <Button
             type='primary'
             onClick={() => QuickAssignStudyModalHandler()}
@@ -560,8 +563,8 @@ const HeaderButton = ({
             Assign study
           </Button>
 
-          {/* ==== Advance search option ====  */}
-
+          {/* Option6 ==== Advance search filter option  */}
+        
           <Button
             type='primary'
             className={`btn-icon-div ${
@@ -573,7 +576,7 @@ const HeaderButton = ({
             Advance search
           </Button>
 
-          {/* ==== Quick Filter option ====  */}
+          {/* Option7 ==== Quick Search filter option  */}
 
           <Button
             type='primary'
@@ -583,7 +586,7 @@ const HeaderButton = ({
             <FilterOutlined style={{ fontWeight: '500' }} /> Quick filter
           </Button>
 
-          {/* ==== Filter option ====  */}
+          {/* Option8 ==== Normal filter option  */}
 
           <div style={{ position: 'relative' }}>
             <Popover
@@ -607,13 +610,14 @@ const HeaderButton = ({
             </Popover>
           </div>
 
-          {/* ==== Study logs option ====  */}
+          {/* Option9 ==== Study logs information  */}
 
           <Button type='primary' onClick={() => navigate('/study-logs')}>
             Study logs
           </Button>
         </div>
       )}
+
       {window.location.pathname === '/reports' && (
         <div className='iod-setting-div'>
           <Button

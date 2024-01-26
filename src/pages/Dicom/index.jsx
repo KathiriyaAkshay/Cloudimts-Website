@@ -1188,13 +1188,11 @@ const Dicom = () => {
 
       {/* ==== Advance filter option modal =====  */}
 
-      {isAdvancedSearchModalOpen && (
-        <AdvancedSearchModal
-          name={'Advance Search'}
-          retrieveStudyData={retrieveStudyData}
-          advanceSearchFilterData={advanceSearchFilterData}
-        />
-      )}
+      <AdvancedSearchModal
+        name={'Advance Search'}
+        retrieveStudyData={retrieveStudyData}
+        advanceSearchFilterData={advanceSearchFilterData}
+      />
 
 
       {/* ==== Assign quick studies ====  */}

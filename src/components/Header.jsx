@@ -100,7 +100,6 @@ const BasicLayout = ({ children }) => {
       )
   }
 
-  const { pathname } = useLocation()
 
   const menuLabel = title => (
     <div className='display-flex-between' style={{ gap: '4px' }}>
