@@ -89,7 +89,7 @@ const AddUsers = () => {
     )
       .then(res => {
         if (res.data.status) {
-                    const instituteData = convertToInitialObject(
+          const instituteData = convertToInitialObject(
             res.data.data.institution_details
           )
           const modalityData = convertToInitialModalityObject(
@@ -106,7 +106,7 @@ const AddUsers = () => {
               dayjs(res.data.data.availability_end_time, 'HH:mm:ss')
             ],
             ...instituteData,
-            ...modalityData, 
+            ...modalityData,
 
           }
           form.setFieldsValue(resData)
@@ -252,34 +252,34 @@ const AddUsers = () => {
     setIsLoading(true)
 
     if (currentStep === 0) {
-      
-      let user_profile_image = null ; 
-      if (values?.user_profile_image?.file?.originFileObj){
+
+      let user_profile_image = null;
+      if (values?.user_profile_image?.file?.originFileObj) {
         try {
-          
+
           const fromData = {
             image: values?.user_profile_image?.file?.originFileObj
-          } ; 
-          
-          const response = await uploadImage(fromData) ; 
-          user_profile_image = response?.data?.image_url ; 
-          
+          };
+
+          const response = await uploadImage(fromData);
+          user_profile_image = response?.data?.image_url;
+
         } catch (error) {
-          NotificationMessage("warning", "Network request failed", "Failed to upload user profile image") ; 
+          NotificationMessage("warning", "Network request failed", "Failed to upload user profile image");
         }
       }
-      
+
       setIsLoading(false);
       setPayload({
         ...values,
         allow_offline_download: values.allow_offline_download
           ? values.allow_offline_download
           : false,
-        allow: values.allow ? values.allow : false, 
-        user_profile_image: user_profile_image 
+        allow: values.allow ? values.allow : false,
+        user_profile_image: user_profile_image
       })
 
-      handleNextStep(); 
+      handleNextStep();
 
     } else if (currentStep === 1) {
       setPayload(prev => ({
@@ -524,8 +524,8 @@ const AddUsers = () => {
   );
 
   return (
-    <div className='secondary-table'>
-      <Card>
+    <div className='secondary-table' style={{marginTop: "-20px"}}>
+      <Card className='user-creation-card'>
         <div
           style={{
             marginLeft: "0.7rem",
@@ -571,15 +571,13 @@ const AddUsers = () => {
               form={form}
               onFinish={handleSubmit}
               className="mt form-step-0"
-              style={{ marginTop: "20px" }}
             >
               <Row gutter={15}>
                 <Col xs={4} sm={4} md={4} lg={3}>
 
                   <Form.Item
-                    name = "user_profile_image"
+                    name="user_profile_image"
                   >
-
                     <Upload
                       name="avatar"
                       listType="picture-card"
@@ -589,8 +587,8 @@ const AddUsers = () => {
                       beforeUpload={beforeUpload}
                       onChange={handleProfileChange}
                       style={{
-                        width:"2rem",
-                        height:"1rem"
+                        width: "2rem",
+                        height: "1rem"
                       }}
                     >
                       {imageUrl ? (
@@ -605,22 +603,6 @@ const AddUsers = () => {
                         uploadButton
                       )}
                     </Upload>
-
-                  </Form.Item>
-
-
-
-
-                </Col>
-                <Col xs={4} sm={4} md={4} lg={2}>
-
-                  <Form.Item
-                    name='allow'
-                    label='Active'
-                    valuePropName='checked'
-                  >
-
-                    <Switch />
 
                   </Form.Item>
 
@@ -639,9 +621,6 @@ const AddUsers = () => {
                   </Form.Item>
 
                 </Col>
-
-
-
 
                 <Col xs={24} sm={12} md={12} lg={8}>
                   <Form.Item

@@ -2664,3 +2664,8 @@ form.ant-form .ant-form-item .ant-form-item-label label{
 .study-more-details .ant-modal-body{
   max-height: 87vh !important;
 }
+
+.user-creation-card{
+  max-height: 87vh !important ; 
+  overflow-y: hidden;
+}
