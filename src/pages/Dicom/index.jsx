@@ -1174,7 +1174,7 @@ const Dicom = () => {
         />
       </Drawer>
 
-      {/* ==== Quick Filter option modal ====  */}
+      {/* Quick Filter  */}
 
       <QuickFilterModal
         name={'Study Quick Filter'}
@@ -1183,8 +1183,8 @@ const Dicom = () => {
         quickFilterStudyData={quickFilterStudyData}
       />
 
-      {/* ==== Advance filter option modal =====  */}
-
+      {/* Advanced search  */}
+        
       <AdvancedSearchModal
         name={'Advance Search'}
         retrieveStudyData={retrieveStudyData}
