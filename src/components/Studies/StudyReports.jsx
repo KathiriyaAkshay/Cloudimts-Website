@@ -454,7 +454,7 @@ const StudyReports = ({
         footer={null}
       >
         <Spin spinning={isLoading}>
-          <div className='Assign-study-upload-option-input-layout'>
+          <div className='Assign-study-reports-option-input-layout'>
 
             <div className='Report-modal-all-option-div'>
 
