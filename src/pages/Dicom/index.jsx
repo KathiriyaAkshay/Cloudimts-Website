@@ -122,7 +122,7 @@ const Dicom = () => {
     setSystemFilterPayload
   } = useContext(StudyDataContext)
 
-  const { setStudyIdArray } = useContext(StudyIdContext)
+  const { setStudyIdArray, setStudyReferenceIdArray } = useContext(StudyIdContext)
   const { isFilterSelected, isAdvanceSearchSelected } = useContext(FilterSelectedContext);
 
   // Modal passing attributes information
@@ -695,7 +695,8 @@ const Dicom = () => {
 
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
-      setStudyIdArray(prev => selectedRows?.map(data => data.id))
+      setStudyIdArray(prev => selectedRows?.map(data => data.id)) ; 
+      setStudyReferenceIdArray(prev => selectedRows?.map(data => data?.refernce_id)) ; 
     },
     getCheckboxProps: record => ({
       id: record.id
@@ -1198,12 +1199,16 @@ const Dicom = () => {
 
       {/* ==== Assign quick studies ====  */}
 
-      <AssignStudyModified
-        isAssignModifiedModalOpen={isQuickAssignStudyModalOpen}
-        setIsAssignModifiedModalOpen={setIsQuickAssignStudyModalOpen}
-        studyID={studyID}
-        setStudyID={setStudyID}
-      />
+      {isQuickAssignStudyModalOpen && (
+  
+        <AssignStudyModified
+          isAssignModifiedModalOpen={isQuickAssignStudyModalOpen}
+          setIsAssignModifiedModalOpen={setIsQuickAssignStudyModalOpen}
+          studyID={studyID}
+          setStudyID={setStudyID}
+        />
+
+      )}
 
 
       {/* ==== Image Drawer==== */}

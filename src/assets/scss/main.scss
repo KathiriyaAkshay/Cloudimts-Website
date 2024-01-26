@@ -2601,3 +2601,10 @@ form.ant-form .ant-form-item .ant-form-item-label label{
   padding-top: 0.80rem;
   padding-bottom: 0.80rem;
 }
+
+// Quick assign study modal
+
+.quick-assign-study-modal .ant-modal-body{
+  height: 35vh !important;
+  overflow-y: hidden !important;
+}
