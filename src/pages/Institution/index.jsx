@@ -190,7 +190,8 @@ const Institution = () => {
         checkPermissionStatus('View Institution name')
           ? ''
           : 'column-display-none'
-      }`
+      }`, 
+      width: 150
     },
 
     checkPermissionStatus('View Institution email') && {

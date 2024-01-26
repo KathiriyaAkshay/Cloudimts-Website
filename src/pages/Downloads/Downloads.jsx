@@ -2,13 +2,10 @@ import React, { useState } from 'react';
 import { Breadcrumb, Layout, Menu, theme, Divider, Row, Steps, Button } from 'antd';
 import { Tabs } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
-
 import logo from '../../assets/images/Imageinet-logo.png'
 const { Header, Content, Footer } = Layout;
 
-const onChange = (key) => {
-    console.log(key);
-};
+
 
 const items = [
     {
@@ -27,17 +24,8 @@ const App = () => {
 
     const navigate = useNavigate();
 
-
     const goBack = () => {
         navigate(-1);
-        // Check if there is a previous entry in the history stack
-        if (window.history.length >= 2) {
-        navigate(-2);
-        } else if (window.history.length == 1) {
-        } else {
-        // If no previous page exists, navi gate to a default path
-        navigate('/institutions');
-        }
     }
 
     const [windowsTitle, setWindowsTitle] = useState("To upload your local study to a cloud server, are you prepared to download the Cloudimts exe file? Set up Cloudimts on your local computer by following these instructions.");
@@ -82,7 +70,7 @@ const App = () => {
                     }
 
                 }>
-                    <Link to={"./studies"} >
+                    <Link to={"/studies"} >
                         <img src={logo} height={"100%"} width={"70px"} />
                     </Link>
 

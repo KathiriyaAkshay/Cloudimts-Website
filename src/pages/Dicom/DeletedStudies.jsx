@@ -110,8 +110,8 @@ const DeletedStudies = () => {
       dataIndex: 'name'
     },
     {
-      title: 'Id',
-      dataIndex: 'study_id'
+      title: 'Reference id',
+      dataIndex: 'refernce_id'
     },
     {
       title: 'Status',
