@@ -223,10 +223,81 @@ const HeaderButton = ({
       className='setting-main-div'
       accordion
     >
+
+      <Collapse.Panel
+        header='Normal filter'
+        key='2'
+        className='setting-panel mb-0  normal-filter-option-list'
+      >
+        {systemFilters?.map(data => (
+          <div key={data?.key}>
+            <Checkbox
+              name={data?.label}
+              key={data?.key}
+              checked={isSystemFilterChecked === data?.key}
+              onClick={() => {
+                setIsFilterChecked(null)
+                setIsSystemFilterChecked(data?.key)
+                if (data?.key === isSystemFilterChecked) {
+                  setIsSystemFilterChecked(null)
+                  setSystemFilterPayload({})
+                } else {
+                  const option = data?.key?.split(' ')[0]
+                  const filterOption = data?.key?.split(' ')[1]
+                  setSystemFilterPayload({
+                    option,
+                    page_number: 1,
+                    page_size: 10,
+                    deleted_skip: false,
+                    filter:
+                      filterOption !== 'undefined'
+                        ? {
+                            status__icontains: filterOption
+                          }
+                        : {},
+                    all_premission_id: JSON.parse(
+                      localStorage.getItem('all_permission_id')
+                    ),
+                    all_assign_id: JSON.parse(
+                      localStorage.getItem('all_assign_id')
+                    )
+                  })
+                  applySystemFilter(
+                    {
+                      option,
+                      page_number: 1,
+                      page_size: 10,
+                      deleted_skip: false,
+                      filter:
+                        filterOption !== 'undefined'
+                          ? {
+                              status__icontains: filterOption
+                            }
+                          : {},
+                      all_premission_id: JSON.parse(
+                        localStorage.getItem('all_permission_id')
+                      ),
+                      all_assign_id: JSON.parse(
+                        localStorage.getItem('all_assign_id')
+                      )
+                    },
+                    setStudyData
+                  )
+                }
+                setStudyDataPayload({})
+                setIsAdvanceSearchSelected(false)
+              }}
+            >
+              {data?.label}
+            </Checkbox>
+          </div>
+        ))}
+      </Collapse.Panel>
+
       <Collapse.Panel
         header='Filters'
         key='1'
-        className='setting-panel mb-0 admin-panel-filter-option-list'
+        className='setting-panel mb-0 mt-3 admin-panel-filter-option-list'
       >
         {filterOptions?.map(data => (
           <div 
@@ -297,76 +368,6 @@ const HeaderButton = ({
             </div>
           </>
         )}
-      </Collapse.Panel>
-
-      <Collapse.Panel
-        header='Normmal filter'
-        key='2'
-        className='setting-panel mb-0  normal-filter-option-list'
-      >
-        {systemFilters?.map(data => (
-          <div key={data?.key}>
-            <Checkbox
-              name={data?.label}
-              key={data?.key}
-              checked={isSystemFilterChecked === data?.key}
-              onClick={() => {
-                setIsFilterChecked(null)
-                setIsSystemFilterChecked(data?.key)
-                if (data?.key === isSystemFilterChecked) {
-                  setIsSystemFilterChecked(null)
-                  setSystemFilterPayload({})
-                } else {
-                  const option = data?.key?.split(' ')[0]
-                  const filterOption = data?.key?.split(' ')[1]
-                  setSystemFilterPayload({
-                    option,
-                    page_number: 1,
-                    page_size: 10,
-                    deleted_skip: false,
-                    filter:
-                      filterOption !== 'undefined'
-                        ? {
-                            status__icontains: filterOption
-                          }
-                        : {},
-                    all_premission_id: JSON.parse(
-                      localStorage.getItem('all_permission_id')
-                    ),
-                    all_assign_id: JSON.parse(
-                      localStorage.getItem('all_assign_id')
-                    )
-                  })
-                  applySystemFilter(
-                    {
-                      option,
-                      page_number: 1,
-                      page_size: 10,
-                      deleted_skip: false,
-                      filter:
-                        filterOption !== 'undefined'
-                          ? {
-                              status__icontains: filterOption
-                            }
-                          : {},
-                      all_premission_id: JSON.parse(
-                        localStorage.getItem('all_permission_id')
-                      ),
-                      all_assign_id: JSON.parse(
-                        localStorage.getItem('all_assign_id')
-                      )
-                    },
-                    setStudyData
-                  )
-                }
-                setStudyDataPayload({})
-                setIsAdvanceSearchSelected(false)
-              }}
-            >
-              {data?.label}
-            </Checkbox>
-          </div>
-        ))}
       </Collapse.Panel>
     </Collapse>
   )
