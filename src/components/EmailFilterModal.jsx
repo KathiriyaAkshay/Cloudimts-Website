@@ -135,6 +135,23 @@ const EmailFilterModal = ({ name, setInstitutionData, retrieveEmailData }) => {
                   whitespace: true,
                   message: "Please enter Contact Number",
                 },
+                
+                {
+                  validator: (rule, value) => {
+                    if (!value) {
+                      return Promise.resolve(); // No validation if value is not provided
+                    }
+            
+                    // Validate Indian contact number
+                    const indianPhoneNumberRegex = /^[6-9]\d{9}$/;
+            
+                    if (indianPhoneNumberRegex.test(value)) {
+                      return Promise.resolve();
+                    } else {
+                      return Promise.reject("Invalid contact number");
+                    }
+                  },
+                },
               ]}
             >
               <Input placeholder="Enter Contact Number" />
@@ -149,7 +166,7 @@ const EmailFilterModal = ({ name, setInstitutionData, retrieveEmailData }) => {
                   required: false,
                   whitespace: true,
                   message: "Please enter Contact Number",
-                },
+                }
               ]}
             >
               <Select

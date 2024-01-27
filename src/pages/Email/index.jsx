@@ -224,12 +224,14 @@ const Email = () => {
         headers: { Authorization: `Bearer ${token}` }
       })
         .then(res => {
+          console.log(res);
           if (res.data.status) {
             NotificationMessage('success', 'Email Added Successfully')
             form.resetFields()
             setIsEmailModalOpen(false)
             retrieveEmailData()
           } else {
+            console.log(res?.data);
             NotificationMessage(
               'warning',
               'Network request failed',
@@ -237,7 +239,7 @@ const Email = () => {
             )
           }
         })
-        .catch(err => NotificationMessage('warning', "Network request failed"))
+        .catch(err => {NotificationMessage('warning', "Network request failed", err?.response?.data?.message) })
     } else {
 
       await API.post(
@@ -322,7 +324,7 @@ const Email = () => {
               {
                 type: 'email',
                 required: true,
-                message: 'Please enter email'
+                message: 'Please enter email address'
               }
             ]}
           >
@@ -337,7 +339,23 @@ const Email = () => {
                 required: true,
                 whitespace: true,
                 message: 'Please enter contact number'
-              }
+              }, 
+              {
+                validator: (rule, value) => {
+                  if (!value) {
+                    return Promise.resolve(); // No validation if value is not provided
+                  }
+          
+                  // Validate Indian contact number
+                  const indianPhoneNumberRegex = /^[6-9]\d{9}$/;
+          
+                  if (indianPhoneNumberRegex.test(value)) {
+                    return Promise.resolve();
+                  } else {
+                    return Promise.reject("Invalid contact number");
+                  }
+                },
+              },
             ]}
           >
             <Input placeholder='Enter Contact Number' />
