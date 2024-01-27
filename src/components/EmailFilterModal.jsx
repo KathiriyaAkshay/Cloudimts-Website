@@ -14,13 +14,19 @@ const EmailFilterModal = ({ name, setInstitutionData, retrieveEmailData }) => {
   }, []);
 
   const handleSubmit = (values) => {
-    const modifiedValues = {
+
+    let modifiedValues = {
       ...values,
       created_at__startswith:
         values?.created_at__startswith &&
         values?.created_at__startswith?.format("YYYY-MM-DD"),
-        active_status: values?.active_status === "active"?true:false
     };
+
+    if (values?.active_status !== undefined){
+      modifiedValues['active_status'] = values?.active_status === "active"?true:false
+
+    }
+
     retrieveEmailData({ page: 1 }, modifiedValues);
     setIsEmailFilterModalOpen(false);
     setIsFilterSelected(true);
@@ -92,7 +98,7 @@ const EmailFilterModal = ({ name, setInstitutionData, retrieveEmailData }) => {
           </Col>
           <Col xs={24} lg={12}>
             <Form.Item
-              name="email__icontains"
+              name="email"
               label="Email"
               rules={[
                 {
