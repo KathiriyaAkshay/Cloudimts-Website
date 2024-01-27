@@ -544,13 +544,13 @@ const HeaderButton = ({
 
           {/* Option3 ==== OHIF Viewer  */}
 
-          {studyIdArray.length === 1 && (
+          {/* {studyIdArray.length === 1 && (
             <Button onClick={OpenOHIFViwerOptionHandler}>
               <img src={OHIFViwer} className='ohif-viwer-option-icon' style={{ marginRight: 8 }} />
               OHIF 
             </Button>
 
-          )}
+          )} */}
 
           {/* Option4 ==== Study Export option  */}
 

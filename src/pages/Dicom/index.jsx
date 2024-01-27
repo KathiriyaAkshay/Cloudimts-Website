@@ -1221,8 +1221,8 @@ const Dicom = () => {
 
       )}
 
-
-      {/* ==== Image Drawer==== */}
+      {/* ==== Study drawer =====  */}
+      
       <ImageDrawer
         isDrawerOpen={isImageModalOpen}
         setImageDrawerOpen={setImageDrawerOpen}
