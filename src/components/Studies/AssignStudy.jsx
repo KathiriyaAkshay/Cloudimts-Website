@@ -64,14 +64,20 @@ const AssignStudy = ({
 
     try {
 
-      const modifiedPayload = {
+      let modifiedPayload = {
         ...payloadObj,
         id: studyID,
         assign_user: values.radiologist,
         study_data: {
-          images: [...multipleImageFile, ...images],
+          images: [],
         },
       };
+
+      if (multipleImageFile !== undefined){
+        modifiedPayload['study_data']['images'] = [...multipleImageFile, ...images]
+      } else{
+        modifiedPayload['study_data']['images'] = [...images]
+      }
 
       await postAssignStudy(modifiedPayload)
         .then((res) => {

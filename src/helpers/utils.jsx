@@ -10,14 +10,13 @@ export const getBase64 = (file) =>
 
 export const dummyRequest = ({ file, onSuccess, onError }) => {
 
-  console.log("File type informaiton ========>");
-  console.log(file.type);
 
   if (
     file.type === "image/png" ||
     file.type === "image/jpeg" ||
     file.type === "image/jpg" ||
-    file.type === "application/pdf" 
+    file.type === "application/pdf" || 
+    file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
   ) {
     if (file.size > 1024 * 1024 * 5) {
       onError(null, "Please select image smaller than 5 MB");

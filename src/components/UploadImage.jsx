@@ -3,8 +3,9 @@ import { Col, Form, Image, Input, Modal, Row, Button, Tooltip } from "antd";
 import Dragger from "antd/es/upload/Dragger";
 import React, { useEffect, useState } from "react";
 import { dummyRequest, getBase64 } from "../helpers/utils";
-import PDFFileIcon from "../assets/images/pdf-file.png" ; 
 import { DownloadOutlined } from "@ant-design/icons";
+import PDFFileIcon from "../assets/images/pdf-file.png" ; 
+import DocxFileIcon from "../assets/images/docx-file.png" ; 
 
 const UploadImage = ({
   imageFile,
@@ -15,9 +16,6 @@ const UploadImage = ({
   multipleImageFile,
   setMultipleImageFile
 }) => {
-
-  console.log("Multiple image file information =====>");
-  console.log(multipleImageFile);
 
   const [file, setFile] = useState(imageURL);
   const [imageUploadError, setImageUploadError] = useState("");
@@ -52,8 +50,19 @@ const UploadImage = ({
 
   // Check Particular URL stand for PDF or not 
   function isPDF(url) {
+    
+    let pdfFileExtensionList = ["pdf"] ; 
+    let WordFileExtensionList = ["docx"] ; 
+    
     const fileExtension = url.split('.').pop().toLowerCase();
-    return fileExtension === 'pdf';
+
+    if (pdfFileExtensionList.includes(fileExtension)){
+      return "pdf"
+    } else if (WordFileExtensionList.includes(fileExtension)){
+      return "word"
+    } else {
+      return 'image';
+    }
   }
 
   function getFileNameFromURL(url) {
@@ -82,7 +91,6 @@ const UploadImage = ({
   const DeleteOptionHandler = (data) => {
     const newArray = multipleImageFile.filter(url => url !== data);
     setMultipleImageFile(newArray)
-
   }
 
 
@@ -119,7 +127,9 @@ const UploadImage = ({
             <Row className="ant-upload-list-item">
               {multipleImageFile.map((data) => (
 
-                isPDF(data)?<>
+                isPDF(data) === "pdf"?<>
+
+                  {/* ==== Pdf file option ====  */}
                   <Col xs={4} className="Report-reference-document">
 
                     <div className="Reference-option-button-layout">
@@ -149,39 +159,78 @@ const UploadImage = ({
                   </Col>
 
                 </>:<>
-                  <Col xs={4} className="Report-reference-document">
 
-                    <div className="Reference-option-button-layout">
+                  {isPDF(data) === "image"?<>
 
-                      <Tooltip title = {getFileNameFromURL(data)}>
-                        <Button danger className="Reference-download-option-button"
-                          icon = {<DeleteOutlined/>}
-                          onClick={() => DeleteOptionHandler(data)}>
-                        </Button>
-                      </Tooltip>
+                    {/* ==== Image File option ====  */}
+                    <Col xs={4} className="Report-reference-document">
 
-                      <Tooltip title = {getFileNameFromURL(data)}>
-                        <Button type="primary" className="Reference-download-option-button"
-                          icon = {<DownloadOutlined/>}
-                          onClick={() => handleDownload(data)}>
-                        </Button>
-                      </Tooltip>
+                      <div className="Reference-option-button-layout">
 
-                    </div>
+                        <Tooltip title = {getFileNameFromURL(data)}>
+                          <Button danger className="Reference-download-option-button"
+                            icon = {<DeleteOutlined/>}
+                            onClick={() => DeleteOptionHandler(data)}>
+                          </Button>
+                        </Tooltip>
 
-                    <Image
-                      style={{ width: "100px", height: "100px" }}
-                      src={data}
-                      onLoad={() => setImageLoaded(true)}
-                      alt="file"
-                      className="Reference-image"
-                    />
-                  </Col>
+                        <Tooltip title = {getFileNameFromURL(data)}>
+                          <Button type="primary" className="Reference-download-option-button"
+                            icon = {<DownloadOutlined/>}
+                            onClick={() => handleDownload(data)}>
+                          </Button>
+                        </Tooltip>
+
+                      </div>
+
+                      <Image
+                        style={{ width: "100px", height: "100px" }}
+                        src={data}
+                        onLoad={() => setImageLoaded(true)}
+                        alt="file"
+                        className="Reference-image"
+                      />
+                    </Col>
+
+                  </>:<>
+                    {/* ==== Other file option ====  */}
+                    <Col xs={4} className="Report-reference-document">
+
+                      <div className="Reference-option-button-layout">
+
+                        <Tooltip title = {getFileNameFromURL(data)}>
+                          <Button danger className="Reference-download-option-button"
+                            icon = {<DeleteOutlined/>}
+                            onClick={() => DeleteOptionHandler(data)}>
+                          </Button>
+                        </Tooltip>
+
+                        <Tooltip title = {getFileNameFromURL(data)}>
+                          <Button type="primary" className="Reference-download-option-button"
+                            icon = {<DownloadOutlined/>}
+                            onClick={() => handleDownload(data)}>
+                          </Button>
+                        </Tooltip>
+
+                      </div>
+
+                      <Image
+                        style={{ width: "100px", height: "100px" }}
+                        src={DocxFileIcon}
+                        onLoad={() => setImageLoaded(true)}
+                        alt="file"
+                        className="Reference-image"
+                      />
+                    </Col>
+                  
+                  </>}
                 </>
               ))}
             </Row>
           )}
         </div>
+          
+        {/* ==== File selection drawer ====  */}
 
         <Dragger
           name="url"
