@@ -79,7 +79,7 @@ const RoleLogsFilter = ({
           onClick={() => {
             setFilterValues({});
             form.resetFields();
-            setIsRoleLogsFilterModalOpen(false);
+            // setIsRoleLogsFilterModalOpen(false);
             retrieveRoleData({ page: 1 }, {}, true);
             setIsFilterSelected(false);
           }}

@@ -50,7 +50,7 @@ const UserFilterModal = ({ name, setInstitutionData, retrieveUsersData }) => {
           type="primary"
           onClick={() => {
             form.resetFields();
-            setIsUserFilterModalOpen(false);
+            // setIsUserFilterModalOpen(false);
             retrieveUsersData();
             setIsFilterSelected(false);
           }}

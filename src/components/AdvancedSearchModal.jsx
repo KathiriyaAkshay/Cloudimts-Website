@@ -188,7 +188,7 @@ const AdvancedSearchModal = ({ name, retrieveStudyData, advanceSearchFilterData 
           type='primary'
           onClick={() => {
             form.resetFields()
-            setIsAdvancedSearchModalOpen(false)
+            // setIsAdvancedSearchModalOpen(false)
             retrieveStudyData()
             setIsFilterSelected(false)
             setIsAdvanceSearchSelected(false)
