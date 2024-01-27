@@ -257,11 +257,11 @@ const AssignStudy = ({
     setIsLoading(false);
   };
 
-
   useEffect(() => {
     if (studyID && isAssignModalOpen) {
       retrieveStudyData();
       retrieveAssignStudyDetails();
+      setValues([]) ; 
     }
   }, [studyID]);
 

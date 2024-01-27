@@ -14,13 +14,19 @@ const EmailFilterModal = ({ name, setInstitutionData, retrieveEmailData }) => {
   }, []);
 
   const handleSubmit = (values) => {
-    const modifiedValues = {
+
+    let modifiedValues = {
       ...values,
       created_at__startswith:
         values?.created_at__startswith &&
         values?.created_at__startswith?.format("YYYY-MM-DD"),
-        active_status: values?.active_status === "active"?true:false
     };
+
+    if (values?.active_status !== undefined){
+      modifiedValues['active_status'] = values?.active_status === "active"?true:false
+
+    }
+
     retrieveEmailData({ page: 1 }, modifiedValues);
     setIsEmailFilterModalOpen(false);
     setIsFilterSelected(true);
@@ -92,7 +98,7 @@ const EmailFilterModal = ({ name, setInstitutionData, retrieveEmailData }) => {
           </Col>
           <Col xs={24} lg={12}>
             <Form.Item
-              name="email__icontains"
+              name="email"
               label="Email"
               rules={[
                 {
@@ -129,6 +135,23 @@ const EmailFilterModal = ({ name, setInstitutionData, retrieveEmailData }) => {
                   whitespace: true,
                   message: "Please enter Contact Number",
                 },
+                
+                {
+                  validator: (rule, value) => {
+                    if (!value) {
+                      return Promise.resolve(); // No validation if value is not provided
+                    }
+            
+                    // Validate Indian contact number
+                    const indianPhoneNumberRegex = /^[6-9]\d{9}$/;
+            
+                    if (indianPhoneNumberRegex.test(value)) {
+                      return Promise.resolve();
+                    } else {
+                      return Promise.reject("Invalid contact number");
+                    }
+                  },
+                },
               ]}
             >
               <Input placeholder="Enter Contact Number" />
@@ -143,7 +166,7 @@ const EmailFilterModal = ({ name, setInstitutionData, retrieveEmailData }) => {
                   required: false,
                   whitespace: true,
                   message: "Please enter Contact Number",
-                },
+                }
               ]}
             >
               <Select
