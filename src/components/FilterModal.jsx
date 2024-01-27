@@ -59,7 +59,6 @@ const FilterModal = ({ name, setInstitutionData, retrieveInstitutionData }) => {
           type="primary"
           onClick={() => {
             form.resetFields();
-            setIsFilterModalOpen(false);
             retrieveInstitutionData();
             setIsFilterSelected(false);
           }}

@@ -104,7 +104,7 @@ const InstitutionLogsFilter = ({ name, retrieveRoleData, setFilterValues }) => {
           onClick={() => {
             setFilterValues({});
             form.resetFields();
-            setIsInstitutionLogsFilterModalOpen(false);
+            // setIsInstitutionLogsFilterModalOpen(false);
             retrieveRoleData({ page: 1 }, {}, true);
             setIsFilterSelected(false);
           }}

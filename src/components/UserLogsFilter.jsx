@@ -98,7 +98,7 @@ const UserLogsFilter = ({ name, retrieveRoleData, setFilterValues }) => {
           onClick={() => {
             setFilterValues({});
             form.resetFields();
-            setIsUserLogsFilterModalOpen(false);
+            // setIsUserLogsFilterModalOpen(false);
             retrieveRoleData({ page: 1 }, {}, true);
             setIsFilterSelected(false);
           }}

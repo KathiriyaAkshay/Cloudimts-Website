@@ -88,7 +88,7 @@ const QuickFilterModal = ({ name, retrieveStudyData, quickFilterStudyData }) => 
           type="primary"
           onClick={() => {
             form.resetFields();
-            setIsStudyFilterModalOpen(false);
+            // setIsStudyFilterModalOpen(false);
             retrieveStudyData();
             setIsFilterSelected(false);
           }}

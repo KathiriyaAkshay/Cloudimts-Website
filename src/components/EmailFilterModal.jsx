@@ -55,7 +55,7 @@ const EmailFilterModal = ({ name, setInstitutionData, retrieveEmailData }) => {
           key="submit"
           type="primary"
           onClick={() => {
-            setIsEmailFilterModalOpen(false);
+            // setIsEmailFilterModalOpen(false);
             retrieveEmailData();
             form.resetFields();
             setIsFilterSelected(false);
