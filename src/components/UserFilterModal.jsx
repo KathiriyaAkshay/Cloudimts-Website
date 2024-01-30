@@ -1,7 +1,9 @@
 import { Button, Col, DatePicker, Form, Input, Modal, Row, Select } from "antd";
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { filterDataContext } from "../hooks/filterDataContext";
 import { FilterSelectedContext } from "../hooks/filterSelectedContext";
+import NotificationMessage from "./NotificationMessage";
+import API from "../apis/getApi";
 
 const UserFilterModal = ({ name, setInstitutionData, retrieveUsersData }) => {
   const { isUserFilterModalOpen, setIsUserFilterModalOpen } =
@@ -13,6 +15,42 @@ const UserFilterModal = ({ name, setInstitutionData, retrieveUsersData }) => {
   useEffect(() => {
     setIsFilterSelected(false);
   }, []);
+
+  const [institutionOptions, setInstitutionOptions] = useState([]) ; 
+
+  const retrieveInstitutionDataFunction = async () => {
+    const token = localStorage.getItem('token');
+    await API.get('/user/v1/fetch-institution-list', {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then(res => {
+        if (res.data.status) {
+          const resData = res.data.data.map(item => ({
+            // ...item,
+            label: item.name,
+            value: item.name
+          }))
+          setInstitutionOptions(resData)
+        } else {
+          NotificationMessage(
+            'warning',
+            'Quick Filter',
+            res.data.message
+          )
+        }
+      })
+      .catch(err =>
+        NotificationMessage(
+          'warning',
+          'Quick Filter',
+          err.response.data.message
+        )
+      )
+  }
+
+  useEffect(() => {
+    retrieveInstitutionDataFunction() ; 
+  }, [isUserFilterModalOpen])
 
   const handleSubmit = (values) => {
     const modifiedValues = {
@@ -147,7 +185,10 @@ const UserFilterModal = ({ name, setInstitutionData, retrieveUsersData }) => {
                 },
               ]}
             >
-              <Input placeholder="Enter Institute Name" />
+              <Select
+                placeholder = "Select institution"
+                options = {institutionOptions}
+              />
             </Form.Item>
           </Col>
           <Col xs={24} lg={12}>
