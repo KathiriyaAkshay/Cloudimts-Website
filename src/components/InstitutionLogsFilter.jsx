@@ -1,7 +1,9 @@
 import { Button, Col, DatePicker, Form, Input, Modal, Row, Select } from "antd";
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { filterDataContext } from "../hooks/filterDataContext";
-import { FilterSelectedContext } from "../hooks/filterSelectedContext";
+import { FilterSelectedContext } from "../hooks/filterSelectedContext"; 
+import NotificationMessage from "./NotificationMessage" ; 
+import API from '../apis/getApi' ; 
 
 const eventTypeOptions = [
   {
@@ -47,6 +49,7 @@ const eventTypeOptions = [
 ];
 
 const InstitutionLogsFilter = ({ name, retrieveRoleData, setFilterValues }) => {
+  
   const {
     isInstitutionLogsFilterModalOpen,
     setIsInstitutionLogsFilterModalOpen,
@@ -54,6 +57,42 @@ const InstitutionLogsFilter = ({ name, retrieveRoleData, setFilterValues }) => {
   const [form] = Form.useForm();
 
   const { setIsFilterSelected } = useContext(FilterSelectedContext);
+
+  const [institutionOptions, setInstitutionOptions] = useState([]) ; 
+
+  const retrieveInstitutionDataFunction = async () => {
+    const token = localStorage.getItem('token');
+    await API.get('/user/v1/fetch-institution-list', {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then(res => {
+        if (res.data.status) {
+          const resData = res.data.data.map(item => ({
+            // ...item,
+            label: item.name,
+            value: item.name
+          }))
+          setInstitutionOptions(resData)
+        } else {
+          NotificationMessage(
+            'warning',
+            'Quick Filter',
+            res.data.message
+          )
+        }
+      })
+      .catch(err =>
+        NotificationMessage(
+          'warning',
+          'Quick Filter',
+          err.response.data.message
+        )
+      )
+  }
+
+  useEffect(() => {
+    if (isInstitutionLogsFilterModalOpen) {retrieveInstitutionDataFunction() ; }
+  }, [isInstitutionLogsFilterModalOpen])
 
   useEffect(() => {
     setIsFilterSelected(false);
@@ -131,7 +170,7 @@ const InstitutionLogsFilter = ({ name, retrieveRoleData, setFilterValues }) => {
         <Row gutter={15}>
           <Col xs={24} lg={12}>
             <Form.Item
-              name="institution__name__icontains"
+              name="institution__name"
               label="Institution Name"
               rules={[
                 {
@@ -140,8 +179,11 @@ const InstitutionLogsFilter = ({ name, retrieveRoleData, setFilterValues }) => {
                   message: "Please enter Institution name",
                 },
               ]}
-            >
-              <Input placeholder="Enter Institution Name" />
+            > 
+              <Select
+                placeholder = "Select Institution"
+                options = {institutionOptions}
+              />
             </Form.Item>
           </Col>
           <Col xs={24} lg={12}>
