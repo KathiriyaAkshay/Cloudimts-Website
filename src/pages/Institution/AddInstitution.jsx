@@ -621,8 +621,8 @@ const AddInstitution = () => {
           {id && (
             <div
               className='skip-to-last-option'
-              onClick={() => setCurrentStep(5)}>
-              Skip To Last
+              onClick={() => { if (currentStep == 5){setCurrentStep(0);} else {setCurrentStep(5) ; }}}>
+              {currentStep == 5?"Skip To First":"Skip To Last"}
             </div>
           )}
 
