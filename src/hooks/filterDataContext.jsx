@@ -3,6 +3,9 @@ import { createContext, useState } from "react";
 export const filterDataContext = createContext();
 
 const FilterDataProvider = ({ children }) => {
+  
+  const [isStudyQuickFilterModalOpen, setIsStudyQuickFilterModalOpen] = useState(false) ; 
+
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   
   const [isUserFilterModalOpen, setIsUserFilterModalOpen] = useState(false);
@@ -69,7 +72,9 @@ const FilterDataProvider = ({ children }) => {
         templateOption, 
         setTemplateOption, 
         studyUIDValue, 
-        setStudyUIDValue
+        setStudyUIDValue, 
+        isStudyQuickFilterModalOpen, 
+        setIsStudyQuickFilterModalOpen
       }}
     >
       {children}
