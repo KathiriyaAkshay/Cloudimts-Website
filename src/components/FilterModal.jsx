@@ -1,20 +1,59 @@
 import { Button, Col, DatePicker, Form, Input, Modal, Row, Select } from "antd";
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { filterDataContext } from "../hooks/filterDataContext";
 import { UserPermissionContext } from "../hooks/userPermissionContext";
 import { FilterSelectedContext } from "../hooks/filterSelectedContext";
+import NotificationMessage from "./NotificationMessage";
+import API from "../apis/getApi";
 
 const FilterModal = ({ name, setInstitutionData, retrieveInstitutionData }) => {
   const { isFilterModalOpen, setIsFilterModalOpen } =
     useContext(filterDataContext);
   const { permissionData } = useContext(UserPermissionContext);
+
   const [form] = Form.useForm();
 
   const { setIsFilterSelected } = useContext(FilterSelectedContext);
+  const [institutionOptions, setInstitutionOptions] = useState([]) ; 
+
+  const retrieveInstitutionDataFunction = async () => {
+    const token = localStorage.getItem('token');
+    await API.get('/user/v1/fetch-institution-list', {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then(res => {
+        if (res.data.status) {
+          const resData = res.data.data.map(item => ({
+            // ...item,
+            label: item.name,
+            value: item.name
+          }))
+          setInstitutionOptions(resData)
+        } else {
+          NotificationMessage(
+            'warning',
+            'Quick Filter',
+            res.data.message
+          )
+        }
+      })
+      .catch(err =>
+        NotificationMessage(
+          'warning',
+          'Quick Filter',
+          err.response.data.message
+        )
+      )
+  }
 
   useEffect(() => {
     setIsFilterSelected(false);
   }, []);
+
+  useEffect(() => {
+    if (isFilterModalOpen === true) {retrieveInstitutionDataFunction() ; }
+  }, [isFilterModalOpen])
+  
 
   const handleSubmit = (values) => {
     const modifiedValues = {
@@ -96,7 +135,10 @@ const FilterModal = ({ name, setInstitutionData, retrieveInstitutionData }) => {
                   },
                 ]}
               >
-                <Input placeholder="Enter Institution Name" />
+                <Select
+                  placeholder = "Select Institution"
+                  options = {institutionOptions}
+                />
               </Form.Item>
             </Col>
           )}

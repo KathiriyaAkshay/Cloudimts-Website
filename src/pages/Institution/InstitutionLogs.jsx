@@ -6,16 +6,18 @@ import InstitutionLogsFilter from '../../components/InstitutionLogsFilter'
 import { instituteLogsFilter } from '../../apis/studiesApi'
 import { Tag } from 'antd'
 import { convertToDDMMYYYY } from '../../helpers/utils'
+import NotificationMessage from '../../components/NotificationMessage'
+import API from '../../apis/getApi'
 
 const InstitutionLogs = () => {
   const [institutionData, setInstitutionData] = useState([])
   const [isLoading, setIsLoading] = useState(false)
   const [pagi, setPagi] = useState({ page: 1, limit: 10 })
   const [totalPages, setTotalPages] = useState(0)
-  const navigate = useNavigate()
   const [filterValues, setFilterValues] = useState({})
 
-  const { changeBreadcrumbs } = useBreadcrumbs()
+  const { changeBreadcrumbs } = useBreadcrumbs() ; 
+
 
   useEffect(() => {
     const crumbs = [{ name: 'Institution', to: '/institutions' }]
