@@ -54,7 +54,9 @@ const HeaderButton = ({
   const {
     isFilterSelected,
     isAdvanceSearchSelected,
-    setIsAdvanceSearchSelected
+    setIsAdvanceSearchSelected, 
+    isStudyQuickFilterModalOpen, 
+    setIsStudyQuickFilterModalOpen
   } = useContext(FilterSelectedContext)
   const { setIsEmailModalOpen } = useContext(UserEmailContext)
   const {
@@ -590,7 +592,7 @@ const HeaderButton = ({
 
           <Button
             type='primary'
-            onClick={() => setIsStudyFilterModalOpen(true)}
+            onClick={() => setIsStudyQuickFilterModalOpen(true)}
             className={`btn-icon-div ${isFilterSelected && 'filter-selected'}`}
           >
             <FilterOutlined style={{ fontWeight: '500' }} /> Quick filter

@@ -8,7 +8,7 @@ import API from "../apis/getApi";
 
 const QuickFilterModal = ({ name, retrieveStudyData, quickFilterStudyData }) => {
 
-  const { isStudyFilterModalOpen, setIsStudyFilterModalOpen } = useContext(filterDataContext);
+  const {isStudyQuickFilterModalOpen, setIsStudyQuickFilterModalOpen} = useContext(filterDataContext) ; 
   const { setIsFilterSelected, setIsAdvanceSearchSelected, isFilterSelected } = useContext(FilterSelectedContext);
 
   const [form] = Form.useForm();
@@ -46,14 +46,14 @@ const QuickFilterModal = ({ name, retrieveStudyData, quickFilterStudyData }) => 
   }
 
   useEffect(() => {
-    if (isStudyFilterModalOpen) {
+    if (isStudyQuickFilterModalOpen) {
       retrieveInstitutionData();
     }
-  }, [isStudyFilterModalOpen]);
+  }, [isStudyQuickFilterModalOpen]);
 
   const handleSubmit = (values) => {
     quickFilterStudyData({ page: 1 }, values);
-    setIsStudyFilterModalOpen(false);
+    setIsStudyQuickFilterModalOpen(false);
     setIsFilterSelected(true);
     setIsAdvanceSearchSelected(false);
   };
@@ -63,11 +63,11 @@ const QuickFilterModal = ({ name, retrieveStudyData, quickFilterStudyData }) => 
       centered
       width={"50%"}
       title={name}
-      open={isStudyFilterModalOpen}
+      open={isStudyQuickFilterModalOpen}
       onOk={() => form.submit()}
       className="Quick-filter-modal"
       onCancel={() => {
-        setIsStudyFilterModalOpen(false);
+        setIsStudyQuickFilterModalOpen(false);
       }}
       footer={[
 
@@ -76,7 +76,7 @@ const QuickFilterModal = ({ name, retrieveStudyData, quickFilterStudyData }) => 
         <Button
           key="back"
           onClick={() => {
-            setIsStudyFilterModalOpen(false);
+            setIsStudyQuickFilterModalOpen(false);
           }}
         >
           Cancel
