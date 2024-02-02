@@ -11,7 +11,8 @@ import {
   Space,
   Switch,
   Tag,
-  Tooltip
+  Tooltip, 
+  Spin
 } from 'antd'
 import { EyeFilled } from '@ant-design/icons'
 import TableWithFilter from '../../components/TableWithFilter'
@@ -37,6 +38,7 @@ const Users = () => {
   
   const [tableData, setTableData] = useState([])
   const [isLoading, setIsLoading] = useState(false)
+  const [updatePasswordLoading, setUpdatePasswordLoading] = useState(false) ; 
   const [pagi, setPagi] = useState({ page: 1, limit: 10 })
   const [totalPages, setTotalPages] = useState(0)
   const [logsData, setLogsData] = useState([])
@@ -307,6 +309,7 @@ const Users = () => {
               className='action-icon'
               style={{ fontSize: '24px' }}
               onClick={() => {
+                form.resetFields() ; 
                 setUserID(record.id)
                 setIsModalOpen(true)
               }}
@@ -322,6 +325,7 @@ const Users = () => {
           </Tooltip>
 
           <DeleteActionIcon
+            title = {"Are you sure you want to delete this user?"}
             deleteActionHandler={() => deleteActionHandler(record.id)}
           />
 
@@ -378,6 +382,7 @@ const Users = () => {
 
   const submitHandler = async values => {
     setIsLoading(true)
+    setUpdatePasswordLoading(true) ; 
     await updateUserPassword({
       update_password: values.update_password,
       target_id: userID
@@ -387,6 +392,7 @@ const Users = () => {
           NotificationMessage('success', 'User Password Updated Successfully')
           setUserID(null)
           setIsModalOpen(false)
+          retrieveUsersData() ; 
         } else {
           NotificationMessage(
             'warning',
@@ -397,6 +403,7 @@ const Users = () => {
       })
       .catch(err => NotificationMessage('warning', "Network request failed" ,err.response.data.message))
     setIsLoading(false)
+    setUpdatePasswordLoading(false)
   }
 
   return (
@@ -442,7 +449,6 @@ const Users = () => {
           setUserID(null)
         }}
       >
-        {' '}
         <Form
           labelCol={{
             span: 24
@@ -455,68 +461,72 @@ const Users = () => {
           autoComplete={'off'}
           style={{marginTop: "12px"}}
         >
-          <Row gutter={15}>
-        
-            <Col xs={24} lg={24}>
-              <Form.Item
-                label='New Password'
-                name='update_password'
-                rules={[
-                  {
-                    whitespace: true,
-                    required: true,
-                    message: 'Please enter password'
-                  }
-                ]}
-                hasFeedback
-              >
-                <Input.Password
-                  autoComplete='off'
+          <Spin spinning = {updatePasswordLoading}>
+            
+            <Row gutter={15}>
+          
+              <Col xs={24} lg={24}>
+                <Form.Item
+                  label='New Password'
                   name='update_password'
-                  style={{ marginBottom: '0.5rem' }}
-                  placeholder='Enter Password'
-                />
-              </Form.Item>
-            </Col>
-        
-            <Col xs={24} lg={24}>
-              <Form.Item
-                label='Confirm Password'
-                name='confirmPassword'
-                rules={[
-                  {
-                    required: true,
-                    message: 'Please confirm your password'
-                  },
-                  ({ getFieldValue }) => ({
-                    validator (_, value) {
-                      if (
-                        !value ||
-                        getFieldValue('update_password') === value
-                      ) {
-                        return Promise.resolve()
-                      }
-                      return Promise.reject(
-                        new Error(
-                          'The two passwords that you entered do not match!'
-                        )
-                      )
+                  rules={[
+                    {
+                      whitespace: true,
+                      required: true,
+                      message: 'Please enter password'
                     }
-                  })
-                ]}
-                dependencies={['update_password']}
-                hasFeedback
-              >
-                <Input.Password
-                  autoComplete='off'
+                  ]}
+                  hasFeedback
+                >
+                  <Input.Password
+                    autoComplete='off'
+                    name='update_password'
+                    style={{ marginBottom: '0.5rem' }}
+                    placeholder='Enter Password'
+                  />
+                </Form.Item>
+              </Col>
+          
+              <Col xs={24} lg={24}>
+                <Form.Item
+                  label='Confirm Password'
                   name='confirmPassword'
-                  style={{ marginBottom: '0.5rem' }}
-                  placeholder='Enter Confirm Password'
-                />
-              </Form.Item>
-            </Col>
+                  rules={[
+                    {
+                      required: true,
+                      message: 'Please confirm your password'
+                    },
+                    ({ getFieldValue }) => ({
+                      validator (_, value) {
+                        if (
+                          !value ||
+                          getFieldValue('update_password') === value
+                        ) {
+                          return Promise.resolve()
+                        }
+                        return Promise.reject(
+                          new Error(
+                            'The two passwords that you entered do not match!'
+                          )
+                        )
+                      }
+                    })
+                  ]}
+                  dependencies={['update_password']}
+                  hasFeedback
+                >
+                  <Input.Password
+                    autoComplete='off'
+                    name='confirmPassword'
+                    style={{ marginBottom: '0.5rem' }}
+                    placeholder='Enter Confirm Password'
+                  />
+                </Form.Item>
+              </Col>
 
-          </Row>
+            </Row>
+
+          </Spin>
         
         </Form>
       </Modal>
