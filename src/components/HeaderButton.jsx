@@ -63,7 +63,6 @@ const HeaderButton = ({
     setIsFilterModalOpen,
     setIsUserFilterModalOpen,
     setIsEmailFilterModalOpen,
-    setIsStudyFilterModalOpen,
     setIsBillingFilterModalOpen,
     setIsRoleLogsFilterModalOpen,
     setIsInstitutionLogsFilterModalOpen,
@@ -73,7 +72,8 @@ const HeaderButton = ({
     setIsStudyExportModalOpen, 
     setIsQuickAssignStudyModalOpen, 
     templateOption, 
-    setTemplateOption
+    setEmailSupportOption, 
+    setPhoneSupportOption
   } = useContext(filterDataContext)
   const { setSelectedItem } = useContext(ReportDataContext)
   const { billingFilterData, setBillingFilterData } =
@@ -744,6 +744,7 @@ const HeaderButton = ({
           />
         </div>
       )}
+
       {window.location.pathname === '/billing' && (
         <div className='iod-setting-div'>
           {permissionData['Other option permission'] &&
@@ -777,16 +778,37 @@ const HeaderButton = ({
           </Button>
         </div>
       )}
+
       {window.location.pathname === '/support' && (
-        <div className='iod-setting-div'>
-          <Button
-            type='primary'
-            onClick={() => setIsSupportModalOpen(true)}
-            className='btn-icon-div'
-          >
-            <PlusOutlined style={{ fontWeight: '500' }} /> Add New Support
-          </Button>
-        </div>
+        
+        <>
+          <div className='iod-setting-div'>
+            <Button
+              type='primary'
+              onClick={() => {console.log("Run this function"); setEmailSupportOption(true); setPhoneSupportOption(false) ; }}
+              className='btn-icon-div'
+            >
+              Email support details
+            </Button>
+
+            <Button
+              type='primary'
+              onClick={() => {setPhoneSupportOption(true) ; setEmailSupportOption(false) ; }}
+              className='btn-icon-div'
+            >
+              Phonesupport details
+            </Button>
+
+            <Button
+              type='primary'
+              onClick={() => setIsSupportModalOpen(true)}
+              className='btn-icon-div'
+            >
+              <PlusOutlined style={{ fontWeight: '500' }} /> Add New Support
+            </Button>
+          </div>
+        
+        </>
       )}
       <StudyFilterModal
         isFilterModalOpen={isAddFilterModalOpen}

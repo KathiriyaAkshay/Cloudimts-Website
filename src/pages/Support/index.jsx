@@ -4,21 +4,24 @@ import TableWithFilter from '../../components/TableWithFilter'
 import { Space } from 'antd'
 import EditActionIcon from '../../components/EditActionIcon'
 import DeleteActionIcon from '../../components/DeleteActionIcon'
-import { deleteStudy, deleteSupport, fetchSupport } from '../../apis/studiesApi'
+import { deleteSupport, fetchSupport } from '../../apis/studiesApi'
 import NotificationMessage from '../../components/NotificationMessage'
 import { UserPermissionContext } from '../../hooks/userPermissionContext'
 import { filterDataContext } from '../../hooks/filterDataContext'
 import { useBreadcrumbs } from '../../hooks/useBreadcrumbs'
 
 const index = () => {
-  const [tableData, setTableData] = useState([])
   const [isLoading, setIsLoading] = useState(false)
   const { permissionData } = useContext(UserPermissionContext)
   const [supportId, setSupportId] = useState(null)
-  const { isSupportModalOpen, setIsSupportModalOpen } =
-    useContext(filterDataContext)
-
+  
+  const { setIsSupportModalOpen,emailSupportOption, phoneSupportOption  } =useContext(filterDataContext)
   const { changeBreadcrumbs } = useBreadcrumbs()
+
+  const [supportTableColumn, setSupportTableColumn] = useState([]) ; 
+  const [emailTableData, setEmailTableData] = useState([]) ; 
+  const [phoneTableData, setPhoneTableData] = useState([]) ; 
+  const [tableData, setTableData] = useState([]) ; 
 
   useEffect(() => {
     changeBreadcrumbs([{ name: 'Support' }])
@@ -30,7 +33,21 @@ const index = () => {
     await fetchSupport()
       .then(res => {
         if (res.data.status) {
-          setTableData(res.data.data)
+
+          let emailtemp = [] ; 
+          let phonetemp = [] ; 
+          res.data.data.map((element) => {
+            if (element.option === 1){
+              emailtemp.push(element) ; 
+            } else{
+              phonetemp.push(element) ; 
+            }
+          })
+          
+          setEmailTableData([...emailtemp]) ;
+          setPhoneTableData([...phonetemp]) ; 
+          setTableData([...emailtemp]) ; 
+           
         } else {
           NotificationMessage(
             'warning',
@@ -72,21 +89,22 @@ const index = () => {
     return permission
   }
 
-  const columns = [
+  const emailColumn = [
     {
       title: 'Email',
       dataIndex: 'option_value',
       render: (text, record) => (record?.option === 1 ? text : '-')
     },
-    {
-      title: 'Phone Number',
-      dataIndex: 'option_value',
-      render: (text, record) => (record?.option === 2 ? text : '-')
-    },
+    // {
+    //   title: 'Phone Number',
+    //   dataIndex: 'option_value',
+    //   render: (text, record) => (record?.option === 2 ? text : '-')
+    // },
     {
       title: 'Description',
       dataIndex: 'option_description'
     },
+
     (checkPermissionStatus('Edit Support details') ||
       checkPermissionStatus('Delete Support details')) && {
       title: 'Actions',
@@ -112,15 +130,64 @@ const index = () => {
         </Space>
       )
     }
-  ].filter(Boolean)
+  ].filter(Boolean) ; 
+
+  const phoneColumn = [
+    {
+      title: 'Phone Number',
+      dataIndex: 'option_value',
+      render: (text, record) => (record?.option === 2 ? text : '-')
+    },
+    {
+      title: 'Description',
+      dataIndex: 'option_description'
+    },
+
+    (checkPermissionStatus('Edit Support details') ||
+      checkPermissionStatus('Delete Support details')) && {
+      title: 'Actions',
+      dataIndex: 'actions',
+      fixed: 'right',
+      width: window.innerWidth < 650 ? '1%' : '10%',
+      render: (_, record) => (
+
+        <Space style={{ display: 'flex', justifyContent: 'space-evenly' }}>
+        
+          {checkPermissionStatus('Edit Support details') && (
+            <EditActionIcon
+              editActionHandler={() => editActionHandler(record.id)}
+            />
+          )}
+        
+          {checkPermissionStatus('Delete Support details') && (
+            <DeleteActionIcon
+              deleteActionHandler={() => deleteActionHandler(record.id)}
+            />
+          )}
+        
+        </Space>
+      )
+    }
+  ].filter(Boolean) ; 
+
+  useEffect(() => {
+    if (emailSupportOption){
+      setSupportTableColumn([...emailColumn]) ; 
+      setTableData([...emailTableData]) ; 
+    } else {
+      setSupportTableColumn([...phoneColumn]) ; 
+      setTableData([...phoneTableData])
+    }
+  }, [emailSupportOption, phoneSupportOption])
+
   return (
     <>
       <TableWithFilter
         tableData={tableData}
-        tableColumns={columns}
+        tableColumns={supportTableColumn}
         loadingTableData={isLoading}
       />
-
+      
       <SupportModal
         retrieveSupportData={retrieveSupportData}
         setSupportId={setSupportId}
