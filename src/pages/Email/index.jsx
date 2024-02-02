@@ -19,13 +19,13 @@ const Email = () => {
   const { isEmailModalOpen, setIsEmailModalOpen } = useContext(UserEmailContext)
   const [form] = Form.useForm()
   const [roleOptions, setRoleOptions] = useState([])
-  const navigate = useNavigate()
   const [isLoading, setIsLoading] = useState(false)
   const token = localStorage.getItem('token')
   const [pagi, setPagi] = useState({ page: 1, limit: 10 })
   const [totalPages, setTotalPages] = useState(0)
   const [emailID, setEmailID] = useState(null)
   const { permissionData } = useContext(UserPermissionContext)
+  const [emailModalTitle, setEmailModalTitle] = useState("Add Email") ; 
 
   const { changeBreadcrumbs } = useBreadcrumbs()
 
@@ -45,7 +45,7 @@ const Email = () => {
       .then(res => {
         if (res.data.status) {
           form.setFieldsValue(res.data.datat)
-          setIsEmailModalOpen(true)
+          setIsEmailModalOpen(true) 
         } else {
           NotificationMessage(
             'warning',
@@ -284,7 +284,7 @@ const Email = () => {
       {/* === Add new email modal ====  */}
 
       <Modal
-        title='Add Email'
+        title='Email address'
         open={isEmailModalOpen}
         onOk={() => form.submit()}
         onCancel={() => {
