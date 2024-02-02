@@ -95,11 +95,6 @@ const index = () => {
       dataIndex: 'option_value',
       render: (text, record) => (record?.option === 1 ? text : '-')
     },
-    // {
-    //   title: 'Phone Number',
-    //   dataIndex: 'option_value',
-    //   render: (text, record) => (record?.option === 2 ? text : '-')
-    // },
     {
       title: 'Description',
       dataIndex: 'option_description'
@@ -123,6 +118,7 @@ const index = () => {
         
           {checkPermissionStatus('Delete Support details') && (
             <DeleteActionIcon
+              title = "Are you sure you want to delete this Support details?"
               deleteActionHandler={() => deleteActionHandler(record.id)}
             />
           )}
@@ -161,6 +157,7 @@ const index = () => {
         
           {checkPermissionStatus('Delete Support details') && (
             <DeleteActionIcon
+              title = "Are you sure you want to delete this Support details?"
               deleteActionHandler={() => deleteActionHandler(record.id)}
             />
           )}

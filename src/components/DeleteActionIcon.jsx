@@ -7,7 +7,7 @@ const DeleteActionIcon = ({ deleteActionHandler, title, assign_user }) => {
       <Typography.Link className="action-column">
         <Tooltip title={`${assign_user !== null && assign_user !== undefined?`${assign_user} =>`:""} Delete`}>
           <Popconfirm
-            title="Are you sure to delete this study?"
+            title = {title}
             onConfirm={deleteActionHandler}
             onCancel={() => {console.log("Cancel study model");}}
           >
