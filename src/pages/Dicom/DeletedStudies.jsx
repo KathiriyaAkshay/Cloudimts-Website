@@ -185,7 +185,6 @@ const DeletedStudies = () => {
       setStudyIdArray(prev => selectedRows?.map(data => data.id))
     },
     getCheckboxProps: record => ({
-      // Column configuration not to be checked
       id: record.id
     })
   }

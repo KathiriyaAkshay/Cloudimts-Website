@@ -135,7 +135,6 @@ const SupportModal = ({ retrieveSupportData, setSupportId, supportId }) => {
                     rules={[
                       {
                         required: true,
-                        // type: "email",
                         message: 'Please enter valid email'
                       }
                     ]}
@@ -170,6 +169,22 @@ const SupportModal = ({ retrieveSupportData, setSupportId, supportId }) => {
                       {
                         required: true,
                         message: 'Please enter valid number'
+                      },
+                      {
+                        validator: (rule, value) => {
+                          if (!value) {
+                            return Promise.resolve(); // No validation if value is not provided
+                          }
+                  
+                          // Validate Indian contact number
+                          const indianPhoneNumberRegex = /^[6-9]\d{9}$/;
+                  
+                          if (indianPhoneNumberRegex.test(value)) {
+                            return Promise.resolve();
+                          } else {
+                            return Promise.reject("Invalid contact number");
+                          }
+                        }
                       }
                     ]}
                   >

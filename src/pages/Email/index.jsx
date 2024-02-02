@@ -343,10 +343,9 @@ const Email = () => {
               {
                 validator: (rule, value) => {
                   if (!value) {
-                    return Promise.resolve(); // No validation if value is not provided
+                    return Promise.resolve(); 
                   }
           
-                  // Validate Indian contact number
                   const indianPhoneNumberRegex = /^[6-9]\d{9}$/;
           
                   if (indianPhoneNumberRegex.test(value)) {
