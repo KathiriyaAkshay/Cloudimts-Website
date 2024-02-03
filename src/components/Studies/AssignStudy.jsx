@@ -145,32 +145,26 @@ const AssignStudy = ({
           const resData = res.data.data;
           const modifiedData = [
             {
-              name: "Patient's id",
-              value: resData?.Patient_id,
-            },
-            {
-              name: "Referring Physician Name",
-              value: resData?.Referring_physician_name,
-            },
-            {
-              name: "Patient's Name",
-              value: resData?.Patient_name,
+              name: "Patient id",
+              value: studyReference
             },
 
             {
-              name: "Assign study time",
+              name: "Patient Name",
+              value: resData?.Patient_name,
+            },
+
+
+            {
+              name: "Assign time",
               value: resData?.study_assign_time,
             },
 
             {
-              name: "Assign study username",
+              name: "Assign Radiologist",
               value: resData?.study_assign_username,
             },
 
-            {
-              name: "Performing Physician Name",
-              value: resData?.Performing_physician_name,
-            },
             {
               name: "Accession Number",
               value: resData?.Accession_number,
@@ -191,14 +185,10 @@ const AssignStudy = ({
               name: "Study Description",
               value: resData?.Study_description,
             },
-            {
-              name: "Body Part",
-              value: resData?.Study_body_part,
-            },
-            {
-              name: "Study UID",
-              value: resData?.Study_UID,
-            },
+            // {
+            //   name: "Study UID",
+            //   value: resData?.Study_UID,
+            // },
             {
               name: "Series UID",
               value: resData?.Series_UID,
@@ -319,9 +309,11 @@ const AssignStudy = ({
                 <Typography
                   style={{ display: "flex", gap: "2px", fontWeight: "600", flexWrap: "wrap" }}
                 >
-                  <div style={{ width: "29%" }}>{item.name}</div><div style={{ width: "4%" }}>:</div><div style={{ width: "60%" }}>
-                    {item.name === "Patient's id" ||
-                      item.name === "Patient's Name" ||
+                  <div style={{ width: "29%", color: "#000000" }}>{item.name}</div>
+                  <div style={{ width: "4%" }}>:</div>
+                  <div style={{ width: "65%" }}>
+                    {item.name === "Patient id" ||
+                      item.name === "Patient Name" ||
                       item.name === "Study UID" ||
                       item.name === "Institution Name" ||
                       item.name === "Series UID" ||

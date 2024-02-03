@@ -6,9 +6,9 @@ import { getModalityList, getRadiologistList } from '../apis/studiesApi'
 import API from '../apis/getApi';
 import NotificationMessage from './NotificationMessage';
 
-const AdvancedSearchModal = ({ name, retrieveStudyData, advanceSearchFilterData }) => {
+const AdvancedSearchModal = ({ name, retrieveStudyData, advanceSearchFilterData, quickFilterform }) => {
 
-  const { isAdvancedSearchModalOpen, setIsAdvancedSearchModalOpen } = useContext(filterDataContext);
+  const { isAdvancedSearchModalOpen, setIsAdvancedSearchModalOpen, setIsStudyQuickFilterModalOpen } = useContext(filterDataContext);
   const { setIsFilterSelected, setIsAdvanceSearchSelected } = useContext(FilterSelectedContext);
 
   const [form] = Form.useForm();
@@ -68,6 +68,8 @@ const AdvancedSearchModal = ({ name, retrieveStudyData, advanceSearchFilterData 
     setIsAdvancedSearchModalOpen(false)
     setIsFilterSelected(false)
     setIsAdvanceSearchSelected(true)
+    setIsStudyQuickFilterModalOpen(false) ; 
+    quickFilterform.resetFields() ; 
   }
 
   const retrieveInstitutionData = async () => {

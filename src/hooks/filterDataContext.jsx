@@ -41,6 +41,8 @@ const FilterDataProvider = ({ children }) => {
 
   const [studyUIDValue, setStudyUIDValue] = useState(null) ; 
 
+  const [emailSupportOption, setEmailSupportOption] = useState(true) ; 
+  const [phoneSupportOption, setPhoneSupportOption] = useState(false) ; 
 
   return (
     <filterDataContext.Provider
@@ -74,7 +76,11 @@ const FilterDataProvider = ({ children }) => {
         studyUIDValue, 
         setStudyUIDValue, 
         isStudyQuickFilterModalOpen, 
-        setIsStudyQuickFilterModalOpen
+        setIsStudyQuickFilterModalOpen, 
+        setEmailSupportOption, 
+        setPhoneSupportOption, 
+        emailSupportOption, 
+        phoneSupportOption
       }}
     >
       {children}

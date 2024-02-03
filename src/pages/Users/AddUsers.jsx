@@ -125,7 +125,24 @@ const AddUsers = () => {
   }
 
   const handleNextStep = () => {
-    setCurrentStep(prevStep => prevStep + 1)
+    if (currentStep === 3){
+      
+      if(imageURL === null){
+        
+        if (value?.length === 0){
+          NotificationMessage("warning", "Please, Select signature image")
+        } else {
+          setCurrentStep(prevStep => prevStep + 1)
+        }
+        
+      }else {
+        setCurrentStep(prevStep => prevStep + 1)
+      }
+    } else {
+      setCurrentStep(prevStep => prevStep + 1)
+
+    }
+
   }
 
   const handlePrevStep = () => {
@@ -254,6 +271,7 @@ const AddUsers = () => {
     if (currentStep === 0) {
 
       let user_profile_image = null;
+
       if (values?.user_profile_image?.file?.originFileObj) {
         try {
 
@@ -267,9 +285,12 @@ const AddUsers = () => {
         } catch (error) {
           NotificationMessage("warning", "Network request failed", "Failed to upload user profile image");
         }
+      } else {
+        user_profile_image = "https://images.unsplash.com/photo-1487611459768-bd414656ea10?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" ; 
       }
-
+      
       setIsLoading(false);
+
       setPayload({
         ...values,
         allow_offline_download: values.allow_offline_download
@@ -282,11 +303,13 @@ const AddUsers = () => {
       handleNextStep();
 
     } else if (currentStep === 1) {
+
       setPayload(prev => ({
         ...prev,
         start_time: values.availability[0].format('HH:mm:ss'),
         end_time: values.availability[1].format('HH:mm:ss')
       }))
+
       if (id) {
         setIsLoading(true)
         await API.post(
@@ -295,7 +318,7 @@ const AddUsers = () => {
             ...payload,
             start_time: values?.availability[0].format('HH:mm:ss'),
             end_time: values?.availability[1].format('HH:mm:ss'),
-            user_id: id
+            user_id: parseInt(id)
           },
           { headers: { Authorization: `Bearer ${token}` } }
         )
@@ -311,8 +334,11 @@ const AddUsers = () => {
           )
         setIsLoading(false)
       }
+
       handleNextStep()
+    
     } else if (currentStep === 2) {
+
       setPayload(prev => ({ ...prev, ...convertToObject(values) }))
       if (id) {
         setIsLoading(true)
@@ -359,9 +385,21 @@ const AddUsers = () => {
           NotificationMessage('warning', "Network request failed", err.response.data.message)
         }
 
+      } else {
+        signature_image = imageURL
       }
 
+      console.log("Image data--------->");
+      console.log(signature_image);
+
+      console.log("Image values information ====>");
+      console.log(value);
+
+      console.log("Signature image information ====>");
+      console.log(imageURL);
+
       setPayload(prev => ({ ...prev, signature_image }))
+
       if (id) {
         await API.post(
           '/user/v1/user-update-signature',
@@ -375,6 +413,8 @@ const AddUsers = () => {
             if (res.data.status) {
               setImageURL(signature_image)
               setPayload(prev => ({ ...prev, signature_image }))
+              
+              NotificationMessage("success", "Update user signature successfully")
             } else {
               NotificationMessage(
                 'warning',
@@ -389,6 +429,7 @@ const AddUsers = () => {
       }
       setIsLoading(false)
       handleNextStep();
+
     } else if (currentStep === 4) {
       setIsLoading(true)
       const modalityData = { ...convertModalityToObject(values) }
@@ -508,6 +549,7 @@ const AddUsers = () => {
       });
     }
   };
+
   const uploadButton = (
     <button
       style={{
@@ -544,8 +586,9 @@ const AddUsers = () => {
           }}>
 
           {id && (
-            <div style={{ cursor: "pointer" }} onClick={() => setCurrentStep(4)}>
-              Skip To Last
+            <div style={{ cursor: "pointer" }} onClick={
+              () => { if(currentStep === 4){setCurrentStep(0)}else{setCurrentStep(4)}}}>
+              {currentStep === 4?"SKip To First": "Skip To Last"}
             </div>
           )}
         </div>
@@ -668,6 +711,22 @@ const AddUsers = () => {
                         required: true,
                         whitespace: true,
                         message: 'Please enter contact number'
+                      }, 
+                      {
+                        validator: (rule, value) => {
+                          if (!value) {
+                            return Promise.resolve(); // No validation if value is not provided
+                          }
+                  
+                          // Validate Indian contact number
+                          const indianPhoneNumberRegex = /^[6-9]\d{9}$/;
+                  
+                          if (indianPhoneNumberRegex.test(value)) {
+                            return Promise.resolve();
+                          } else {
+                            return Promise.reject("Invalid contact number");
+                          }
+                        }
                       }
                     ]}
                   >

@@ -1430,6 +1430,36 @@
   text-align: center;
 }
 
+
+.Study-table {
+
+  .ant-table-thead{
+    .ant-table-cell{
+      text-align: center !important;
+    }
+  }
+
+  .ant-table{
+    font-size: 13px !important;
+  }
+
+  .ant-statistic-content-value{
+    font-size: 13px !important;
+  }
+
+  .study-table-chat-option{
+    font-size: 16px !important;
+  }
+
+  
+}
+
+.action-icon{
+  margin-left: 0.2rem !important;
+  margin-right: 0.2rem !important;
+  font-size: 17px;
+}
+  
 // ========= Chat Module css ============ // 
 
 .chat-module-div {
@@ -2332,13 +2362,15 @@ margin-top: 8px !important;
 
 
 .ohif-viwer-option-icon{
-  height: 16px;
-  width: 16px;
+  // margin-top: 3px;
+  height: 14px;
+  width: 14px;
 }
 
 .Weasis-viewer-option-icon{
-  height: 20px;
-  width: 20px;
+  height: 17px;
+  width: 17px;
+  margin-left: 4px;
 }
 
 .Advance-view-report-layout .ant-card-body{
@@ -2502,6 +2534,7 @@ form.ant-form .ant-form-item .ant-form-item-label label{
 
 .studyrow-option-icon{
   gap: 1.5rem !important;
+  padding-left: 2rem;
 }
 
 :where(.css-15rg2km).ant-table-wrapper .ant-table {
@@ -2668,4 +2701,49 @@ form.ant-form .ant-form-item .ant-form-item-label label{
 .user-creation-card{
   max-height: 87vh !important ; 
   overflow-y: hidden;
+}
+
+.ant-table-row-expand-icon{
+  display: none !important;
+}
+
+.study-quick-filter-form{
+  
+  .ant-input{
+    background-color: #ffffff !important;
+  }
+
+  .ant-input::placeholder{
+    color: rgb(98, 98, 98) !important;
+  }
+
+  .ant-select{
+    .ant-select-selector{
+      background-color:  #ffffff !important;
+    }
+  }
+
+  .ant-select-selection-placeholder{
+    color: rgb(98, 98, 98)  !important;
+  }
+  
+  .quick-filter-date-picker{
+    .ant-picker{
+      background-color: #ffffff !important;
+    }
+  }
+
+  #created_at__startswith::placeholder{
+    color: rgb(98, 98, 98)  !important  ;
+  }
+
+  .ant-form-item-control-input{
+    margin-right: 1rem !important;
+  }
+  
+}
+
+.quick-filter-selected{
+  background-color: #ff4a4a !important;
+  color: #FFFFFF !important;
 }

@@ -125,7 +125,10 @@ const index = () => {
           )}
 
           {checkPermissionStatus('Delete template option') && (
-                <DeleteActionIcon deleteActionHandler={() => DeleteTemplateOptionHandler(record.id)}/>
+                <DeleteActionIcon 
+                  title = "Are you sure you want to delete this template?"
+                  deleteActionHandler={() => DeleteTemplateOptionHandler(record.id)}
+                />
           )}
         </Space>
       )

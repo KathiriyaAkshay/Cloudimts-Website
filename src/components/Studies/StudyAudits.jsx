@@ -25,20 +25,12 @@ const StudyAudits = ({ isModalOpen, setIsModalOpen, studyID, setStudyID, referen
           const resData = res.data.data
           const modifiedData = [
             {
-              name: "Patient's id",
-              value: resData?.Patient_id
+              name: "Patient id",
+              value: referenceId
             },
             {
-              name: 'Referring Physician Name',
-              value: resData?.Referring_physician_name
-            },
-            {
-              name: "Patient's Name",
+              name: "Patient Name",
               value: resData?.Patient_name
-            },
-            {
-              name: 'Performing Physician Name',
-              value: resData?.Performing_physician_name
             },
             {
               name: 'Accession Number',
@@ -60,25 +52,12 @@ const StudyAudits = ({ isModalOpen, setIsModalOpen, studyID, setStudyID, referen
               name: 'Study Description',
               value: resData?.Study_description
             },
-           
-            {
-              name: 'Body Part',
-              value: resData?.Study_body_part
-            },
-            {
-              name: 'Study UID',
-              value: resData?.Study_UID
-            },
-            {
-              name: 'Series UID',
-              value: resData?.Series_UID
-            },
             {
               name: 'urgent_case',
               value: resData?.assigned_study_data
             },
             {
-              name: "Patient's comments",
+              name: "Study history",
               value: resData?.Patient_comments
             },
           ]
@@ -236,8 +215,8 @@ const StudyAudits = ({ isModalOpen, setIsModalOpen, studyID, setStudyID, referen
                 style={{ display: 'flex', gap: '4px', fontWeight: '600',flexWrap:"wrap" }}
               >
                 {item.name}:
-                {item.name === "Patient's id" ||
-                item.name === "Patient's Name" ||
+                {item.name === "Patient id" ||
+                item.name === "Patient Name" ||
                 item.name === "Study UID" ||
                 item.name === "Institution Name" ||
                 item.name === "Series UID" || 

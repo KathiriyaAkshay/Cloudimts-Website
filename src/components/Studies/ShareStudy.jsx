@@ -17,6 +17,7 @@ import {
 import { MdEmail, MdOutlineWhatsapp } from 'react-icons/md'
 import NotificationMessage from '../NotificationMessage'
 import APIHandler from '../../apis/apiHandler'
+import { getMoreDetails } from '../../apis/studiesApi'
 import API from '../../apis/getApi'
 const ShareStudy = ({
   isShareStudyModalOpen,
@@ -86,21 +87,24 @@ const ShareStudy = ({
 
   const retrieveStudyData = () => {
     setIsLoading(true)
-    getStudyData({ id: studyID })
+    getMoreDetails({ id: studyID })
       .then(res => {
         if (res.data.status) {
           const resData = res.data.data
 
           const modifiedData = [
             {
-              name: "Patient's id",
-              value: resData?.Patient_id
+              name: "Patient id",
+              value: referenceId
             },
             {
-              name: "Patient's Name",
+              name: "Patient Name",
               value: resData?.Patient_name
             },
-
+            {
+              name: "Institution", 
+              value: resData?.institution?.Institution_name
+            },
             {
               name: 'Study Description',
               value: resData?.Study_description
@@ -109,10 +113,6 @@ const ShareStudy = ({
             {
               name: 'Modality',
               value: resData?.Modality
-            },
-            {
-              name: "Reference id",
-              value: referenceId
             }
           ]
           setModalData(modifiedData)
@@ -328,8 +328,9 @@ const ShareStudy = ({
                   style={{ display: 'flex', gap: '4px', fontWeight: '600', flexWrap: "wrap" }}
                 >
                   {item.name}:
-                  {item.name === "Patient's id" ||
-                    item.name === "Patient's Name" ||
+                  {item.name === "Patient id" ||
+                    item.name === "Patient Name" ||
+                    item.name === "Institution" ||
                     item.name === "Study UID" ||
                     item.name === "Institution Name" ||
                     item.name === "Series UID" ||

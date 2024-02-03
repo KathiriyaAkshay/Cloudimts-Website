@@ -13,7 +13,8 @@ import {
   Select,
   Spin,
   InputNumber,
-  Modal
+  Modal,
+  Empty
 } from 'antd' ;
 
 import { useNavigate, useParams } from 'react-router-dom'
@@ -156,7 +157,18 @@ const AddInstitution = () => {
   }, [])
 
   const handleNextStep = () => {
-    setCurrentStep(prevStep => prevStep + 1)
+    if (currentStep === 1){
+      if (tableData?.length === 0){
+
+        NotificationMessage("warning", "Please, Add Modality charge information") ; 
+      } else {
+
+        setCurrentStep(prevStep => prevStep + 1)
+      }
+    } else{
+
+      setCurrentStep(prevStep => prevStep + 1)
+    }
   }
 
   const handlePrevStep = () => {
@@ -599,6 +611,11 @@ const AddInstitution = () => {
     }
   ]
 
+  const ModalityDelete = (modalityname) => {
+    
+    setTableData(tableData.filter(element => element?.id !== modalityname));
+  }
+
 
 
   return (
@@ -693,6 +710,23 @@ const AddInstitution = () => {
                         required: true,
                         whitespace: true,
                         message: 'Please enter contact number'
+                      }, 
+
+                      {
+                        validator: (rule, value) => {
+                          if (!value) {
+                            return Promise.resolve(); // No validation if value is not provided
+                          }
+                  
+                          // Validate Indian contact number
+                          const indianPhoneNumberRegex = /^[6-9]\d{9}$/;
+                  
+                          if (indianPhoneNumberRegex.test(value)) {
+                            return Promise.resolve();
+                          } else {
+                            return Promise.reject("Invalid contact number");
+                          }
+                        }
                       }
                     ]}
                   >
@@ -865,25 +899,42 @@ const AddInstitution = () => {
 
                   <div className='modality-card-wrapper'>
 
-                    {tableData.map((element) => {
-                      return(
-                        <Card className='particular-modality-info-division' title={element.id} style={{ width: "fit-content", marginTop: "0.3rem" }} headerBg="#00ff00">
+                    {tableData?.length === 0?<>
+                      <Empty
+                        description = "Not found any modality charges"
+                      />
+                    </>:<>
 
-                          <div className='particular-modality-charges-title'>Reporting charge</div>
-                          
-                          <Form.Item name={`${element.id}_reporting_charge`} initialValue={element.reporting_charge}>
-                            <Input type='number' />
-                          </Form.Item>
+                      {tableData.map((element, index) => {
+                        return(
+                          <Card className='particular-modality-info-division' 
+                            title={element.id} style={{ width: "fit-content", marginTop: "0.3rem" }} 
+                            headerBg="#00ff00"
+                            key={index}>
 
-                          <div className='particular-modality-charges-title'>Communication charge</div>
-                          
-                          <Form.Item name={`${element.id}_communication_charge`} initialValue={element.communication_charge}>
-                            <Input type='number'/>
-                          </Form.Item>
+                            <div className='particular-modality-charges-title'>Reporting charge</div>
+                            
+                            <Form.Item name={`${element.id}_reporting_charge`} initialValue={element.reporting_charge}>
+                              <Input type='number' />
+                            </Form.Item>
 
-                        </Card>
-                    )
-                    })}
+                            <div className='particular-modality-charges-title'>Communication charge</div>
+                            
+                            <Form.Item name={`${element.id}_communication_charge`} initialValue={element.communication_charge}>
+                              <Input type='number'/>
+                            </Form.Item>
+
+                            <Button style={{width: "100%"}} danger
+                              onClick={() => {ModalityDelete(element?.id)}}>
+                              Delete
+                            </Button>
+
+                          </Card>
+                      )
+                      })}
+                    
+                    </>}
+
                   </div>
                 </Col>
 

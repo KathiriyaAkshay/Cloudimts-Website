@@ -22,43 +22,35 @@ const PatientDetails = ({
           const resData = res.data.data;
           const modifiedData = [
             {
-              name: "Patient's Id",
-              value: resData?.Patient_id,
+              name: "Patient id",
+              value: referenceId,
             },
             {
-              name: "Referring Physician Name",
-              value: resData?.Referring_physician_name,
-            },
-            {
-              name: "Patient's Name",
+              name: "Patient Name",
               value: resData?.Patient_name,
             },
             {
-              name: "Performing Physician Name",
-              value: resData?.Performing_physician_name,
+              name: "Institution Name",
+              value: resData?.institution?.Institution_name,
             },
             {
-              name: "Previous Patient's Id",
-              value: resData?.Previous_patient_id,
-            },
-
-            {
-              name: "Assign study time",
+              name: "Assign time",
               value: resData?.study_assign_time
             },
 
             {
-              name: "Assign study username",
+              name: "Assign Radiologist",
               value: resData?.study_assign_username
+            },
+
+            {
+              name: "Reporting Time",
+              value: resData?.reporting_time,
             },
 
             {
               name: "Accession Number",
               value: resData?.Accession_number,
-            },
-            {
-              name: "Previous Patient's Name",
-              value: resData?.Previous_patient_name,
             },
             {
               name: "Modality",
@@ -77,21 +69,14 @@ const PatientDetails = ({
               name: "Study Description",
               value: resData?.Study_description,
             },
+
             {
-              name: "Institution Name",
-              value: resData?.institution?.Institution_name,
+              name: "Study history",
+              value: resData?.Patient_comments,
             },
             {
-              name: "Body Part",
-              value: resData?.Study_body_part,
-            },
-            {
-              name: "Created At",
+              name: "Study date",
               value: resData?.Created_at,
-            },
-            {
-              name: "Reporting Time",
-              value: resData?.reporting_time,
             },
             {
               name: "Urgent Case",
@@ -102,12 +87,16 @@ const PatientDetails = ({
               value: resData?.Study_UID,
             },
             {
+              name: "Performing Physician Name",
+              value: resData?.Performing_physician_name,
+            },
+            {
               name: "Series UID",
               value: resData?.Series_UID,
             },
             {
-              name: "Patient's comments",
-              value: resData?.Patient_comments,
+              name: "Referring Physician Name",
+              value: resData?.Referring_physician_name,
             },
           ];
           setModalData(modifiedData);
@@ -182,11 +171,11 @@ const PatientDetails = ({
           renderItem={(item) => (
             <List.Item className="queue-number-list">
               <Typography
-                style={{ display: "flex", gap: "4px", fontWeight: "600", flexWrap: "wrap" }}
+                style={{ display: "flex", gap: "4px", fontWeight: "600", flexWrap: "wrap", color : "#000000" }}
               >
                 {item.name}:
-                {item.name === "Patient's id" ||
-                  item.name === "Patient's Name" ||
+                {item.name === "Patient id" ||
+                  item.name === "Patient Name" ||
                   item.name === "Study UID" ||
                   item.name === "Institution Name" ||
                   item.name === "Series UID" ||
