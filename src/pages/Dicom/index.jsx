@@ -838,7 +838,8 @@ const Dicom = () => {
                   style={{cursor: "pointer"}}
                   className='ohif-viwer-option-icon'
                   onClick={() => {
-                    window.open( `https://viewer.cloudimts.com/viewer/${record?.study?.study_uid}`, "_blank")
+                    handleCellDoubleClick(record) ; 
+                    window.open( `https://viewer.cloudimts.com/viewer/${record?.study?.study_uid}`, "_blank"); 
                   }} />
               </Tooltip>
 
@@ -847,6 +848,9 @@ const Dicom = () => {
                   src={WeasisViewer} 
                   className='Weasis-viewer-option-icon' 
                   style={{cursor: "pointer"}} 
+                  onClick={() => {
+                    handleCellDoubleClick(record) ; 
+                  }}
                 />
               </Tooltip>
             </div>
@@ -972,7 +976,7 @@ const Dicom = () => {
 
   // Function === OnRow click handle
   const onRow = record => ({
-    onDoubleClick: () => handleCellDoubleClick(record)
+    // onDoubleClick: () => handleCellDoubleClick(record)
   })
 
   // Function ==== onRow doubleClick handler
