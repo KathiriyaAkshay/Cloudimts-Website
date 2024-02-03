@@ -607,7 +607,7 @@ const HeaderButton = ({
             onClick={() => setIsAdvancedSearchModalOpen(true)}
           >
             <SearchOutlined style={{ fontWeight: '500' }} />
-            Advance search
+            Advanced search
           </Button>
 
           <div style={{ position: 'relative' }}>

@@ -1038,13 +1038,14 @@ const Dicom = () => {
 
   const [quickForm] = Form.useForm();
 
+  // **** Apply quick filter option handler **** // 
   const HandleQuickFormSubmit = (value) => {
     quickFilterStudyData({ page: 1 }, value);
     setIsStudyQuickFilterModalOpen(true);
     setIsAdvanceSearchSelected(false);
   }
 
-  // const HandleQuickFilterReset 
+  // **** Quick filter reset option handler **** //
   const QuickFilterReset = () => {
     quickForm.resetFields();
     retrieveStudyData();
@@ -1085,6 +1086,8 @@ const Dicom = () => {
 
   return (
     <>
+
+      {/* ==== Study Quick filter option ====  */}
 
       <div>
 
@@ -1225,6 +1228,8 @@ const Dicom = () => {
         </Form>
 
       </div>
+      
+      {/* ==== Study data table ====  */}
 
       <Table
         className='Study-table'
@@ -1275,7 +1280,7 @@ const Dicom = () => {
         }}
       />
 
-      {/* Edit Study details modal  */}
+      {/* ==== Edit study option ====  */}
 
       <EditStudy
         isEditModalOpen={isEditModalOpen}
@@ -1285,7 +1290,7 @@ const Dicom = () => {
         referenceId={studyReferenceId}
       />
 
-      {/* Assign study modal  */}
+      {/* ==== Assign study modal ==== */}
 
       <AssignStudy
         isAssignModalOpen={isAssignModalOpen}
@@ -1295,7 +1300,7 @@ const Dicom = () => {
         studyReference={studyReferenceId}
       />
 
-      {/* Study auditing modal  */}
+      {/* ==== Study auditing modal ====  */}
 
       <StudyAudits
         isModalOpen={isModalOpen}
@@ -1305,7 +1310,7 @@ const Dicom = () => {
         referenceId={studyReferenceId}
       />
 
-      {/* Study report modal  */}
+      {/* ==== Study report modal ====  */}
 
       <StudyReports
         isReportModalOpen={isReportModalOpen}
@@ -1326,8 +1331,8 @@ const Dicom = () => {
         referenceId={studyReferenceId}
       />
 
-      {/* Study more details option modal  */}
-
+      {/* ==== Study more details option ====  */}
+    
       <PatientDetails
         isStudyModalOpen={isStudyModalOpen}
         setIsStudyModalOpen={setIsStudyModalOpen}
@@ -1336,7 +1341,7 @@ const Dicom = () => {
         referenceId={studyReferenceId}
       />
 
-      {/* ==== Share study option modal ====  */}
+      {/* ==== Study share option ====  */}
 
       <ShareStudy
         isShareStudyModalOpen={isShareStudyModalOpen}
@@ -1346,6 +1351,8 @@ const Dicom = () => {
         seriesId={seriesID}
         referenceId={studyReferenceId}
       />
+
+      {/* ==== Study chat option drawer ====  */}
 
       <Drawer
         title={null}
@@ -1374,17 +1381,17 @@ const Dicom = () => {
       </Drawer>
 
  
-      {/* Advanced search  */}
+      {/* ==== Advanced search option ====  */}
 
       <AdvancedSearchModal
-        name={'Advance Search'}
+        name={'Advanced Search'}
         retrieveStudyData={retrieveStudyData}
         advanceSearchFilterData={advanceSearchFilterData}
         quickFilterform={quickForm}
       />
 
 
-      {/* ==== Assign quick studies ====  */}
+      {/* ==== Quick assign study option ====  */}
 
       {isQuickAssignStudyModalOpen && (
 
@@ -1397,7 +1404,7 @@ const Dicom = () => {
 
       )}
 
-      {/* ==== Study drawer =====  */}
+      {/* ==== Study image drawer ====  */}
 
       <ImageDrawer
         isDrawerOpen={isImageModalOpen}
