@@ -13,7 +13,7 @@ const PatientDetails = ({
   const [modalData, setModalData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Function reterive study more details information 
+  // **** Reterive study more details option **** // 
   const retrieveStudyData = () => {
     setIsLoading(true);
     getMoreDetails({ id: studyID })
