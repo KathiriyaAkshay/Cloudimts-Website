@@ -1070,142 +1070,177 @@ const Dicom = () => {
     
   }
 
+  const SelectStatusOption = [
+    {
+      label: "New",
+      value: "New"
+    }, 
+    {
+      label: "Viewed", 
+      value: "Viewed"
+    }, 
+    {
+      label: "Assigned", 
+      value: "Assigned"
+    }, 
+    {
+      label: "InReporting", 
+      value : "InReporting"
+    }, 
+    {
+      label: "Reported", 
+      value: "Reported"
+    }, 
+    {
+      label: "ViewReport", 
+      value: "ViewReport"
+    }, 
+    {
+      label: "ClosedStudy", 
+      value: "ClosedStudy"
+    }
+  ]
+
   return (
     <>
 
       <div>
         
-      <Form
-        labelCol={{
-          span: 24,
-        }}
-        wrapperCol={{
-          span: 24,
-        }}
-        form={quickForm}
-        onFinish={HandleQuickFormSubmit}
-        autoComplete={"off"}
-        className='study-quick-filter-form'
-        style={{paddingLeft: "1rem"}}
-      >
-        <Row gutter={15}>
+        <Form
+          labelCol={{
+            span: 24,
+          }}
+          wrapperCol={{
+            span: 24,
+          }}
+          form={quickForm}
+          onFinish={HandleQuickFormSubmit}
+          autoComplete={"off"}
+          className='study-quick-filter-form'
+          style={{paddingLeft: "1rem"}}
+        >
+          <Row gutter={15}>
 
-          {/* ==== Patient id input ====  */}
+            {/* ==== Patient id input ====  */}
 
-          <Form.Item
-            name="refernce_id"
-            rules={[
-              {
-                required: false,
-                whitespace: true,
-                message: "Please enter Patient Id",
-              },
-            ]}
-          >
-            <Input placeholder="Enter Patient Id" />
-          </Form.Item>
+            <Form.Item
+              name="refernce_id"
+              rules={[
+                {
+                  required: false,
+                  whitespace: true,
+                  message: "Please enter Patient Id",
+                },
+              ]}
+            >
+              <Input placeholder="Enter Patient Id" />
+            </Form.Item>
+            
+            {/* ==== Patient name input ====  */}
+
+            <Form.Item
+              name="study__patient_name__icontains"
+              rules={[
+                {
+                  required: false,
+                  whitespace: true,
+                  message: "Please enter Patient Name",
+                },
+              ]}
+            >
+              <Input placeholder="Enter Patient Name" />
+            </Form.Item>
+
+            {/* ==== Modality ====  */}
+            
+            <Form.Item
+              name="modality__icontains"
+              rules={[
+                {
+                  required: false,
+                  whitespace: true,
+                  message: "Please enter Modality",
+                },
+              ]}
+            >
+              <Input placeholder="Enter Modality" />
+            </Form.Item>
+            
+            {/* ==== Study status ====  */}
+
+            <Form.Item
+              name="status"
+              rules={[
+                {
+                  required: false,
+                  whitespace: true,
+                  message: "Please enter Status",
+                },
+              ]}
+            >
+              <Select
+                placeholder = "Select Status"
+                id='quick-filter-institution-selection'
+                options={SelectStatusOption}
+              />
+            </Form.Item>
+            
+            {/* ==== Institution ====  */}
+
+            <Form.Item
+              name="institution__name"
+              rules={[
+                {
+                  required: false,
+                  message: "Please enter Institution Name",
+                },
+              ]}
+            >
+              <Select
+                placeholder='Select Institution'
+                id='quick-filter-institution-selection'
+                options={institutionOptions}
+              />
+            </Form.Item>
+            
+            {/* ==== Study date ====  */}
+
+            <Form.Item
+              name="created_at__startswith"
+              className='quick-filter-date-picker'
+              rules={[
+                {
+                  required: false,
+                  message: "Please enter date",
+                },
+              ]}
+            >
+              <DatePicker format={"DD-MM-YYYY"} />
+
+            </Form.Item>
+            {/* ==== Clear filter option button ====  */}
           
-          {/* ==== Patient name input ====  */}
+            <Button key="submit"
+            style={{marginTop: "0.5rem"}}
+            type="primary"
+              onClick={() => {quickForm.submit()}}
+            >
+              Apply
+            </Button>
 
-          <Form.Item
-            name="study__patient_name__icontains"
-            rules={[
-              {
-                required: false,
-                whitespace: true,
-                message: "Please enter Patient Name",
-              },
-            ]}
-          >
-            <Input placeholder="Enter Patient Name" />
-          </Form.Item>
+            {/* ==== Apply filter option button ====  */}
 
-          {/* ==== Modality ====  */}
-          
-          <Form.Item
-            name="modality__icontains"
-            rules={[
-              {
-                required: false,
-                whitespace: true,
-                message: "Please enter Modality",
-              },
-            ]}
-          >
-            <Input placeholder="Enter Modality" />
-          </Form.Item>
-          
-          {/* ==== Study status ====  */}
+            <Button key="submit"
+              danger
+              style={{marginTop: "0.5rem", marginLeft: "1rem"}}
+              onClick={() => {QuickFilterReset()}}
+              className= {isStudyQuickFilterModalOpen?'quick-filter-selected':""}
+            >
+              Clear
+            </Button>
 
-          <Form.Item
-            name="status"
-            rules={[
-              {
-                required: false,
-                whitespace: true,
-                message: "Please enter Status",
-              },
-            ]}
-          >
-            <Input placeholder="Enter Status" />
-          </Form.Item>
-          
-          {/* ==== Institution ====  */}
-
-          <Form.Item
-            name="institution__name"
-            rules={[
-              {
-                required: false,
-                message: "Please enter Institution Name",
-              },
-            ]}
-          >
-            <Select
-              placeholder='Select Institution'
-              id='quick-filter-institution-selection'
-              options={institutionOptions}
-            />
-          </Form.Item>
-          
-          {/* ==== Study date ====  */}
-
-          <Form.Item
-            name="created_at__startswith"
-            className='quick-filter-date-picker'
-            rules={[
-              {
-                required: false,
-                message: "Please enter date",
-              },
-            ]}
-          >
-            <DatePicker format={"DD-MM-YYYY"} />
-
-          </Form.Item>
-          {/* ==== Clear filter option button ====  */}
-        
-          <Button key="submit"
-          style={{marginTop: "0.5rem"}}
-          type="primary"
-            onClick={() => {quickForm.submit()}}
-          >
-            Apply
-          </Button>
-
-          {/* ==== Apply filter option button ====  */}
-
-          <Button key="submit"
-            danger
-            style={{marginTop: "0.5rem", marginLeft: "1rem"}}
-            onClick={() => {QuickFilterReset()}}
-            className= {isStudyQuickFilterModalOpen?'quick-filter-selected':""}
-          >
-            Clear
-          </Button>
-
-        </Row>
-      </Form>
+          </Row>
+        </Form>
 
       </div>
 
