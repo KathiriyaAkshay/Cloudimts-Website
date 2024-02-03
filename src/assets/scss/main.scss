@@ -991,7 +991,7 @@
 
 .report-template-card {
   position: relative;
-  height: calc(100vh - 200px);
+  height: calc(100vh - 120px);
   overflow: auto;
 
   .btn-div {
@@ -2746,4 +2746,10 @@ form.ant-form .ant-form-item .ant-form-item-label label{
 .quick-filter-selected{
   background-color: #ff4a4a !important;
   color: #FFFFFF !important;
+}
+
+.study-quick-filter-form :where(.css-dev-only-do-not-override-15rg2km).ant-select-single .ant-select-selector .ant-select-selection-item,.study-quick-filter-form :where(.css-dev-only-do-not-override-15rg2km).ant-select-single .ant-select-selector .ant-select-selection-placeholder {
+  // padding: 0;
+  line-height: 45px;
+  transition: all 0.3s,visibility 0s;
 }
