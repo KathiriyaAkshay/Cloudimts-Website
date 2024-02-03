@@ -1262,7 +1262,7 @@ const Dicom = () => {
         className='Study-table'
         dataSource={studyData}
         columns={columns}
-        scroll={{ y:"calc(100vh - 330px)", x: "100%" }}
+        scroll={{ y:"calc(100vh - 305px)", x: "100%" }}
         key={studyData.map(o => o.key)}
 
         rowSelection={rowSelection}
