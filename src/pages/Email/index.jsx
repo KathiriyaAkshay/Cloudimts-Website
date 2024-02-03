@@ -198,6 +198,7 @@ const Email = () => {
 
           {checkPermissionStatus('Delete option') && (
             <DeleteActionIcon
+              title = {"Are you sure you want to delet this email ?"}
               deleteActionHandler={() => deleteActionHandler(record.id)}
             />
           )}
