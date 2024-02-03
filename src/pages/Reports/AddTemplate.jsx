@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useBreadcrumbs } from '../../hooks/useBreadcrumbs'
-import { Button, Card, Col, Form, Input, Row,Select } from 'antd'
+import { Button, Card, Col, Form, Input, Row, Select } from 'antd'
 import '../../../ckeditor5/build/ckeditor'
 import { CKEditor } from '@ckeditor/ckeditor5-react'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -19,6 +19,25 @@ const AddTemplate = () => {
   const navigate = useNavigate()
   const { id } = useParams()
 
+  // **** Reterive particular template information **** // 
+
+  const retrieveTemplateData = () => {
+    fetchTemplate({ id })
+      .then(res => {
+        if (res.data.status) {
+          form.setFieldsValue({ name: res.data.data.report_name, study_description: res?.data?.data?.report_description })
+          setEditorData(res.data.data.report_data)
+        } else {
+          NotificationMessage(
+            'warning',
+            'Network request failed',
+            res.data.message
+          )
+        }
+      })
+      .catch(err => NotificationMessage('warning', 'Network request failed', err.response.data.message))
+  }
+
   useEffect(() => {
     const crumbs = [{ name: 'Templates', to: '/reports' }]
     if (id) {
@@ -34,34 +53,15 @@ const AddTemplate = () => {
     changeBreadcrumbs(crumbs)
   }, [])
 
-  const retrieveTemplateData = () => {
-    fetchTemplate({ id })
-      .then(res => {
-        if (res.data.status) {
-          form.setFieldsValue({ name: res.data.data.report_name, study_description :res?.data?.data?.report_description })
-          setEditorData(res.data.data.report_data)
-        } else {
-          NotificationMessage(
-            'warning',
-            'Network request failed',
-            res.data.message
-          )
-        }
-      })
-      .catch(err => NotificationMessage('warning', 'Network request failed', err.response.data.message))
-  }
 
   const handleSubmit = (values) => {
     if (editorData.trim() !== '') {
       if (!id) {
 
-        console.log("Insert templated data values ======>");
-        console.log(values);
-
-        insertNewTemplate({ name: values.name, data: editorData,description:values.study_description })
+        insertNewTemplate({ name: values.name, data: editorData, description: values.study_description })
           .then(res => {
             if (res.data.status) {
-              NotificationMessage('success', 'Template Created Successfully')
+              NotificationMessage('success', 'Template successfully created')
               navigate('/reports')
             } else {
               NotificationMessage(
@@ -75,11 +75,11 @@ const AddTemplate = () => {
             NotificationMessage('warning', 'Network request failed', err.response.data.message)
           )
       } else {
-       
-        updateReport({ id, update_data: editorData, update_report_name: values.name, update_report_description: values?.study_description})
+
+        updateReport({ id, update_data: editorData, update_report_name: values.name, update_report_description: values?.study_description })
           .then(res => {
             if (res.data.status) {
-              NotificationMessage('success', 'Template Updated Successfully')
+              NotificationMessage('success', 'Template updated successfully')
               navigate('/reports')
             } else {
               NotificationMessage(
@@ -129,28 +129,28 @@ const AddTemplate = () => {
                 />
               </Form.Item>
               <Form.Item
-                    name="study_description"
-                    label="Modality Description"
-                    className="category-select"
+                name="study_description"
+                label="Modality Description"
+                className="category-select"
 
-                    rules={[
-                      {
-                        required: true,
-                        message: "Please select Modality Study Description",
-                      },
-                    ]}
-                  >
-                      <Select
-                        placeholder="Select Study Description"
-                        options={descriptionOptions}
-                        showSearch
-                        filterSort={(optionA, optionB) =>
-                          (optionA?.label ?? "")
-                            .toLowerCase()
-                            .localeCompare((optionB?.label ?? "").toLowerCase())
-                        }
-                      />
-                  </Form.Item>
+                rules={[
+                  {
+                    required: true,
+                    message: "Please select Modality Study Description",
+                  },
+                ]}
+              >
+                <Select
+                  placeholder="Select Study Description"
+                  options={descriptionOptions}
+                  showSearch
+                  filterSort={(optionA, optionB) =>
+                    (optionA?.label ?? "")
+                      .toLowerCase()
+                      .localeCompare((optionB?.label ?? "").toLowerCase())
+                  }
+                />
+              </Form.Item>
             </Col>
             <Col
               lg={16}
@@ -158,7 +158,7 @@ const AddTemplate = () => {
               sm={16}
               style={{ height: 'calc(100vh - 300px)', overflow: 'auto' }}
             >
-              
+
               <Form.Item label='Create Template'>
                 <CKEditor
                   editor={ClassicEditor}
