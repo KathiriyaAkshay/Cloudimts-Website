@@ -409,7 +409,9 @@ const HeaderButton = ({
   )
 
   const SetChatNotificationData = () => {
-    const updatedTitles = chatNotificationData.map((element) => ({
+
+    let tempData = JSON.parse(localStorage.getItem("chat-data")) ; 
+    const updatedTitles = tempData.map((element) => ({
       title: `Patient Id - ${element?.Patientid}`, 
       description : element?.message
     }));
@@ -419,8 +421,7 @@ const HeaderButton = ({
   }
 
   useEffect(() => {
-    console.log("Reterive chat notification data ===========>");
-    console.log(chatNotificationData);
+ 
     SetChatNotificationData() ; 
   }, [chatNotificationData])
 

@@ -175,7 +175,24 @@ const Dicom = () => {
 
             studyData.map((element) => {
               if (element.series_id === ChatData.room_name) {
+
+                let chatnotificationData = localStorage.getItem("chat-data") ; 
+    
+                if (chatnotificationData === null){
+                  localStorage.setItem("chat-data", JSON.stringify([])) ; 
+                }
+            
+                let chatdata = localStorage.getItem("chat-data") ; 
+                chatdata = JSON.parse(chatdata) ; 
                 
+                chatdata.push(
+                  {
+                    'message': `Message send by ${ChatData.sender_username} for Patient - ${element.name}`, 
+                    "Patientid": element?.refernce_id
+                  }
+                )
+            
+                localStorage.setItem("chat-data", JSON.stringify(chatdata)) ;
                 
                 if (ChatData.urgent_case) {
                   setChatNotificationData([...chatNotificationData, 
@@ -410,9 +427,7 @@ const Dicom = () => {
 
   // **** Study advanced filter option handler **** //  
   const advanceSearchFilterData = (pagination, values = {}) => {
-    setChatNotificationData([...chatNotificationData, 
-      {message: `Message send by for Patient `, "Patientid": "!21212"}]) ; 
-
+    
     setIsLoading(true)
     setAdvanceSearchPayload(values)
 
