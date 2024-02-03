@@ -6,7 +6,10 @@ import {
   Menu,
   Popover,
   Select,
-  Popconfirm
+  Popconfirm,
+  Badge,
+  Avatar, 
+  List
 } from 'antd'
 import React, { useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -23,7 +26,8 @@ import {
   SearchOutlined,
   DeleteOutlined,
   ReloadOutlined,
-  ExportOutlined
+  ExportOutlined,
+  NotificationOutlined
 } from '@ant-design/icons'
 import { handleDownloadPDF, handleExport } from '../helpers/billingTemplate'
 import { BillingDataContext } from '../hooks/billingDataContext'
@@ -381,6 +385,33 @@ const HeaderButton = ({
 
   )
 
+  // notification items 
+
+  const notification_data = [
+    {
+      title: 'Ant Design Title 1',
+    },
+    {
+      title: 'Ant Design Title 2',
+    },
+  ];
+  const notification_content=(
+    <List
+    style={{width:"25rem"}}
+    itemLayout="horizontal"
+    dataSource={notification_data}
+    renderItem={(item, index) => (
+      <List.Item>
+        <List.Item.Meta
+          avatar={<Avatar src={`https://api.dicebear.com/7.x/miniavs/svg?seed=${index}`} />}
+          title={<a href="https://ant.design">{item.title}</a>}
+          description="Ant Design, a design language for background applications, is refined by Ant UED Team"
+        />
+      </List.Item>
+    )}
+  />
+  )
+
   return (
     <div>
 
@@ -546,6 +577,23 @@ const HeaderButton = ({
 
       {window.location.pathname === '/studies' && (
         <div className='iod-setting-div'>
+
+
+          {/* view current notifications */}
+          <Popover content={notification_content} title="Recent Notifications" placement='bottomLeft'>
+
+          <Badge count={0}>
+
+            <Button
+              type='default'
+              className=''
+            >
+              <NotificationOutlined />
+            </Button>
+          </Badge>
+          </Popover>
+
+          {/* Option1 === Delete Study  */}
 
           <Popconfirm
             title="Delete study"
