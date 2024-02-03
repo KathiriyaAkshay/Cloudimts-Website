@@ -41,6 +41,7 @@ function EditPermission() {
       })
     setIsLoading(false)
   }
+  
   useEffect(() => {
     retrievePermissionData()
     const crumbs = [{ name: 'Roles', to: '/users/roles' }]
@@ -98,7 +99,7 @@ function EditPermission() {
     })
       .then(res => {
         if (res.data.status) {
-          NotificationMessage('success', 'Permission Updated Successfully')
+          NotificationMessage('success', 'Permission updated successfully')
           retrievePermissionData()
         } else {
           NotificationMessage(
