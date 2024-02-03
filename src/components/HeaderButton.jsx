@@ -590,13 +590,13 @@ const HeaderButton = ({
 
           {/* Option7 ==== Quick Search filter option  */}
 
-          <Button
+          {/* <Button
             type='primary'
             onClick={() => setIsStudyQuickFilterModalOpen(true)}
             className={`btn-icon-div ${isFilterSelected && 'filter-selected'}`}
           >
             <FilterOutlined style={{ fontWeight: '500' }} /> Quick filter
-          </Button>
+          </Button> */}
 
           {/* Option8 ==== Normal filter option  */}
 

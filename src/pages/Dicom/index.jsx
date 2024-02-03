@@ -14,7 +14,8 @@ import {
   Input,
   Switch,
   Statistic,
-  Button
+  Button, 
+  Select
 } from 'antd'
 import { CheckCircleOutlined, CloseCircleOutlined, FileOutlined, PictureOutlined } from '@ant-design/icons'
 import { useBreadcrumbs } from '../../hooks/useBreadcrumbs'
@@ -63,7 +64,8 @@ import EditSeriesId from '../../components/EditSeriesId'
 import ImageDrawer from './ImageDrawer'
 import { convertToDDMMYYYY } from '../../helpers/utils'
 import OHIFViewer from "../../assets/images/menu.png";
-import WeasisViewer from "../../assets/images/Weasis.png";
+import WeasisViewer from "../../assets/images/Weasis.png"; 
+import API from '../../apis/getApi'
 
 const BASE_URL = import.meta.env.VITE_APP_SOCKET_BASE_URL
 const Dicom = () => {
@@ -108,9 +110,10 @@ const Dicom = () => {
     isStudyExportModalOpen,
     setIsStudyExportModalOpen,
     isQuickAssignStudyModalOpen,
-    setIsQuickAssignStudyModalOpen,
-    isAdvancedSearchModalOpen,
-    isStudyFilterModalOpen } = useContext(filterDataContext)
+    setIsQuickAssignStudyModalOpen, 
+    isStudyQuickFilterModalOpen, 
+    setIsStudyQuickFilterModalOpen, 
+    setIsAdvancedSearchModalOpen} = useContext(filterDataContext)
 
   // Normal studies information, System filter and Main filter payload information
   const {
@@ -123,7 +126,7 @@ const Dicom = () => {
   } = useContext(StudyDataContext)
 
   const { setStudyIdArray, setStudyReferenceIdArray } = useContext(StudyIdContext)
-  const { isFilterSelected, isAdvanceSearchSelected } = useContext(FilterSelectedContext);
+  const { isFilterSelected, isAdvanceSearchSelected,  setIsAdvanceSearchSelected} = useContext(FilterSelectedContext);
 
   // Modal passing attributes information
   const [studyID, setStudyID] = useState(null);
@@ -919,6 +922,8 @@ const Dicom = () => {
     }
   }
 
+  // ==== QuickFilter option had
+
   // ==== Email Share option handling
   const [form] = Form.useForm()
 
@@ -1010,12 +1015,199 @@ const Dicom = () => {
 
   }
 
-  // default selected row
-  const [selectedRow, setSelectedRow] = useState('');
+  
+  
+  const [institutionOptions, setInstitutionOptions] = useState([])
 
+  const retrieveInstitutionData = async () => {
+    const token = localStorage.getItem('token');
+    await API.get('/user/v1/fetch-institution-list', {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then(res => {
+        if (res.data.status) {
+          const resData = res.data.data.map(item => ({
+            // ...item,
+            label: item.name,
+            value: item.name
+          }))
+          setInstitutionOptions(resData)
+        } else {
+          NotificationMessage(
+            'warning',
+            'Quick Filter',
+            res.data.message
+          )
+        }
+      })
+      .catch(err =>
+        NotificationMessage(
+          'warning',
+          'Quick Filter',
+          err.response.data.message
+        )
+      )
+  }
+
+  useEffect(() => {
+    retrieveInstitutionData(0) ; 
+  }, []) ; 
+
+  // Quick filter option handling 
+  const [quickForm] = Form.useForm() ; 
+
+  const HandleQuickFormSubmit = (value) => {
+    quickFilterStudyData({page: 1}, value) ; 
+    setIsStudyQuickFilterModalOpen(true) ; 
+    setIsAdvanceSearchSelected(false) ; 
+  }
+
+  // const HandleQuickFilterReset 
+  const QuickFilterReset = () => {
+    quickForm.resetFields() ; 
+    retrieveStudyData() ; 
+    setIsStudyQuickFilterModalOpen(false) ; 
+    
+  }
 
   return (
     <>
+
+      <div>
+        
+      <Form
+        labelCol={{
+          span: 24,
+        }}
+        wrapperCol={{
+          span: 24,
+        }}
+        form={quickForm}
+        onFinish={HandleQuickFormSubmit}
+        autoComplete={"off"}
+        className='study-quick-filter-form'
+        style={{paddingLeft: "1rem"}}
+      >
+        <Row gutter={15}>
+
+          {/* ==== Patient id input ====  */}
+
+          <Form.Item
+            name="refernce_id"
+            rules={[
+              {
+                required: false,
+                whitespace: true,
+                message: "Please enter Patient Id",
+              },
+            ]}
+          >
+            <Input placeholder="Enter Patient Id" />
+          </Form.Item>
+          
+          {/* ==== Patient name input ====  */}
+
+          <Form.Item
+            name="study__patient_name__icontains"
+            rules={[
+              {
+                required: false,
+                whitespace: true,
+                message: "Please enter Patient Name",
+              },
+            ]}
+          >
+            <Input placeholder="Enter Patient Name" />
+          </Form.Item>
+
+          {/* ==== Modality ====  */}
+          
+          <Form.Item
+            name="modality__icontains"
+            rules={[
+              {
+                required: false,
+                whitespace: true,
+                message: "Please enter Modality",
+              },
+            ]}
+          >
+            <Input placeholder="Enter Modality" />
+          </Form.Item>
+          
+          {/* ==== Study status ====  */}
+
+          <Form.Item
+            name="status"
+            rules={[
+              {
+                required: false,
+                whitespace: true,
+                message: "Please enter Status",
+              },
+            ]}
+          >
+            <Input placeholder="Enter Status" />
+          </Form.Item>
+          
+          {/* ==== Institution ====  */}
+
+          <Form.Item
+            name="institution__name"
+            rules={[
+              {
+                required: false,
+                message: "Please enter Institution Name",
+              },
+            ]}
+          >
+            <Select
+              placeholder='Select Institution'
+              id='quick-filter-institution-selection'
+              options={institutionOptions}
+            />
+          </Form.Item>
+          
+          {/* ==== Study date ====  */}
+
+          <Form.Item
+            name="created_at__startswith"
+            className='quick-filter-date-picker'
+            rules={[
+              {
+                required: false,
+                message: "Please enter date",
+              },
+            ]}
+          >
+            <DatePicker format={"DD-MM-YYYY"} />
+
+          </Form.Item>
+          {/* ==== Clear filter option button ====  */}
+        
+          <Button key="submit"
+          style={{marginTop: "0.5rem"}}
+          type="primary"
+            onClick={() => {quickForm.submit()}}
+          >
+            Apply
+          </Button>
+
+          {/* ==== Apply filter option button ====  */}
+
+          <Button key="submit"
+            danger
+            style={{marginTop: "0.5rem", marginLeft: "1rem"}}
+            onClick={() => {QuickFilterReset()}}
+            className= {isStudyQuickFilterModalOpen?'quick-filter-selected':""}
+          >
+            Clear
+          </Button>
+
+        </Row>
+      </Form>
+
+      </div>
 
       <Table
         className='Study-table'
@@ -1177,12 +1369,12 @@ const Dicom = () => {
 
       {/* Quick Filter  */}
 
-      <QuickFilterModal
+      {/* <QuickFilterModal
         name={'Study Quick Filter'}
         retrieveStudyData={retrieveStudyData}
         setStudyData={setStudyData}
         quickFilterStudyData={quickFilterStudyData}
-      />
+      /> */}
 
       {/* Advanced search  */}
 
@@ -1190,6 +1382,7 @@ const Dicom = () => {
         name={'Advance Search'}
         retrieveStudyData={retrieveStudyData}
         advanceSearchFilterData={advanceSearchFilterData}
+        quickFilterform={quickForm}
       />
 
 
