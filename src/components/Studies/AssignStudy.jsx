@@ -145,12 +145,12 @@ const AssignStudy = ({
           const resData = res.data.data;
           const modifiedData = [
             {
-              name: "Patient's id",
+              name: "Patient id",
               value: studyReference
             },
 
             {
-              name: "Patient's Name",
+              name: "Patient Name",
               value: resData?.Patient_name,
             },
 
@@ -312,8 +312,8 @@ const AssignStudy = ({
                   <div style={{ width: "29%", color: "#000000" }}>{item.name}</div>
                   <div style={{ width: "4%" }}>:</div>
                   <div style={{ width: "65%" }}>
-                    {item.name === "Patient's id" ||
-                      item.name === "Patient's Name" ||
+                    {item.name === "Patient id" ||
+                      item.name === "Patient Name" ||
                       item.name === "Study UID" ||
                       item.name === "Institution Name" ||
                       item.name === "Series UID" ||
