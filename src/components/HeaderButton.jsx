@@ -410,13 +410,18 @@ const HeaderButton = ({
 
   const SetChatNotificationData = () => {
 
-    let tempData = JSON.parse(localStorage.getItem("chat-data")) ; 
-    const updatedTitles = tempData.map((element) => ({
-      title: `Patient Id - ${element?.Patientid}`, 
-      description : element?.message
-    }));
-    
-    setChatNotificationTitle(updatedTitles);
+    let tempData = localStorage.getItem("chat-data") ; 
+
+    if (tempData !== null){
+
+      tempData = JSON.parse(tempData) ; 
+      const updatedTitles = tempData.map((element) => ({
+        title: `Patient Id - ${element?.Patientid}`, 
+        description : element?.message
+      }));
+      
+      setChatNotificationTitle(updatedTitles);
+    }
     
   }
 
