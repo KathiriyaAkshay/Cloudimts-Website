@@ -176,16 +176,18 @@ const Dicom = () => {
             studyData.map((element) => {
               if (element.series_id === ChatData.room_name) {
                 
-                setChatNotificationData([...chatNotificationData, 
-                    {message: `Message send by ${ChatData.sender_username} for Patient - ${element.name}`, "Patientid": element?.refernce_id}]) ; 
-
+                
                 if (ChatData.urgent_case) {
-                  NotificationMessage("important",
+                  setChatNotificationData([...chatNotificationData, 
+                    {message: `Message send by ${ChatData.sender_username} for Patient - ${element.name}`, "Patientid": element?.refernce_id}]) ; 
+                    NotificationMessage("important",
                     "New chat message", `Message send by ${ChatData.sender_username} for Patient - ${element.name} and Patient Id - ${element.refernce_id}`,
                     6,
                     "topLeft");
-
-                } else {
+                    
+                  } else {
+                  setChatNotificationData([...chatNotificationData, 
+                      {message: `Message send by ${ChatData.sender_username} for Patient - ${element.name}`, "Patientid": element?.refernce_id}]) ; 
                   NotificationMessage("success",
                     "New chat message", `Message send by ${ChatData.sender_username} for Patient - ${element.name} and Patient Id - ${element.refernce_id}`,
                     6,
@@ -408,6 +410,9 @@ const Dicom = () => {
 
   // **** Study advanced filter option handler **** //  
   const advanceSearchFilterData = (pagination, values = {}) => {
+    setChatNotificationData([...chatNotificationData, 
+      {message: `Message send by for Patient `, "Patientid": "!21212"}]) ; 
+
     setIsLoading(true)
     setAdvanceSearchPayload(values)
 
