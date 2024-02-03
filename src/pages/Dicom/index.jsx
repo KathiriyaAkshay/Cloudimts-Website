@@ -107,7 +107,9 @@ const Dicom = () => {
     isQuickAssignStudyModalOpen,
     setIsQuickAssignStudyModalOpen,
     isStudyQuickFilterModalOpen,
-    setIsStudyQuickFilterModalOpen } = useContext(filterDataContext)
+    setIsStudyQuickFilterModalOpen, 
+    chatNotificationData, 
+    setChatNotificationData } = useContext(filterDataContext)
 
   // Normal studies information, System filter and Main filter payload information
   const {
@@ -173,15 +175,19 @@ const Dicom = () => {
 
             studyData.map((element) => {
               if (element.series_id === ChatData.room_name) {
+                
+                setChatNotificationData([...chatNotificationData, 
+                    {message: `Message send by ${ChatData.sender_username} for Patient - ${element.name}`, "Patientid": element?.refernce_id}]) ; 
 
                 if (ChatData.urgent_case) {
                   NotificationMessage("important",
-                    "New chat message", `Message send by ${ChatData.sender_username} for Patient - ${element.name} and StudyId - ${element.id}`,
+                    "New chat message", `Message send by ${ChatData.sender_username} for Patient - ${element.name} and Patient Id - ${element.refernce_id}`,
                     6,
                     "topLeft");
+
                 } else {
                   NotificationMessage("success",
-                    "New chat message", `Message send by ${ChatData.sender_username} for Patient - ${element.name} and StudyId - ${element.id}`,
+                    "New chat message", `Message send by ${ChatData.sender_username} for Patient - ${element.name} and Patient Id - ${element.refernce_id}`,
                     6,
                     "topLeft");
                 }
@@ -322,28 +328,28 @@ const Dicom = () => {
       retrieveStudyData(Pagination)
     }
   }, [Pagination, isFilterSelected, studyDataPayload, systemFilterPayload])
-
+  
   useEffect(() => {
     FetchSeriesCountInformation(null);
   }, [seriesIdList])
-
+  
   useEffect(() => {
     if (!isLoading && studyData.length !== 0 && notificationValue === 0) {
       setNotificationValue(1)
       SetupGenralChatNotification()
     }
   }, [isLoading, studyData, notificationValue])
-
+  
   useEffect(() => {
-
+    
     changeBreadcrumbs([{ name: `Study` }])
-
+    
     setSystemFilterPayload({})
-
+    
     setStudyDataPayload({})
-
+    
     setStudyIdArray([])
-
+    
   }, [])
 
 
