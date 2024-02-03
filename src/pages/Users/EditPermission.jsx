@@ -5,20 +5,14 @@ import { useParams } from 'react-router-dom'
 import NotificationMessage from '../../components/NotificationMessage'
 import { useBreadcrumbs } from '../../hooks/useBreadcrumbs'
 
-function EditPermission () {
+function EditPermission() {
   const [permissionData, setPermissionData] = useState({})
   const [isLoading, setIsLoading] = useState(false)
   const token = localStorage.getItem('token')
   const { id } = useParams()
   const { changeBreadcrumbs } = useBreadcrumbs()
-  useEffect(() => {
-    retrievePermissionData()
-    const crumbs = [{ name: 'Roles', to: '/users/roles' }]
-    crumbs.push({
-      name: 'Edit Permissions'
-    })
-    changeBreadcrumbs(crumbs)
-  }, [])
+
+  // **** Retervie particular role permission information **** // 
 
   const retrievePermissionData = async () => {
     setIsLoading(true)
@@ -47,6 +41,15 @@ function EditPermission () {
       })
     setIsLoading(false)
   }
+  useEffect(() => {
+    retrievePermissionData()
+    const crumbs = [{ name: 'Roles', to: '/users/roles' }]
+    crumbs.push({
+      name: 'Edit Permissions'
+    })
+    changeBreadcrumbs(crumbs)
+  }, [])
+
 
   const handlePermissionChange = (permissionId, value) => {
     setPermissionData(prevData => ({
