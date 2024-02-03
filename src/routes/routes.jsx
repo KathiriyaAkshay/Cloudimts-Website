@@ -18,7 +18,6 @@ const Users = React.lazy(() => import("../pages/Users"));
 const AddUsers = React.lazy(() => import("../pages/Users/AddUsers"));
 const NotFound = React.lazy(() => import("../components/NotFound"));
 const Dicom = React.lazy(() => import("../pages/Dicom"));
-const IOD = React.lazy(() => import("../pages/IOD"));
 const Chats = React.lazy(() => import("../pages/Chats"));
 const StudyLogs = React.lazy(() => import("../pages/Dicom/StudyLogs"));
 const UsersLogs = React.lazy(() => import("../pages/Users/UsersLogs"));
@@ -59,7 +58,6 @@ export const routes = [
   },
   { path: "/users/email", component: <Loader component={Email} /> },
   { path: "/studies", component: <Loader component={Dicom} /> },
-  { path: "/iod-settings", component: <Loader component={IOD} /> },
   { path: "/chats", component: <Loader component={Chats} /> },
   { path: "/study-logs", component: <Loader component={StudyLogs} /> },
   { path: "/users-logs", component: <Loader component={UsersLogs} /> },

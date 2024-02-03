@@ -557,7 +557,6 @@ const Dicom = () => {
     {
       title: 'Status',
       dataIndex: 'status',
-      width: "8rem",
       render: (text, record) => (
         <Tooltip title={`${record.patient_id} | ${record.created_at}`}>
           <Tag
@@ -594,6 +593,7 @@ const Dicom = () => {
     checkPermissionStatus('View Patient id') && {
       title: "Patient's Id",
       dataIndex: 'patient_id',
+      width: "10%" , 
       className: `${checkPermissionStatus('View Patient id') ? '' : 'column-display-none'}`,
       render: (text, record) => (
         record.urgent_case ? <>
@@ -614,7 +614,7 @@ const Dicom = () => {
     checkPermissionStatus('View Patient name') && {
       title: "Patient's Name",
       dataIndex: 'name',
-      width: "12%",
+      width: "15%",
       className: `${checkPermissionStatus('View Patient name') ? '' : 'column-display-none'}`,
       render: (text, record) => (
         record.urgent_case ? <>
@@ -635,6 +635,7 @@ const Dicom = () => {
     {
       title: 'Modality',
       dataIndex: 'modality',
+      width: "7%" , 
       className: 'Study-count-column',
       render: (text, record) => (
         <Tooltip title={`${record.patient_id} | ${record.created_at}`}>
@@ -662,6 +663,7 @@ const Dicom = () => {
     checkPermissionStatus('Study id') && {
       title: 'Reference id',
       dataIndex: 'refernce_id',
+      width: "9%" , 
       className: `${checkPermissionStatus('Study id')
           ? 'Study-count-column'
           : 'column-display-none'
@@ -672,7 +674,7 @@ const Dicom = () => {
     {
       title: 'Study date',
       dataIndex: 'created_at',
-      width: "10%",
+      width: "12%",
       render: (text, record) => convertToDDMMYYYY(record?.created_at)
     },
 
@@ -690,6 +692,7 @@ const Dicom = () => {
     {
       title: 'Count',
       dataIndex: 'count',
+      width: "7%" , 
       className: 'Study-count-column',
       render: (text, record) => (
         <Statistic value={record?.count} style={{ fontSize: "1.4rem" }} />
@@ -888,7 +891,8 @@ const Dicom = () => {
           expandRowByClick: true,
           expandedRowRender: (record) => (
             <>
-              <Space style={{ display: 'flex', marginTop: "0.8rem" }} className='studyrow-option-icon'>
+              <Space style={{ display: 'flex', marginTop: "0.8rem" }} 
+                className='studyrow-option-icon'>
 
                 {/* Option 1 === Study series  */}
                 <Tooltip title={`Study series`}>

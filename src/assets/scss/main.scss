@@ -1430,6 +1430,11 @@
   text-align: center;
 }
 
+.Study-table .ant-table-cell{
+  padding-top: 0.8rem !important;
+  padding-bottom: 0.8rem !important;
+}
+
 // ========= Chat Module css ============ // 
 
 .chat-module-div {
@@ -2502,6 +2507,7 @@ form.ant-form .ant-form-item .ant-form-item-label label{
 
 .studyrow-option-icon{
   gap: 1.5rem !important;
+  padding-left: 2rem;
 }
 
 :where(.css-15rg2km).ant-table-wrapper .ant-table {
