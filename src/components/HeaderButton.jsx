@@ -766,7 +766,7 @@ const HeaderButton = ({
             )?.permission_value && (
               <Button
                 type='primary'
-                className='btn-icon-div'
+                className='btn-icon-div header-secondary-option-button'
                 onClick={() => handleExport(billingFilterData)}
               >
                 <SiMicrosoftexcel style={{ fontWeight: '500' }} /> Export Excel
@@ -775,7 +775,7 @@ const HeaderButton = ({
 
           <Button
             type='primary'
-            className='btn-icon-div'
+            className='btn-icon-div header-secondary-option-button'
             onClick={() => setIsBillingFilterModalOpen(true)}
           >
             <SearchOutlined /> Search Billing
@@ -783,7 +783,7 @@ const HeaderButton = ({
 
           <Button
             type='primary'
-            className='btn-icon-div'
+            className='btn-icon-div header-secondary-option-button'
             onClick={() => handleDownloadPDF(billingFilterData)}
           >
             <DownloadOutlined /> Download Bill
