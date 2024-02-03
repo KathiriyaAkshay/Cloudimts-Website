@@ -120,7 +120,7 @@ const UserLogsFilter = ({ name, retrieveRoleData, setFilterValues }) => {
         form={form}
         onFinish={handleSubmit}
         autoComplete={"off"}
-        style={{marginTop: "12px"}}
+        style={{ marginTop: "12px" }}
       >
         <Row gutter={15}>
           <Col xs={24} lg={12}>
