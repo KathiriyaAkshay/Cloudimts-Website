@@ -21,10 +21,7 @@ const index = () => {
   const navigate = useNavigate()
   const { permissionData } = useContext(UserPermissionContext)
 
-  useEffect(() => {
-    changeBreadcrumbs([{ name: 'Templates' }])
-    retrieveReportsData()
-  }, [])
+  // **** Retervie all added templated information **** // 
 
   const retrieveReportsData = pagination => {
     setIsLoading(true)
@@ -53,9 +50,18 @@ const index = () => {
     setIsLoading(false)
   }
 
+  useEffect(() => {
+    changeBreadcrumbs([{ name: 'Templates' }])
+    retrieveReportsData()
+  }, [])
+
+  // **** Edit templated option handler **** // 
+
   const editActionHandler = id => {
     navigate(`/reports/${id}/edit`)
   }
+
+  // **** Delete templated option handler **** // 
 
   const DeleteTemplateOptionHandler = async id => {
     setIsLoading(true)
@@ -71,7 +77,7 @@ const index = () => {
     if (responseData === false) {
       NotificationMessage('warning', 'Network request failed')
     } else if (responseData['status'] === true) {
-      NotificationMessage('success', 'Successfully delete template')
+      NotificationMessage('success', 'Template successfully deleted')
 
       retrieveReportsData()
     } else {
