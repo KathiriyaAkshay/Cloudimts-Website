@@ -37,6 +37,7 @@ const AssignStudy = ({
   const [multipleImageFile, setMultipleImageFile] = useState([]);
   const [value, setValues] = useState([]);
   const [imageFile, setImageFile] = useState(null);
+  const [assignUserId, setAssignUserId] = useState(null) ; 
 
   // **** Reterive particular assign study details **** // 
   const retrieveAssignStudyDetails = async () => {
@@ -44,9 +45,7 @@ const AssignStudy = ({
     await fetchAssignStudy({ id: studyID })
       .then((res) => {
         if (res.data.status) {
-          console.log("Assign user data information =======>");
-          console.log(res?.data);
-          
+          setAssignUserId(res?.data?.assign_user[0]?.assign_user_id) ; 
           form.setFieldsValue({
             ...res.data?.data,
             radiologist: res.data?.assign_user?.map(
@@ -194,11 +193,19 @@ const AssignStudy = ({
 
     if (responseData["status"] === true) {
 
+      console.log("Assign radiologist information id =============>");
+      console.log(assignUserId);
+
       // responseData['data'].map((element) => (
       //   if (element.id === 10){
 
       //   }
       // ))
+
+      responseData?.data?.map((element) => {
+        console.log("Radiologist information ========>");
+        console.log(element);
+      })
 
       // responseData?.data?.map((element) => {
 
@@ -286,10 +293,15 @@ const AssignStudy = ({
     if (studyID && isAssignModalOpen) {
       retrieveStudyData();
       retrieveAssignStudyDetails();
-      FetchRadiologist() ; 
       setValues([]);
     }
   }, [studyID]);
+
+  useEffect(() => {
+    if (assignUserId !== null){
+      FetchRadiologist() ; 
+    }
+  }, [assignUserId, studyID]) ; 
 
 
   return (
