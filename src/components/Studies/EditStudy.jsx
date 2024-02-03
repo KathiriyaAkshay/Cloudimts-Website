@@ -9,7 +9,8 @@ const EditStudy = ({
   isEditModalOpen,
   setIsEditModalOpen,
   studyID,
-  setStudyID
+  setStudyID, 
+  referenceId
 }) => {
   const [isLoading, setIsLoading] = useState(false)
   const [form] = Form.useForm()
@@ -27,7 +28,7 @@ const EditStudy = ({
         if (res.data.status) {
           const resData = res.data.data
           const modifiedData = {
-            patient_id: resData?.Patient_id,
+            patient_id: referenceId,
             patient_name: resData?.Patient_name,
             accession_number: resData?.Accession_number,
             study_description: resData?.Study_description,
@@ -58,14 +59,22 @@ const EditStudy = ({
   }
 
   const handleSubmit = values => {
-    console.log(values)
-    const modifiedData = {
+
+    let  modifiedData = {
       ...values,
       id: studyID,
       dob: values.dob !== '' ? values.dob.format('DD/MM/YYYY') : '',
       study_history:
         values?.study_history == undefined ? '' : values?.study_history
+    } ; 
+
+    console.log(modifiedData);
+
+    if (values?.study_description === null){
+      modifiedData = {...modifiedData, study_description: " "}
     }
+
+    console.log(modifiedData);
 
     updateStudyData(modifiedData)
       .then(res => {

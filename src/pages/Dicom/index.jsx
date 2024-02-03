@@ -456,8 +456,9 @@ const Dicom = () => {
   }
 
   // Edit Study data option handler
-  const editActionHandler = id => {
+  const editActionHandler = (id, referenceId) => {
     setStudyID(id)
+    setStudyReferenceId(referenceId) ; 
     setIsEditModalOpen(true)
   }
 
@@ -727,7 +728,7 @@ const Dicom = () => {
     {
       title: "Report", 
       dataIndex : "chat", 
-      width: "8%", 
+      width: "10%", 
       render: (text, record) => (
         <>
           <div>
@@ -787,6 +788,15 @@ const Dicom = () => {
                     }}
                   />
                 </Tooltip>
+              )}
+
+              {checkPermissionStatus('Study edit option') && (
+                <EditActionIcon
+                  assign_user={record?.assign_user}
+                  editActionHandler={() => editActionHandler(
+                    record?.id, 
+                    record?.refernce_id)}
+                />
               )}
             </div>
           </div>
@@ -1296,14 +1306,14 @@ const Dicom = () => {
 
       {/* Edit Series Id popup */}
 
-      <EditSeriesId
+      {/* <EditSeriesId
         isEditSeriesIdModifiedOpen={isEditSeriesIdModifiedOpen}
         setIsEditSeriesIdModifiedOpen={setIsEditSeriesIdModifiedOpen}
         studyID={studyID}
         setStudyID={setStudyID}
         seriesId={seriesID}
         setPagination={setPagination}
-      />
+      /> */}
 
       {/* Edit Study details modal  */}
 
@@ -1312,6 +1322,7 @@ const Dicom = () => {
         setIsEditModalOpen={setIsEditModalOpen}
         studyID={studyID}
         setStudyID={setStudyID}
+        referenceId = {studyReferenceId}
       />
 
       {/* Assign study modal  */}
