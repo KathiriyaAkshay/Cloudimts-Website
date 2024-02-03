@@ -25,59 +25,11 @@ const Email = () => {
   const [totalPages, setTotalPages] = useState(0)
   const [emailID, setEmailID] = useState(null)
   const { permissionData } = useContext(UserPermissionContext)
-  const [emailModalTitle, setEmailModalTitle] = useState("Add Email") ; 
 
-  const { changeBreadcrumbs } = useBreadcrumbs()
+  const { changeBreadcrumbs } = useBreadcrumbs() 
 
-  useEffect(() => {
-    changeBreadcrumbs([{ name: 'Email' }])
-    retrieveRoleOptions()
-  }, [])
+  // **** Reterive email table data **** // 
 
-  // API Call 
-  const editActionHandler = async id => {
-    setEmailID(id)
-    await API.post(
-      '/email/v1/fetch-particular-email',
-      { id: id },
-      { headers: { Authorization: `Bearer ${token}` } }
-    )
-      .then(res => {
-        if (res.data.status) {
-          form.setFieldsValue(res.data.datat)
-          setIsEmailModalOpen(true) 
-        } else {
-          NotificationMessage(
-            'warning',
-            'Network request failed',
-            res.data.message
-          )
-        }
-      })
-      .catch(err => {
-        NotificationMessage('warning', 'Network request failed')
-      })
-  }
-
-  // API Call 
-  const deleteActionHandler = async id => {
-    await deleteEmail({ id })
-      .then(res => {
-        if (res.data.status) {
-          NotificationMessage('success', 'Email Deleted Successfully')
-          retrieveEmailData()
-        } else {
-          NotificationMessage(
-            'warning',
-            'Network request failed',
-            res.data.message
-          )
-        }
-      })
-      .catch(err => NotificationMessage('warning', 'Network request failed'))
-  }
-
-  // API Call 
   const retrieveEmailData = async (pagination, values = {}) => {
     const currentPagination = pagination || pagi
     setIsLoading(true)
@@ -89,7 +41,7 @@ const Email = () => {
     })
       .then(res => {
         if (res.data.status) {
-            const updatedData = modifyDate(res.data.data)
+          const updatedData = modifyDate(res.data.data)
           setEmailData(updatedData)
           setTotalPages(res.data.total_object)
         } else {
@@ -104,7 +56,55 @@ const Email = () => {
     setIsLoading(false)
   }
 
-  // API Call 
+  useEffect(() => {
+    changeBreadcrumbs([{ name: 'Email' }])
+    retrieveRoleOptions()
+  }, [])
+
+
+  const editActionHandler = async id => {
+    setEmailID(id)
+    await API.post(
+      '/email/v1/fetch-particular-email',
+      { id: id },
+      { headers: { Authorization: `Bearer ${token}` } }
+    )
+      .then(res => {
+        if (res.data.status) {
+          form.setFieldsValue(res.data.datat)
+          setIsEmailModalOpen(true)
+        } else {
+          NotificationMessage(
+            'warning',
+            'Network request failed',
+            res.data.message
+          )
+        }
+      })
+      .catch(err => {
+        NotificationMessage('warning', 'Network request failed')
+      })
+  }
+
+  const deleteActionHandler = async id => {
+    await deleteEmail({ id })
+      .then(res => {
+        if (res.data.status) {
+          NotificationMessage('success', 'Email deleted successfully')
+          retrieveEmailData()
+        } else {
+          NotificationMessage(
+            'warning',
+            'Network request failed',
+            res.data.message
+          )
+        }
+      })
+      .catch(err => NotificationMessage('warning', 'Network request failed'))
+  }
+
+  // **** Retervie role list for insert email **** // 
+
   const retrieveRoleOptions = async () => {
     setIsLoading(true)
     await API.get('/email/v1/role-fetch', {
@@ -142,49 +142,46 @@ const Email = () => {
     checkPermissionStatus('View Full name') && {
       title: 'Full Name',
       dataIndex: 'full_name',
-      className: `${
-        checkPermissionStatus('View Full name') ? '' : 'column-display-none'
-      }`
+      className: `${checkPermissionStatus('View Full name') ? '' : 'column-display-none'
+        }`
     },
-    
+
     {
       title: 'Email',
       dataIndex: 'email'
     },
-    
+
     checkPermissionStatus('Active status') && {
       title: 'Status',
       dataIndex: 'active_status',
-      className: `${
-        checkPermissionStatus('Active status') ? '' : 'column-display-none'
-      }`,
+      className: `${checkPermissionStatus('Active status') ? '' : 'column-display-none'
+        }`,
       render: (text, record) => `${text ? 'Active' : 'Inactive'}`
     },
-    
+
     checkPermissionStatus('View User Role') && {
       title: 'Role',
       dataIndex: 'role',
-      className: `${
-        checkPermissionStatus('View User Role') ? '' : 'column-display-none'
-      }`,
+      className: `${checkPermissionStatus('View User Role') ? '' : 'column-display-none'
+        }`,
       render: (text, record) => `${record?.role?.role_name}`
     },
-    
+
     {
       title: 'Contact',
       dataIndex: 'contact'
     },
-    
+
     {
       title: 'Created At',
       dataIndex: 'created_at'
     },
-    
+
     {
       title: 'Updated At',
       dataIndex: 'updated_at'
     },
-    
+
     {
       title: 'Actions',
       dataIndex: 'actions',
@@ -192,29 +189,29 @@ const Email = () => {
       width: window.innerWidth < 650 ? '1%' : '10%',
       render: (_, record) => (
         <Space style={{ display: 'flex', justifyContent: 'space-evenly' }}>
-    
+
           {checkPermissionStatus('Edit option') && (
             <EditActionIcon
               editActionHandler={() => editActionHandler(record.id)}
             />
           )}
-    
+
           {checkPermissionStatus('Delete option') && (
             <DeleteActionIcon
               deleteActionHandler={() => deleteActionHandler(record.id)}
             />
           )}
-    
+
         </Space>
       )
     }
   ].filter(Boolean)
 
   // ==== Insert and Edit email address handler ==== // 
-  
+
   const handleSubmit = async (values) => {
 
-    if (values.active_status === undefined){
+    if (values.active_status === undefined) {
       values.active_status = false
     }
 
@@ -226,7 +223,7 @@ const Email = () => {
         .then(res => {
           console.log(res);
           if (res.data.status) {
-            NotificationMessage('success', 'Email Added Successfully')
+            NotificationMessage('success', 'Email added successfully')
             form.resetFields()
             setIsEmailModalOpen(false)
             retrieveEmailData()
@@ -239,7 +236,7 @@ const Email = () => {
             )
           }
         })
-        .catch(err => {NotificationMessage('warning', "Network request failed", err?.response?.data?.message) })
+        .catch(err => { NotificationMessage('warning', "Network request failed", err?.response?.data?.message) })
     } else {
 
       await API.post(
@@ -251,7 +248,7 @@ const Email = () => {
       )
         .then(res => {
           if (res.data.status) {
-            NotificationMessage('success', 'Email Updated Successfully')
+            NotificationMessage('success', 'Email updated successfully')
             form.resetFields()
             setIsEmailModalOpen(false)
             retrieveEmailData()
@@ -301,7 +298,7 @@ const Email = () => {
           }}
           form={form}
           onFinish={handleSubmit}
-          style={{marginTop: "12px"}}
+          style={{ marginTop: "12px" }}
         >
           <Form.Item
             name='full_name'
@@ -339,15 +336,15 @@ const Email = () => {
                 required: true,
                 whitespace: true,
                 message: 'Please enter contact number'
-              }, 
+              },
               {
                 validator: (rule, value) => {
                   if (!value) {
-                    return Promise.resolve(); 
+                    return Promise.resolve();
                   }
-          
+
                   const indianPhoneNumberRegex = /^[6-9]\d{9}$/;
-          
+
                   if (indianPhoneNumberRegex.test(value)) {
                     return Promise.resolve();
                   } else {
