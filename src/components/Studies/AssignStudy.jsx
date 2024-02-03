@@ -155,7 +155,7 @@ const AssignStudy = ({
                 value: data.id,
               }));
 
-              setInstitutionRadiologist([...institutionRadiologist, resData]) ; 
+              setInstitutionRadiologist([...institutionRadiologist, ...resData]) ; 
             }
           };
 
@@ -193,25 +193,12 @@ const AssignStudy = ({
 
     if (responseData["status"] === true) {
 
-      console.log("Assign radiologist information id =============>");
-      console.log(assignUserId);
-
-      // responseData['data'].map((element) => (
-      //   if (element.id === 10){
-
-      //   }
-      // ))
-
       responseData?.data?.map((element) => {
-        console.log("Radiologist information ========>");
-        console.log(element);
+        if (element?.id === assignUserId){
+          setInstitutionRadiologist([...institutionRadiologist, {label: element?.name, value:element?.id}])
+        }
       })
 
-      // responseData?.data?.map((element) => {
-
-      // })
-
-      // setOptions(resData);
 
     }
   };
@@ -298,8 +285,8 @@ const AssignStudy = ({
   }, [studyID]);
 
   useEffect(() => {
+    FetchRadiologist() ; 
     if (assignUserId !== null){
-      FetchRadiologist() ; 
     }
   }, [assignUserId, studyID]) ; 
 
