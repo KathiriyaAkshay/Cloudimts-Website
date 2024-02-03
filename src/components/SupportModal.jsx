@@ -9,17 +9,13 @@ import {
 import NotificationMessage from './NotificationMessage'
 
 const SupportModal = ({ retrieveSupportData, setSupportId, supportId }) => {
-  const { isSupportModalOpen, setIsSupportModalOpen } =
-    useContext(filterDataContext)
+
+  const { isSupportModalOpen, setIsSupportModalOpen } = useContext(filterDataContext)
   const [form] = Form.useForm()
   const [currentTab, setCurrentTab] = useState('1')
   const [isLoading, setIsLoading] = useState(false)
 
-  useEffect(() => {
-    if (supportId) {
-      retrieveParticularSupportData()
-    }
-  }, [supportId])
+  // **** Retervie particular support details using support id **** // 
 
   const retrieveParticularSupportData = async () => {
     setIsLoading(true)
@@ -48,6 +44,12 @@ const SupportModal = ({ retrieveSupportData, setSupportId, supportId }) => {
         )
       )
   }
+  useEffect(() => {
+    if (supportId) {
+      retrieveParticularSupportData()
+    }
+  }, [supportId])
+
 
   const handleSubmit = async values => {
 
@@ -61,7 +63,7 @@ const SupportModal = ({ retrieveSupportData, setSupportId, supportId }) => {
           if (res.data.status) {
             setIsSupportModalOpen(false)
             form.resetFields()
-            NotificationMessage('success', 'Support Updated Successfully')
+            NotificationMessage('success', 'Support details has been updated successfully.')
             retrieveSupportData()
             setSupportId(null)
             setCurrentTab('1')
@@ -80,7 +82,7 @@ const SupportModal = ({ retrieveSupportData, setSupportId, supportId }) => {
           if (res.data.status) {
             setIsSupportModalOpen(false)
             form.resetFields()
-            NotificationMessage('success', 'New Support Added Successfully')
+            NotificationMessage('success', 'Support details has been successfully added')
             retrieveSupportData()
             setSupportId(null)
             setCurrentTab('1')
@@ -123,7 +125,7 @@ const SupportModal = ({ retrieveSupportData, setSupportId, supportId }) => {
           autoComplete={'off'}
         >
           <Tabs
-            onChange={e => {setCurrentTab(e) ; form.resetFields() ; }}
+            onChange={e => { setCurrentTab(e); form.resetFields(); }}
             defaultActiveKey={`${currentTab}`}
           >
             <Tabs.TabPane key={'1'} tab='Email Support'>
@@ -175,10 +177,10 @@ const SupportModal = ({ retrieveSupportData, setSupportId, supportId }) => {
                           if (!value) {
                             return Promise.resolve(); // No validation if value is not provided
                           }
-                  
+
                           // Validate Indian contact number
                           const indianPhoneNumberRegex = /^[6-9]\d{9}$/;
-                  
+
                           if (indianPhoneNumberRegex.test(value)) {
                             return Promise.resolve();
                           } else {

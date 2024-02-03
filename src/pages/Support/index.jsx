@@ -23,10 +23,16 @@ const index = () => {
   const [phoneTableData, setPhoneTableData] = useState([]) ; 
   const [tableData, setTableData] = useState([]) ; 
 
-  useEffect(() => {
-    changeBreadcrumbs([{ name: 'Support' }])
-    retrieveSupportData()
-  }, [])
+  // ** Permission handler ** // 
+
+  const checkPermissionStatus = name => {
+    const permission = permissionData['Support permission']?.find(
+      data => data.permission === name
+    )?.permission_value
+    return permission
+  }
+
+  // **** Fetch support table data **** // 
 
   const retrieveSupportData = async () => {
     setIsLoading(true)
@@ -60,16 +66,24 @@ const index = () => {
     setIsLoading(false)
   }
 
+  useEffect(() => {
+    changeBreadcrumbs([{ name: 'Support' }])
+    retrieveSupportData()
+  }, [])
+
+
   const editActionHandler = id => {
     setSupportId(id)
     setIsSupportModalOpen(true)
   }
 
+  // **** Study data delete option handler **** // 
+
   const deleteActionHandler = async id => {
     await deleteSupport({ id })
       .then(res => {
         if (res.data.status) {
-          NotificationMessage('success', 'Support deleted Successfully')
+          NotificationMessage('success', 'Successfully deleted support details')
           retrieveSupportData()
         } else {
           NotificationMessage(
@@ -82,12 +96,7 @@ const index = () => {
       .catch(err => NotificationMessage('warning','Network request failed', err.response.data.message))
   }
 
-  const checkPermissionStatus = name => {
-    const permission = permissionData['Support permission']?.find(
-      data => data.permission === name
-    )?.permission_value
-    return permission
-  }
+  // ==== Support table column ==== // 
 
   const emailColumn = [
     {
