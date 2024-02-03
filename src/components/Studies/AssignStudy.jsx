@@ -32,86 +32,20 @@ const AssignStudy = ({
 
   const [modalData, setModalData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [options, setOptions] = useState([]);
+  const [options, setOptions] = useState([]); 
+  const [institutionRadiologist, setInstitutionRadiologist] = useState([]) ; 
   const [multipleImageFile, setMultipleImageFile] = useState([]);
   const [value, setValues] = useState([]);
   const [imageFile, setImageFile] = useState(null);
+  const [assignUserId, setAssignUserId] = useState(null) ; 
 
-  const [form] = Form.useForm();
-
-  const handleSubmit = async (values) => {
-    setIsLoading(true);
-
-    const payloadObj = omit(values, ["radiologist", "url"]);
-    const images = [];
-
-    if (value?.length !== null) {
-
-      for (const data of value) {
-        try {
-          const formData = {
-            image: data?.url,
-          };
-
-          const res = await uploadImage(formData);
-          images.push(res.data.image_url);
-
-        } catch (err) {
-          console.error(err);
-        }
-      }
-    }
-
-    try {
-
-      let modifiedPayload = {
-        ...payloadObj,
-        id: studyID,
-        assign_user: values.radiologist,
-        study_data: {
-          images: [],
-        },
-      };
-
-      if (multipleImageFile !== undefined){
-        modifiedPayload['study_data']['images'] = [...multipleImageFile, ...images]
-      } else{
-        modifiedPayload['study_data']['images'] = [...images]
-      }
-
-      await postAssignStudy(modifiedPayload)
-        .then((res) => {
-          if (res.data.status) {
-            NotificationMessage("success", "Study Assigned Successfully");
-            setIsAssignModalOpen(false);
-            setStudyID(null);
-            form.resetFields();
-          } else {
-            NotificationMessage(
-              "warning",
-              "Network request failed",
-              res.data.message
-            );
-          }
-        })
-        .catch((err) =>
-          NotificationMessage(
-            "warning",
-            "Network request failed",
-            err.response.data.message
-          )
-        );
-    } catch (err) {
-      NotificationMessage("warning", err);
-    }
-    setIsLoading(false);
-  };
-
+  // **** Reterive particular assign study details **** // 
   const retrieveAssignStudyDetails = async () => {
     setIsLoading(true);
     await fetchAssignStudy({ id: studyID })
       .then((res) => {
         if (res.data.status) {
+          setAssignUserId(res?.data?.assign_user[0]?.assign_user_id) ; 
           form.setFieldsValue({
             ...res.data?.data,
             radiologist: res.data?.assign_user?.map(
@@ -137,6 +71,7 @@ const AssignStudy = ({
     setIsLoading(false);
   };
 
+  // **** Reterive particular study data **** // 
   const retrieveStudyData = async () => {
     setIsLoading(true);
     getStudyData({ id: studyID })
@@ -185,10 +120,6 @@ const AssignStudy = ({
               name: "Study Description",
               value: resData?.Study_description,
             },
-            // {
-            //   name: "Study UID",
-            //   value: resData?.Study_UID,
-            // },
             {
               name: "Series UID",
               value: resData?.Series_UID,
@@ -205,7 +136,7 @@ const AssignStudy = ({
 
           setModalData(modifiedData);
 
-          // Fetch radiologist name based on Institution id
+          // **** Fetch particular institution radiologist **** // 
 
           const FetchRadiologist = async () => {
             let requestPayload = {
@@ -224,11 +155,12 @@ const AssignStudy = ({
                 value: data.id,
               }));
 
-              setOptions(resData);
+              setInstitutionRadiologist([...institutionRadiologist, ...resData]) ; 
             }
           };
 
           FetchRadiologist();
+
         } else {
           NotificationMessage(
             "warning",
@@ -247,13 +179,116 @@ const AssignStudy = ({
     setIsLoading(false);
   };
 
+  // **** Retervice all radiologist data **** // 
+
+  const FetchRadiologist = async () => {
+
+    let requestPayload = {};
+
+    let responseData = await APIHandler(
+      "POST",
+      requestPayload,
+      "institute/v1/fetch-radiologist-name"
+    );
+
+    if (responseData["status"] === true) {
+
+      responseData?.data?.map((element) => {
+        if (element?.id === assignUserId){
+          setInstitutionRadiologist([...institutionRadiologist, {label: element?.name, value:element?.id}])
+        }
+      })
+
+
+    }
+  };
+
+  // **** Retervice particular institution radiologist *** // 
+
+  const [form] = Form.useForm();
+
+  const handleSubmit = async (values) => {
+    setIsLoading(true);
+
+    const payloadObj = omit(values, ["radiologist", "url"]);
+    const images = [];
+
+    if (value?.length !== null) {
+
+      for (const data of value) {
+        try {
+          const formData = {
+            image: data?.url,
+          };
+
+          const res = await uploadImage(formData);
+          images.push(res.data.image_url);
+
+        } catch (err) {
+          console.error(err);
+        }
+      }
+    }
+
+    try {
+
+      let modifiedPayload = {
+        ...payloadObj,
+        id: studyID,
+        assign_user: values.radiologist,
+        study_data: {
+          images: [],
+        },
+      };
+
+      if (multipleImageFile !== undefined) {
+        modifiedPayload['study_data']['images'] = [...multipleImageFile, ...images]
+      } else {
+        modifiedPayload['study_data']['images'] = [...images]
+      }
+
+      await postAssignStudy(modifiedPayload)
+        .then((res) => {
+          if (res.data.status) {
+            NotificationMessage("success", "Study Assigned Successfully");
+            setIsAssignModalOpen(false);
+            setStudyID(null);
+            form.resetFields();
+          } else {
+            NotificationMessage(
+              "warning",
+              "Network request failed",
+              res.data.message
+            );
+          }
+        })
+        .catch((err) =>
+          NotificationMessage(
+            "warning",
+            "Network request failed",
+            err.response.data.message
+          )
+        );
+    } catch (err) {
+      NotificationMessage("warning", err);
+    }
+    setIsLoading(false);
+  };
+
+
   useEffect(() => {
     if (studyID && isAssignModalOpen) {
       retrieveStudyData();
       retrieveAssignStudyDetails();
-      setValues([]) ; 
+      setValues([]);
     }
   }, [studyID]);
+
+  useEffect(() => {
+    FetchRadiologist() ; 
+    if (assignUserId !== null){
+    }
+  }, [assignUserId, studyID]) ; 
 
 
   return (
@@ -351,7 +386,7 @@ const AssignStudy = ({
               <div className="Assign-study-upload-option-input-layout">
                 <div className="Assign-study-specific-option">
 
-                  {/* Radiologist selection dropDown  */}
+                  {/* **** Show paarticular institution radiologist ****  */}
 
                   <Form.Item
                     label="Choose Radiologist"
@@ -366,7 +401,7 @@ const AssignStudy = ({
                   >
                     <Select
                       placeholder="Select Radiologist"
-                      options={options}
+                      options={institutionRadiologist}
                       showSearch
                       filterSort={(optionA, optionB) =>
                         (optionA?.label ?? "")

@@ -9,9 +9,11 @@ import API from '../../apis/getApi'
 import NotificationMessage from '../../components/NotificationMessage'
 import { TbLockAccess } from 'react-icons/tb'
 import { UserRoleContext } from '../../hooks/usersRolesContext'
-import { convertToDDMMYYYY, modifyDate } from '../../helpers/utils'
+import { convertToDDMMYYYY } from '../../helpers/utils'
 
 const Roles = () => {
+  const navigate = useNavigate()
+  
   const [currentPage, setCurrentPage] = useState(1)
   const { isRoleModalOpen, setIsRoleModalOpen } = useContext(UserRoleContext)
   const [isLoading, setIsLoading] = useState(false)
@@ -19,37 +21,11 @@ const Roles = () => {
   const [roleID, setRoleID] = useState(null)
   const [form] = Form.useForm()
   const recordsPage = 10
-  const lastIndex = currentPage * recordsPage
-  const firstIndex = lastIndex - recordsPage
-  const records = tableData.slice(firstIndex, lastIndex)
-  const navigate = useNavigate()
   const token = localStorage.getItem('token')
 
   const { changeBreadcrumbs } = useBreadcrumbs()
 
-  useEffect(() => {
-    changeBreadcrumbs([{ name: 'Roles' }])
-    retrieveRoleData()
-  }, [])
-
-  const editActionHandler = record => {
-    form.setFieldsValue(record)
-    setRoleID(record.id)
-    setIsRoleModalOpen(true)
-  }
-
-const modifyUserDate = data => {
-  return data.map(item => {
-    return {
-      ...item,
-      created_at: convertToDDMMYYYY(item?.created_at),
-      updated_at: convertToDDMMYYYY(item?.updated_at),
-      role_created_at: convertToDDMMYYYY(item?.role_created_at),
-      role_updated_at: convertToDDMMYYYY(item?.role_updated_at)
-    }
-  })
-}
-
+  // **** Retervie all available role list **** // 
 
   const retrieveRoleData = async () => {
     setIsLoading(true)
@@ -78,6 +54,29 @@ const modifyUserDate = data => {
         )
       })
     setIsLoading(false)
+  }
+
+  useEffect(() => {
+    changeBreadcrumbs([{ name: 'Roles' }])
+    retrieveRoleData()
+  }, [])
+
+  const editActionHandler = record => {
+    form.setFieldsValue(record)
+    setRoleID(record.id)
+    setIsRoleModalOpen(true)
+  }
+
+  const modifyUserDate = data => {
+    return data.map(item => {
+      return {
+        ...item,
+        created_at: convertToDDMMYYYY(item?.created_at),
+        updated_at: convertToDDMMYYYY(item?.updated_at),
+        role_created_at: convertToDDMMYYYY(item?.role_created_at),
+        role_updated_at: convertToDDMMYYYY(item?.role_updated_at)
+      }
+    })
   }
 
   const columns = [
@@ -131,7 +130,7 @@ const modifyUserDate = data => {
       })
         .then(res => {
           if (res.data.status) {
-            NotificationMessage('success', 'Role Created Successfully')
+            NotificationMessage('success', 'Role created successfully')
             setIsRoleModalOpen(false)
             form.resetFields()
             retrieveRoleData()
@@ -164,7 +163,7 @@ const modifyUserDate = data => {
         .then(res => {
           if (res.data.status) {
 
-            NotificationMessage('success', 'Role Updated Successfully')
+            NotificationMessage('success', 'Role updated successfully')
             setIsRoleModalOpen(false)
             form.resetFields() ; 
             retrieveRoleData() ; 

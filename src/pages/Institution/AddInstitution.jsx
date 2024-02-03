@@ -8,14 +8,14 @@ import {
   Card,
   Row,
   Col,
-  DatePicker, 
+  DatePicker,
   Switch,
   Select,
   Spin,
   InputNumber,
   Modal,
   Empty
-} from 'antd' ;
+} from 'antd';
 
 import { useNavigate, useParams } from 'react-router-dom'
 import { useBreadcrumbs } from '../../hooks/useBreadcrumbs'
@@ -44,9 +44,9 @@ const AddInstitution = () => {
 
   const [currentStep, setCurrentStep] = useState(0)
   const [tableData, setTableData] = useState([])
-  
+
   const [chargesName, setChargesName] = useState("");
-  const [chargesId, setChargesId] = useState(0) ; 
+  const [chargesId, setChargesId] = useState(0);
 
   const [payload, setPayload] = useState({})
   const [isLoading, setIsLoading] = useState(false)
@@ -57,16 +57,14 @@ const AddInstitution = () => {
   const [institutionId, setInstitutionId] = useState(null)
 
   const [selectedRadiologists, setSelectedRadiologists] = useState([]);
-  const [selectAll, setSelectAll] = useState(false);
 
 
   const handleChange = (selectedValues) => {
     setSelectedRadiologists(selectedValues);
-    setSelectAll(selectedValues.length === radiologistOptions.length);
   };
 
 
-  // Fetch Institution data 
+  // **** Reterive particualr institution details information **** // 
   const retrieveInstitutionData = async () => {
     setIsLoading(true)
 
@@ -79,15 +77,15 @@ const AddInstitution = () => {
         if (res.data.status) {
 
           // Set Moality charges information
-          let tempData = [] ; 
-          for (let key in res?.data?.data?.modality){
+          let tempData = [];
+          for (let key in res?.data?.data?.modality) {
             tempData.push({
-              id: key, 
-              reporting_charge: res?.data?.data?.modality[key]?.reporting_charge, 
+              id: key,
+              reporting_charge: res?.data?.data?.modality[key]?.reporting_charge,
               communication_charge: res?.data?.data?.modality[key]?.communication_charge
             })
           }
-          setTableData([...tempData]) ; 
+          setTableData([...tempData]);
 
           const formData = {
             ...res.data.data,
@@ -118,7 +116,7 @@ const AddInstitution = () => {
     setIsLoading(false)
   }
 
-  // Fetch Radiologist data 
+  // **** Reterive all radiologist user data **** // 
   const retrieveRadiologistData = () => {
     getRadiologistList({ role_id: localStorage.getItem('role_id') }).then(
       res => {
@@ -157,15 +155,15 @@ const AddInstitution = () => {
   }, [])
 
   const handleNextStep = () => {
-    if (currentStep === 1){
-      if (tableData?.length === 0){
+    if (currentStep === 1) {
+      if (tableData?.length === 0) {
 
-        NotificationMessage("warning", "Please, Add Modality charge information") ; 
+        NotificationMessage("warning", "Please, Include modality charge details");
       } else {
 
         setCurrentStep(prevStep => prevStep + 1)
       }
-    } else{
+    } else {
 
       setCurrentStep(prevStep => prevStep + 1)
     }
@@ -188,31 +186,30 @@ const AddInstitution = () => {
     setReportSettingModal(true)
   }
 
-  // Add new modality charges handler
   const AddModalityDataHandler = () => {
 
-    let alreadInsert = 0 ; 
+    let alreadInsert = 0;
 
     tableData.map((element) => {
-      if (element?.id === chargesName){
+      if (element?.id === chargesName) {
         NotificationMessage(
-          "warning", 
-          "Already insert this Modality"
-        ) ; 
-          
-        alreadInsert = 1;  
+          "warning",
+          "Already insert this modality charge"
+        );
+
+        alreadInsert = 1;
       }
     })
 
-    if (alreadInsert == 0){
-      setTableData([...tableData, 
-        { 
-          id: chargesName, 
-          reporting_charge: 0, 
-          communication_charge: 0
+    if (alreadInsert == 0) {
+      setTableData([...tableData,
+      {
+        id: chargesName,
+        reporting_charge: 0,
+        communication_charge: 0
       }])
 
-      setChargesId((prev) => prev + 1) ; 
+      setChargesId((prev) => prev + 1);
     }
 
   }
@@ -230,10 +227,10 @@ const AddInstitution = () => {
         allow_offline_download: values.allow_offline_download
           ? values.allow_offline_download
           : false
-      } ; 
+      };
 
       setPayload(resData)
-      
+
       if (id) {
         setIsLoading(true);
 
@@ -244,7 +241,7 @@ const AddInstitution = () => {
         )
           .then(res => {
             if (res.data.status) {
-              NotificationMessage('success', res.data.message)
+              NotificationMessage('success', "Institution basic details updated successfully")
             } else {
               NotificationMessage(
                 'warning',
@@ -263,56 +260,66 @@ const AddInstitution = () => {
       handleNextStep();
 
     } else if (currentStep === 1) {
-      
-      // Update Modality details object 
-      let modality_details = {} ; 
+
+      let modality_details = {};
       tableData.map((element) => {
         modality_details[element?.id] = {
-          'reporting_charge':  values[`${element?.id}_reporting_charge`] , 
+          'reporting_charge': values[`${element?.id}_reporting_charge`],
           "communication_charge": values[`${element?.id}_communication_charge`]
         }
-      }) ; 
+      });
 
-      setPayload(prev => ({ ...prev, modality: modality_details}))
-
+      setPayload(prev => ({ ...prev, modality: modality_details }))
+      
       if (id) {
-        setIsLoading(true)
+        
+        if (tableData?.length === 0){
+          NotificationMessage("warning", "Please, Include modality charge details");
+        } else{
 
-        // Update Modality details object 
-        let modality_details = {} ; 
-        tableData.map((element) => {
-          modality_details[element?.id] = {
-            'reporting_charge':  values[`${element?.id}_reporting_charge`] , 
-            "communication_charge": values[`${element?.id}_communication_charge`]
-          }
-        }) ; 
+          setIsLoading(true)
 
-        await API.post(
-          '/institute/v1/institute-modality-update',
-          {
-            id: id,
-            modality_details: modality_details
-          },
-          { headers: { Authorization: `Bearer ${token}` } }
-        )
-          .then(res => {
-            if (res.data.status) {
-              NotificationMessage('success', res.data.message)
-            } else {
-              NotificationMessage(
-                'warning',
-                'Network request failed',
-                res.data.message
-              )
+          let modality_details = {};
+          tableData.map((element) => {
+            modality_details[element?.id] = {
+              'reporting_charge': values[`${element?.id}_reporting_charge`],
+              "communication_charge": values[`${element?.id}_communication_charge`]
             }
-          })
-          .catch(err =>
-            NotificationMessage('warning', 'Network request failed', err?.response?.data?.message)
+          });
+  
+          await API.post(
+            '/institute/v1/institute-modality-update',
+            {
+              id: id,
+              modality_details: modality_details
+            },
+            { headers: { Authorization: `Bearer ${token}` } }
           )
-        setIsLoading(false)
+            .then(res => {
+              if (res.data.status) {
+                NotificationMessage('success', 'Institution modality charge updated successfully')
+              } else {
+                NotificationMessage(
+                  'warning',
+                  'Network request failed',
+                  res.data.message
+                )
+              }
+            })
+            .catch(err =>
+              NotificationMessage('warning', 'Network request failed', err?.response?.data?.message)
+            )
+          setIsLoading(false)
+
+          handleNextStep()
+
+        }
+
+      } else{
+
+        handleNextStep()
       }
 
-      handleNextStep()
 
     } else if (currentStep === 2) {
 
@@ -350,7 +357,7 @@ const AddInstitution = () => {
         )
           .then(res => {
             if (res.data.status) {
-              NotificationMessage('success', res.data.message)
+              NotificationMessage('success', "Institution report settings updated successfully")
             } else {
               NotificationMessage(
                 'warning',
@@ -418,7 +425,7 @@ const AddInstitution = () => {
         })
           .then(res => {
             if (res.data.status) {
-              NotificationMessage('success', res.data.message)
+              NotificationMessage('success', "Institution blocked user updated successfully")
             } else {
               NotificationMessage(
                 'warning',
@@ -449,7 +456,7 @@ const AddInstitution = () => {
         })
           .then(res => {
             if (res.data.status) {
-              NotificationMessage('success', 'Institute Updated Successfully')
+              NotificationMessage('success', 'Institution in-house radiologist updated successfully')
               navigate('/institutions')
             } else {
               NotificationMessage(
@@ -479,7 +486,7 @@ const AddInstitution = () => {
         )
           .then(res => {
             if (res.data.status) {
-              NotificationMessage('success', 'Institution Created Successfully')
+              NotificationMessage('success', 'Institution created successfully')
               form.resetFields()
               navigate('/institutions')
             } else {
@@ -612,7 +619,7 @@ const AddInstitution = () => {
   ]
 
   const ModalityDelete = (modalityname) => {
-    
+
     setTableData(tableData.filter(element => element?.id !== modalityname));
   }
 
@@ -638,14 +645,15 @@ const AddInstitution = () => {
           {id && (
             <div
               className='skip-to-last-option'
-              onClick={() => { if (currentStep == 5){setCurrentStep(0);} else {setCurrentStep(5) ; }}}>
-              {currentStep == 5?"Skip To First":"Skip To Last"}
+              onClick={() => { if (currentStep == 5) { setCurrentStep(0); } else { setCurrentStep(5); } }}>
+              {currentStep == 5 ? "Skip To First" : "Skip To Last"}
             </div>
           )}
 
 
         </div>
         <Spin spinning={isLoading}>
+
           <Steps current={currentStep} className='mb'>
             <Step title='Basic Info' />
             <Step title='Modality Charges' />
@@ -654,9 +662,9 @@ const AddInstitution = () => {
             <Steps title='Blocked Users' />
             <Steps title='In house Radiologist' />
           </Steps>
+          
+          {/* Step1 --- Institution details  */}
 
-
-          {/* Institution details information input  */}
           {currentStep === 0 && (
             <Form
               labelCol={{
@@ -710,17 +718,15 @@ const AddInstitution = () => {
                         required: true,
                         whitespace: true,
                         message: 'Please enter contact number'
-                      }, 
+                      },
 
                       {
                         validator: (rule, value) => {
                           if (!value) {
                             return Promise.resolve(); // No validation if value is not provided
                           }
-                  
-                          // Validate Indian contact number
                           const indianPhoneNumberRegex = /^[6-9]\d{9}$/;
-                  
+
                           if (indianPhoneNumberRegex.test(value)) {
                             return Promise.resolve();
                           } else {
@@ -870,7 +876,8 @@ const AddInstitution = () => {
             </Form>
           )}
 
-          {/* Institution modality charge input  */}
+          {/* Step2 --- Institution modality charge  */}
+
           {currentStep === 1 && (
             <Form
               labelCol={{
@@ -899,40 +906,40 @@ const AddInstitution = () => {
 
                   <div className='modality-card-wrapper'>
 
-                    {tableData?.length === 0?<>
+                    {tableData?.length === 0 ? <>
                       <Empty
-                        description = "Not found any modality charges"
+                        description="Not found any modality charges"
                       />
-                    </>:<>
+                    </> : <>
 
                       {tableData.map((element, index) => {
-                        return(
-                          <Card className='particular-modality-info-division' 
-                            title={element.id} style={{ width: "fit-content", marginTop: "0.3rem" }} 
+                        return (
+                          <Card className='particular-modality-info-division'
+                            title={element.id} style={{ width: "fit-content", marginTop: "0.3rem" }}
                             headerBg="#00ff00"
                             key={index}>
 
                             <div className='particular-modality-charges-title'>Reporting charge</div>
-                            
+
                             <Form.Item name={`${element.id}_reporting_charge`} initialValue={element.reporting_charge}>
                               <Input type='number' />
                             </Form.Item>
 
                             <div className='particular-modality-charges-title'>Communication charge</div>
-                            
+
                             <Form.Item name={`${element.id}_communication_charge`} initialValue={element.communication_charge}>
-                              <Input type='number'/>
+                              <Input type='number' />
                             </Form.Item>
 
-                            <Button style={{width: "100%"}} danger
-                              onClick={() => {ModalityDelete(element?.id)}}>
+                            <Button style={{ width: "100%" }} danger
+                              onClick={() => { ModalityDelete(element?.id) }}>
                               Delete
                             </Button>
 
                           </Card>
-                      )
+                        )
                       })}
-                    
+
                     </>}
 
                   </div>
@@ -969,7 +976,8 @@ const AddInstitution = () => {
             </Form>
           )}
 
-          {/* Institution report setting option input  */}
+          {/* Step3 --- Institution report setting input  */}
+
           {currentStep === 2 && (
             <Form
               labelCol={{
@@ -1018,7 +1026,8 @@ const AddInstitution = () => {
             </Form>
           )}
 
-          {/* Institution upload setting option input  */}
+          {/* Step4 --- Institution upload setting option input  */}
+
           {currentStep === 3 && (
             <Form
               labelCol={{ span: 24 }}
@@ -1066,7 +1075,8 @@ const AddInstitution = () => {
             </Form>
           )}
 
-          {/* Institution blocked user input  */}
+          {/* Step5 --- Institution blocked user option  */}
+
           {currentStep === 4 && (
             <Form
               labelCol={{
@@ -1134,7 +1144,8 @@ const AddInstitution = () => {
             </Form>
           )}
 
-          {/* Institution inhouse radiologist option input  */}
+          {/* Step6 ---- Institution inhouse radiologist option  */}
+
           {currentStep === 5 && (
             <Form
               labelCol={{
@@ -1195,6 +1206,8 @@ const AddInstitution = () => {
         </Spin>
 
       </Card>
+
+      {/* ==== Update details conformation model ====  */}
 
       <Modal
         centered

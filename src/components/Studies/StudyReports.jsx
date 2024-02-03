@@ -28,7 +28,6 @@ import { useNavigate } from 'react-router-dom'
 import { UserPermissionContext } from '../../hooks/userPermissionContext'
 import APIHandler from '../../apis/apiHandler';
 import NotificationMessage from "../NotificationMessage";
-import { filterDataContext } from "../../hooks/filterDataContext";
 import { convertToDDMMYYYY } from "../../helpers/utils";
 
 const StudyReports = ({
@@ -64,12 +63,7 @@ const StudyReports = ({
   const [normalReportModalData, setNormalReportModalData] = useState({})
   const [normalReportClosedLoading, setNormalReportClosedLoading] = useState(false);
 
-  useEffect(() => {
-    if (studyID && isReportModalOpen) {
-      retrieveStudyData()
-    }
-  }, [studyID])
-
+  // ** Permission handler ** //
   const checkPermissionStatus = name => {
     const permission = permissionData['Studies permission']?.find(
       data => data.permission === name
@@ -77,113 +71,7 @@ const StudyReports = ({
     return permission
   }
 
-  // Function === Download report from URL
-  function downloadPDF(pdfUrl, pdfName) {
-    var pdfUrl = pdfUrl;
-
-    var link = document.createElement('a');
-    link.style.display = 'none';
-    link.setAttribute('download', pdfName);
-    link.setAttribute('href', pdfUrl);
-
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  }
-
-  // Function ==== Complete Study request 
-  const downloadReport = async (id) => {
-
-    let requestPayload = { id: studyID };
-
-    let responseData = await APIHandler('POST', requestPayload, 'studies/v1/complete-study');
-
-    if (responseData === false) {
-      NotificationMessage("warning", "Network request failed");
-
-    } else if (responseData['status'] === true) {
-
-      let responseData = await APIHandler("POST", { id: studyID }, "studies/v1/report-download");
-
-      if (responseData === false) {
-
-        NotificationMessage(
-          "warning",
-          "Network request failed"
-        );
-
-      } else if (responseData?.status) {
-
-        let report_download_url = responseData?.message;
-        let report_patient_name = patientName.replace(/ /g, "-");
-
-        let updated_report_name = `${patientId}-${report_patient_name}-report.pdf`;
-
-        downloadPDF(report_download_url, updated_report_name);
-
-      } else {
-
-        NotificationMessage(
-          "warning",
-          "Network request failed",
-          responseData?.message
-        )
-      }
-
-
-      // await downloadAdvancedFileReport({ id })
-      //   .then(res => {
-      //     if (res.data.status) {
-
-      //       console.log("Fetch download report related data information ");
-      //       console.log(res?.data?.data);
-
-      //       let report_download_url = res.data?.data?.report_url ; 
-      //       let report_patient_name = patientName.replace(/ /g, "-") ; 
-
-      //       let updated_report_name = `${patientId}-${report_patient_name}-report.pdf` ; 
-
-      //       downloadPDF(report_download_url, updated_report_name) ; 
-
-      //     } else {
-      //       NotificationMessage(
-      //         'warning',
-      //         'Network request failed',
-      //         res.data.message
-      //       )
-      //     }
-      //   })
-      //   .catch(err => NotificationMessage('warning', err.response.data.message))
-
-    } else {
-
-      NotificationMessage("warning", "Network request failed", responseData['message']);
-    }
-  }
-
-  // Update Report status to ViewReporring
-  const handleStudyStatus = async () => {
-    await viewReported({ id: studyID })
-      .then(res => {
-        if (res.data.status) {
-        } else {
-          NotificationMessage(
-            'warning',
-            'Network request failed',
-            res.data.message
-          )
-        }
-      })
-      .catch(err =>
-        NotificationMessage(
-          'warning',
-          'Network request failed',
-          err.response.data.message
-        )
-      )
-  }
-
-  // Function ==== Reterive particular study information 
+  // **** Reterive study data **** // 
   const retrieveStudyData = () => {
     setIsLoading(true)
     getStudyData({ id: studyID })
@@ -261,6 +149,94 @@ const StudyReports = ({
     setIsLoading(false)
   }
 
+  useEffect(() => {
+    if (studyID && isReportModalOpen) {
+      retrieveStudyData()
+    }
+  }, [studyID])
+
+  // **** Download report in pdf formate option handler **** // 
+  function downloadPDF(pdfUrl, pdfName) {
+    var pdfUrl = pdfUrl;
+
+    var link = document.createElement('a');
+    link.style.display = 'none';
+    link.setAttribute('download', pdfName);
+    link.setAttribute('href', pdfUrl);
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  // **** Update study status to ClosedStudy handler **** // 
+  const downloadReport = async () => {
+
+    let requestPayload = { id: studyID };
+
+    let responseData = await APIHandler('POST', requestPayload, 'studies/v1/complete-study');
+
+    if (responseData === false) {
+      NotificationMessage("warning", "Network request failed");
+
+    } else if (responseData['status'] === true) {
+
+      let responseData = await APIHandler("POST", { id: studyID }, "studies/v1/report-download");
+
+      if (responseData === false) {
+
+        NotificationMessage(
+          "warning",
+          "Network request failed"
+        );
+
+      } else if (responseData?.status) {
+
+        let report_download_url = responseData?.message;
+        let report_patient_name = patientName.replace(/ /g, "-");
+
+        let updated_report_name = `${patientId}-${report_patient_name}-report.pdf`;
+
+        downloadPDF(report_download_url, updated_report_name);
+
+      } else {
+
+        NotificationMessage(
+          "warning",
+          "Network request failed",
+          responseData?.message
+        )
+      }
+
+    } else {
+
+      NotificationMessage("warning", "Network request failed", responseData['message']);
+    }
+  }
+
+  // **** Update study status to ViewReport **** // 
+  const handleStudyStatus = async () => {
+    await viewReported({ id: studyID })
+      .then(res => {
+        if (res.data.status) {
+        } else {
+          NotificationMessage(
+            'warning',
+            'Network request failed',
+            res.data.message
+          )
+        }
+      })
+      .catch(err =>
+        NotificationMessage(
+          'warning',
+          'Network request failed',
+          err.response.data.message
+        )
+      )
+  }
+
+  // **** Email share option handler *** // 
   const EmailShareModalOpen = id => {
     setEmailReportId(id)
     isEmailShareModalOpen(true)
@@ -582,10 +558,10 @@ const StudyReports = ({
 
       {/* Study reference image information  */}
 
-      <ImageCarousel 
-        studyImages={studyImages} 
-        show={show} 
-        setShow={setShow} 
+      <ImageCarousel
+        studyImages={studyImages}
+        show={show}
+        setShow={setShow}
       />
 
       {/* Simplified report reference image information  */}

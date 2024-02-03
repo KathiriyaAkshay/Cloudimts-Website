@@ -22,8 +22,8 @@ const EmailFilterModal = ({ name, setInstitutionData, retrieveEmailData }) => {
         values?.created_at__startswith?.format("YYYY-MM-DD"),
     };
 
-    if (values?.active_status !== undefined){
-      modifiedValues['active_status'] = values?.active_status === "active"?true:false
+    if (values?.active_status !== undefined) {
+      modifiedValues['active_status'] = values?.active_status === "active" ? true : false
 
     }
 
@@ -135,16 +135,16 @@ const EmailFilterModal = ({ name, setInstitutionData, retrieveEmailData }) => {
                   whitespace: true,
                   message: "Please enter Contact Number",
                 },
-                
+
                 {
                   validator: (rule, value) => {
                     if (!value) {
                       return Promise.resolve(); // No validation if value is not provided
                     }
-            
+
                     // Validate Indian contact number
                     const indianPhoneNumberRegex = /^[6-9]\d{9}$/;
-            
+
                     if (indianPhoneNumberRegex.test(value)) {
                       return Promise.resolve();
                     } else {

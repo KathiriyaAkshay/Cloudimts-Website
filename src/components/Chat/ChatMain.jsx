@@ -11,7 +11,6 @@ const ChatMain = (props) => {
   
   const [loading, setLoading] = useState(false);
   const handleChatListData = () => {};
-
   
   return (
     <>
@@ -29,6 +28,7 @@ const ChatMain = (props) => {
           isChatModule={props.isChatModule}
           isDrawerOpen = {props.drawerValue}
           urgentCase = {props.urgentCase}
+          referenceid = {props.referenceid}
         />
 
       </div>

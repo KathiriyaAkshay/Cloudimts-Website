@@ -3,7 +3,7 @@ import { useBreadcrumbs } from '../../hooks/useBreadcrumbs'
 import { getUsersLogs, userLogsFilter } from '../../apis/studiesApi'
 import TableWithFilter from '../../components/TableWithFilter'
 import UserLogsFilter from '../../components/UserLogsFilter'
-import { Tag } from 'antd' 
+import { Tag } from 'antd'
 import { convertToDDMMYYYY } from '../../helpers/utils'
 
 const UsersLogs = () => {
@@ -14,19 +14,11 @@ const UsersLogs = () => {
   const [totalPages, setTotalPages] = useState(0)
   const [filterValues, setFilterValues] = useState({})
 
-  useEffect(() => {
-    const crumbs = [{ name: 'Users', to: '/users' }]
-    crumbs.push({
-      name: 'Users Logs'
-    })
-    changeBreadcrumbs(crumbs)
-    retrieveStudyData()
-  }, [])
-
+  // **** Retervie all user logs information **** // 
+  
   const retrieveStudyData = (pagination, values = {}, valueChanged = false) => {
     setIsLoading(true)
     const currentPagination = pagination || pagi
-    console.log(currentPagination)
     userLogsFilter({
       filter:
         Object.keys(values).length !== 0
@@ -34,10 +26,10 @@ const UsersLogs = () => {
           : Object.keys(filterValues).length === 0 &&
             Object.keys(values).length !== 0 &&
             !valueChanged
-          ? values
-          : !valueChanged
-          ? filterValues
-          : {},
+            ? values
+            : !valueChanged
+              ? filterValues
+              : {},
       condition: 'and',
       page_number: currentPagination.page,
       page_size: currentPagination.limit || 10,
@@ -64,6 +56,16 @@ const UsersLogs = () => {
     setIsLoading(false)
   }
 
+  useEffect(() => {
+    const crumbs = [{ name: 'Users', to: '/users' }]
+    crumbs.push({
+      name: 'Users Logs'
+    })
+    changeBreadcrumbs(crumbs)
+    retrieveStudyData()
+  }, [])
+
+
   const columns = [
     {
       title: 'Perform User',
@@ -82,20 +84,20 @@ const UsersLogs = () => {
             text.includes('User login')
               ? 'blue'
               : text.includes('create')
-              ? 'green'
-              : text.includes('basic details update')
-              ? 'warning'
-              : text.includes('modality details update')
-              ? 'orange'
-              : text.includes('institution details update')
-              ? 'magenta'
-              : text.includes('password update')
-              ? 'lime'
-              : text.includes(' Signature image')
-              ? 'cyan'
-              : text.includes('User disable')
-              ? 'red'
-              : 'purple'
+                ? 'green'
+                : text.includes('basic details update')
+                  ? 'warning'
+                  : text.includes('modality details update')
+                    ? 'orange'
+                    : text.includes('institution details update')
+                      ? 'magenta'
+                      : text.includes('password update')
+                        ? 'lime'
+                        : text.includes(' Signature image')
+                          ? 'cyan'
+                          : text.includes('User disable')
+                            ? 'red'
+                            : 'purple'
           }
           className='event-type-tag'
         >
@@ -105,14 +107,14 @@ const UsersLogs = () => {
     },
     {
       title: 'Time',
-      dataIndex: 'time', 
+      dataIndex: 'time',
       render: (text, record) => convertToDDMMYYYY(record?.time)
     }
   ]
 
   return (
     <div>
-      
+
       <TableWithFilter
         tableData={tableData}
         tableColumns={columns}
