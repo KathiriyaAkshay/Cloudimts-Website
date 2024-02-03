@@ -270,44 +270,56 @@ const AddInstitution = () => {
       });
 
       setPayload(prev => ({ ...prev, modality: modality_details }))
-
+      
       if (id) {
-        setIsLoading(true)
+        
+        if (tableData?.length === 0){
+          NotificationMessage("warning", "Please, Include modality charge details");
+        } else{
 
-        let modality_details = {};
-        tableData.map((element) => {
-          modality_details[element?.id] = {
-            'reporting_charge': values[`${element?.id}_reporting_charge`],
-            "communication_charge": values[`${element?.id}_communication_charge`]
-          }
-        });
+          setIsLoading(true)
 
-        await API.post(
-          '/institute/v1/institute-modality-update',
-          {
-            id: id,
-            modality_details: modality_details
-          },
-          { headers: { Authorization: `Bearer ${token}` } }
-        )
-          .then(res => {
-            if (res.data.status) {
-              NotificationMessage('success', 'Institution modality charge updated successfully')
-            } else {
-              NotificationMessage(
-                'warning',
-                'Network request failed',
-                res.data.message
-              )
+          let modality_details = {};
+          tableData.map((element) => {
+            modality_details[element?.id] = {
+              'reporting_charge': values[`${element?.id}_reporting_charge`],
+              "communication_charge": values[`${element?.id}_communication_charge`]
             }
-          })
-          .catch(err =>
-            NotificationMessage('warning', 'Network request failed', err?.response?.data?.message)
+          });
+  
+          await API.post(
+            '/institute/v1/institute-modality-update',
+            {
+              id: id,
+              modality_details: modality_details
+            },
+            { headers: { Authorization: `Bearer ${token}` } }
           )
-        setIsLoading(false)
+            .then(res => {
+              if (res.data.status) {
+                NotificationMessage('success', 'Institution modality charge updated successfully')
+              } else {
+                NotificationMessage(
+                  'warning',
+                  'Network request failed',
+                  res.data.message
+                )
+              }
+            })
+            .catch(err =>
+              NotificationMessage('warning', 'Network request failed', err?.response?.data?.message)
+            )
+          setIsLoading(false)
+
+          handleNextStep()
+
+        }
+
+      } else{
+
+        handleNextStep()
       }
 
-      handleNextStep()
 
     } else if (currentStep === 2) {
 
