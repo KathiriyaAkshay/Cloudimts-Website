@@ -764,6 +764,7 @@ const Dicom = () => {
             <BsChat
               className='action-icon action-icon-primary study-table-chat-option'
               onClick={() => {
+                setStudyReferenceId(record?.refernce_id) 
                 setSeriesID(record.series_id)
                 setStudyID(record.id)
                 setIsDrawerOpen(true)
@@ -1370,6 +1371,7 @@ const Dicom = () => {
         className='chat-drawer'
       >
         <ChatMain
+          referenceid = {studyReferenceId}
           userId={studyID}
           orderId={seriesID}
           restaurantName={personName}
@@ -1508,6 +1510,7 @@ const Dicom = () => {
       </Modal>
 
       {/* ==== Share Whatsapp modal ==== */}
+
       <Modal
         title='Whatsapp Report'
         centered
