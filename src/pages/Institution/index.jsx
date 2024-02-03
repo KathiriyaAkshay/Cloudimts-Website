@@ -31,19 +31,21 @@ const Institution = () => {
 
   const { changeBreadcrumbs } = useBreadcrumbs();
 
-  useEffect(() => {
-    // Set initial breadcrumb when the component mounts
-    changeBreadcrumbs([{ name: 'Institution' }])
-    retrieveInstitutionData()
-  }, [])
+  // ** Check permission ** //
 
-  // Function to retrieve institution data
+  const checkPermissionStatus = name => {
+    const permission = permissionData['InstitutionTable view']?.find(
+      data => data.permission === name
+    )?.permission_value
+    return permission
+  }
+
+  // **** Reterive table institution data **** // 
+
   const retrieveInstitutionData = async (pagination, values = {}) => {
     setIsLoading(true)
 
     const currentPagination = pagination || pagi
-
-    // Filter institution data API call
     filterInstitutionData({
       filter: values,
       condition: 'and',
@@ -51,13 +53,11 @@ const Institution = () => {
       page_size: currentPagination.limit || 10
     })
       .then(res => {
-        // Check if the response status is true
         res.data.data = modifyDate(res.data.data)
         if (res.data.status) {
         setTotalPages(res.data.total_object)
         setInstitutionData(res.data.data)
          } else {
-            // Display a warning notification if the response status is false
           NotificationMessage(
             'warning',
             'Network request failed',
@@ -70,6 +70,12 @@ const Institution = () => {
       })
     setIsLoading(false)
   }
+
+  useEffect(() => {
+    changeBreadcrumbs([{ name: 'Institution' }])
+    retrieveInstitutionData()
+  }, [])
+
 
   const editActionHandler = id => {
     navigate(`/institutions/${id}/edit`)
@@ -104,6 +110,8 @@ const Institution = () => {
     }
   }
 
+  // **** Retervie particular Institution logs data **** // 
+
   const retrieveLogsData = (id, name) => {
     setInstitutionName(`${name} institution logs`)
     getInstitutionLogs({ id: id })
@@ -129,12 +137,7 @@ const Institution = () => {
       })
   }
 
-  const checkPermissionStatus = name => {
-    const permission = permissionData['InstitutionTable view']?.find(
-      data => data.permission === name
-    )?.permission_value
-    return permission
-  }
+  // **** Instiution status disable and enable option handler **** // 
 
   const statusChangeHandler = async (status, id) => {
     if (status) {
@@ -390,11 +393,15 @@ const Institution = () => {
         loadingTableData={isLoading}
       />
 
+      {/* ==== Institution filter model ====  */}
+
       <FilterModal
         name='Institution Filter'
         setInstitutionData={setInstitutionData}
         retrieveInstitutionData={retrieveInstitutionData}
       />
+
+      {/* ==== Institutiton logs related drawer ====  */}
 
       <Drawer
         title={institutionName}
