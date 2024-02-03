@@ -5,7 +5,7 @@ import {
   Divider,
   Menu,
   Popover,
-  Select, 
+  Select,
   Popconfirm
 } from 'antd'
 import React, { useContext, useEffect, useState } from 'react'
@@ -21,7 +21,7 @@ import {
   FilterOutlined,
   PlusOutlined,
   SearchOutlined,
-  DeleteOutlined, 
+  DeleteOutlined,
   ReloadOutlined,
   ExportOutlined
 } from '@ant-design/icons'
@@ -39,7 +39,6 @@ import {
   applySystemFilter,
   retrieveSystemFilters
 } from '../helpers/studyDataFilter'
-import OHIFViwer from "../assets/images/menu.png"
 import APIHandler from '../apis/apiHandler'
 
 const HeaderButton = ({
@@ -49,14 +48,13 @@ const HeaderButton = ({
   retrieveFilterOptions
 }) => {
   const navigate = useNavigate()
+
   const { permissionData } = useContext(UserPermissionContext)
   const { setIsRoleModalOpen } = useContext(UserRoleContext)
   const {
     isFilterSelected,
     isAdvanceSearchSelected,
-    setIsAdvanceSearchSelected, 
-    isStudyQuickFilterModalOpen, 
-    setIsStudyQuickFilterModalOpen
+    setIsAdvanceSearchSelected
   } = useContext(FilterSelectedContext)
   const { setIsEmailModalOpen } = useContext(UserEmailContext)
   const {
@@ -69,12 +67,13 @@ const HeaderButton = ({
     setIsUserLogsFilterModalOpen,
     setIsSupportModalOpen,
     setIsAdvancedSearchModalOpen,
-    setIsStudyExportModalOpen, 
-    setIsQuickAssignStudyModalOpen, 
-    templateOption, 
-    setEmailSupportOption, 
+    setIsStudyExportModalOpen,
+    setIsQuickAssignStudyModalOpen,
+    templateOption,
+    setEmailSupportOption,
     setPhoneSupportOption
   } = useContext(filterDataContext)
+
   const { setSelectedItem } = useContext(ReportDataContext)
   const { billingFilterData, setBillingFilterData } =
     useContext(BillingDataContext)
@@ -86,7 +85,7 @@ const HeaderButton = ({
     setStudyData,
     setSystemFilterPayload,
     studyDataPayload,
-    systemFilterPayload, 
+    systemFilterPayload,
     studyData
   } = useContext(StudyDataContext)
   const [systemFilters, setSystemsFilters] = useState([])
@@ -94,36 +93,45 @@ const HeaderButton = ({
   const [isFilterChecked, setIsFilterChecked] = useState(null)
   const [isSystemFilterChecked, setIsSystemFilterChecked] = useState(null)
 
+  const checkPermissionStatus = name => {
+    const permission = permissionData['Menu Permission']?.find(
+      data => data.permission === name
+    )?.permission_value
+    return permission
+  }
+
+  // **** Reterive templates list for Study report page **** //
+
   const retrieveTemplateOptions = async () => {
 
     let requestPayload = {
       "page_number": 1,
-      "page_limit": 200, 
+      "page_limit": 200,
       "modality": templateOption
-    } ; 
+    };
 
     let responseData = await APIHandler("POST", requestPayload, "report/v1/submitReportlist")
 
-    if (responseData === false){
+    if (responseData === false) {
       NotificationMessage(
-        "warning", 
+        "warning",
         "Network request failed"
       )
-    
-    } else if (responseData?.status === true){
+
+    } else if (responseData?.status === true) {
 
       const resData = responseData?.data.map((data) => ({
-        label: data?.name, 
+        label: data?.name,
         value: data?.id
       }))
 
-      setTemplateOptions([...resData]) ; 
+      setTemplateOptions([...resData]);
 
     } else {
 
       NotificationMessage(
-        "warning", 
-        responseData?.message, 
+        "warning",
+        responseData?.message,
         "Network request failed"
       )
     }
@@ -133,10 +141,26 @@ const HeaderButton = ({
   useEffect(() => {
 
     if (window.location.pathname === `/reports/${id}`) {
-      retrieveTemplateOptions(); 
+      retrieveTemplateOptions();
     }
 
   }, [window.location.pathname, templateOption])
+
+  // **** Reterive system filter list for Study page **** // 
+
+  const fetchSystemFilter = async () => {
+
+    const response = await retrieveSystemFilters()
+
+    const modifiedOptions = response.map(data => ({
+      label: data.name,
+      value: `${data?.filter_data?.option} ${data?.filter_data?.filter?.status__icontains}`,
+      key: `${data?.filter_data?.option} ${data?.filter_data?.filter?.status__icontains}`,
+      details: data.filter_data
+    }))
+
+    setSystemsFilters(modifiedOptions);
+  }
 
   useEffect(() => {
     if (window.location.pathname === '/studies') {
@@ -144,21 +168,8 @@ const HeaderButton = ({
     }
   }, [window.location.pathname])
 
-  const fetchSystemFilter = async () => {
 
-    const response = await retrieveSystemFilters()
-    
-    const modifiedOptions = response.map(data => ({
-      label: data.name,
-      value: `${data?.filter_data?.option} ${data?.filter_data?.filter?.status__icontains}`,
-      key: `${data?.filter_data?.option} ${data?.filter_data?.filter?.status__icontains}`,
-      details: data.filter_data
-    }))
-    
-    setSystemsFilters(modifiedOptions) ; 
-  }
-
-
+  // **** Delete study option for Study page **** // 
 
   const deleteStudyData = async () => {
 
@@ -166,8 +177,8 @@ const HeaderButton = ({
       deleteStudy({ id: studyIdArray })
         .then(res => {
           if (res.data.status) {
-            NotificationMessage('success', "Study delete successfully") ;
-            setStudyIdArray([]) ; 
+            NotificationMessage('success', "Study delete successfully");
+            setStudyIdArray([]);
           } else {
             NotificationMessage(
               'warning',
@@ -188,37 +199,23 @@ const HeaderButton = ({
     }
   }
 
-  const checkPermissionStatus = name => {
-    const permission = permissionData['Menu Permission']?.find(
-      data => data.permission === name
-    )?.permission_value
-    return permission
-  } 
+  // **** Reload option handler for Study page **** // 
 
   const ReloadOptionHandler = () => {
-    window.location.reload() ; 
+    window.location.reload();
   }
 
+  // **** Quick assign study option handler for Study page **** // 
+
   const QuickAssignStudyModalHandler = () => {
-    if (studyIdArray.length === 0){
-      NotificationMessage("warning", "Please, Select study for assign") ; 
-    } else{
-      setIsQuickAssignStudyModalOpen(true) ; 
+    if (studyIdArray.length === 0) {
+      NotificationMessage("warning", "Please, Select study for assign");
+    } else {
+      setIsQuickAssignStudyModalOpen(true);
     }
   }
 
-
-  const OpenOHIFViwerOptionHandler = () => {
-    studyData.map((element) => {
-      if (element.id = studyIdArray[0]){
-
-        let url = `https://viewer.cloudimts.com/viewer/${element?.study?.study_uid}` ; 
-        window.open(url, "_blank") ; 
-      }
-    })
-  }
-
-  // ===== Filter list ===== // 
+  // ==== Study page filter dropdown ===== //   
 
   const content = (
 
@@ -259,8 +256,8 @@ const HeaderButton = ({
                     filter:
                       filterOption !== 'undefined'
                         ? {
-                            status__icontains: filterOption
-                          }
+                          status__icontains: filterOption
+                        }
                         : {},
                     all_premission_id: JSON.parse(
                       localStorage.getItem('all_permission_id')
@@ -278,8 +275,8 @@ const HeaderButton = ({
                       filter:
                         filterOption !== 'undefined'
                           ? {
-                              status__icontains: filterOption
-                            }
+                            status__icontains: filterOption
+                          }
                           : {},
                       all_premission_id: JSON.parse(
                         localStorage.getItem('all_permission_id')
@@ -299,20 +296,20 @@ const HeaderButton = ({
             </Checkbox>
           </div>
         ))}
-        
+
       </Collapse.Panel>
-      
+
       {/* ===== Owner added filter list ======  */}
 
       <Collapse.Panel
-        style={{marginTop: "0.60rem"}}
+        style={{ marginTop: "0.60rem" }}
         header='Other filters'
         key='1'
         className='setting-panel mb-0 mt-3 admin-panel-filter-option-list'
       >
         {filterOptions?.map(data => (
-          <div 
-          key={data?.key}
+          <div
+            key={data?.key}
           >
             <Checkbox
               name={data?.label}
@@ -381,13 +378,18 @@ const HeaderButton = ({
         )}
       </Collapse.Panel>
     </Collapse>
-  
+
   )
 
   return (
     <div>
+
+      {/* ==== Institution page ====  */}
+
       {window.location.pathname === '/institutions' && (
+
         <div className='iod-setting-div'>
+
           <Button
             type='primary'
             onClick={() => setIsFilterModalOpen(true)}
@@ -395,18 +397,28 @@ const HeaderButton = ({
           >
             <FilterOutlined style={{ fontWeight: '500' }} /> Filter
           </Button>
-          <Button type='primary' onClick={() => navigate('/institutions-logs')}>
+
+          <Button 
+            type='primary' 
+            onClick={() => navigate('/institutions-logs')}
+            className='header-secondary-option-button'>
             Institution Logs
           </Button>
+
           <Button
             type='primary'
             onClick={() => navigate('/institutions/add')}
-            className='btn-icon-div'
+            className='btn-icon-div header-secondary-option-button'
           >
             <PlusOutlined style={{ fontWeight: '500' }} /> Add Institution
           </Button>
+
         </div>
+
       )}
+
+      {/* ==== Institution logs page ====  */}
+
       {window.location.pathname === '/institutions-logs' && (
         <div className='iod-setting-div'>
           <Button
@@ -419,6 +431,9 @@ const HeaderButton = ({
           </Button>
         </div>
       )}
+
+      {/* ==== User page ====  */}
+
       {window.location.pathname === '/users' && (
         <div className='iod-setting-div'>
           <Button
@@ -428,18 +443,26 @@ const HeaderButton = ({
           >
             <FilterOutlined style={{ fontWeight: '500' }} /> Filter
           </Button>
-          <Button type='primary' onClick={() => navigate('/users-logs')}>
+
+          <Button 
+            type='primary' 
+            onClick={() => navigate('/users-logs')}
+            className='header-secondary-option-button'>
             Users Logs
           </Button>
+
           <Button
             type='primary'
             onClick={() => navigate('/users/add')}
-            className='btn-icon-div'
+            className='btn-icon-div header-secondary-option-button'
           >
             <PlusOutlined style={{ fontWeight: '500' }} /> Add Users
           </Button>
         </div>
       )}
+
+      {/* ==== User logs page ====  */}
+
       {window.location.pathname === '/users-logs' && (
         <div className='iod-setting-div'>
           <Button
@@ -451,25 +474,35 @@ const HeaderButton = ({
           </Button>
         </div>
       )}
+
+      {/* ==== User role list related page ====  */}
+
       {window.location.pathname === '/users/roles' && (
         <div className='iod-setting-div'>
           {permissionData['Other option permission'] &&
             permissionData['Other option permission'].find(
               data => data.permission === 'Create New UserRole'
             )?.permission_value && (
+
               <Button
                 type='primary'
                 onClick={() => setIsRoleModalOpen(true)}
-                className='btn-icon-div'
+                className='btn-icon-div header-secondary-option-button'
               >
                 <PlusOutlined style={{ fontWeight: '500' }} /> Add Role
               </Button>
             )}
-          <Button type='primary' onClick={() => navigate('/role-logs')}>
+          <Button 
+            type='primary' 
+            onClick={() => navigate('/role-logs')}
+            className='header-secondary-option-button'>
             Role Logs
           </Button>
         </div>
       )}
+
+      {/* ==== Role logs page ====  */}
+
       {window.location.pathname === '/role-logs' && (
         <div className='iod-setting-div'>
           <Button
@@ -481,6 +514,9 @@ const HeaderButton = ({
           </Button>
         </div>
       )}
+
+      {/* ==== User email page ====  */}
+
       {window.location.pathname === '/users/email' && (
         <div className='iod-setting-div'>
           <Button
@@ -490,6 +526,7 @@ const HeaderButton = ({
           >
             <FilterOutlined style={{ fontWeight: '500' }} /> Filter
           </Button>
+
           {permissionData['Other option permission'] &&
             permissionData['Other option permission'].find(
               data => data.permission === 'Create New Email'
@@ -497,27 +534,25 @@ const HeaderButton = ({
               <Button
                 type='primary'
                 onClick={() => setIsEmailModalOpen(true)}
-                className='btn-icon-div'
+                className='btn-icon-div header-secondary-option-button'
               >
                 <PlusOutlined style={{ fontWeight: '500' }} /> Add Email
               </Button>
             )}
         </div>
       )}
-      
-      {/* ====== Study page ======  */}
+
+      {/* ==== Study page ====  */}
 
       {window.location.pathname === '/studies' && (
         <div className='iod-setting-div'>
 
-          {/* Option1 === Delete Study  */}
-
           <Popconfirm
-            title = "Delete study"
-            description = "Are you sure you want to delete this studies ?"
+            title="Delete study"
+            description="Are you sure you want to delete this studies ?"
             onConfirm={deleteStudyData}
-            okText = "Yes"
-            cancelText = "No"
+            okText="Yes"
+            cancelText="No"
           >
             <Button
               type='primary'
@@ -527,78 +562,53 @@ const HeaderButton = ({
             </Button>
           </Popconfirm>
 
-
-          {/* Option2 === Reload Study  */}
-
           <Popconfirm
-            title = "Reload page"
-            description = "Are you sure you want to reload page" 
+            title="Reload page"
+            description="Are you sure you want to reload page"
             onConfirm={ReloadOptionHandler}
-            okText = "Yes"
-            cancelText = "No"
+            okText="Yes"
+            cancelText="No"
           >
             <Button
               type='primary'
+              className='header-secondary-option-button'
             >
               <ReloadOutlined />
             </Button>
           </Popconfirm>
 
-          {/* Option3 ==== OHIF Viewer  */}
-
-          {/* {studyIdArray.length === 1 && (
-            <Button onClick={OpenOHIFViwerOptionHandler}>
-              <img src={OHIFViwer} className='ohif-viwer-option-icon' style={{ marginRight: 8 }} />
-              OHIF 
-            </Button>
-
-          )} */}
-
-          {/* Option4 ==== Study Export option  */}
-
           <Button
             type='export'
             onClick={() => setIsStudyExportModalOpen(true)}
-            style={{
-              
-            }}
+            className='header-secondary-option-button'
           >
-            <ExportOutlined style={{marginRight:"0.4rem"}}/> Study Export
+            <ExportOutlined style={{ marginRight: "0.4rem" }} /> Study Export
           </Button>
 
-          {/* Option5 ==== Assign Study option  */}
-          
           <Button
             type='primary'
             onClick={() => QuickAssignStudyModalHandler()}
+            className='header-secondary-option-button'
           >
             Assign study
           </Button>
 
-          {/* Option6 ==== Advance search filter option  */}
-        
+          <Button 
+            type='primary' 
+            onClick={() => navigate('/study-logs')}
+            className='header-secondary-option-button'
+            >
+            Study logs
+          </Button>
+
           <Button
             type='primary'
-            className={`btn-icon-div ${
-              isAdvanceSearchSelected && 'filter-selected'
-            }`}
+            className={`btn-icon-div ${isAdvanceSearchSelected && 'filter-selected'}`}
             onClick={() => setIsAdvancedSearchModalOpen(true)}
           >
             <SearchOutlined style={{ fontWeight: '500' }} />
             Advance search
           </Button>
-
-          {/* Option7 ==== Quick Search filter option  */}
-
-          {/* <Button
-            type='primary'
-            onClick={() => setIsStudyQuickFilterModalOpen(true)}
-            className={`btn-icon-div ${isFilterSelected && 'filter-selected'}`}
-          >
-            <FilterOutlined style={{ fontWeight: '500' }} /> Quick filter
-          </Button> */}
-
-          {/* Option8 ==== Normal filter option  */}
 
           <div style={{ position: 'relative' }}>
             <Popover
@@ -610,11 +620,10 @@ const HeaderButton = ({
             >
               <Button
                 type='primary'
-                className={`btn-icon-div ${
-                  (Object.keys(systemFilterPayload)?.length !== 0 ||
+                className={`btn-icon-div ${(Object.keys(systemFilterPayload)?.length !== 0 ||
                     Object.keys(studyDataPayload)?.length !== 0) &&
                   'filter-selected'
-                }`}
+                  }`}
                 onClick={() => setIsFilterCollapseOpen(prev => !prev)}
               >
                 <FilterOutlined style={{ fontWeight: '500' }} /> Filters
@@ -622,25 +631,26 @@ const HeaderButton = ({
             </Popover>
           </div>
 
-          {/* Option9 ==== Study logs information  */}
-
-          <Button type='primary' onClick={() => navigate('/study-logs')}>
-            Study logs
-          </Button>
+          
         </div>
       )}
+
+      {/* ==== Add template related page ====  */}
 
       {window.location.pathname === '/reports' && (
         <div className='iod-setting-div'>
           <Button
             type='primary'
             onClick={() => navigate('/reports/add')}
-            className='btn-icon-div'
+            className='btn-icon-div header-secondary-option-button'
           >
             <PlusOutlined style={{ fontWeight: '500' }} /> Add Report Template
           </Button>
         </div>
       )}
+
+      {/* ==== Study report submit option page ====  */}
+
       {window.location.pathname === `/reports/${id}` && (
         <div className='iod-setting-div'>
 
@@ -651,7 +661,7 @@ const HeaderButton = ({
                 isPatientSelected: false,
                 isInstitutionSelected: false,
                 isImagesSelected: true,
-                isOhifViewerSelected:false,
+                isOhifViewerSelected: false,
                 templateId: prev?.templateId,
                 isStudyDescriptionSelected: false
               }))
@@ -667,7 +677,7 @@ const HeaderButton = ({
                 isPatientSelected: false,
                 isInstitutionSelected: false,
                 isImagesSelected: false,
-                isOhifViewerSelected:false,
+                isOhifViewerSelected: false,
 
                 templateId: prev?.templateId,
                 isStudyDescriptionSelected: true
@@ -684,7 +694,7 @@ const HeaderButton = ({
                 isPatientSelected: true,
                 isInstitutionSelected: false,
                 isImagesSelected: false,
-                isOhifViewerSelected:false,
+                isOhifViewerSelected: false,
 
                 templateId: prev?.templateId,
                 isStudyDescriptionSelected: false
@@ -701,7 +711,7 @@ const HeaderButton = ({
                 isPatientSelected: false,
                 isInstitutionSelected: true,
                 isImagesSelected: false,
-                isOhifViewerSelected:false,
+                isOhifViewerSelected: false,
 
                 templateId: prev?.templateId,
                 isStudyDescriptionSelected: false
@@ -718,7 +728,7 @@ const HeaderButton = ({
                 isPatientSelected: false,
                 isInstitutionSelected: false,
                 isImagesSelected: false,
-                isOhifViewerSelected:true,
+                isOhifViewerSelected: true,
                 templateId: prev?.templateId,
                 isStudyDescriptionSelected: false
               }))
@@ -728,7 +738,7 @@ const HeaderButton = ({
           </Button>
 
           <Select
-            style={{width: "12rem"}}
+            style={{ width: "12rem" }}
             className='template-selection-option-division'
             placeholder='choose template'
             options={templateOptions}
@@ -744,6 +754,8 @@ const HeaderButton = ({
           />
         </div>
       )}
+
+      {/* ==== Billing related page =====  */}
 
       {window.location.pathname === '/billing' && (
         <div className='iod-setting-div'>
@@ -779,22 +791,24 @@ const HeaderButton = ({
         </div>
       )}
 
+      {/* ===== Support option page ====  */}
+
       {window.location.pathname === '/support' && (
-        
+
         <>
           <div className='iod-setting-div'>
             <Button
               type='primary'
-              onClick={() => {console.log("Run this function"); setEmailSupportOption(true); setPhoneSupportOption(false) ; }}
-              className='btn-icon-div'
+              onClick={() => { console.log("Run this function"); setEmailSupportOption(true); setPhoneSupportOption(false); }}
+              className='btn-icon-div header-secondary-option-button'
             >
               Email support details
             </Button>
 
             <Button
               type='primary'
-              onClick={() => {setPhoneSupportOption(true) ; setEmailSupportOption(false) ; }}
-              className='btn-icon-div'
+              onClick={() => { setPhoneSupportOption(true); setEmailSupportOption(false); }}
+              className='btn-icon-div header-secondary-option-button'
             >
               Phonesupport details
             </Button>
@@ -802,19 +816,21 @@ const HeaderButton = ({
             <Button
               type='primary'
               onClick={() => setIsSupportModalOpen(true)}
-              className='btn-icon-div'
+              className='btn-icon-div header-secondary-option-button'
             >
               <PlusOutlined style={{ fontWeight: '500' }} /> Add New Support
             </Button>
           </div>
-        
+
         </>
       )}
+      
       <StudyFilterModal
         isFilterModalOpen={isAddFilterModalOpen}
         setIsFilterModalOpen={setIsAddFilterModalOpen}
         retrieveFilterOptions={retrieveFilterOptions}
       />
+
     </div>
   )
 }
