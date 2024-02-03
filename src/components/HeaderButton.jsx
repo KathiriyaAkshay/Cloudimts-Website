@@ -46,7 +46,6 @@ import {
 import APIHandler from '../apis/apiHandler'
 
 const HeaderButton = ({
-  setIsModalOpen,
   id,
   filterOptions,
   retrieveFilterOptions
@@ -75,7 +74,9 @@ const HeaderButton = ({
     setIsQuickAssignStudyModalOpen,
     templateOption,
     setEmailSupportOption,
-    setPhoneSupportOption
+    setPhoneSupportOption, 
+    chatNotificationData, 
+    setChatNotificationData
   } = useContext(filterDataContext)
 
   const { setSelectedItem } = useContext(ReportDataContext)
@@ -385,32 +386,41 @@ const HeaderButton = ({
 
   )
 
-  // notification items 
+  // **** Chat notification data handle **** // 
 
-  const notification_data = [
-    {
-      title: 'Ant Design Title 1',
-    },
-    {
-      title: 'Ant Design Title 2',
-    },
-  ];
+  const [chatNotificationTitle, setChatNotificationTitle] = useState([]) ; 
+
   const notification_content=(
     <List
-    style={{width:"25rem"}}
-    itemLayout="horizontal"
-    dataSource={notification_data}
-    renderItem={(item, index) => (
-      <List.Item>
-        <List.Item.Meta
-          avatar={<Avatar src={`https://api.dicebear.com/7.x/miniavs/svg?seed=${index}`} />}
-          title={<a href="https://ant.design">{item.title}</a>}
-          description="Ant Design, a design language for background applications, is refined by Ant UED Team"
-        />
-      </List.Item>
-    )}
-  />
+      style={{width:"25rem"}}
+      itemLayout="horizontal"
+      dataSource={chatNotificationTitle}
+      renderItem={(item, index) => (
+        <List.Item>
+          <List.Item.Meta
+            className='chat-notification'
+            avatar={<Avatar src={`https://api.dicebear.com/7.x/miniavs/svg?seed=${index}`} />}
+            title={item.title}
+            description={item?.description}
+          />
+        </List.Item>
+      )}
+    />
   )
+
+  const SetChatNotificationData = () => {
+    const updatedTitles = chatNotificationData.map((element) => ({
+      title: `Patient Id - ${element?.Patientid}`, 
+      description : element?.message
+    }));
+    
+    setChatNotificationTitle(updatedTitles);
+    
+  }
+
+  useEffect(() => {
+    SetChatNotificationData() ; 
+  }, [chatNotificationData])
 
   return (
     <div>
@@ -582,7 +592,7 @@ const HeaderButton = ({
           {/* view current notifications */}
           <Popover content={notification_content} title="Recent Notifications" placement='bottomLeft'>
 
-          <Badge count={0}>
+          <Badge count={chatNotificationData?.length}>
 
             <Button
               type='default'
