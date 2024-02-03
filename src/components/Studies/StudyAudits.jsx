@@ -11,12 +11,7 @@ const StudyAudits = ({ isModalOpen, setIsModalOpen, studyID, setStudyID, referen
   const [isLoading, setIsLoading] = useState(false)
   const [auditData, setAuditData] = useState([])
 
-  useEffect(() => {
-    if (studyID && isModalOpen) {
-      retrieveStudyData()
-    }
-  }, [studyID])
-
+  // **** Retervie particular study information and particualr study logs information **** // 
   const retrieveStudyData = () => {
     setIsLoading(true)
     getStudyData({ id: studyID })
@@ -106,6 +101,13 @@ const StudyAudits = ({ isModalOpen, setIsModalOpen, studyID, setStudyID, referen
       )
     setIsLoading(false)
   }
+
+  useEffect(() => {
+    if (studyID && isModalOpen) {
+      retrieveStudyData()
+    }
+  }, [studyID])
+
 
   const auditColumns = [
     {
