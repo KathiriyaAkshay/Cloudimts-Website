@@ -1,32 +1,23 @@
-import { Form, List, Modal, Select, Spin, Tag, Typography } from "antd";
+import { Form, Modal, Select, Spin } from "antd";
 import React, { useEffect, useState, useContext } from "react";
-import {
-  fetchAssignStudy,
-  getStudyData,
-  postAssignStudy,
-  uploadImage,
-} from "../../apis/studiesApi";
-import { omit } from "lodash";
 import NotificationMessage from "../NotificationMessage";
 import APIHandler from "../../apis/apiHandler";
-import { StudyIdContext } from "../../hooks/studyIdContext"; 
+import { StudyIdContext } from "../../hooks/studyIdContext";
 
 const AssignStudyModified = ({
   isAssignModifiedModalOpen,
   setIsAssignModifiedModalOpen,
-  studyID,
   setStudyID,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [options, setOptions] = useState([]);
   const [form] = Form.useForm();
-  const { studyIdArray, setStudyIdArray, studyReferenceIdArray } = useContext(StudyIdContext) ; 
+  const { studyIdArray, setStudyIdArray, studyReferenceIdArray } = useContext(StudyIdContext);
 
-  // Fetch radiologist name based on Institution id
-
+  // **** Retervie all radiologist name for assign study **** // 
   const FetchRadiologist = async () => {
 
-    let requestPayload = { };
+    let requestPayload = {};
 
     let responseData = await APIHandler(
       "POST",
@@ -35,46 +26,46 @@ const AssignStudyModified = ({
     );
 
     if (responseData["status"] === true) {
-      
+
       const resData = responseData['data'].map((element) => ({
-        label: element.name, 
+        label: element.name,
         value: element.id
       }))
 
-      setOptions(resData) ; 
-     
+      setOptions(resData);
+
     }
   };
 
 
   useEffect(() => {
-    FetchRadiologist() ;
-  }, []) ; 
+    FetchRadiologist();
+  }, []);
 
   const handleSubmit = async (values) => {
     setIsLoading(true);
-  
-    let requestPayload = {"studyId": studyIdArray, "assign_user": values?.radiologist} ; 
-    
-    let responseData = await APIHandler("POST", requestPayload, "studies/v1/quick-assign-study") ; 
+
+    let requestPayload = { "studyId": studyIdArray, "assign_user": values?.radiologist };
+
+    let responseData = await APIHandler("POST", requestPayload, "studies/v1/quick-assign-study");
 
     setIsLoading(false);
 
-    if (responseData === false){
-      NotificationMessage("warning", "Network request failed") ; 
-    } else if (responseData['status'] === true){
-      setIsAssignModifiedModalOpen(false) ; 
-      setStudyIdArray([]) ; 
-      NotificationMessage("success", "Study assign successfully") ; 
-    } else{
-      NotificationMessage("warning", "Network request failed", responseData['message']) ; 
+    if (responseData === false) {
+      NotificationMessage("warning", "Network request failed");
+    } else if (responseData['status'] === true) {
+      setIsAssignModifiedModalOpen(false);
+      setStudyIdArray([]);
+      NotificationMessage("success", "Study assigned successfully");
+    } else {
+      NotificationMessage("warning", "Network request failed", responseData['message']);
     }
   };
 
   return (
     <Modal
       className="quick-assign-study-modal"
-      title="Quick Assign study"  
+      title="Quick Assign study"
       open={isAssignModifiedModalOpen}
       centered
       onOk={() => {
@@ -86,7 +77,7 @@ const AssignStudyModified = ({
         form.resetFields();
       }}
       width={"40%"}
-      
+
     >
       <Spin spinning={isLoading}>
         <div
@@ -104,20 +95,20 @@ const AssignStudyModified = ({
           <div>Reference ids</div>
         </div>
 
-        <div style={{marginTop: "1rem"}}>
+        <div style={{ marginTop: "1rem" }}>
 
           <div className="assign_studies_all_id_list">
             {studyReferenceIdArray.map((element) => {
-              return(
+              return (
                 <div className="particular_assign_study_id_information">
                   {element}
                 </div>
               )
             })}
-           
+
           </div>
 
-          <div className="Assign-study-upload-option-input-layout" style={{marginTop: 20  }}>
+          <div className="Assign-study-upload-option-input-layout" style={{ marginTop: 20 }}>
 
             <div className="quick-assign-study-division w-100">
 
@@ -142,7 +133,7 @@ const AssignStudyModified = ({
                       message: "Please select radiologist",
                     },
                   ]}
-                  style={{marginTop: "auto", width: "100%"}}
+                  style={{ marginTop: "auto", width: "100%" }}
                 >
                   <Select
                     placeholder="Select Radiologist"

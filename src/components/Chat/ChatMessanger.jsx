@@ -33,7 +33,8 @@ const ChatMessanger = props => {
     setMessages,
     isChatModule,
     isDrawerOpen, 
-    urgentCase
+    urgentCase, 
+    referenceid
   } = props || {}
 
   const userDetail = userProfileData
@@ -107,78 +108,7 @@ const ChatMessanger = props => {
   const [quotedMessageInfo, setQuotedMessageInfo] = useState({}) ; 
   const [deleteChat, setDeletChat] = useState(false) ; 
 
-  useEffect(() => {
-    let id = messages?.length ? messages[messages?.length - 1]?.uni_key : 1 ; 
-
-    if (deleteChat){
-      setDeletChat((prev) => !prev) ; 
-    } else{
-      
-      ScrollToBottom() ; 
-    }
-  }, [messages])
-
-  useEffect(() => {
-    if (forwardMessage?.chatSearchValue?.length) {
-      setForwardMessage({
-        ...forwardMessage,
-        chatSearchedResults: messages?.filter(i =>
-          i.message
-            .toUpperCase()
-            ?.includes(forwardMessage?.chatSearchValue.toUpperCase())
-        )
-      })
-    } else {
-      setForwardMessage({
-        ...forwardMessage,
-        chatSearchedResults: [],
-        searchIndex: 0
-      })
-    }
-  }, [forwardMessage?.chatSearchValue])
-
-  useEffect(() => {
-
-    if (orderId) {
-    
-      const ws = new WebSocket(`${WEBSOCKET_URL}personal/${roomName}/`)
-
-      ws.onopen = () => {
-        console.log('WebSocket connection opened')
-      }
-
-      ws.onmessage = event => {
-        ;(JSON.parse(event.data).id != null ||
-          JSON.parse(event.data).id != undefined) &&
-          localStorage.setItem('roomID', JSON.parse(event.data).id)
-        setRoomID(prev =>
-          JSON.parse(event.data).id != null ||
-          JSON.parse(event.data).id != undefined
-            ? JSON.parse(event.data).id
-            : prev
-        )
-
-        handleAllChatHistory(
-          true,
-          JSON.parse(event.data).id != null ||
-            JSON.parse(event.data).id != undefined
-            ? true
-            : false,
-          JSON.parse(event.data)
-        )
-      }
-
-      ws.onclose = () => {
-        console.log('WebSocket connection closed')
-      }
-
-      setWs(ws)
-
-      return () => {
-        ws.close()
-      }
-    }
-  }, [orderId])
+  // **** Reterive particular chat room history **** // 
 
   const handleAllChatHistory = async (webSocketConnect, roomData, chatData) => {
 
@@ -267,6 +197,80 @@ const ChatMessanger = props => {
     }
   }
 
+  useEffect(() => {
+    let id = messages?.length ? messages[messages?.length - 1]?.uni_key : 1 ; 
+
+    if (deleteChat){
+      setDeletChat((prev) => !prev) ; 
+    } else{
+      
+      ScrollToBottom() ; 
+    }
+  }, [messages])
+
+  useEffect(() => {
+    if (forwardMessage?.chatSearchValue?.length) {
+      setForwardMessage({
+        ...forwardMessage,
+        chatSearchedResults: messages?.filter(i =>
+          i.message
+            .toUpperCase()
+            ?.includes(forwardMessage?.chatSearchValue.toUpperCase())
+        )
+      })
+    } else {
+      setForwardMessage({
+        ...forwardMessage,
+        chatSearchedResults: [],
+        searchIndex: 0
+      })
+    }
+  }, [forwardMessage?.chatSearchValue])
+
+  useEffect(() => {
+
+    if (orderId) {
+    
+      const ws = new WebSocket(`${WEBSOCKET_URL}personal/${roomName}/`)
+
+      ws.onopen = () => {
+        console.log('WebSocket connection opened')
+      }
+
+      ws.onmessage = event => {
+        ;(JSON.parse(event.data).id != null ||
+          JSON.parse(event.data).id != undefined) &&
+          localStorage.setItem('roomID', JSON.parse(event.data).id)
+        setRoomID(prev =>
+          JSON.parse(event.data).id != null ||
+          JSON.parse(event.data).id != undefined
+            ? JSON.parse(event.data).id
+            : prev
+        )
+
+        handleAllChatHistory(
+          true,
+          JSON.parse(event.data).id != null ||
+            JSON.parse(event.data).id != undefined
+            ? true
+            : false,
+          JSON.parse(event.data)
+        )
+      }
+
+      ws.onclose = () => {
+        console.log('WebSocket connection closed')
+      }
+
+      setWs(ws)
+
+      return () => {
+        ws.close()
+      }
+    }
+  }, [orderId])
+
+
   function groupMessagesByDate (data) {
    
     const groupedMessages = data?.reduce((acc, message) => {
@@ -286,6 +290,7 @@ const ChatMessanger = props => {
     setMessages(formattedData)
   }
 
+  // **** Send chat message in particular chat room **** // 
   const sendMessage = async () => {
     
     if (quotedMessageContainer){
@@ -304,8 +309,9 @@ const ChatMessanger = props => {
           room_id: roomID,  
           is_quoted: true,
           quoted_message: quotedMessageInfo?.media, 
-          urgent_case: urgentCase
+          urgent_case: urgentCase,
         } ;
+        reference_id: referenceid
         
       } else {
         
@@ -318,7 +324,8 @@ const ChatMessanger = props => {
           room_id: roomID,  
           is_quoted: true,
           quoted_message: quotedMessageInfo?.content, 
-          urgent_case: urgentCase
+          urgent_case: urgentCase , 
+          reference_id: referenceid
         } ;
       }
 
@@ -378,7 +385,8 @@ const ChatMessanger = props => {
           room_id: roomID,
           is_quoted: 'False',
           quoted_message: "", 
-          urgentCase: urgentCase
+          urgentCase: urgentCase, 
+          reference_id: referenceid
         }
   
         sendMediaChat(formData)
@@ -418,7 +426,8 @@ const ChatMessanger = props => {
             room_id: roomID,
             is_quoted: false,
             quoted_message: '', 
-            urgent_case: urgentCase
+            urgent_case: urgentCase, 
+            reference_id: referenceid
           } ;
 
           setChatData('') ; 

@@ -40,51 +40,7 @@ const ShareStudy = ({
   const [form] = Form.useForm()
   const [studyData, setStudyData] = useState({})
 
-  useEffect(() => {
-    if (studyID && isShareStudyModalOpen) {
-      retrieveStudyData()
-    }
-  }, [studyID])
-
-  useEffect(() => {
-    if (isEmailModalOpen) {
-      retrieveEmailOptions()
-    }
-  }, [isEmailModalOpen])
-
-  useEffect(() => {
-    if (isNewEmailModalOpen) {
-      console.log("asdsa");
-      retrieveRoleOptions()
-    }
-  }, [isNewEmailModalOpen])
-
-  const retrieveEmailOptions = () => {
-    fetchEmailList()
-      .then(res => {
-        if (res.data.status) {
-          const resData = res.data?.data?.map(data => ({
-            label: data.email,
-            value: data.email
-          }))
-          setEmailOptions(resData)
-        } else {
-          NotificationMessage(
-            'warning',
-            'Network request failed',
-            res.data.message
-          )
-        }
-      })
-      .catch(err =>
-        NotificationMessage(
-          'warning',
-          'Network request failed',
-          err.response.data.message
-        )
-      )
-  }
-
+  // **** Retervie particular study information **** // 
   const retrieveStudyData = () => {
     setIsLoading(true)
     getMoreDetails({ id: studyID })
@@ -102,7 +58,7 @@ const ShareStudy = ({
               value: resData?.Patient_name
             },
             {
-              name: "Institution", 
+              name: "Institution",
               value: resData?.institution?.Institution_name
             },
             {
@@ -137,6 +93,52 @@ const ShareStudy = ({
     setIsLoading(false)
   }
 
+  // **** Reterive email list option information **** // 
+
+  const retrieveEmailOptions = () => {
+    fetchEmailList()
+      .then(res => {
+        if (res.data.status) {
+          const resData = res.data?.data?.map(data => ({
+            label: data.email,
+            value: data.email
+          }))
+          setEmailOptions(resData)
+        } else {
+          NotificationMessage(
+            'warning',
+            'Network request failed',
+            res.data.message
+          )
+        }
+      })
+      .catch(err =>
+        NotificationMessage(
+          'warning',
+          'Network request failed',
+          err.response.data.message
+        )
+      )
+  }
+  useEffect(() => {
+    if (studyID && isShareStudyModalOpen) {
+      retrieveStudyData()
+    }
+  }, [studyID])
+
+  useEffect(() => {
+    if (isEmailModalOpen) {
+      retrieveEmailOptions()
+    }
+  }, [isEmailModalOpen])
+
+  useEffect(() => {
+    if (isNewEmailModalOpen) {
+      retrieveRoleOptions()
+    }
+  }, [isNewEmailModalOpen])
+
+  // **** Email share option handler **** // 
   const handleSubmitEmail = async values => {
     setIsEmailSending(true)
 
@@ -164,6 +166,7 @@ const ShareStudy = ({
     }
   }
 
+  // **** Whatsapp share option handler **** // 
   const handleSubmitWhatsapp = async values => {
 
     setIsEmailSending(true)
@@ -191,6 +194,7 @@ const ShareStudy = ({
       NotificationMessage('warning', responseData['message'])
     }
   }
+
   const modalHeader = (
     <div
       style={{
@@ -222,9 +226,8 @@ const ShareStudy = ({
 
     </div>
   )
-
-  // ==== add email data handler ==== 
-
+  
+  // **** Add new email option handler **** // 
   const handleSubmit = async (values) => {
 
     if (values.active_status === undefined) {
@@ -237,7 +240,7 @@ const ShareStudy = ({
     })
       .then(res => {
         if (res.data.status) {
-          NotificationMessage('success', 'Email Added Successfully')
+          NotificationMessage('success', 'Email added successfully')
           form.resetFields()
           setIsNewEmailModalOpen(false);
         } else {
@@ -252,7 +255,7 @@ const ShareStudy = ({
     setIsLoading(false)
   }
 
-  // API Call 
+  // **** Reterive role option for add new email **** // 
   const retrieveRoleOptions = async () => {
     setIsLoading(true)
     await API.get('/email/v1/role-fetch', {
@@ -320,8 +323,8 @@ const ShareStudy = ({
             renderItem={item => (
               <List.Item
                 className={`queue-number-list ${item.name === 'Series UID' || item.name === 'Study UID'
-                    ? 'full-width'
-                    : 'half-width'
+                  ? 'full-width'
+                  : 'half-width'
                   }`}
               >
                 <Typography

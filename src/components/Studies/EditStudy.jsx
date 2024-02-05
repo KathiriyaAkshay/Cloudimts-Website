@@ -15,11 +15,7 @@ const EditStudy = ({
   const [isLoading, setIsLoading] = useState(false)
   const [form] = Form.useForm()
 
-  useEffect(() => {
-    if (studyID && isEditModalOpen) {
-      retrieveStudyData()
-    }
-  }, [studyID])
+  // **** Retervie particular study information **** // 
 
   const retrieveStudyData = () => {
     setIsLoading(true)
@@ -58,6 +54,13 @@ const EditStudy = ({
     setIsLoading(false)
   }
 
+  useEffect(() => {
+    if (studyID && isEditModalOpen) {
+      retrieveStudyData()
+    }
+  }, [studyID])
+
+
   const handleSubmit = values => {
 
     let  modifiedData = {
@@ -68,18 +71,14 @@ const EditStudy = ({
         values?.study_history == undefined ? '' : values?.study_history
     } ; 
 
-    console.log(modifiedData);
-
     if (values?.study_description === null){
       modifiedData = {...modifiedData, study_description: " "}
     }
 
-    console.log(modifiedData);
-
     updateStudyData(modifiedData)
       .then(res => {
         if (res.data.status) {
-          NotificationMessage('success', 'Study Updated Successfully')
+          NotificationMessage('success', 'Study details updated Successfully')
           setStudyID(null)
           setIsEditModalOpen(false)
           form.resetFields()

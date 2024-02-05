@@ -19,25 +19,9 @@ const DeletedStudies = () => {
   })
   const [studyData, setStudyData] = useState([])
   const [isLoading, setIsLoading] = useState(false)
-  const [expandedRows, setExpandedRows] = useState([])
   const [pagi, setPagi] = useState({ page: 1, limit: 10 })
-  const [studyIdArray, setStudyIdArray] = useState([])
-  useEffect(() => {
-    setPagi(Pagination)
-
-    retrieveStudyData(Pagination)
-  }, [Pagination])
-
-  const onShowSizeChange = (current, pageSize) => {
-    setLimit(pageSize)
-
-    setPagination(prev => ({ ...prev, page: current, limit: pageSize }))
-  }
-
-  useEffect(() => {
-    changeBreadcrumbs([{ name: 'Deleted Studies' }])
-  }, [])
-
+  
+  // **** Reterive deleted study details information **** // 
   const retrieveStudyData = pagination => {
     setIsLoading(true)
     const currentPagination = pagination || pagi
@@ -77,11 +61,28 @@ const DeletedStudies = () => {
     setIsLoading(false)
   }
 
+  const onShowSizeChange = (current, pageSize) => {
+    setLimit(pageSize)
+    setPagination(prev => ({ ...prev, page: current, limit: pageSize }))
+  }
+
+  useEffect(() => {
+    setPagi(Pagination)
+    retrieveStudyData(Pagination)
+  }, [Pagination])
+
+
+  useEffect(() => {
+    changeBreadcrumbs([{ name: 'Deleted Studies' }])
+  }, [])
+
+  // **** Backup particular study **** // 
+
   const backupStudyData = async id => {
     await backupStudy({ id })
       .then(res => {
         if (res.data.status) {
-          NotificationMessage('success', 'Study Backup Successfully')
+          NotificationMessage('success', 'Study backup has been successfully executed')
           retrieveStudyData()
         } else {
           NotificationMessage(
@@ -122,16 +123,16 @@ const DeletedStudies = () => {
             text === 'New'
               ? 'success'
               : text === 'Assigned'
-              ? 'blue'
-              : text === 'Viewed'
-              ? 'cyan'
-              : text === 'ViewReport'
-              ? 'lime'
-              : text === 'InReporting'
-              ? 'magenta'
-              : text === 'CloseStudy'
-              ? 'red'
-              : 'warning'
+                ? 'blue'
+                : text === 'Viewed'
+                  ? 'cyan'
+                  : text === 'ViewReport'
+                    ? 'lime'
+                    : text === 'InReporting'
+                      ? 'magenta'
+                      : text === 'CloseStudy'
+                        ? 'red'
+                        : 'warning'
           }
           style={{ textAlign: 'center', fontWeight: '600' }}
         >
@@ -176,39 +177,15 @@ const DeletedStudies = () => {
     }
   ].filter(Boolean)
 
-  const onRow = record => ({
-    onClick: () => handleRowClick(record)
-  })
-
-  const rowSelection = {
-    onChange: (selectedRowKeys, selectedRows) => {
-      setStudyIdArray(prev => selectedRows?.map(data => data.id))
-    },
-    getCheckboxProps: record => ({
-      id: record.id
-    })
-  }
-
-  const handleRowClick = record => {
-    const isRowExpanded = expandedRows.includes(record.id)
-
-    if (isRowExpanded) {
-      setExpandedRows(expandedRows.filter(key => key !== record.id))
-    } else {
-      setExpandedRows([...expandedRows, record.id])
-    }
-  }
-
   return (
     <Table
       dataSource={studyData}
       columns={columns}
-      scroll={{y  :475}}
-      onRow={onRow}
+      scroll={{ y: 475 }}
       loading={isLoading}
       pagination={{
         current: Pagination.page,
-        pageSize: localStorage.getItem("pageSize")||Pagination.limit,
+        pageSize: localStorage.getItem("pageSize") || Pagination.limit,
         total: totalPages,
         pageSizeOptions: [10, 25, 50, 100, 200, 500],
         showSizeChanger: totalPages > 10,

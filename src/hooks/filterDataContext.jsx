@@ -44,6 +44,8 @@ const FilterDataProvider = ({ children }) => {
   const [emailSupportOption, setEmailSupportOption] = useState(true) ; 
   const [phoneSupportOption, setPhoneSupportOption] = useState(false) ; 
 
+  const [chatNotificationData, setChatNotificationData] = useState([]) ; 
+
   return (
     <filterDataContext.Provider
       value={{
@@ -80,7 +82,9 @@ const FilterDataProvider = ({ children }) => {
         setEmailSupportOption, 
         setPhoneSupportOption, 
         emailSupportOption, 
-        phoneSupportOption
+        phoneSupportOption, 
+        chatNotificationData, 
+        setChatNotificationData
       }}
     >
       {children}

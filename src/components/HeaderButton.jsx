@@ -45,24 +45,21 @@ import {
   applySystemFilter,
   retrieveSystemFilters
 } from '../helpers/studyDataFilter'
-import OHIFViwer from "../assets/images/menu.png"
 import APIHandler from '../apis/apiHandler'
 
 const HeaderButton = ({
-  setIsModalOpen,
   id,
   filterOptions,
   retrieveFilterOptions
 }) => {
   const navigate = useNavigate()
+
   const { permissionData } = useContext(UserPermissionContext)
   const { setIsRoleModalOpen } = useContext(UserRoleContext)
   const {
     isFilterSelected,
     isAdvanceSearchSelected,
-    setIsAdvanceSearchSelected,
-    isStudyQuickFilterModalOpen,
-    setIsStudyQuickFilterModalOpen
+    setIsAdvanceSearchSelected
   } = useContext(FilterSelectedContext)
   const { setIsEmailModalOpen } = useContext(UserEmailContext)
   const {
@@ -79,8 +76,11 @@ const HeaderButton = ({
     setIsQuickAssignStudyModalOpen,
     templateOption,
     setEmailSupportOption,
-    setPhoneSupportOption
+    setPhoneSupportOption, 
+    chatNotificationData, 
+    setChatNotificationData
   } = useContext(filterDataContext)
+
   const { setSelectedItem } = useContext(ReportDataContext)
   const { billingFilterData, setBillingFilterData } =
     useContext(BillingDataContext)
@@ -99,6 +99,15 @@ const HeaderButton = ({
   const [isFilterCollapseOpen, setIsFilterCollapseOpen] = useState(false)
   const [isFilterChecked, setIsFilterChecked] = useState(null)
   const [isSystemFilterChecked, setIsSystemFilterChecked] = useState(null)
+
+  const checkPermissionStatus = name => {
+    const permission = permissionData['Menu Permission']?.find(
+      data => data.permission === name
+    )?.permission_value
+    return permission
+  }
+
+  // **** Reterive templates list for Study report page **** //
 
   const retrieveTemplateOptions = async () => {
 
@@ -144,11 +153,7 @@ const HeaderButton = ({
 
   }, [window.location.pathname, templateOption])
 
-  useEffect(() => {
-    if (window.location.pathname === '/studies') {
-      fetchSystemFilter()
-    }
-  }, [window.location.pathname])
+  // **** Reterive system filter list for Study page **** // 
 
   const fetchSystemFilter = async () => {
 
@@ -164,7 +169,14 @@ const HeaderButton = ({
     setSystemsFilters(modifiedOptions);
   }
 
+  useEffect(() => {
+    if (window.location.pathname === '/studies') {
+      fetchSystemFilter()
+    }
+  }, [window.location.pathname])
 
+
+  // **** Delete study option for Study page **** // 
 
   const deleteStudyData = async () => {
 
@@ -194,16 +206,13 @@ const HeaderButton = ({
     }
   }
 
-  const checkPermissionStatus = name => {
-    const permission = permissionData['Menu Permission']?.find(
-      data => data.permission === name
-    )?.permission_value
-    return permission
-  }
+  // **** Reload option handler for Study page **** // 
 
   const ReloadOptionHandler = () => {
     window.location.reload();
   }
+
+  // **** Quick assign study option handler for Study page **** // 
 
   const QuickAssignStudyModalHandler = () => {
     if (studyIdArray.length === 0) {
@@ -213,18 +222,7 @@ const HeaderButton = ({
     }
   }
 
-
-  const OpenOHIFViwerOptionHandler = () => {
-    studyData.map((element) => {
-      if (element.id = studyIdArray[0]) {
-
-        let url = `https://viewer.cloudimts.com/viewer/${element?.study?.study_uid}`;
-        window.open(url, "_blank");
-      }
-    })
-  }
-
-  // ===== Filter list ===== // 
+  // ==== Study page filter dropdown ===== //   
 
   const content = (
 
@@ -390,66 +388,59 @@ const HeaderButton = ({
 
   )
 
-  // notification items 
+  // **** Chat notification data handle **** // 
 
-  const notification_data = [
-    {
-      title: 'Ant Design Title 1',
-    },
-    {
-      title: 'Ant Design Title 2',
-    },
-  ];
-  const notification_content = (
+  const [chatNotificationTitle, setChatNotificationTitle] = useState([]) ; 
+
+  const notification_content=(
     <List
-      style={{ width: "25rem" }}
+      style={{width:"25rem"}}
       itemLayout="horizontal"
-      dataSource={notification_data}
+      dataSource={chatNotificationTitle}
       renderItem={(item, index) => (
         <List.Item>
           <List.Item.Meta
+            className='chat-notification'
             avatar={<Avatar src={`https://api.dicebear.com/7.x/miniavs/svg?seed=${index}`} />}
-            title={<a href="https://ant.design">{item.title}</a>}
-            description="Ant Design, a design language for background applications, is refined by Ant UED Team"
+            title={item.title}
+            description={item?.description}
           />
         </List.Item>
       )}
     />
   )
 
-  const notification_title = (
-    <div
-      style={{
-        width: '100%',
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "space-between",
-      }}
-    >
-      <div>Recent Notifications</div>
-      <div >
-        <Button shape='circle'>
-          <ClearOutlined />
-        </Button>
-      </div>
-    </div>
-  )
+  const SetChatNotificationData = () => {
 
-  const no_content=(
-    <div 
-    style={{
-    width:"25rem",
-    display:"flex",
-    justifyContent:"center",
-    alignItems:"center" 
-    }}>
-          <Empty/>
-    </div>
-  )
+    let tempData = localStorage.getItem("chat-data") ; 
+
+    if (tempData !== null){
+
+      tempData = JSON.parse(tempData) ; 
+      const updatedTitles = tempData.map((element) => ({
+        title: `Patient Id - ${element?.Patientid}`, 
+        description : element?.message
+      }));
+      
+      setChatNotificationTitle(updatedTitles);
+    }
+    
+  }
+
+  useEffect(() => {
+ 
+    SetChatNotificationData() ; 
+  }, [chatNotificationData])
+
   return (
     <div>
+
+      {/* ==== Institution page ====  */}
+
       {window.location.pathname === '/institutions' && (
+
         <div className='iod-setting-div'>
+
           <Button
             type='primary'
             onClick={() => setIsFilterModalOpen(true)}
@@ -457,18 +448,28 @@ const HeaderButton = ({
           >
             <FilterOutlined style={{ fontWeight: '500' }} /> Filter
           </Button>
-          <Button type='primary' onClick={() => navigate('/institutions-logs')}>
+
+          <Button 
+            type='primary' 
+            onClick={() => navigate('/institutions-logs')}
+            className='header-secondary-option-button'>
             Institution Logs
           </Button>
+
           <Button
             type='primary'
             onClick={() => navigate('/institutions/add')}
-            className='btn-icon-div'
+            className='btn-icon-div header-secondary-option-button'
           >
             <PlusOutlined style={{ fontWeight: '500' }} /> Add Institution
           </Button>
+
         </div>
+
       )}
+
+      {/* ==== Institution logs page ====  */}
+
       {window.location.pathname === '/institutions-logs' && (
         <div className='iod-setting-div'>
           <Button
@@ -481,6 +482,9 @@ const HeaderButton = ({
           </Button>
         </div>
       )}
+
+      {/* ==== User page ====  */}
+
       {window.location.pathname === '/users' && (
         <div className='iod-setting-div'>
           <Button
@@ -490,18 +494,26 @@ const HeaderButton = ({
           >
             <FilterOutlined style={{ fontWeight: '500' }} /> Filter
           </Button>
-          <Button type='primary' onClick={() => navigate('/users-logs')}>
+
+          <Button 
+            type='primary' 
+            onClick={() => navigate('/users-logs')}
+            className='header-secondary-option-button'>
             Users Logs
           </Button>
+
           <Button
             type='primary'
             onClick={() => navigate('/users/add')}
-            className='btn-icon-div'
+            className='btn-icon-div header-secondary-option-button'
           >
             <PlusOutlined style={{ fontWeight: '500' }} /> Add Users
           </Button>
         </div>
       )}
+
+      {/* ==== User logs page ====  */}
+
       {window.location.pathname === '/users-logs' && (
         <div className='iod-setting-div'>
           <Button
@@ -513,25 +525,35 @@ const HeaderButton = ({
           </Button>
         </div>
       )}
+
+      {/* ==== User role list related page ====  */}
+
       {window.location.pathname === '/users/roles' && (
         <div className='iod-setting-div'>
           {permissionData['Other option permission'] &&
             permissionData['Other option permission'].find(
               data => data.permission === 'Create New UserRole'
             )?.permission_value && (
+
               <Button
                 type='primary'
                 onClick={() => setIsRoleModalOpen(true)}
-                className='btn-icon-div'
+                className='btn-icon-div header-secondary-option-button'
               >
                 <PlusOutlined style={{ fontWeight: '500' }} /> Add Role
               </Button>
             )}
-          <Button type='primary' onClick={() => navigate('/role-logs')}>
+          <Button 
+            type='primary' 
+            onClick={() => navigate('/role-logs')}
+            className='header-secondary-option-button'>
             Role Logs
           </Button>
         </div>
       )}
+
+      {/* ==== Role logs page ====  */}
+
       {window.location.pathname === '/role-logs' && (
         <div className='iod-setting-div'>
           <Button
@@ -543,6 +565,9 @@ const HeaderButton = ({
           </Button>
         </div>
       )}
+
+      {/* ==== User email page ====  */}
+
       {window.location.pathname === '/users/email' && (
         <div className='iod-setting-div'>
           <Button
@@ -552,6 +577,7 @@ const HeaderButton = ({
           >
             <FilterOutlined style={{ fontWeight: '500' }} /> Filter
           </Button>
+
           {permissionData['Other option permission'] &&
             permissionData['Other option permission'].find(
               data => data.permission === 'Create New Email'
@@ -559,7 +585,7 @@ const HeaderButton = ({
               <Button
                 type='primary'
                 onClick={() => setIsEmailModalOpen(true)}
-                className='btn-icon-div'
+                className='btn-icon-div header-secondary-option-button'
               >
                 <PlusOutlined style={{ fontWeight: '500' }} /> Add Email
               </Button>
@@ -567,7 +593,7 @@ const HeaderButton = ({
         </div>
       )}
 
-      {/* ====== Study page ======  */}
+      {/* ==== Study page ====  */}
 
       {window.location.pathname === '/studies' && (
         <div className='iod-setting-div'>
@@ -576,7 +602,7 @@ const HeaderButton = ({
           {/* view current notifications */}
           <Popover content={notification_data.length>0?notification_content:no_content} title={notification_title} placement='bottomLeft'>
 
-            <Badge count={0}>
+          <Badge count={chatNotificationData?.length}>
 
               <Button
                 type='default'
@@ -604,9 +630,6 @@ const HeaderButton = ({
             </Button>
           </Popconfirm>
 
-
-          {/* Option2 === Reload Study  */}
-
           <Popconfirm
             title="Reload page"
             description="Are you sure you want to reload page"
@@ -616,65 +639,44 @@ const HeaderButton = ({
           >
             <Button
               type='primary'
+              className='header-secondary-option-button'
             >
               <ReloadOutlined />
             </Button>
           </Popconfirm>
 
-          {/* Option3 ==== OHIF Viewer  */}
-
-          {/* {studyIdArray.length === 1 && (
-            <Button onClick={OpenOHIFViwerOptionHandler}>
-              <img src={OHIFViwer} className='ohif-viwer-option-icon' style={{ marginRight: 8 }} />
-              OHIF 
-            </Button>
-
-          )} */}
-
-          {/* Option4 ==== Study Export option  */}
-
           <Button
             type='export'
             onClick={() => setIsStudyExportModalOpen(true)}
-            style={{
-
-            }}
+            className='header-secondary-option-button'
           >
             <ExportOutlined style={{ marginRight: "0.4rem" }} /> Study Export
           </Button>
 
-          {/* Option5 ==== Assign Study option  */}
-
           <Button
             type='primary'
             onClick={() => QuickAssignStudyModalHandler()}
+            className='header-secondary-option-button'
           >
             Assign study
           </Button>
 
-          {/* Option6 ==== Advance search filter option  */}
+          <Button 
+            type='primary' 
+            onClick={() => navigate('/study-logs')}
+            className='header-secondary-option-button'
+            >
+            Study logs
+          </Button>
 
           <Button
             type='primary'
-            className={`btn-icon-div ${isAdvanceSearchSelected && 'filter-selected'
-              }`}
+            className={`btn-icon-div ${isAdvanceSearchSelected && 'filter-selected'}`}
             onClick={() => setIsAdvancedSearchModalOpen(true)}
           >
             <SearchOutlined style={{ fontWeight: '500' }} />
-            Advance search
+            Advanced search
           </Button>
-
-          {/* Option7 ==== Quick Search filter option  */}
-
-          {/* <Button
-            type='primary'
-            onClick={() => setIsStudyQuickFilterModalOpen(true)}
-            className={`btn-icon-div ${isFilterSelected && 'filter-selected'}`}
-          >
-            <FilterOutlined style={{ fontWeight: '500' }} /> Quick filter
-          </Button> */}
-
-          {/* Option8 ==== Normal filter option  */}
 
           <div style={{ position: 'relative' }}>
             <Popover
@@ -697,25 +699,26 @@ const HeaderButton = ({
             </Popover>
           </div>
 
-          {/* Option9 ==== Study logs information  */}
-
-          <Button type='primary' onClick={() => navigate('/study-logs')}>
-            Study logs
-          </Button>
+          
         </div>
       )}
+
+      {/* ==== Add template related page ====  */}
 
       {window.location.pathname === '/reports' && (
         <div className='iod-setting-div'>
           <Button
             type='primary'
             onClick={() => navigate('/reports/add')}
-            className='btn-icon-div'
+            className='btn-icon-div header-secondary-option-button'
           >
             <PlusOutlined style={{ fontWeight: '500' }} /> Add Report Template
           </Button>
         </div>
       )}
+
+      {/* ==== Study report submit option page ====  */}
+
       {window.location.pathname === `/reports/${id}` && (
         <div className='iod-setting-div'>
 
@@ -820,6 +823,8 @@ const HeaderButton = ({
         </div>
       )}
 
+      {/* ==== Billing related page =====  */}
+
       {window.location.pathname === '/billing' && (
         <div className='iod-setting-div'>
           {permissionData['Other option permission'] &&
@@ -829,7 +834,7 @@ const HeaderButton = ({
             )?.permission_value && (
               <Button
                 type='primary'
-                className='btn-icon-div'
+                className='btn-icon-div header-secondary-option-button'
                 onClick={() => handleExport(billingFilterData)}
               >
                 <SiMicrosoftexcel style={{ fontWeight: '500' }} /> Export Excel
@@ -838,7 +843,7 @@ const HeaderButton = ({
 
           <Button
             type='primary'
-            className='btn-icon-div'
+            className='btn-icon-div header-secondary-option-button'
             onClick={() => setIsBillingFilterModalOpen(true)}
           >
             <SearchOutlined /> Search Billing
@@ -846,13 +851,15 @@ const HeaderButton = ({
 
           <Button
             type='primary'
-            className='btn-icon-div'
+            className='btn-icon-div header-secondary-option-button'
             onClick={() => handleDownloadPDF(billingFilterData)}
           >
             <DownloadOutlined /> Download Bill
           </Button>
         </div>
       )}
+
+      {/* ===== Support option page ====  */}
 
       {window.location.pathname === '/support' && (
 
@@ -861,7 +868,7 @@ const HeaderButton = ({
             <Button
               type='primary'
               onClick={() => { console.log("Run this function"); setEmailSupportOption(true); setPhoneSupportOption(false); }}
-              className='btn-icon-div'
+              className='btn-icon-div header-secondary-option-button'
             >
               Email support details
             </Button>
@@ -869,7 +876,7 @@ const HeaderButton = ({
             <Button
               type='primary'
               onClick={() => { setPhoneSupportOption(true); setEmailSupportOption(false); }}
-              className='btn-icon-div'
+              className='btn-icon-div header-secondary-option-button'
             >
               Phonesupport details
             </Button>
@@ -877,7 +884,7 @@ const HeaderButton = ({
             <Button
               type='primary'
               onClick={() => setIsSupportModalOpen(true)}
-              className='btn-icon-div'
+              className='btn-icon-div header-secondary-option-button'
             >
               <PlusOutlined style={{ fontWeight: '500' }} /> Add New Support
             </Button>
@@ -885,11 +892,13 @@ const HeaderButton = ({
 
         </>
       )}
+      
       <StudyFilterModal
         isFilterModalOpen={isAddFilterModalOpen}
         setIsFilterModalOpen={setIsAddFilterModalOpen}
         retrieveFilterOptions={retrieveFilterOptions}
       />
+
     </div>
   )
 }

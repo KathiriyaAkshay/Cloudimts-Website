@@ -28,7 +28,6 @@ import { LoadingOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons
 
 const { Step } = Steps;
 
-
 const getBase64 = (img, callback) => {
   const reader = new FileReader();
   reader.addEventListener('load', () => callback(reader.result));
@@ -49,13 +48,14 @@ const beforeUpload = (file) => {
 
 
 const AddUsers = () => {
+  const navigate = useNavigate()  ; 
+
   const [currentStep, setCurrentStep] = useState(0)
   const [tableData, setTableData] = useState([])
   const [isLoading, setIsLoading] = useState(false)
   const [roleOptions, setRoleOptions] = useState([])
   const [institutionOptions, setInstitutionOptions] = useState([])
   const [form] = Form.useForm()
-  const navigate = useNavigate()
   const { changeBreadcrumbs } = useBreadcrumbs()
   const token = localStorage.getItem('token')
   const [payload, setPayload] = useState({})
@@ -65,19 +65,7 @@ const AddUsers = () => {
   const [value, setValues] = useState([])
   const [isModalOpen, setIsModalOpen] = useState(false)
 
-  useEffect(() => {
-    const crumbs = [{ name: <span style={{ color: "#0052c6" }}>Users</span>, to: '/users' }]
-    crumbs.push({
-      name: id ? 'Edit' : 'Add'
-    })
-    changeBreadcrumbs(crumbs)
-    retrieveInstitutionData()
-    retrieveRolesData()
-    retrieveModalityList()
-    if (id) {
-      retrieveUserData()
-    }
-  }, [])
+  // **** Retervie particular user information on edit user details time **** // 
 
   const retrieveUserData = async () => {
     await API.post(
@@ -124,18 +112,116 @@ const AddUsers = () => {
       })
   }
 
+  // **** Retervie Institution list for User creation **** // 
+
+  const retrieveInstitutionData = async () => {
+    setIsLoading(true)
+    await API.get('/user/v1/fetch-institution-list', {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then(res => {
+        if (res.data.status) {
+          const resData = res.data.data.map(item => ({
+            ...item,
+            label: item.name,
+            value: item.id
+          }))
+          setInstitutionOptions(resData)
+        } else {
+          NotificationMessage(
+            'warning',
+            'Network request failed',
+            res.data.message
+          )
+        }
+      })
+      .catch(err => {
+        NotificationMessage('warning', 'Network request failed', err?.response?.data?.message)
+      })
+    setIsLoading(false)
+  }
+  
+  // **** Retervide all available role list for User creation **** // 
+
+  const retrieveRolesData = async () => {
+    setIsLoading(true)
+    await API.get('/user/v1/fetch-role-list', {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then(res => {
+        if (res.data.status) {
+          const resData = res.data.data.map(item => ({
+            label: item.role_name,
+            value: item.id
+          }))
+          setRoleOptions(resData)
+        } else {
+          NotificationMessage(
+            'warning',
+            'Network request failed',
+            res.data.message
+          )
+        }
+      })
+      .catch(err => NotificationMessage('warning', 'Network request failed', err?.response?.data?.message))
+    setIsLoading(false)
+  }
+
+  // **** Retervie modality list for User creation **** // 
+
+  const retrieveModalityList = async () => {
+    setIsLoading(true)
+    await API.get('/user/v1/fetch-modality-list', {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then(res => {
+        if (res.data.status) {
+          const resData = res.data.data.map(item => ({
+            ...item,
+            isAllowed: false
+          }))
+          setTableData(resData)
+        } else {
+          NotificationMessage(
+            'warning',
+            'Network request failed',
+            res.data.message
+          )
+        }
+      })
+      .catch(err => {
+        NotificationMessage('warning', 'Network request failed', err?.response?.data?.message)
+      })
+    setIsLoading(false)
+  }
+
+  useEffect(() => {
+    const crumbs = [{ name: <span style={{ color: "#0052c6" }}>Users</span>, to: '/users' }]
+    crumbs.push({
+      name: id ? 'Edit' : 'Add'
+    })
+    changeBreadcrumbs(crumbs)
+    retrieveInstitutionData()
+    retrieveRolesData()
+    retrieveModalityList()
+    if (id) {
+      retrieveUserData()
+    }
+  }, [])
+
+
   const handleNextStep = () => {
-    if (currentStep === 3){
-      
-      if(imageURL === null){
-        
-        if (value?.length === 0){
+    if (currentStep === 3) {
+
+      if (imageURL === null) {
+
+        if (value?.length === 0) {
           NotificationMessage("warning", "Please, Select signature image")
         } else {
           setCurrentStep(prevStep => prevStep + 1)
         }
-        
-      }else {
+
+      } else {
         setCurrentStep(prevStep => prevStep + 1)
       }
     } else {
@@ -164,84 +250,6 @@ const AddUsers = () => {
       initialObject[`${i}_viewAll`] = data[i]?.viewAll
     }
     return initialObject
-  }
-
-  const retrieveInstitutionData = async () => {
-    setIsLoading(true)
-    await API.get('/user/v1/fetch-institution-list', {
-      headers: { Authorization: `Bearer ${token}` }
-    })
-      .then(res => {
-        if (res.data.status) {
-          const resData = res.data.data.map(item => ({
-            ...item,
-            label: item.name,
-            value: item.id
-          }))
-          setInstitutionOptions(resData)
-        } else {
-          NotificationMessage(
-            'warning',
-            'Network request failed',
-            res.data.message
-          )
-        }
-      })
-      .catch(err => {
-        NotificationMessage('warning', 'Network request failed', err?.response?.data?.message)
-      })
-    setIsLoading(false)
-  }
-
-  const retrieveRolesData = async () => {
-    setIsLoading(true)
-    await API.get('/user/v1/fetch-role-list', {
-      headers: { Authorization: `Bearer ${token}` }
-    })
-      .then(res => {
-        if (res.data.status) {
-          const resData = res.data.data.map(item => ({
-            label: item.role_name,
-            value: item.id
-          }))
-          setRoleOptions(resData)
-        } else {
-          NotificationMessage(
-            'warning',
-            'Network request failed',
-            res.data.message
-          )
-        }
-      })
-      .catch(err => NotificationMessage('warning', 'Network request failed', err?.response?.data?.message))
-    setIsLoading(false)
-  }
-
-  // Fetch modality list data
-  const retrieveModalityList = async () => {
-    setIsLoading(true)
-    await API.get('/user/v1/fetch-modality-list', {
-      headers: { Authorization: `Bearer ${token}` }
-    })
-      .then(res => {
-        if (res.data.status) {
-          const resData = res.data.data.map(item => ({
-            ...item,
-            isAllowed: false
-          }))
-          setTableData(resData)
-        } else {
-          NotificationMessage(
-            'warning',
-            'Network request failed',
-            res.data.message
-          )
-        }
-      })
-      .catch(err => {
-        NotificationMessage('warning', 'Network request failed', err?.response?.data?.message)
-      })
-    setIsLoading(false)
   }
 
   const convertToObject = data => {
@@ -286,9 +294,9 @@ const AddUsers = () => {
           NotificationMessage("warning", "Network request failed", "Failed to upload user profile image");
         }
       } else {
-        user_profile_image = "https://images.unsplash.com/photo-1487611459768-bd414656ea10?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" ; 
+        user_profile_image = "https://images.unsplash.com/photo-1487611459768-bd414656ea10?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
       }
-      
+
       setIsLoading(false);
 
       setPayload({
@@ -324,7 +332,7 @@ const AddUsers = () => {
         )
           .then(res => {
             if (res.data.status) {
-              NotificationMessage('success', res.data.message)
+              NotificationMessage('success', "User details updated successfully")
             } else {
               NotificationMessage('warning', 'Network request failed')
             }
@@ -336,7 +344,7 @@ const AddUsers = () => {
       }
 
       handleNextStep()
-    
+
     } else if (currentStep === 2) {
 
       setPayload(prev => ({ ...prev, ...convertToObject(values) }))
@@ -354,7 +362,7 @@ const AddUsers = () => {
         )
           .then(res => {
             if (res.data.status) {
-              NotificationMessage('success', res.data.message)
+              NotificationMessage('success', "User institution permission updated successfully")
             } else {
               NotificationMessage('warning', 'Network request failed')
             }
@@ -389,15 +397,6 @@ const AddUsers = () => {
         signature_image = imageURL
       }
 
-      console.log("Image data--------->");
-      console.log(signature_image);
-
-      console.log("Image values information ====>");
-      console.log(value);
-
-      console.log("Signature image information ====>");
-      console.log(imageURL);
-
       setPayload(prev => ({ ...prev, signature_image }))
 
       if (id) {
@@ -413,8 +412,8 @@ const AddUsers = () => {
             if (res.data.status) {
               setImageURL(signature_image)
               setPayload(prev => ({ ...prev, signature_image }))
-              
-              NotificationMessage("success", "Update user signature successfully")
+
+              NotificationMessage("success", "User signature updated successfully")
             } else {
               NotificationMessage(
                 'warning',
@@ -447,7 +446,7 @@ const AddUsers = () => {
         )
           .then(res => {
             if (res.data.status) {
-              NotificationMessage('success', 'User Updated Successfully')
+              NotificationMessage('success', 'User modality details updated successfully')
               form.resetFields()
               navigate('/users')
             } else {
@@ -469,7 +468,7 @@ const AddUsers = () => {
         )
           .then(res => {
             if (res.data.status) {
-              NotificationMessage('success', 'User Created Successfully')
+              NotificationMessage('success', 'User successfully created')
               form.resetFields()
               navigate('/users')
             } else {
@@ -587,8 +586,8 @@ const AddUsers = () => {
 
           {id && (
             <div style={{ cursor: "pointer" }} onClick={
-              () => { if(currentStep === 4){setCurrentStep(0)}else{setCurrentStep(4)}}}>
-              {currentStep === 4?"SKip To First": "Skip To Last"}
+              () => { if (currentStep === 4) { setCurrentStep(0) } else { setCurrentStep(4) } }}>
+              {currentStep === 4 ? "SKip To First" : "Skip To Last"}
             </div>
           )}
         </div>
@@ -604,7 +603,7 @@ const AddUsers = () => {
 
           </Steps>
 
-          {/* ==== User basic details input information ====  */}
+          {/* Step1 --- User basic details input */}
 
           {currentStep === 0 && (
 
@@ -711,16 +710,16 @@ const AddUsers = () => {
                         required: true,
                         whitespace: true,
                         message: 'Please enter contact number'
-                      }, 
+                      },
                       {
                         validator: (rule, value) => {
                           if (!value) {
                             return Promise.resolve(); // No validation if value is not provided
                           }
-                  
+
                           // Validate Indian contact number
                           const indianPhoneNumberRegex = /^[6-9]\d{9}$/;
-                  
+
                           if (indianPhoneNumberRegex.test(value)) {
                             return Promise.resolve();
                           } else {
@@ -938,6 +937,8 @@ const AddUsers = () => {
 
           )}
 
+          {/* Step2 --- User availability time input  */}
+
           {currentStep === 1 && (
             <Form
               labelCol={{
@@ -1011,6 +1012,8 @@ const AddUsers = () => {
             </Form>
           )}
 
+          {/* Step3 --- Institution assign option  */}
+
           {currentStep === 2 && (
 
             <Form
@@ -1064,6 +1067,8 @@ const AddUsers = () => {
               </Row>
             </Form>
           )}
+
+          {/* Step4 --- User signature option  */}
 
           {currentStep === 3 && (
             <Form
@@ -1134,6 +1139,8 @@ const AddUsers = () => {
             </Form>
           )}
 
+          {/* Step5 --- User Modality access option  */}
+
           {currentStep === 4 && (
             <Form
               labelCol={{
@@ -1173,6 +1180,8 @@ const AddUsers = () => {
         </Spin>
 
       </Card>
+
+      {/* ==== Update details conformation model ====  */}
 
       <Modal
         centered
