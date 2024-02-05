@@ -8,6 +8,8 @@ import {
   Spin,
   Tag,
   Typography,
+  Row,
+  Col
 } from "antd";
 import React, { useEffect, useState } from "react";
 import {
@@ -335,7 +337,7 @@ const AssignStudy = ({
             )}
           />
 
-          <div className="Study-modal-input-option-division" style={{ width: "50%", height: "100%" }}>
+          <div className="Study-modal-input-option-division" style={{ width: "50%", height: "100%",overflow:"hidden" }}>
             <Form
               labelCol={{
                 span: 24,
@@ -345,61 +347,72 @@ const AssignStudy = ({
               }}
               form={form}
               onFinish={handleSubmit}
-              className="mt"
+              className=""
               style={{ height: "100%" }}
             >
               <div className="Assign-study-upload-option-input-layout">
-                <div className="Assign-study-specific-option">
+                <div className="Assign-study-specific-option ">
 
-                  {/* Radiologist selection dropDown  */}
+                  <Row justify="space-between">
+                    <Col span={11}>
 
-                  <Form.Item
-                    label="Choose Radiologist"
-                    name="radiologist"
-                    className="category-select"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Please select radiologist",
-                      },
-                    ]}
-                  >
-                    <Select
-                      placeholder="Select Radiologist"
-                      options={options}
-                      showSearch
-                      filterSort={(optionA, optionB) =>
-                        (optionA?.label ?? "")
-                          .toLowerCase()
-                          .localeCompare((optionB?.label ?? "").toLowerCase())
-                      }
-                    />
-                  </Form.Item>
+                      {/* Radiologist selection dropDown  */}
+                      <Form.Item
+                        label="Choose Radiologist"
+                        name="radiologist"
+                        className="category-select"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Please select radiologist",
+                          },
+                        ]}
+                      >
+                        <Select
+                          placeholder="Select Radiologist"
+                          options={options}
+                          showSearch
+                          filterSort={(optionA, optionB) =>
+                            (optionA?.label ?? "")
+                              .toLowerCase()
+                              .localeCompare((optionB?.label ?? "").toLowerCase())
+                          }
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col span={11}>
 
-                  {/* Study description  */}
+                      {/* Study description  */}
 
-                  <Form.Item
-                    name="study_description"
-                    label="Modality Study Description"
-                    className="category-select"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Please select Modality Study Description",
-                      },
-                    ]}
-                  >
-                    <Select
-                      placeholder="Select Study Description"
-                      options={descriptionOptions}
-                      showSearch
-                      filterSort={(optionA, optionB) =>
-                        (optionA?.label ?? "")
-                          .toLowerCase()
-                          .localeCompare((optionB?.label ?? "").toLowerCase())
-                      }
-                    />
-                  </Form.Item>
+                      <Form.Item
+                        name="study_description"
+                        label="Modality Study Description"
+                        className="category-select"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Please select Modality Study Description",
+                          },
+                        ]}
+                      >
+                        <Select
+                          placeholder="Select Study Description"
+                          options={descriptionOptions}
+                          showSearch
+                          filterSort={(optionA, optionB) =>
+                            (optionA?.label ?? "")
+                              .toLowerCase()
+                              .localeCompare((optionB?.label ?? "").toLowerCase())
+                          }
+                        />
+                      </Form.Item>
+
+                    </Col>
+                  </Row>
+
+
+
+
 
                   {/* Clinical history information  */}
 

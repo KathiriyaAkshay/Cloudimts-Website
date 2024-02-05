@@ -8,8 +8,9 @@ import {
   Select,
   Popconfirm,
   Badge,
-  Avatar, 
-  List
+  Avatar,
+  List,
+  Empty
 } from 'antd'
 import React, { useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -27,7 +28,8 @@ import {
   DeleteOutlined,
   ReloadOutlined,
   ExportOutlined,
-  NotificationOutlined
+  NotificationOutlined,
+  ClearOutlined
 } from '@ant-design/icons'
 import { handleDownloadPDF, handleExport } from '../helpers/billingTemplate'
 import { BillingDataContext } from '../hooks/billingDataContext'
@@ -398,23 +400,52 @@ const HeaderButton = ({
       title: 'Ant Design Title 2',
     },
   ];
-  const notification_content=(
+  const notification_content = (
     <List
-    style={{width:"25rem"}}
-    itemLayout="horizontal"
-    dataSource={notification_data}
-    renderItem={(item, index) => (
-      <List.Item>
-        <List.Item.Meta
-          avatar={<Avatar src={`https://api.dicebear.com/7.x/miniavs/svg?seed=${index}`} />}
-          title={<a href="https://ant.design">{item.title}</a>}
-          description="Ant Design, a design language for background applications, is refined by Ant UED Team"
-        />
-      </List.Item>
-    )}
-  />
+      style={{ width: "25rem" }}
+      itemLayout="horizontal"
+      dataSource={notification_data}
+      renderItem={(item, index) => (
+        <List.Item>
+          <List.Item.Meta
+            avatar={<Avatar src={`https://api.dicebear.com/7.x/miniavs/svg?seed=${index}`} />}
+            title={<a href="https://ant.design">{item.title}</a>}
+            description="Ant Design, a design language for background applications, is refined by Ant UED Team"
+          />
+        </List.Item>
+      )}
+    />
   )
 
+  const notification_title = (
+    <div
+      style={{
+        width: '100%',
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-between",
+      }}
+    >
+      <div>Recent Notifications</div>
+      <div >
+        <Button shape='circle'>
+          <ClearOutlined />
+        </Button>
+      </div>
+    </div>
+  )
+
+  const no_content=(
+    <div 
+    style={{
+    width:"25rem",
+    display:"flex",
+    justifyContent:"center",
+    alignItems:"center" 
+    }}>
+          <Empty/>
+    </div>
+  )
   return (
     <div>
       {window.location.pathname === '/institutions' && (
@@ -543,17 +574,17 @@ const HeaderButton = ({
 
 
           {/* view current notifications */}
-          <Popover content={notification_content} title="Recent Notifications" placement='bottomLeft'>
+          <Popover content={notification_data.length>0?notification_content:no_content} title={notification_title} placement='bottomLeft'>
 
-          <Badge count={0}>
+            <Badge count={0}>
 
-            <Button
-              type='default'
-              className=''
-            >
-              <NotificationOutlined />
-            </Button>
-          </Badge>
+              <Button
+                type='default'
+                className=''
+              >
+                <NotificationOutlined />
+              </Button>
+            </Badge>
           </Popover>
 
           {/* Option1 === Delete Study  */}
@@ -656,7 +687,7 @@ const HeaderButton = ({
               <Button
                 type='primary'
                 className={`btn-icon-div ${(Object.keys(systemFilterPayload)?.length !== 0 ||
-                    Object.keys(studyDataPayload)?.length !== 0) &&
+                  Object.keys(studyDataPayload)?.length !== 0) &&
                   'filter-selected'
                   }`}
                 onClick={() => setIsFilterCollapseOpen(prev => !prev)}

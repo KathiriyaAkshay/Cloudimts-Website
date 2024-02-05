@@ -1196,6 +1196,7 @@ const Dicom = () => {
                 placeholder = "Select Status"
                 id='quick-filter-institution-selection'
                 options={SelectStatusOption}
+                style={{width:"9rem"}}
               />
             </Form.Item>
             
@@ -1214,6 +1215,7 @@ const Dicom = () => {
                 placeholder='Select Institution'
                 id='quick-filter-institution-selection'
                 options={institutionOptions}
+                style={{width:"10rem"}}
               />
             </Form.Item>
             
