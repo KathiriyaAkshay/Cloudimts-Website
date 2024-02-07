@@ -8,8 +8,9 @@ import {
   Select,
   Popconfirm,
   Badge,
-  Avatar, 
-  List
+  Avatar,
+  List,
+  Empty
 } from 'antd'
 import React, { useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -27,7 +28,8 @@ import {
   DeleteOutlined,
   ReloadOutlined,
   ExportOutlined,
-  NotificationOutlined
+  NotificationOutlined,
+  ClearOutlined
 } from '@ant-design/icons'
 import { handleDownloadPDF, handleExport } from '../helpers/billingTemplate'
 import { BillingDataContext } from '../hooks/billingDataContext'
@@ -598,17 +600,17 @@ const HeaderButton = ({
 
 
           {/* view current notifications */}
-          <Popover content={notification_content} title="Recent Notifications" placement='bottomLeft'>
+          <Popover content={notification_data.length>0?notification_content:no_content} title={notification_title} placement='bottomLeft'>
 
           <Badge count={chatNotificationData?.length}>
 
-            <Button
-              type='default'
-              className=''
-            >
-              <NotificationOutlined />
-            </Button>
-          </Badge>
+              <Button
+                type='default'
+                className=''
+              >
+                <NotificationOutlined />
+              </Button>
+            </Badge>
           </Popover>
 
           {/* Option1 === Delete Study  */}
@@ -687,7 +689,7 @@ const HeaderButton = ({
               <Button
                 type='primary'
                 className={`btn-icon-div ${(Object.keys(systemFilterPayload)?.length !== 0 ||
-                    Object.keys(studyDataPayload)?.length !== 0) &&
+                  Object.keys(studyDataPayload)?.length !== 0) &&
                   'filter-selected'
                   }`}
                 onClick={() => setIsFilterCollapseOpen(prev => !prev)}

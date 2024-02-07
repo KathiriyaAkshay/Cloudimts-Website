@@ -4,8 +4,8 @@ import Dragger from "antd/es/upload/Dragger";
 import React, { useEffect, useState } from "react";
 import { dummyRequest, getBase64 } from "../helpers/utils";
 import { DownloadOutlined } from "@ant-design/icons";
-import PDFFileIcon from "../assets/images/pdf-file.png" ; 
-import DocxFileIcon from "../assets/images/docx-file.png" ; 
+import PDFFileIcon from "../assets/images/pdf-file.png";
+import DocxFileIcon from "../assets/images/docx-file.png";
 
 const UploadImage = ({
   imageFile,
@@ -27,7 +27,7 @@ const UploadImage = ({
   useEffect(() => {
     setFile(imageURL);
   }, [imageURL]);
-  
+
   const handleImagePreviewCancel = () => setPreviewOpen((prev) => false);
 
   // Image Preview option handle 
@@ -50,15 +50,15 @@ const UploadImage = ({
 
   // Check Particular URL stand for PDF or not 
   function isPDF(url) {
-    
-    let pdfFileExtensionList = ["pdf"] ; 
-    let WordFileExtensionList = ["docx"] ; 
-    
+
+    let pdfFileExtensionList = ["pdf"];
+    let WordFileExtensionList = ["docx"];
+
     const fileExtension = url.split('.').pop().toLowerCase();
 
-    if (pdfFileExtensionList.includes(fileExtension)){
+    if (pdfFileExtensionList.includes(fileExtension)) {
       return "pdf"
-    } else if (WordFileExtensionList.includes(fileExtension)){
+    } else if (WordFileExtensionList.includes(fileExtension)) {
       return "word"
     } else {
       return 'image';
@@ -69,10 +69,10 @@ const UploadImage = ({
     // Extract the last part of the URL after the last slash
     const pathSegments = url.split('/');
     const lastSegment = pathSegments[pathSegments.length - 1];
-  
+
     // Extract the file name using a regular expression to remove query parameters
     const fileName = lastSegment.replace(/[\?|#].*$/, '');
-  
+
     return fileName;
   }
 
@@ -80,7 +80,7 @@ const UploadImage = ({
   const handleDownload = (imageUrl) => {
     const link = document.createElement('a');
     link.href = imageUrl;
-    link.target = "_blank" ; 
+    link.target = "_blank";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -104,6 +104,7 @@ const UploadImage = ({
         }}
         valuePropName="value1"
         preserve={false}
+        // style={{overflow:"auto"}}
       >
         {file && (
           <Row
@@ -127,23 +128,23 @@ const UploadImage = ({
             <Row className="ant-upload-list-item">
               {multipleImageFile.map((data) => (
 
-                isPDF(data) === "pdf"?<>
+                isPDF(data) === "pdf" ? <>
 
                   {/* ==== Pdf file option ====  */}
                   <Col xs={4} className="Report-reference-document">
 
                     <div className="Reference-option-button-layout">
 
-                      <Tooltip title = {getFileNameFromURL(data)}>
+                      <Tooltip title={getFileNameFromURL(data)}>
                         <Button danger className="Reference-download-option-button"
-                          icon = {<DeleteOutlined/>}
+                          icon={<DeleteOutlined />}
                           onClick={() => DeleteOptionHandler(data)}>
                         </Button>
                       </Tooltip>
 
-                      <Tooltip title = {getFileNameFromURL(data)}>
+                      <Tooltip title={getFileNameFromURL(data)}>
                         <Button type="primary" className="Reference-download-option-button"
-                          icon = {<DownloadOutlined/>}
+                          icon={<DownloadOutlined />}
                           onClick={() => handleDownload(data)}>
                         </Button>
                       </Tooltip>
@@ -158,25 +159,25 @@ const UploadImage = ({
                     />
                   </Col>
 
-                </>:<>
+                </> : <>
 
-                  {isPDF(data) === "image"?<>
+                  {isPDF(data) === "image" ? <>
 
                     {/* ==== Image File option ====  */}
                     <Col xs={4} className="Report-reference-document">
 
                       <div className="Reference-option-button-layout">
 
-                        <Tooltip title = {getFileNameFromURL(data)}>
+                        <Tooltip title={getFileNameFromURL(data)}>
                           <Button danger className="Reference-download-option-button"
-                            icon = {<DeleteOutlined/>}
+                            icon={<DeleteOutlined />}
                             onClick={() => DeleteOptionHandler(data)}>
                           </Button>
                         </Tooltip>
 
-                        <Tooltip title = {getFileNameFromURL(data)}>
+                        <Tooltip title={getFileNameFromURL(data)}>
                           <Button type="primary" className="Reference-download-option-button"
-                            icon = {<DownloadOutlined/>}
+                            icon={<DownloadOutlined />}
                             onClick={() => handleDownload(data)}>
                           </Button>
                         </Tooltip>
@@ -192,22 +193,22 @@ const UploadImage = ({
                       />
                     </Col>
 
-                  </>:<>
+                  </> : <>
                     {/* ==== Other file option ====  */}
                     <Col xs={4} className="Report-reference-document">
 
                       <div className="Reference-option-button-layout">
 
-                        <Tooltip title = {getFileNameFromURL(data)}>
+                        <Tooltip title={getFileNameFromURL(data)}>
                           <Button danger className="Reference-download-option-button"
-                            icon = {<DeleteOutlined/>}
+                            icon={<DeleteOutlined />}
                             onClick={() => DeleteOptionHandler(data)}>
                           </Button>
                         </Tooltip>
 
-                        <Tooltip title = {getFileNameFromURL(data)}>
+                        <Tooltip title={getFileNameFromURL(data)}>
                           <Button type="primary" className="Reference-download-option-button"
-                            icon = {<DownloadOutlined/>}
+                            icon={<DownloadOutlined />}
                             onClick={() => handleDownload(data)}>
                           </Button>
                         </Tooltip>
@@ -222,59 +223,63 @@ const UploadImage = ({
                         className="Reference-image"
                       />
                     </Col>
-                  
+
                   </>}
                 </>
               ))}
             </Row>
           )}
         </div>
-          
-        {/* ==== File selection drawer ====  */}
 
-        <Dragger
-          name="url"
-          multiple={multipleImage ? true : false}
-          accept=".png,.jpeg,.jpg,.pdf,.docx"
-          listType="picture-card"
-          maxCount={multipleImage ? 10 : 1}
-          customRequest={dummyRequest}
-          onPreview={handleImagePreview}
-          onDrop={(_) => { }}
-          onChange={(info, _) => {
-            switch (info.file.status) {
-              case "error":
-                console.log(info.file.status);
-                setImageUploadError(info.file.response);
-                break;
-              case "uploading":
-                break;
-              case "done":
-                setImageUploadError("");
-                // setFile(info?.file);
-                setValues((prev) => ([
-                  ...prev,
-                  {url: info?.file?.originFileObj}
-                ]));
-                break;
-              case "removed":
-                break;
-              default:
-                console.log("rer");
-            }
-          }}
-        >
-          <p className="ant-upload-drag-icon">
-            <InboxOutlined />
-          </p>
-          <p className="ant-upload-text">Drag & drop files or Browse</p>
-          <p className="ant-upload-hint">
-            Supported formates: JPG, JPEG, PNG, PDF, DOCX
-          </p>
-        </Dragger>
+        {/* ==== File selection drawer ====  */}
+        <div style={{height:"11.8rem",overflowX:"auto"}}>
+          <Dragger
+            name="url"
+            style={{ height: "100%" }}
+            multiple={multipleImage ? true : false}
+            accept=".png,.jpeg,.jpg,.pdf,.docx"
+            listType="picture-card"
+            maxCount={multipleImage ? 10 : 1}
+            customRequest={dummyRequest}
+            onPreview={handleImagePreview}
+            onDrop={(_) => { }}
+            onChange={(info, _) => {
+              switch (info.file.status) {
+                case "error":
+                  console.log(info.file.status);
+                  setImageUploadError(info.file.response);
+                  break;
+                case "uploading":
+                  break;
+                case "done":
+                  setImageUploadError("");
+                  // setFile(info?.file);
+                  setValues((prev) => ([
+                    ...prev,
+                    { url: info?.file?.originFileObj }
+                  ]));
+                  break;
+                case "removed":
+                  break;
+                default:
+                  console.log("rer");
+              }
+            }}
+          >
+            <p className="ant-upload-drag-icon">
+              <InboxOutlined />
+            </p>
+            <p className="ant-upload-text">Drag & drop files or Browse</p>
+            <p className="ant-upload-hint">
+              Supported formates: JPG, JPEG, PNG, PDF, DOCX
+            </p>
+          </Dragger>
+        </div>
+
+
 
       </Form.Item>
-      
+
       {/* Image preview modal  */}
 
       <Modal
