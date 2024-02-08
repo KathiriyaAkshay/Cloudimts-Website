@@ -17,7 +17,7 @@ import {
   Button,
   Select
 } from 'antd'
-import { CheckCircleOutlined, CloseCircleOutlined, FileOutlined, PictureOutlined } from '@ant-design/icons'
+import { CheckCircleOutlined, ClearOutlined, CloseCircleOutlined, FileOutlined, PictureOutlined } from '@ant-design/icons'
 import { useBreadcrumbs } from '../../hooks/useBreadcrumbs'
 import ChatMain from '../../components/Chat/ChatMain'
 import EditStudy from '../../components/Studies/EditStudy'
@@ -107,8 +107,8 @@ const Dicom = () => {
     isQuickAssignStudyModalOpen,
     setIsQuickAssignStudyModalOpen,
     isStudyQuickFilterModalOpen,
-    setIsStudyQuickFilterModalOpen, 
-    chatNotificationData, 
+    setIsStudyQuickFilterModalOpen,
+    chatNotificationData,
     setChatNotificationData } = useContext(filterDataContext)
 
   // Normal studies information, System filter and Main filter payload information
@@ -176,35 +176,35 @@ const Dicom = () => {
             studyData.map((element) => {
               if (element.series_id === ChatData.room_name) {
 
-                let chatnotificationData = localStorage.getItem("chat-data") ; 
-    
-                if (chatnotificationData === null){
-                  localStorage.setItem("chat-data", JSON.stringify([])) ; 
+                let chatnotificationData = localStorage.getItem("chat-data");
+
+                if (chatnotificationData === null) {
+                  localStorage.setItem("chat-data", JSON.stringify([]));
                 }
-            
-                let chatdata = localStorage.getItem("chat-data") ; 
-                chatdata = JSON.parse(chatdata) ; 
-                
+
+                let chatdata = localStorage.getItem("chat-data");
+                chatdata = JSON.parse(chatdata);
+
                 chatdata.push(
                   {
-                    'message': `Message send by ${ChatData.sender_username} for Patient - ${element.name}`, 
+                    'message': `Message send by ${ChatData.sender_username} for Patient - ${element.name}`,
                     "Patientid": element?.refernce_id
                   }
                 )
-            
-                localStorage.setItem("chat-data", JSON.stringify(chatdata)) ;
-                
+
+                localStorage.setItem("chat-data", JSON.stringify(chatdata));
+
                 if (ChatData.urgent_case) {
-                  setChatNotificationData([...chatNotificationData, 
-                    {message: `Message send by ${ChatData.sender_username} for Patient - ${element.name}`, "Patientid": element?.refernce_id}]) ; 
-                    NotificationMessage("important",
+                  setChatNotificationData([...chatNotificationData,
+                  { message: `Message send by ${ChatData.sender_username} for Patient - ${element.name}`, "Patientid": element?.refernce_id }]);
+                  NotificationMessage("important",
                     "New chat message", `Message send by ${ChatData.sender_username} for Patient - ${element.name} and Patient Id - ${element.refernce_id}`,
                     6,
                     "topLeft");
-                    
-                  } else {
-                  setChatNotificationData([...chatNotificationData, 
-                      {message: `Message send by ${ChatData.sender_username} for Patient - ${element.name}`, "Patientid": element?.refernce_id}]) ; 
+
+                } else {
+                  setChatNotificationData([...chatNotificationData,
+                  { message: `Message send by ${ChatData.sender_username} for Patient - ${element.name}`, "Patientid": element?.refernce_id }]);
                   NotificationMessage("success",
                     "New chat message", `Message send by ${ChatData.sender_username} for Patient - ${element.name} and Patient Id - ${element.refernce_id}`,
                     6,
@@ -281,7 +281,7 @@ const Dicom = () => {
 
     setIsLoading(false)
   }
-  
+
 
   // **** Retervice particular study series and instance count information **** // 
   const FetchSeriesCountInformation = async (previousValue) => {
@@ -347,28 +347,28 @@ const Dicom = () => {
       retrieveStudyData(Pagination)
     }
   }, [Pagination, isFilterSelected, studyDataPayload, systemFilterPayload])
-  
+
   useEffect(() => {
     FetchSeriesCountInformation(null);
   }, [seriesIdList])
-  
+
   useEffect(() => {
     if (!isLoading && studyData.length !== 0 && notificationValue === 0) {
       setNotificationValue(1)
       SetupGenralChatNotification()
     }
   }, [isLoading, studyData, notificationValue])
-  
+
   useEffect(() => {
-    
+
     changeBreadcrumbs([{ name: `Study` }])
-    
+
     setSystemFilterPayload({})
-    
+
     setStudyDataPayload({})
-    
+
     setStudyIdArray([])
-    
+
   }, [])
 
 
@@ -427,7 +427,7 @@ const Dicom = () => {
 
   // **** Study advanced filter option handler **** //  
   const advanceSearchFilterData = (pagination, values = {}) => {
-    
+
     setIsLoading(true)
     setAdvanceSearchPayload(values)
 
@@ -649,7 +649,7 @@ const Dicom = () => {
       saveAs(blob, fileName)
     }
   }
-  
+
 
   const columns = [
     {
@@ -687,8 +687,26 @@ const Dicom = () => {
       )
     },
     checkPermissionStatus('Study id') && {
-      title: "Patient Id",
+      title: "Reference Id",
       dataIndex: 'refernce_id',
+      width: "7%",
+      className: `${checkPermissionStatus('View Patient id') ? '' : 'column-display-none'}`,
+      render: (text, record) => (
+        record.urgent_case ? <>
+          <Tooltip title={`${record.patient_id} | ${record.created_at}`} style={{ color: "red" }}>
+            <div style={{ color: "red" }}>{text}</div>
+          </Tooltip>
+        </> : <>
+          <Tooltip title={`${record.patient_id} | ${record.created_at}`}>
+            {text}
+          </Tooltip>
+
+        </>
+      ),
+    },
+    {
+      title: "Patient Id",
+      dataIndex: 'patient_id',
       width: "7%",
       className: `${checkPermissionStatus('View Patient id') ? '' : 'column-display-none'}`,
       render: (text, record) => (
@@ -783,29 +801,61 @@ const Dicom = () => {
     {
       title: "Opt..",
       dataIndex: "chat",
-      width: "5%",
+      width: "6%",
       render: (text, record) => (
         <>
-          <Tooltip title={`Chat`}>
-            <BsChat
-              className='action-icon action-icon-primary study-table-chat-option'
-              onClick={() => {
-                setStudyReferenceId(record?.refernce_id) 
-                setSeriesID(record.series_id)
-                setStudyID(record.id)
-                setIsDrawerOpen(true)
-                setPersonName(`${record.study.patient_id} | ${record.name}`)
-                setUrgentCase(record.urgent_case)
-                localStorage.setItem("currentChatId", record.series_id)
-              }}
-            />
-          </Tooltip>
-          {checkPermissionStatus('Study delete option') && (
-            <DeleteActionIcon
-              assign_user={record?.assign_user}
-              deleteActionHandler={() => deleteParticularStudy(record?.id)}
-            />
-          )}
+          <div>
+            <div>
+
+              <Tooltip title={`Study series`}>
+                <PictureOutlined
+                  className='action-icon'
+                  style={{ width: "max-content" }}
+                  onClick={() => ImageDrawerHandler(record)}
+                />
+              </Tooltip>
+
+              {checkPermissionStatus('Study share option') && (
+                <Tooltip title={`${record?.assign_user !== null ? `${record?.assign_user} =>` : ""} Share Study`}>
+                  <IoIosShareAlt
+                    className='action-icon action-icon-primary'
+                    style={{ width: "max-content" }}
+
+                    onClick={() => {
+                      setStudyID(record.id)
+                      setSeriesID(record.series_id)
+                      setIsShareStudyModalOpen(true)
+                      setStudyReferenceId(record?.refernce_id)
+                    }}
+                  />
+                </Tooltip>
+              )}
+
+              <Tooltip title={`Chat`}>
+                <BsChat
+                  className='action-icon action-icon-primary study-table-chat-option'
+                  onClick={() => {
+                    setStudyReferenceId(record?.refernce_id)
+                    setSeriesID(record.series_id)
+                    setStudyID(record.id)
+                    setIsDrawerOpen(true)
+                    setPersonName(`${record.study.patient_id} | ${record.name}`)
+                    setUrgentCase(record.urgent_case)
+                    localStorage.setItem("currentChatId", record.series_id)
+                  }}
+                />
+              </Tooltip>
+
+              {checkPermissionStatus('Study delete option') && (
+                <DeleteActionIcon
+                  assign_user={record?.assign_user}
+                  deleteActionHandler={() => deleteParticularStudy(record?.id)}
+                />
+              )}
+
+            </div>
+          </div>
+
         </>
       )
     },
@@ -813,7 +863,7 @@ const Dicom = () => {
     {
       title: "Report",
       dataIndex: "chat",
-      width: "10%",
+      width: "9%",
       render: (text, record) => (
         <>
           <div>
@@ -890,33 +940,13 @@ const Dicom = () => {
     },
 
     {
-      title: "Other",
+      title: "Viewer",
       dataIndex: "chat",
-      width: "5%",
+      width: "7%",
       render: (text, record) => (
         <>
           <div>
             <div>
-              <Tooltip title={`Study series`}>
-                <PictureOutlined
-                  className='action-icon'
-                  onClick={() => ImageDrawerHandler(record)}
-                />
-              </Tooltip>
-
-              {checkPermissionStatus('Study share option') && (
-                <Tooltip title={`${record?.assign_user !== null ? `${record?.assign_user} =>` : ""} Share Study`}>
-                  <IoIosShareAlt
-                    className='action-icon action-icon-primary'
-                    onClick={() => {
-                      setStudyID(record.id)
-                      setSeriesID(record.series_id)
-                      setIsShareStudyModalOpen(true)
-                      setStudyReferenceId(record?.refernce_id)
-                    }}
-                  />
-                </Tooltip>
-              )}
 
               <Tooltip title={`${record?.assign_user !== null ? `${record?.assign_user} =>` : ""} OHIF Viewer`}>
                 <img src={OHIFViewer}
@@ -1129,55 +1159,75 @@ const Dicom = () => {
           onFinish={HandleQuickFormSubmit}
           autoComplete={"off"}
           className='study-quick-filter-form'
-          style={{ paddingLeft: "1rem" }}
+          style={{ paddingLeft: "0.2rem" }}
         >
           <Row gutter={15}>
+            <Col span={3}>
+              <Form.Item
+                name="patient_id"
+                rules={[
+                  {
+                    required: false,
+                    whitespace: true,
+                    message: "Please enter Patient Id",
+                  },
+                ]}
+              >
+                <Input placeholder="Patient Id" />
+              </Form.Item>
+            </Col>
+
 
             {/* ==== Patient id input ====  */}
+            <Col span={3}>
 
-            <Form.Item
-              name="refernce_id"
-              rules={[
-                {
-                  required: false,
-                  whitespace: true,
-                  message: "Please enter Patient Id",
-                },
-              ]}
-            >
-              <Input placeholder="Enter Patient Id" />
-            </Form.Item>
+              <Form.Item
+                name="refernce_id"
+                rules={[
+                  {
+                    required: false,
+                    whitespace: true,
+                    message: "Please enter Reference Id",
+                  },
+                ]}
+              >
+                <Input placeholder="Reference Id" />
+              </Form.Item>
+            </Col>
 
             {/* ==== Patient name input ====  */}
+            <Col span={4}>
 
-            <Form.Item
-              name="study__patient_name__icontains"
-              rules={[
-                {
-                  required: false,
-                  whitespace: true,
-                  message: "Please enter Patient Name",
-                },
-              ]}
-            >
-              <Input placeholder="Enter Patient Name" />
-            </Form.Item>
+              <Form.Item
+                name="study__patient_name__icontains"
+                rules={[
+                  {
+                    required: false,
+                    whitespace: true,
+                    message: "Please enter Patient Name",
+                  },
+                ]}
+              >
+                <Input placeholder="Enter Patient Name" />
+              </Form.Item>
+            </Col>
 
             {/* ==== Modality ====  */}
+            <Col span={3}>
 
-            <Form.Item
-              name="modality__icontains"
-              rules={[
-                {
-                  required: false,
-                  whitespace: true,
-                  message: "Please enter Modality",
-                },
-              ]}
-            >
-              <Input placeholder="Enter Modality" />
-            </Form.Item>
-
+              <Form.Item
+                name="modality__icontains"
+                rules={[
+                  {
+                    required: false,
+                    whitespace: true,
+                    message: "Please enter Modality",
+                  },
+                ]}
+              >
+                <Input placeholder="Enter Modality" />
+              </Form.Item>
+            </Col>
             {/* ==== Study status ====  */}
 
             <Form.Item
@@ -1194,7 +1244,7 @@ const Dicom = () => {
                 placeholder="Select Status"
                 id='quick-filter-institution-selection'
                 options={SelectStatusOption}
-                style={{width:"9rem"}}
+                style={{ width: "9rem" }}
               />
             </Form.Item>
 
@@ -1213,27 +1263,28 @@ const Dicom = () => {
                 placeholder='Select Institution'
                 id='quick-filter-institution-selection'
                 options={institutionOptions}
-                style={{width:"10rem"}}
+                style={{ width: "10rem" }}
               />
             </Form.Item>
 
             {/* ==== Study date ====  */}
 
-            <Form.Item
-              name="created_at__startswith"
-              className='quick-filter-date-picker'
-              rules={[
-                {
-                  required: false,
-                  message: "Please enter date",
-                },
-              ]}
-            >
-              <DatePicker format={"DD-MM-YYYY"} />
+            <Col span="3">
+              <Form.Item
+                name="created_at__startswith"
+                className='quick-filter-date-picker'
+                rules={[
+                  {
+                    required: false,
+                    message: "Please enter date",
+                  },
+                ]}
+              >
+                <DatePicker format={"DD-MM-YYYY"} />
 
-            </Form.Item>
-            {/* ==== Clear filter option button ====  */}
-
+              </Form.Item>
+              {/* ==== Clear filter option button ====  */}
+            </Col>
             <Button key="submit"
               style={{ marginTop: "0.5rem" }}
               type="primary"
@@ -1246,25 +1297,25 @@ const Dicom = () => {
 
             <Button key="submit"
               danger
-              style={{ marginTop: "0.5rem", marginLeft: "1rem" }}
+              style={{ marginTop: "0.5rem", marginLeft: "0.1rem" }}
               onClick={() => { QuickFilterReset() }}
               className={isStudyQuickFilterModalOpen ? 'quick-filter-selected' : ""}
             >
-              Clear
+              <ClearOutlined/>
             </Button>
 
           </Row>
         </Form>
 
       </div>
-      
+
       {/* ==== Study data table ====  */}
 
       <Table
         className='Study-table'
         dataSource={studyData}
         columns={columns}
-        scroll={{ y:"calc(100vh - 305px)", x: "100%" }}
+        scroll={{ y: "calc(100vh - 305px)", x: "100%" }}
         key={studyData.map(o => o.key)}
 
         rowSelection={rowSelection}
@@ -1361,7 +1412,7 @@ const Dicom = () => {
       />
 
       {/* ==== Study more details option ====  */}
-    
+
       <PatientDetails
         isStudyModalOpen={isStudyModalOpen}
         setIsStudyModalOpen={setIsStudyModalOpen}
@@ -1399,7 +1450,7 @@ const Dicom = () => {
         className='chat-drawer'
       >
         <ChatMain
-          referenceid = {studyReferenceId}
+          referenceid={studyReferenceId}
           userId={studyID}
           orderId={seriesID}
           restaurantName={personName}
@@ -1410,7 +1461,7 @@ const Dicom = () => {
         />
       </Drawer>
 
- 
+
       {/* ==== Advanced search option ====  */}
 
       <AdvancedSearchModal

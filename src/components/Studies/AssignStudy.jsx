@@ -303,6 +303,7 @@ const AssignStudy = ({
       onCancel={() => {
         setStudyID(null);
         setIsAssignModalOpen(false);
+        setInstitutionRadiologist([]);
         form.resetFields();
       }}
       width={1300}
@@ -415,6 +416,8 @@ const AssignStudy = ({
                       }
                     />
                   </Form.Item>
+                  </Col>
+                  <Col span={11}>
 
                       {/* Study description  */}
 

@@ -600,7 +600,7 @@ const HeaderButton = ({
 
 
           {/* view current notifications */}
-          <Popover content={notification_data.length>0?notification_content:no_content} title={notification_title} placement='bottomLeft'>
+          <Popover content={chatNotificationData.length>0?notification_content:<><Empty/></>} title={chatNotificationTitle} placement='bottomLeft'>
 
           <Badge count={chatNotificationData?.length}>
 
