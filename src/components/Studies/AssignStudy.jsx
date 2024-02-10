@@ -157,7 +157,7 @@ const AssignStudy = ({
                 value: data.id,
               }));
 
-              setInstitutionRadiologist([...institutionRadiologist, ...resData]) ; 
+              setInstitutionRadiologist(institutionRadiologist=>[ ...resData]) ; 
             }
           };
 
@@ -197,7 +197,10 @@ const AssignStudy = ({
 
       responseData?.data?.map((element) => {
         if (element?.id === assignUserId){
-          setInstitutionRadiologist([...institutionRadiologist, {label: element?.name, value:element?.id}])
+          const exists=institutionRadiologist.indexOf({label: element?.name, value:element?.id});
+          if(exists!=-1){
+            setInstitutionRadiologist(institutionRadiologist=>[...institutionRadiologist, {label: element?.name, value:element?.id}])
+          } 
         }
       })
 
