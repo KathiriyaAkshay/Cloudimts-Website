@@ -21,6 +21,7 @@ const index = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false) ; 
 
+  // **** Billling column **** //
   const columns = [
     {
       title: "Patient ID",

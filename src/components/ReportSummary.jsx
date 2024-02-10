@@ -97,7 +97,7 @@ const ReportSummary = () => {
         },
         
         {
-            title: "Reporting person contact info",
+            title: "Reporting person",
             dataIndex: "reported_contact",
             key: "reported_contact",
         },
@@ -278,6 +278,8 @@ const ReportSummary = () => {
                     </div>
                 </div>
 
+                {/* ==== Basic patient details information =====  */}
+
                 <div className="w-95 report-summary-table-res" style={{marginLeft: "auto", marginRight: "auto", marginTop: "20px"}}>
                     <Card bordered={false} style={{ width: "100%" }}>
                         <Table
@@ -287,7 +289,7 @@ const ReportSummary = () => {
                             scroll={{ y: 175, x: false }}
                         />
                     </Card>
-                </div>
+                </div>  
 
                 <div
                     className="w-95"
@@ -384,16 +386,17 @@ const ReportSummary = () => {
 
                 <div className="w-95 report-summary-table-res" style={{marginLeft: "auto", marginRight: "auto", marginTop: "25px"}}>
                     <Card
-                    title="Report information"
-                    bordered={false}
-                    style={{ width: "100%", marginTop: "15px", marginBottom: "20px" }}
+                        title="Report information"
+                        bordered={false}
+                        style={{ width: "100%", marginTop: "15px", marginBottom: "20px" }}
                     >
-                    <Table
-                        columns={columns1}
-                        dataSource={patientReport}
-                        pagination={false}
-                        scroll={{ y: 175 }}
-                    />
+                        <Table
+                            columns={columns1}
+                            dataSource={patientReport}
+                            pagination={false}
+                            scroll={{ y: 175 }}
+                            
+                        />
                     </Card>
                 </div>
 

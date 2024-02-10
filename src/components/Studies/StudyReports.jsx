@@ -81,7 +81,7 @@ const StudyReports = ({
           const modifiedData = [
             {
               name: "Patient id",
-              value: referenceId
+              value: resData?.Patient_id
             },
             {
               name: "Patient Name",
@@ -170,7 +170,7 @@ const StudyReports = ({
   }
 
   // **** Update study status to ClosedStudy handler **** // 
-  const downloadReport = async () => {
+  const downloadReport = async (reportId) => {
 
     let requestPayload = { id: studyID };
 
@@ -181,7 +181,7 @@ const StudyReports = ({
 
     } else if (responseData['status'] === true) {
 
-      let responseData = await APIHandler("POST", { id: studyID }, "studies/v1/report-download");
+      let responseData = await APIHandler("POST", { id: reportId }, "studies/v1/report-download");
 
       if (responseData === false) {
 
@@ -366,22 +366,6 @@ const StudyReports = ({
             </Tooltip>
           )}
 
-          {/* ==== Close report option handler ====  */}
-
-          {record.report_type !== 'Advanced report' && (
-            <Popconfirm
-              title="Closed study"
-              description={"Are you sure you want to closed this study ?"}
-              okText="Yes"
-              cancelText="No"
-              okButtonProps={{
-                loading: normalReportClosedLoading
-              }}
-              onConfirm={() => ClosedStudyHandler(record.id)}
-            >
-              <CloseCircleFilled style={{ color: "red" }} className='action-icon' />
-            </Popconfirm>
-          )}
 
         </Space>
       )
