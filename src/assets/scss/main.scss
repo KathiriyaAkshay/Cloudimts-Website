@@ -2256,37 +2256,37 @@ thead>tr>th {
 }
 
 
-@media only screen and (min-height: 600px) and (max-height:700px) {
-  .ant-table-body {
-    max-height: 400px !important;
-  }
-}
+// @media only screen and (min-height: 600px) and (max-height:700px) {
+//   .ant-table-body {
+//     max-height: 400px !important;
+//   }
+// }
 
 
-@media only screen and (min-height: 800px) and (max-height:900px) {
-  .ant-table-body {
-    max-height: 500px !important;
-  }
-}
+// @media only screen and (min-height: 800px) and (max-height:900px) {
+//   .ant-table-body {
+//     max-height: 500px !important;
+//   }
+// }
 
 
-@media only screen and (min-height: 900px) and (max-height:1000px) {
-  .ant-table-body {
-    max-height: 600px !important;
-  }
-}
+// @media only screen and (min-height: 900px) and (max-height:1000px) {
+//   .ant-table-body {
+//     max-height: 600px !important;
+//   }
+// }
 
-@media only screen and (min-height: 1000px) and (max-height:1200px) {
-  .ant-table-body {
-    max-height: 700px !important;
-  }
-}
+// @media only screen and (min-height: 1000px) and (max-height:1200px) {
+//   .ant-table-body {
+//     max-height: 700px !important;
+//   }
+// }
 
-@media only screen and (min-height: 1200px) {
-  .ant-table-body {
-    max-height: 800px !important;
-  }
-}
+// @media only screen and (min-height: 1200px) {
+//   .ant-table-body {
+//     max-height: 800px !important;
+//   }
+// }
 
 .reply-chat-option-image{
   padding: 0.5rem 0;
@@ -2715,7 +2715,7 @@ form.ant-form .ant-form-item .ant-form-item-label label{
   
   .ant-input{
     background-color: #ffffff !important;
-    min-height: 40px !important;
+    min-height: 49px !important;
     border-radius: 0px !important;
   }
 

@@ -418,7 +418,7 @@ const HeaderButton = ({
 
       tempData = JSON.parse(tempData) ; 
       const updatedTitles = tempData.map((element) => ({
-        title: `Patient Id - ${element?.Patientid}`, 
+        title:element?.title, 
         description : element?.message
       }));
       
@@ -600,10 +600,10 @@ const HeaderButton = ({
         <div className='iod-setting-div'>
 
           {/* view current notifications */}
-          <Popover content={chatNotificationData.length>0?notification_content:<><Empty/></>} 
-            title={chatNotificationTitle} placement='bottomLeft'>
+          <Popover content={chatNotificationTitle.length>0?notification_content:<><Empty/></>} 
+            title={"Notifications"} placement='bottomLeft'>
 
-            <Badge count={chatNotificationData?.length}>
+            <Badge count={chatNotificationTitle?.length}>
 
               <Button
                 type='default'

@@ -655,7 +655,7 @@ const Dicom = () => {
     {
       title: 'Status',
       dataIndex: 'status',
-      width: "7%",
+      width: "10%",
       render: (text, record) => (
         <Tooltip title={`${record.patient_id} | ${record.created_at}`}>
           <Tag
@@ -1317,7 +1317,7 @@ const Dicom = () => {
         className='Study-table'
         dataSource={studyData}
         columns={columns}
-        scroll={{ y: "calc(100vh - 305px)", x: "100%" }}
+        scroll={{ y: "calc(100vh - 325px)", x: "100%" }}
         key={studyData.map(o => o.key)}
         rowSelection={rowSelection}
         loading={isLoading}
