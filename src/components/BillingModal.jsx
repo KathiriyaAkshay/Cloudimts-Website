@@ -54,13 +54,7 @@ const BillingModal = ({ setBillingData, setIsLoading, setCharges }) => {
     },
   ]);
 
-  
-
-  useEffect(() => {
-    retrieveInstitutionData();
-    retrieveRadiologistData();
-  }, []);
-
+  // **** Reterive institution list **** // 
   const retrieveInstitutionData = () => {
     getInstitutionList()
       .then((res) => {
@@ -69,7 +63,7 @@ const BillingModal = ({ setBillingData, setIsLoading, setCharges }) => {
           value: data.id,
           label: data.name,
         }));
-        setInstitutionOptions([{ value: "all", label: "All" }, ...resData]);
+        setInstitutionOptions([...resData]);
         } else {
           NotificationMessage(
             'warning',
@@ -86,6 +80,7 @@ const BillingModal = ({ setBillingData, setIsLoading, setCharges }) => {
 );
   };
 
+  // **** Retervice radiologist list **** // 
   const retrieveRadiologistData = () => {
     getRadiologistList({ role_id: localStorage.getItem("role_id") })
       .then((res) => {
@@ -94,7 +89,7 @@ const BillingModal = ({ setBillingData, setIsLoading, setCharges }) => {
           label: data.name,
           value: data.id,
         }));
-        setRadiologistOptions([{ value: "all", label: "All" }, ...resData]);
+        setRadiologistOptions([...resData]);
         } else {
           NotificationMessage(
             'warning',
@@ -110,7 +105,13 @@ const BillingModal = ({ setBillingData, setIsLoading, setCharges }) => {
 )
 );
   };
+  
+  useEffect(() => {
+    retrieveInstitutionData();
+    retrieveRadiologistData();
+  }, []);
 
+  // **** Handle institution select change **** // 
   const handleInstitutionSelectChange = (value) => {
     if (value.includes("all")) {
       form.setFieldsValue({ institution_list: ["all"] });
@@ -121,6 +122,7 @@ const BillingModal = ({ setBillingData, setIsLoading, setCharges }) => {
     }
   };
 
+  // **** Handle user select change **** // 
   const handleUserSelectChange = (value) => {
     if (value.includes("all")) {
       form.setFieldsValue({ user: ["all"] });
@@ -269,7 +271,6 @@ const BillingModal = ({ setBillingData, setIsLoading, setCharges }) => {
                 <Select
                   placeholder="Select Institution"
                   options={institutionOptions}
-                  mode="multiple"
                   onChange={handleInstitutionSelectChange}
                   filterSort={(optionA, optionB) =>
                     (optionA?.label ?? "")

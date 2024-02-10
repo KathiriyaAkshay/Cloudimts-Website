@@ -1319,9 +1319,9 @@ const Dicom = () => {
         columns={columns}
         scroll={{ y: "calc(100vh - 305px)", x: "100%" }}
         key={studyData.map(o => o.key)}
-
         rowSelection={rowSelection}
         loading={isLoading}
+        
         // Pagination handle
         pagination={{
           current: Pagination.page,
