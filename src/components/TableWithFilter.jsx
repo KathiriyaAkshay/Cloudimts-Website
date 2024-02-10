@@ -128,7 +128,7 @@ const TableWithFilter = ({
             !pagination
               ? window.screen.width < 1000
                 ? { x: 500 }
-                : {y:dashboard?375:isAuditModal?240:465}
+                : {y:dashboard?"calc(100vh - 345px)":isAuditModal?"calc(79vh - 335px)":"calc(100vh - 325px)"}
               : { y: 375, x: window.screen.width < 1000 ? 1000 : null }
           }
           loading={loadingTableData}
