@@ -24,7 +24,7 @@ const EditStudy = ({
         if (res.data.status) {
           const resData = res.data.data
           const modifiedData = {
-            patient_id: referenceId,
+            patient_id: resData?.Patient_id,
             patient_name: resData?.Patient_name,
             accession_number: resData?.Accession_number,
             study_description: resData?.Study_description,

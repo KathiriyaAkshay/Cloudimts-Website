@@ -23,7 +23,7 @@ const PatientDetails = ({
           const modifiedData = [
             {
               name: "Patient id",
-              value: referenceId,
+              value: resData?.Patient_id,
             },
             {
               name: "Patient Name",

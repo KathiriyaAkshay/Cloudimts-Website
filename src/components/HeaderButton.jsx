@@ -422,7 +422,7 @@ const HeaderButton = ({
         description : element?.message
       }));
       
-      setChatNotificationTitle(updatedTitles);
+      setChatNotificationTitle([...updatedTitles]);
     }
     
   }
@@ -596,13 +596,14 @@ const HeaderButton = ({
       {/* ==== Study page ====  */}
 
       {window.location.pathname === '/studies' && (
+
         <div className='iod-setting-div'>
 
-
           {/* view current notifications */}
-          <Popover content={chatNotificationData.length>0?notification_content:<><Empty/></>} title={chatNotificationTitle} placement='bottomLeft'>
+          <Popover content={chatNotificationData.length>0?notification_content:<><Empty/></>} 
+            title={chatNotificationTitle} placement='bottomLeft'>
 
-          <Badge count={chatNotificationData?.length}>
+            <Badge count={chatNotificationData?.length}>
 
               <Button
                 type='default'

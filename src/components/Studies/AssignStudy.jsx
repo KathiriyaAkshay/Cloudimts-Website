@@ -83,7 +83,7 @@ const AssignStudy = ({
           const modifiedData = [
             {
               name: "Patient id",
-              value: studyReference
+              value: resData?.Patient_id
             },
 
             {
