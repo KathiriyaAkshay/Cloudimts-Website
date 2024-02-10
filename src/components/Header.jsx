@@ -124,6 +124,14 @@ const BasicLayout = ({ children }) => {
       icon: <AiOutlineFileSync />
     },
 
+    // Chat option
+    checkPermissionStatus('Show Chat Option') && {
+      label: <NavLink to={'/chats'}>Chats</NavLink>,
+      key: 'Chats',
+      icon: <WechatOutlined style={{ height: '20px', width: '20px' }} />,
+      className: 'Chat-icon'
+    },
+
     // Institution option
 
     checkPermissionStatus('Show Option - Institution option') && {
@@ -158,14 +166,6 @@ const BasicLayout = ({ children }) => {
           key: 'add-users'
         }
       ]
-    },
-
-    // Chat option
-    checkPermissionStatus('Show Chat Option') && {
-      label: <NavLink to={'/chats'}>Chats</NavLink>,
-      key: 'Chats',
-      icon: <WechatOutlined style={{ height: '20px', width: '20px' }} />,
-      className: 'Chat-icon'
     },
 
     // Filter option

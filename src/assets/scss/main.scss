@@ -2711,6 +2711,8 @@ form.ant-form .ant-form-item .ant-form-item-label label{
   
   .ant-input{
     background-color: #ffffff !important;
+    min-height: 40px !important;
+    border-radius: 0px !important;
   }
 
   .ant-input::placeholder{
@@ -2737,11 +2739,12 @@ form.ant-form .ant-form-item .ant-form-item-label label{
     color: rgb(98, 98, 98)  !important  ;
   }
 
-  .ant-form-item-control-input{
-    margin-right: 1rem !important;
+  .quick-filter-input{
+    margin-right: 0.8rem !important;
   }
   
 }
+
 
 .quick-filter-selected{
   background-color: #ff4a4a !important;
@@ -2756,4 +2759,9 @@ form.ant-form .ant-form-item .ant-form-item-label label{
   // padding: 0;
   line-height: 45px;
   transition: all 0.3s,visibility 0s;
+}
+
+
+:where(.css-dev-only-do-not-override-15rg2km).ant-select-single:not(.ant-select-customize-input) .ant-select-selector {
+  height: 0px !important;
 }

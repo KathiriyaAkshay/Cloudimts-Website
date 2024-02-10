@@ -1162,9 +1162,10 @@ const Dicom = () => {
           style={{ paddingLeft: "0.2rem" }}
         >
           <Row gutter={15}>
+            
             <Col span={3}>
               <Form.Item
-                name="patient_id"
+                name="study__patient_id__icontains"
                 rules={[
                   {
                     required: false,
@@ -1176,7 +1177,6 @@ const Dicom = () => {
                 <Input placeholder="Patient Id" />
               </Form.Item>
             </Col>
-
 
             {/* ==== Patient id input ====  */}
             <Col span={3}>
@@ -1196,7 +1196,7 @@ const Dicom = () => {
             </Col>
 
             {/* ==== Patient name input ====  */}
-            <Col span={4}>
+            <Col span={3}>
 
               <Form.Item
                 name="study__patient_name__icontains"
@@ -1217,6 +1217,7 @@ const Dicom = () => {
 
               <Form.Item
                 name="modality__icontains"
+                className='quick-filter-input'
                 rules={[
                   {
                     required: false,
@@ -1228,10 +1229,11 @@ const Dicom = () => {
                 <Input placeholder="Enter Modality" />
               </Form.Item>
             </Col>
-            {/* ==== Study status ====  */}
 
+            {/* ==== Study status ====  */}
             <Form.Item
               name="status"
+              className='quick-filter-input'
               rules={[
                 {
                   required: false,
@@ -1249,9 +1251,9 @@ const Dicom = () => {
             </Form.Item>
 
             {/* ==== Institution ====  */}
-
             <Form.Item
               name="institution__name"
+              className='quick-filter-input'
               rules={[
                 {
                   required: false,
@@ -1268,7 +1270,6 @@ const Dicom = () => {
             </Form.Item>
 
             {/* ==== Study date ====  */}
-
             <Col span="3">
               <Form.Item
                 name="created_at__startswith"
@@ -1285,8 +1286,9 @@ const Dicom = () => {
               </Form.Item>
               {/* ==== Clear filter option button ====  */}
             </Col>
+            
             <Button key="submit"
-              style={{ marginTop: "0.5rem" }}
+              style={{ marginTop: "0.5rem", marginRight: "1rem", marginLeft:"0.5rem" }}
               type="primary"
               onClick={() => { quickForm.submit() }}
             >
