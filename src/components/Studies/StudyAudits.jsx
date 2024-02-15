@@ -18,6 +18,7 @@ const StudyAudits = ({ isModalOpen, setIsModalOpen, studyID, setStudyID, referen
       .then(res => {
         if (res.data.status) {
           const resData = res.data.data
+        
           const modifiedData = [
             {
               name: "Patient id",
@@ -26,6 +27,14 @@ const StudyAudits = ({ isModalOpen, setIsModalOpen, studyID, setStudyID, referen
             {
               name: "Patient Name",
               value: resData?.Patient_name
+            },
+            {
+              name: 'Study UID',
+              value: resData?.Study_UID
+            },
+            {
+              name: 'Series UID',
+              value: resData?.Series_UID
             },
             {
               name: 'Accession Number',
