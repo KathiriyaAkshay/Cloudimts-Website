@@ -899,7 +899,7 @@ const Dicom = () => {
                 </Tooltip>
               )}
 
-              {checkPermissionStatus('Study more details option') && (
+              {/* {checkPermissionStatus('Study more details option') && (
                 <Tooltip title={`${record?.assign_user !== null ? `${record?.assign_user} =>` : ""} More Details`}>
                   <BsEyeFill
                     className='action-icon action-icon-primary'
@@ -910,7 +910,7 @@ const Dicom = () => {
                     }}
                   />
                 </Tooltip>
-              )}
+              )} */}
 
               {checkPermissionStatus('Study logs option') && (
                 <Tooltip title={`${record?.assign_user !== null ? `${record?.assign_user} =>` : ""} Auditing`}>
@@ -1422,7 +1422,7 @@ const Dicom = () => {
         setStudyID={setStudyID}
         referenceId={studyReferenceId}
       />
-
+  
       {/* ==== Study share option ====  */}
 
       <ShareStudy

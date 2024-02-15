@@ -55,6 +55,7 @@ const BillingModal = ({ setBillingData, setIsLoading, setCharges }) => {
   ]);
 
   // **** Reterive institution list **** // 
+
   const retrieveInstitutionData = () => {
     getInstitutionList()
       .then((res) => {
@@ -81,6 +82,7 @@ const BillingModal = ({ setBillingData, setIsLoading, setCharges }) => {
   };
 
   // **** Retervice radiologist list **** // 
+  
   const retrieveRadiologistData = () => {
     getRadiologistList({ role_id: localStorage.getItem("role_id") })
       .then((res) => {
@@ -107,9 +109,11 @@ const BillingModal = ({ setBillingData, setIsLoading, setCharges }) => {
   };
   
   useEffect(() => {
-    retrieveInstitutionData();
-    retrieveRadiologistData();
-  }, []);
+    if (isBillingFilterModalOpen){
+      retrieveInstitutionData();
+      retrieveRadiologistData();
+    }
+  }, [isBillingFilterModalOpen]);
 
   // **** Handle institution select change **** // 
   const handleInstitutionSelectChange = (value) => {
@@ -134,6 +138,9 @@ const BillingModal = ({ setBillingData, setIsLoading, setCharges }) => {
   const [form] = Form.useForm();
 
   const submitHandler = (values) => {
+
+    console.log("Submit handler functionality call ============>");
+    console.log(values);
 
     if (values?.institution_list === undefined){
 
@@ -188,12 +195,8 @@ const BillingModal = ({ setBillingData, setIsLoading, setCharges }) => {
         ...values,
         from_date: values?.from_date?.format("YYYY-MM-DD"),
         to_date: values?.to_date?.format("YYYY-MM-DD"),
-        institution_list: values?.institution_list?.includes("all")
-          ? []
-          : values?.institution_list,
-        institution_all_option: values?.institution_list?.includes("all")
-          ? true
-          : false,
+        institution_list: [values?.institution_list],
+        institution_all_option: false,
         user: values?.user?.includes("all") ? [] : values?.user,
         user_all_option: values?.user?.includes("all") ? true : false,
         page_number: 1,

@@ -83,23 +83,37 @@ const AssignStudy = ({
           const modifiedData = [
             {
               name: "Patient id",
-              value: resData?.Patient_id
+              value: resData?.Patient_id,
             },
-
             {
               name: "Patient Name",
               value: resData?.Patient_name,
             },
-
-
+            {
+              name: "Institution Name",
+              value: resData?.institution?.Institution_name,
+            },
+            {
+              name: "Study UID",
+              value: resData?.Study_UID,
+            },
+            {
+              name: "Series UID",
+              value: resData?.Series_UID,
+            },
             {
               name: "Assign time",
-              value: resData?.study_assign_time,
+              value: resData?.study_assign_time
             },
 
             {
               name: "Assign Radiologist",
-              value: resData?.study_assign_username,
+              value: resData?.study_assign_username
+            },
+
+            {
+              name: "Reporting Time",
+              value: resData?.reporting_time,
             },
 
             {
@@ -114,6 +128,7 @@ const AssignStudy = ({
               name: "Gender",
               value: resData?.Gender,
             },
+
             {
               name: "Date of birth",
               value: resData?.DOB,
@@ -122,17 +137,26 @@ const AssignStudy = ({
               name: "Study Description",
               value: resData?.Study_description,
             },
+
             {
-              name: "Series UID",
-              value: resData?.Series_UID,
-            },
-            {
-              name: "urgent_case",
-              value: resData?.assigned_study_data,
-            },
-            {
-              name: "Patient's comments",
+              name: "Study history",
               value: resData?.Patient_comments,
+            },
+            {
+              name: "Study date",
+              value: resData?.Created_at,
+            },
+            {
+              name: "Urgent Case",
+              value: resData?.urgent_case,
+            },
+            {
+              name: "Performing Physician Name",
+              value: resData?.Performing_physician_name,
+            },
+            {
+              name: "Referring Physician Name",
+              value: resData?.Referring_physician_name,
             },
           ];
 
