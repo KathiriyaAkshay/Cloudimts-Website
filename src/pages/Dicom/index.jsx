@@ -689,8 +689,8 @@ const Dicom = () => {
     checkPermissionStatus('Study id') && {
       title: "Reference Id",
       dataIndex: 'refernce_id',
-      width: "7%",
-      className: `${checkPermissionStatus('View Patient id') ? '' : 'column-display-none'}`,
+      width: "8%",
+      className: `${checkPermissionStatus('View Patient id') ? 'patient_name_row' : 'column-display-none'}`,
       render: (text, record) => (
         record.urgent_case ? <>
           <Tooltip title={`${record.patient_id} | ${record.created_at}`} style={{ color: "red" }}>
@@ -727,7 +727,7 @@ const Dicom = () => {
       title: "Patient's Name",
       dataIndex: 'name',
       width: "14%",
-      className: `${checkPermissionStatus('View Patient name') ? '' : 'column-display-none'}`,
+      className: `${checkPermissionStatus('View Patient name') ? 'patient_name_row' : 'column-display-none'}`,
       render: (text, record) => (
         record.urgent_case ? <>
           <Tooltip title={`${record.patient_id} | ${record.created_at}`} style={{ color: "red" }}>
@@ -783,7 +783,7 @@ const Dicom = () => {
       dataIndex: 'institution',
       width: "10%",
       className: `${checkPermissionStatus('View Institution name')
-        ? 'Study-count-column'
+        ? 'Study-count-column patient_name_row'
         : 'column-display-none'
         }`
     },
@@ -799,9 +799,9 @@ const Dicom = () => {
     },
 
     {
-      title: "Opt..",
+      title: "Others",
       dataIndex: "chat",
-      width: "6%",
+      width: "7%",
       render: (text, record) => (
         <>
           <div>
