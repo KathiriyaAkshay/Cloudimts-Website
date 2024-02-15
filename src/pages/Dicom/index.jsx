@@ -1098,6 +1098,23 @@ const Dicom = () => {
 
   // **** Apply quick filter option handler **** // 
   const HandleQuickFormSubmit = (value) => {
+    
+    if (value.refernce_id === "") {
+      value.refernce_id = undefined;
+    }
+
+    if (value.study__patient_id__icontains === ""){
+      value.study__patient_id__icontains = undefined ; 
+    }
+
+    if (value.modality__icontains === ""){
+      value.modality__icontains = undefined ; 
+    }
+
+    if (value.study__patient_name__icontains ===  ""){
+      value.study__patient_name__icontains = undefined ; 
+    }
+
     quickFilterStudyData({ page: 1 }, value);
     setIsStudyQuickFilterModalOpen(true);
     setIsAdvanceSearchSelected(false);
@@ -1165,6 +1182,8 @@ const Dicom = () => {
           <Row gutter={15}>
             
             <Col span={3}>
+
+              {/* ==== Patient id input ====  */}
               <Form.Item
                 name="study__patient_id__icontains"
                 rules={[
@@ -1175,11 +1194,16 @@ const Dicom = () => {
                   },
                 ]}
               >
-                <Input placeholder="Patient Id" />
+                <Input 
+                  onPressEnter={() => {quickForm.submit()}} 
+                  placeholder="Patient Id" 
+                />
+
               </Form.Item>
             </Col>
 
-            {/* ==== Patient id input ====  */}
+            {/* ==== Reference id input ====  */}
+
             <Col span={3}>
 
               <Form.Item
@@ -1192,11 +1216,15 @@ const Dicom = () => {
                   },
                 ]}
               >
-                <Input placeholder="Reference Id" />
+                <Input 
+                  onPressEnter={() => {quickForm.submit()}}
+                  placeholder="Reference Id" 
+                />
               </Form.Item>
             </Col>
 
             {/* ==== Patient name input ====  */}
+
             <Col span={3}>
 
               <Form.Item
@@ -1205,15 +1233,19 @@ const Dicom = () => {
                   {
                     required: false,
                     whitespace: true,
-                    message: "Please enter Patient Name",
+                    message: "Patient Name",
                   },
                 ]}
               >
-                <Input placeholder="Enter Patient Name" />
+                <Input 
+                  onPressEnter={() => {quickForm.submit()}}
+                  placeholder="Patient Name" 
+                  />
               </Form.Item>
             </Col>
 
             {/* ==== Modality ====  */}
+
             <Col span={3}>
 
               <Form.Item
@@ -1227,7 +1259,10 @@ const Dicom = () => {
                   },
                 ]}
               >
-                <Input placeholder="Enter Modality" />
+                <Input 
+                  onPressEnter={() => {quickForm.submit()}}
+                  placeholder="Modality" 
+                />
               </Form.Item>
             </Col>
 
