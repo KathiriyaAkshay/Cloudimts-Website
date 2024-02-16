@@ -9,7 +9,6 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import {
   Link,
   NavLink,
-  useLocation,
   useNavigate,
   useParams
 } from 'react-router-dom'

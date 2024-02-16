@@ -24,32 +24,21 @@ import {
   DownloadOutlined,
   FilterOutlined,
   PlusOutlined,
-  SearchOutlined,
-  DeleteOutlined,
-  ReloadOutlined,
-  ExportOutlined,
-  NotificationOutlined,
-  ClearOutlined
+  SearchOutlined
 } from '@ant-design/icons'
 import { handleDownloadPDF, handleExport } from '../helpers/billingTemplate'
 import { BillingDataContext } from '../hooks/billingDataContext'
 import { StudyIdContext } from '../hooks/studyIdContext'
 import NotificationMessage from './NotificationMessage'
-import { deleteStudy, getReportList } from '../apis/studiesApi'
 import { FilterSelectedContext } from '../hooks/filterSelectedContext'
-import { AiOutlineFilter, AiOutlinePlus } from 'react-icons/ai'
 import StudyFilterModal from './StudyFilterModal'
-import { StudyDataContext } from '../hooks/studyDataContext'
 import {
-  applyMainFilter,
-  applySystemFilter,
   retrieveSystemFilters
 } from '../helpers/studyDataFilter'
 import APIHandler from '../apis/apiHandler'
 
 const HeaderButton = ({
   id,
-  filterOptions,
   retrieveFilterOptions
 }) => {
   const navigate = useNavigate()
@@ -57,9 +46,7 @@ const HeaderButton = ({
   const { permissionData } = useContext(UserPermissionContext)
   const { setIsRoleModalOpen } = useContext(UserRoleContext)
   const {
-    isFilterSelected,
-    isAdvanceSearchSelected,
-    setIsAdvanceSearchSelected
+    isFilterSelected
   } = useContext(FilterSelectedContext)
   const { setIsEmailModalOpen } = useContext(UserEmailContext)
   const {
@@ -71,34 +58,18 @@ const HeaderButton = ({
     setIsInstitutionLogsFilterModalOpen,
     setIsUserLogsFilterModalOpen,
     setIsSupportModalOpen,
-    setIsAdvancedSearchModalOpen,
-    setIsStudyExportModalOpen,
-    setIsQuickAssignStudyModalOpen,
     templateOption,
     setEmailSupportOption,
     setPhoneSupportOption, 
-    chatNotificationData, 
-    setChatNotificationData
   } = useContext(filterDataContext)
 
   const { setSelectedItem } = useContext(ReportDataContext)
   const { billingFilterData, setBillingFilterData } =
     useContext(BillingDataContext)
-  const { studyIdArray, setStudyIdArray } = useContext(StudyIdContext)
   const [templateOptions, setTemplateOptions] = useState([])
   const [isAddFilterModalOpen, setIsAddFilterModalOpen] = useState(false)
-  const {
-    setStudyDataPayload,
-    setStudyData,
-    setSystemFilterPayload,
-    studyDataPayload,
-    systemFilterPayload,
-    studyData
-  } = useContext(StudyDataContext)
+
   const [systemFilters, setSystemsFilters] = useState([])
-  const [isFilterCollapseOpen, setIsFilterCollapseOpen] = useState(false)
-  const [isFilterChecked, setIsFilterChecked] = useState(null)
-  const [isSystemFilterChecked, setIsSystemFilterChecked] = useState(null)
 
   const checkPermissionStatus = name => {
     const permission = permissionData['Menu Permission']?.find(
