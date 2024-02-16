@@ -1177,7 +1177,7 @@ const Dicom = () => {
           onFinish={HandleQuickFormSubmit}
           autoComplete={"off"}
           className='study-quick-filter-form'
-          style={{ paddingLeft: "0.2rem" }}
+          style={{ paddingLeft: "0.2rem", marginTop: "-1rem" }}
         >
           <Row gutter={15}>
             
