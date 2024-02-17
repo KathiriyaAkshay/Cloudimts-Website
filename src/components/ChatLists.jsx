@@ -31,11 +31,6 @@ const ChatLists = ({ setSeriesId, setStudyId, setPersonName, studyId, setUrgentC
               timeStampInfo.latest_timestamp
           })
 
-          res.data.data.map((data) => {
-            console.log("New chat information =========>");
-            console.log(data);
-          })
-
           const resData = res.data.data.map(data => (
 
             // console.log(data)

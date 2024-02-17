@@ -142,9 +142,6 @@ const StudyNotificationProvider = ({ children }) => {
           });     
         } else if (eventData.payload.status === "Reported") {
 
-          console.log("Reported socket notification information ========>");
-          console.log(eventData.payload.data.id);
-  
           setStudyData((prevStudyData) => {
             const updatedData = prevStudyData.map((data) => {
               if (data.id == eventData.payload.data.id) {

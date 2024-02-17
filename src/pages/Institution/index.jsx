@@ -253,7 +253,6 @@ const Institution = () => {
       }`,
       render: (text, record) => {
         let Calculate_usaeg_permission = parseFloat(parseFloat(record.space_usage / record.allocated_storage)*100).toFixed(2); 
-        console.log(Calculate_usaeg_permission);
         return <Progress percent={Calculate_usaeg_permission} style={{width: 100}} />;
       }
       
