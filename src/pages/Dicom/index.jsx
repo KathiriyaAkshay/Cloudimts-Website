@@ -17,6 +17,7 @@ import {
   Button,
   Select
 } from 'antd'
+import { AiFillIdcard } from 'react-icons/ai'
 import { CheckCircleOutlined, ClearOutlined, CloseCircleOutlined, FileOutlined, PictureOutlined } from '@ant-design/icons'
 import { useBreadcrumbs } from '../../hooks/useBreadcrumbs'
 import ChatMain from '../../components/Chat/ChatMain'
@@ -689,8 +690,8 @@ const Dicom = () => {
     checkPermissionStatus('Study id') && {
       title: "Reference Id",
       dataIndex: 'refernce_id',
-      width: "7%",
-      className: `${checkPermissionStatus('View Patient id') ? '' : 'column-display-none'}`,
+      width: "8%",
+      className: `${checkPermissionStatus('View Patient id') ? 'patient_name_row' : 'column-display-none'}`,
       render: (text, record) => (
         record.urgent_case ? <>
           <Tooltip title={`${record.patient_id} | ${record.created_at}`} style={{ color: "red" }}>
@@ -727,7 +728,7 @@ const Dicom = () => {
       title: "Patient's Name",
       dataIndex: 'name',
       width: "14%",
-      className: `${checkPermissionStatus('View Patient name') ? '' : 'column-display-none'}`,
+      className: `${checkPermissionStatus('View Patient name') ? 'patient_name_row' : 'column-display-none'}`,
       render: (text, record) => (
         record.urgent_case ? <>
           <Tooltip title={`${record.patient_id} | ${record.created_at}`} style={{ color: "red" }}>
@@ -783,7 +784,7 @@ const Dicom = () => {
       dataIndex: 'institution',
       width: "10%",
       className: `${checkPermissionStatus('View Institution name')
-        ? 'Study-count-column'
+        ? 'Study-count-column patient_name_row'
         : 'column-display-none'
         }`
     },
@@ -799,9 +800,9 @@ const Dicom = () => {
     },
 
     {
-      title: "Opt..",
+      title: "Others",
       dataIndex: "chat",
-      width: "6%",
+      width: "7%",
       render: (text, record) => (
         <>
           <div>
@@ -883,7 +884,7 @@ const Dicom = () => {
 
               {checkPermissionStatus('Study data option') && (
                 <Tooltip title={`${record?.assign_user !== null ? `${record?.assign_user} =>` : ""} Study Report`}>
-                  <IoIosDocument
+                  <AiFillIdcard
                     className='action-icon'
                     onClick={() => {
                       setStudyID(record.id)
@@ -899,7 +900,7 @@ const Dicom = () => {
                 </Tooltip>
               )}
 
-              {checkPermissionStatus('Study more details option') && (
+              {/* {checkPermissionStatus('Study more details option') && (
                 <Tooltip title={`${record?.assign_user !== null ? `${record?.assign_user} =>` : ""} More Details`}>
                   <BsEyeFill
                     className='action-icon action-icon-primary'
@@ -910,7 +911,7 @@ const Dicom = () => {
                     }}
                   />
                 </Tooltip>
-              )}
+              )} */}
 
               {checkPermissionStatus('Study logs option') && (
                 <Tooltip title={`${record?.assign_user !== null ? `${record?.assign_user} =>` : ""} Auditing`}>
@@ -1097,6 +1098,23 @@ const Dicom = () => {
 
   // **** Apply quick filter option handler **** // 
   const HandleQuickFormSubmit = (value) => {
+    
+    if (value.refernce_id === "") {
+      value.refernce_id = undefined;
+    }
+
+    if (value.study__patient_id__icontains === ""){
+      value.study__patient_id__icontains = undefined ; 
+    }
+
+    if (value.modality__icontains === ""){
+      value.modality__icontains = undefined ; 
+    }
+
+    if (value.study__patient_name__icontains ===  ""){
+      value.study__patient_name__icontains = undefined ; 
+    }
+
     quickFilterStudyData({ page: 1 }, value);
     setIsStudyQuickFilterModalOpen(true);
     setIsAdvanceSearchSelected(false);
@@ -1159,11 +1177,13 @@ const Dicom = () => {
           onFinish={HandleQuickFormSubmit}
           autoComplete={"off"}
           className='study-quick-filter-form'
-          style={{ paddingLeft: "0.2rem" }}
+          style={{ paddingLeft: "0.2rem", marginTop: "-1rem" }}
         >
           <Row gutter={15}>
             
             <Col span={3}>
+
+              {/* ==== Patient id input ====  */}
               <Form.Item
                 name="study__patient_id__icontains"
                 rules={[
@@ -1174,11 +1194,16 @@ const Dicom = () => {
                   },
                 ]}
               >
-                <Input placeholder="Patient Id" />
+                <Input 
+                  onPressEnter={() => {quickForm.submit()}} 
+                  placeholder="Patient Id" 
+                />
+
               </Form.Item>
             </Col>
 
-            {/* ==== Patient id input ====  */}
+            {/* ==== Reference id input ====  */}
+
             <Col span={3}>
 
               <Form.Item
@@ -1191,11 +1216,15 @@ const Dicom = () => {
                   },
                 ]}
               >
-                <Input placeholder="Reference Id" />
+                <Input 
+                  onPressEnter={() => {quickForm.submit()}}
+                  placeholder="Reference Id" 
+                />
               </Form.Item>
             </Col>
 
             {/* ==== Patient name input ====  */}
+
             <Col span={3}>
 
               <Form.Item
@@ -1204,15 +1233,19 @@ const Dicom = () => {
                   {
                     required: false,
                     whitespace: true,
-                    message: "Please enter Patient Name",
+                    message: "Patient Name",
                   },
                 ]}
               >
-                <Input placeholder="Enter Patient Name" />
+                <Input 
+                  onPressEnter={() => {quickForm.submit()}}
+                  placeholder="Patient Name" 
+                  />
               </Form.Item>
             </Col>
 
             {/* ==== Modality ====  */}
+
             <Col span={3}>
 
               <Form.Item
@@ -1226,7 +1259,10 @@ const Dicom = () => {
                   },
                 ]}
               >
-                <Input placeholder="Enter Modality" />
+                <Input 
+                  onPressEnter={() => {quickForm.submit()}}
+                  placeholder="Modality" 
+                />
               </Form.Item>
             </Col>
 
@@ -1317,7 +1353,7 @@ const Dicom = () => {
         className='Study-table'
         dataSource={studyData}
         columns={columns}
-        scroll={{ y: "calc(100vh - 325px)", x: "100%" }}
+        scroll={{ y: "calc(100vh - 275px)", x: "100%" }}
         key={studyData.map(o => o.key)}
         rowSelection={rowSelection}
         loading={isLoading}
@@ -1422,7 +1458,7 @@ const Dicom = () => {
         setStudyID={setStudyID}
         referenceId={studyReferenceId}
       />
-
+  
       {/* ==== Study share option ====  */}
 
       <ShareStudy

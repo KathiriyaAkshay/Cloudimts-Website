@@ -24,32 +24,21 @@ import {
   DownloadOutlined,
   FilterOutlined,
   PlusOutlined,
-  SearchOutlined,
-  DeleteOutlined,
-  ReloadOutlined,
-  ExportOutlined,
-  NotificationOutlined,
-  ClearOutlined
+  SearchOutlined
 } from '@ant-design/icons'
 import { handleDownloadPDF, handleExport } from '../helpers/billingTemplate'
 import { BillingDataContext } from '../hooks/billingDataContext'
 import { StudyIdContext } from '../hooks/studyIdContext'
 import NotificationMessage from './NotificationMessage'
-import { deleteStudy, getReportList } from '../apis/studiesApi'
 import { FilterSelectedContext } from '../hooks/filterSelectedContext'
-import { AiOutlineFilter, AiOutlinePlus } from 'react-icons/ai'
 import StudyFilterModal from './StudyFilterModal'
-import { StudyDataContext } from '../hooks/studyDataContext'
 import {
-  applyMainFilter,
-  applySystemFilter,
   retrieveSystemFilters
 } from '../helpers/studyDataFilter'
 import APIHandler from '../apis/apiHandler'
 
 const HeaderButton = ({
   id,
-  filterOptions,
   retrieveFilterOptions
 }) => {
   const navigate = useNavigate()
@@ -57,9 +46,7 @@ const HeaderButton = ({
   const { permissionData } = useContext(UserPermissionContext)
   const { setIsRoleModalOpen } = useContext(UserRoleContext)
   const {
-    isFilterSelected,
-    isAdvanceSearchSelected,
-    setIsAdvanceSearchSelected
+    isFilterSelected
   } = useContext(FilterSelectedContext)
   const { setIsEmailModalOpen } = useContext(UserEmailContext)
   const {
@@ -71,50 +58,30 @@ const HeaderButton = ({
     setIsInstitutionLogsFilterModalOpen,
     setIsUserLogsFilterModalOpen,
     setIsSupportModalOpen,
-    setIsAdvancedSearchModalOpen,
-    setIsStudyExportModalOpen,
-    setIsQuickAssignStudyModalOpen,
     templateOption,
     setEmailSupportOption,
     setPhoneSupportOption, 
-    chatNotificationData, 
-    setChatNotificationData
+    templateInstitutionOption
   } = useContext(filterDataContext)
 
   const { setSelectedItem } = useContext(ReportDataContext)
   const { billingFilterData, setBillingFilterData } =
     useContext(BillingDataContext)
-  const { studyIdArray, setStudyIdArray } = useContext(StudyIdContext)
   const [templateOptions, setTemplateOptions] = useState([])
   const [isAddFilterModalOpen, setIsAddFilterModalOpen] = useState(false)
-  const {
-    setStudyDataPayload,
-    setStudyData,
-    setSystemFilterPayload,
-    studyDataPayload,
-    systemFilterPayload,
-    studyData
-  } = useContext(StudyDataContext)
-  const [systemFilters, setSystemsFilters] = useState([])
-  const [isFilterCollapseOpen, setIsFilterCollapseOpen] = useState(false)
-  const [isFilterChecked, setIsFilterChecked] = useState(null)
-  const [isSystemFilterChecked, setIsSystemFilterChecked] = useState(null)
 
-  const checkPermissionStatus = name => {
-    const permission = permissionData['Menu Permission']?.find(
-      data => data.permission === name
-    )?.permission_value
-    return permission
-  }
+  const [systemFilters, setSystemsFilters] = useState([])
+
 
   // **** Reterive templates list for Study report page **** //
-
   const retrieveTemplateOptions = async () => {
 
     let requestPayload = {
       "page_number": 1,
       "page_limit": 200,
-      "modality": templateOption
+      "modality": templateOption, 
+      "institution": templateInstitutionOption, 
+      "radiologist": parseInt(localStorage.getItem("userID"))
     };
 
     let responseData = await APIHandler("POST", requestPayload, "report/v1/submitReportlist")
@@ -175,262 +142,6 @@ const HeaderButton = ({
     }
   }, [window.location.pathname])
 
-
-  // **** Delete study option for Study page **** // 
-
-  const deleteStudyData = async () => {
-
-    if (studyIdArray.length > 0) {
-      deleteStudy({ id: studyIdArray })
-        .then(res => {
-          if (res.data.status) {
-            NotificationMessage('success', "Study delete successfully");
-            setStudyIdArray([]);
-          } else {
-            NotificationMessage(
-              'warning',
-              'Network request failed',
-              res.data.message
-            )
-          }
-        })
-        .catch(err =>
-          NotificationMessage(
-            'warning',
-            'Network request failed',
-            err.response.data.message
-          )
-        )
-    } else {
-      NotificationMessage('warning', 'Please select study for delete')
-    }
-  }
-
-  // **** Reload option handler for Study page **** // 
-
-  const ReloadOptionHandler = () => {
-    window.location.reload();
-  }
-
-  // **** Quick assign study option handler for Study page **** // 
-
-  const QuickAssignStudyModalHandler = () => {
-    if (studyIdArray.length === 0) {
-      NotificationMessage("warning", "Please, Select study for assign");
-    } else {
-      setIsQuickAssignStudyModalOpen(true);
-    }
-  }
-
-  // ==== Study page filter dropdown ===== //   
-
-  const content = (
-
-    <Collapse
-      bordered={true}
-      expandIconPosition='end'
-      className='setting-main-div'
-      accordion
-    >
-
-      {/* ===== System filter list =====  */}
-
-      <Collapse.Panel
-        header='Normal filter'
-        key='2'
-        className='setting-panel mb-0  normal-filter-option-list'
-      >
-        {systemFilters?.map(data => (
-          <div key={data?.key}>
-            <Checkbox
-              name={data?.label}
-              key={data?.key}
-              checked={isSystemFilterChecked === data?.key}
-              onClick={() => {
-                setIsFilterChecked(null)
-                setIsSystemFilterChecked(data?.key)
-                if (data?.key === isSystemFilterChecked) {
-                  setIsSystemFilterChecked(null)
-                  setSystemFilterPayload({})
-                } else {
-                  const option = data?.key?.split(' ')[0]
-                  const filterOption = data?.key?.split(' ')[1]
-                  setSystemFilterPayload({
-                    option,
-                    page_number: 1,
-                    page_size: 10,
-                    deleted_skip: false,
-                    filter:
-                      filterOption !== 'undefined'
-                        ? {
-                          status__icontains: filterOption
-                        }
-                        : {},
-                    all_premission_id: JSON.parse(
-                      localStorage.getItem('all_permission_id')
-                    ),
-                    all_assign_id: JSON.parse(
-                      localStorage.getItem('all_assign_id')
-                    )
-                  })
-                  applySystemFilter(
-                    {
-                      option,
-                      page_number: 1,
-                      page_size: 10,
-                      deleted_skip: false,
-                      filter:
-                        filterOption !== 'undefined'
-                          ? {
-                            status__icontains: filterOption
-                          }
-                          : {},
-                      all_premission_id: JSON.parse(
-                        localStorage.getItem('all_permission_id')
-                      ),
-                      all_assign_id: JSON.parse(
-                        localStorage.getItem('all_assign_id')
-                      )
-                    },
-                    setStudyData
-                  )
-                }
-                setStudyDataPayload({})
-                setIsAdvanceSearchSelected(false)
-              }}
-            >
-              {data?.label}
-            </Checkbox>
-          </div>
-        ))}
-
-      </Collapse.Panel>
-
-      {/* ===== Owner added filter list ======  */}
-
-      <Collapse.Panel
-        style={{ marginTop: "0.60rem" }}
-        header='Other filters'
-        key='1'
-        className='setting-panel mb-0 mt-3 admin-panel-filter-option-list'
-      >
-        {filterOptions?.map(data => (
-          <div
-            key={data?.key}
-          >
-            <Checkbox
-              name={data?.label}
-              key={data?.key}
-              checked={isFilterChecked === data?.key}
-              onClick={() => {
-                setIsSystemFilterChecked(null)
-                if (data?.key === isFilterChecked) {
-                  setIsFilterChecked(null)
-                  setStudyDataPayload({})
-                } else {
-                  setIsFilterChecked(data?.key)
-                  setStudyDataPayload({
-                    id: data.key,
-                    page_number: 1,
-                    page_size: 10,
-                    deleted_skip: false,
-                    all_premission_id: JSON.parse(
-                      localStorage.getItem('all_permission_id')
-                    ),
-                    all_assign_id: JSON.parse(
-                      localStorage.getItem('all_assign_id')
-                    )
-                  })
-                  applyMainFilter(
-                    {
-                      id: data.key,
-                      page_number: 1,
-                      page_size: 10,
-                      deleted_skip: false,
-                      all_premission_id: JSON.parse(
-                        localStorage.getItem('all_permission_id')
-                      ),
-                      all_assign_id: JSON.parse(
-                        localStorage.getItem('all_assign_id')
-                      )
-                    },
-                    setStudyData
-                  )
-                }
-                setSystemFilterPayload({})
-                setIsAdvanceSearchSelected(false)
-              }}
-            >
-              {data?.label}
-            </Checkbox>
-          </div>
-        ))}
-
-        {checkPermissionStatus('Show Filter option') && (
-          <>
-            <Divider style={{ margin: '10px 0px' }} />
-            <div
-              onClick={() => setIsAddFilterModalOpen(true)}
-              style={{
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '4px',
-                fontWeight: '500'
-              }}
-            >
-              <AiOutlinePlus /> Add Filter
-            </div>
-          </>
-        )}
-      </Collapse.Panel>
-    </Collapse>
-
-  )
-
-  // **** Chat notification data handle **** // 
-
-  const [chatNotificationTitle, setChatNotificationTitle] = useState([]) ; 
-
-  const notification_content=(
-    <List
-      style={{width:"25rem"}}
-      itemLayout="horizontal"
-      dataSource={chatNotificationTitle}
-      renderItem={(item, index) => (
-        <List.Item>
-          <List.Item.Meta
-            className='chat-notification'
-            avatar={<Avatar src={`https://api.dicebear.com/7.x/miniavs/svg?seed=${index}`} />}
-            title={item.title}
-            description={item?.description}
-          />
-        </List.Item>
-      )}
-    />
-  )
-
-  const SetChatNotificationData = () => {
-
-    let tempData = localStorage.getItem("chat-data") ; 
-
-    if (tempData !== null){
-
-      tempData = JSON.parse(tempData) ; 
-      const updatedTitles = tempData.map((element) => ({
-        title:element?.title, 
-        description : element?.message
-      }));
-      
-      setChatNotificationTitle([...updatedTitles]);
-    }
-    
-  }
-
-  useEffect(() => {
- 
-    SetChatNotificationData() ; 
-  }, [chatNotificationData])
 
   return (
     <div>
@@ -593,116 +304,6 @@ const HeaderButton = ({
         </div>
       )}
 
-      {/* ==== Study page ====  */}
-
-      {window.location.pathname === '/studies' && (
-
-        <div className='iod-setting-div'>
-
-          {/* view current notifications */}
-          <Popover content={chatNotificationTitle.length>0?notification_content:<><Empty/></>} 
-            title={"Notifications"} placement='bottomLeft'>
-
-            <Badge count={chatNotificationTitle?.length}>
-
-              <Button
-                type='default'
-                className=''
-              >
-                <NotificationOutlined />
-              </Button>
-            </Badge>
-          </Popover>
-
-          {/* Option1 === Delete Study  */}
-
-          <Popconfirm
-            title="Delete study"
-            description="Are you sure you want to delete this studies ?"
-            onConfirm={deleteStudyData}
-            okText="Yes"
-            cancelText="No"
-          >
-            <Button
-              type='primary'
-              className='error-btn-primary'
-            >
-              <DeleteOutlined />
-            </Button>
-          </Popconfirm>
-
-          <Popconfirm
-            title="Reload page"
-            description="Are you sure you want to reload page"
-            onConfirm={ReloadOptionHandler}
-            okText="Yes"
-            cancelText="No"
-          >
-            <Button
-              type='primary'
-              className='header-secondary-option-button'
-            >
-              <ReloadOutlined />
-            </Button>
-          </Popconfirm>
-
-          <Button
-            type='export'
-            onClick={() => setIsStudyExportModalOpen(true)}
-            className='header-secondary-option-button'
-          >
-            <ExportOutlined style={{ marginRight: "0.4rem" }} /> Study Export
-          </Button>
-
-          <Button
-            type='primary'
-            onClick={() => QuickAssignStudyModalHandler()}
-            className='header-secondary-option-button'
-          >
-            Assign study
-          </Button>
-
-          <Button 
-            type='primary' 
-            onClick={() => navigate('/study-logs')}
-            className='header-secondary-option-button'
-            >
-            Study logs
-          </Button>
-
-          <Button
-            type='primary'
-            className={`btn-icon-div ${isAdvanceSearchSelected && 'filter-selected'}`}
-            onClick={() => setIsAdvancedSearchModalOpen(true)}
-          >
-            <SearchOutlined style={{ fontWeight: '500' }} />
-            Advanced search
-          </Button>
-
-          <div style={{ position: 'relative' }}>
-            <Popover
-              content={content}
-              title={null}
-              trigger='click'
-              style={{ minWidth: '300px' }}
-              className='filter-popover'
-            >
-              <Button
-                type='primary'
-                className={`btn-icon-div ${(Object.keys(systemFilterPayload)?.length !== 0 ||
-                  Object.keys(studyDataPayload)?.length !== 0) &&
-                  'filter-selected'
-                  }`}
-                onClick={() => setIsFilterCollapseOpen(prev => !prev)}
-              >
-                <FilterOutlined style={{ fontWeight: '500' }} /> Filters
-              </Button>
-            </Popover>
-          </div>
-
-          
-        </div>
-      )}
 
       {/* ==== Add template related page ====  */}
 

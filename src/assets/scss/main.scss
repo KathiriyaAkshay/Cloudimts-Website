@@ -1455,6 +1455,17 @@
     font-size: 16px !important;
   }
 
+  .ant-table-row:nth-child(odd) {
+    background-color: #e2e2e2 !important; /* Set background color for odd rows */
+  }
+
+  .ant-table-tbody > tr:hover > td {
+    background-color: transparent !important; /* Override the hover background color */
+  }
+  
+  .ant-table-tbody > tr:hover {
+    background-color: transparent !important; /* Override the hover background color */
+  }
   
 }
 
@@ -2765,3 +2776,16 @@ form.ant-form .ant-form-item .ant-form-item-label label{
   transition: all 0.3s,visibility 0s;
 }
 
+.patient_name_row{
+  background-color: rgb(193, 226, 237, 0.5) !important;
+}
+
+.ant-table-measure-row{
+  // display: none !important ;
+  height: 0px ;
+}
+
+// .breadcrumb-div{
+//   height: 0px  !important;
+//   display: none !important;
+// }

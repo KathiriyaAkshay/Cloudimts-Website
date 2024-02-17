@@ -36,7 +36,6 @@ const FileReport = ({
   const [value, setValues] = useState([])
 
   // ===== Simplified report option handling ====== // 
-
   const submitReport = async (values, report_attach_data = []) => {
 
     await submitNormalReportFile({
