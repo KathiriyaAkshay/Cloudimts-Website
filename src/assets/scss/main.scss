@@ -1456,7 +1456,7 @@
   }
 
   .ant-table-row:nth-child(odd) {
-    background-color: #e2e2e2 !important; /* Set background color for odd rows */
+    background-color: #f2f2f2 !important; /* Set background color for odd rows */
   }
 
   .ant-table-tbody > tr:hover > td {
@@ -2777,7 +2777,7 @@ form.ant-form .ant-form-item .ant-form-item-label label{
 }
 
 .patient_name_row{
-  background-color: rgb(193, 226, 237, 0.5) !important;
+  background-color: rgb(209, 244, 255) !important;
 }
 
 .ant-table-measure-row{
@@ -2792,4 +2792,30 @@ form.ant-form .ant-form-item .ant-form-item-label label{
 
 .ant-select-selection-item{
   margin-top: 10px !important;
+}
+
+.chat-message-notification-layout{
+  .chat-notification{
+    cursor: pointer;
+    padding-top: 0.50rem;
+    padding-bottom: 0.50rem;
+    border-radius: 5px; 
+
+    .ant-list-item-meta-content{
+      margin-top: auto;
+      margin-bottom: auto;
+    }
+    
+    .ant-list-item-meta-description{
+      color: #494949 !important;
+      font-weight: 600 ;
+      justify-content: center;
+      margin-top: auto;
+      margin-bottom: auto;
+    }
+  } 
+
+  .chat-notification:hover{
+    background-color: #f4f4f4;
+  }
 }

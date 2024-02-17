@@ -5,6 +5,8 @@ export const StudyDataContext = createContext();
 const StudyDataProvider = ({ children }) => {
 
   const [studyData, setStudyData] = useState([]);
+
+  const [chatStudyData, setChatStudyData] = useState(null) ; 
   
   const [studyDataPayload, setStudyDataPayload] = useState({
     id: null,
@@ -24,6 +26,8 @@ const StudyDataProvider = ({ children }) => {
         setStudyDataPayload,
         systemFilterPayload,
         setSystemFilterPayload,
+        chatStudyData, 
+        setChatStudyData
       }}
     >
       {children}

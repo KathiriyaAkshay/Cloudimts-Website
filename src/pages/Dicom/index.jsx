@@ -118,7 +118,9 @@ const Dicom = () => {
     studyDataPayload,
     setStudyDataPayload,
     systemFilterPayload,
-    setSystemFilterPayload
+    setSystemFilterPayload,
+    chatStudyData, 
+    setChatStudyData
   } = useContext(StudyDataContext)
 
   const { setStudyIdArray, setStudyReferenceIdArray } = useContext(StudyIdContext)
@@ -195,16 +197,22 @@ const Dicom = () => {
                 localStorage.setItem("chat-data", JSON.stringify(chatdata));
 
                 if (ChatData.urgent_case) {
+                  
+                  // localstorage notification message
                   setChatNotificationData([...chatNotificationData,
-                  { message: `Message send by ${ChatData.sender_username} for Patient - ${element.name}`, "Patientid": element?.refernce_id }]);
+                  { message: `Message send by ${ChatData.sender_username} for Study Reference id - ${element?.refernce_id}`, "Patientid": element?.refernce_id }]);
+
                   NotificationMessage("important",
                     "New chat message", `Message send by ${ChatData.sender_username} for Patient - ${element.name} and Patient Id - ${element.refernce_id}`,
                     6,
                     "topLeft");
 
                 } else {
+
+                  // localstorage notification message 
                   setChatNotificationData([...chatNotificationData,
-                  { message: `Message send by ${ChatData.sender_username} for Patient - ${element.name}`, "Patientid": element?.refernce_id }]);
+                  { message: `Message send by ${ChatData.sender_username} for Study Reference id - ${element?.refernce_id}`, "Patientid": element?.refernce_id }]);
+                  
                   NotificationMessage("success",
                     "New chat message", `Message send by ${ChatData.sender_username} for Patient - ${element.name} and Patient Id - ${element.refernce_id}`,
                     6,
@@ -689,7 +697,7 @@ const Dicom = () => {
       title: "Reference Id",
       dataIndex: 'refernce_id',
       width: "8%",
-      className: `${checkPermissionStatus('View Patient id') ? 'patient_name_row' : 'column-display-none'}`,
+      className: `${checkPermissionStatus('View Patient id') ? '' : 'column-display-none'}`,
       render: (text, record) => (
         record.urgent_case ? <>
           <Tooltip title={`${record.patient_id} | ${record.created_at}`} style={{ color: "red" }}>
@@ -697,7 +705,7 @@ const Dicom = () => {
           </Tooltip>
         </> : <>
           <Tooltip title={`${record.patient_id} | ${record.created_at}`}>
-            {text}
+            <Tag color='#2db7f5'>{text}</Tag>
           </Tooltip>
 
         </>
@@ -726,7 +734,7 @@ const Dicom = () => {
       title: "Patient's Name",
       dataIndex: 'name',
       width: "14%",
-      className: `${checkPermissionStatus('View Patient name') ? 'patient_name_row' : 'column-display-none'}`,
+      className: `${checkPermissionStatus('View Patient name') ? '' : 'column-display-none'}`,
       render: (text, record) => (
         record.urgent_case ? <>
           <Tooltip title={`${record.patient_id} | ${record.created_at}`} style={{ color: "red" }}>
@@ -734,7 +742,7 @@ const Dicom = () => {
           </Tooltip>
         </> : <>
           <Tooltip title={`${record.patient_id} | ${record.created_at}`}>
-            {text}
+            <Tag color='#2db7f5'>{text}</Tag>
           </Tooltip>
 
         </>
@@ -782,9 +790,12 @@ const Dicom = () => {
       dataIndex: 'institution',
       width: "10%",
       className: `${checkPermissionStatus('View Institution name')
-        ? 'Study-count-column patient_name_row'
+        ? 'Study-count-column '
         : 'column-display-none'
-        }`
+        }`, 
+      render: (text, record) => (
+        <Tag  color='#2db7f5'>{text}</Tag>
+      )
     },
 
     {
@@ -1158,7 +1169,6 @@ const Dicom = () => {
     quickForm.resetFields();
     retrieveStudyData();
     setIsStudyQuickFilterModalOpen(false);
-
   }
 
   const SelectStatusOption = [
@@ -1191,6 +1201,32 @@ const Dicom = () => {
       value: "ClosedStudy"
     }
   ]
+
+  // **** Notification message click option handler **** // 
+
+  useEffect(() => {
+    if (chatStudyData !== null){ 
+      let studyMatch = 0;
+
+      studyData.map((element) => {
+        if (element?.refernce_id == chatStudyData){
+          studyMatch = 1 ; 
+          setChatStudyData(null) ;  
+          setStudyReferenceId(chatStudyData) ; 
+          setSeriesID(element?.series_id) ; 
+          setStudyID(element?.id) ; 
+          setIsDrawerOpen(true) ; 
+          setPersonName(`${element.study.patient_id} | ${element.name}`)
+          setUrgentCase(element?.urgent_case)
+          localStorage.setItem("currentChatId", element?.series_id)
+        }
+      })
+
+      if (studyMatch == 0){
+        NotificationMessage("warning", "Not available any study in your study page") ;
+      }
+    }
+  }, [chatStudyData]) ; 
 
   return (
     <>
@@ -1364,25 +1400,27 @@ const Dicom = () => {
                   },
                 ]}
               >
-                <DatePicker format={"DD-MM-YYYY"} />
+                <DatePicker 
+                  onChange={() => {quickForm.submit()}}
+                  format={"DD-MM-YYYY"} 
+                />
 
               </Form.Item>
-              {/* ==== Clear filter option button ====  */}
             </Col>
             
-            <Button key="submit"
+            {/* <Button key="submit"
               style={{ marginTop: "0.5rem", marginRight: "1rem", marginLeft:"0.5rem" }}
               type="primary"
               onClick={() => { quickForm.submit() }}
             >
               Apply
-            </Button>
+            </Button> */}
 
             {/* ==== Apply filter option button ====  */}
 
             <Button key="submit"
               danger
-              style={{ marginTop: "0.5rem", marginLeft: "0.1rem" }}
+              style={{ marginTop: "0.5rem", marginLeft: "1rem" }}
               onClick={() => { QuickFilterReset() }}
               className={isStudyQuickFilterModalOpen ? 'quick-filter-selected' : ""}
             >

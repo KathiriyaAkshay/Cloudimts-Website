@@ -55,7 +55,7 @@ const BasicLayout = ({ children }) => {
   const [userPermissionData, setUserPermissionData] = useState({})
 
   // Study page related context 
-  const {chatNotificationData, setIsStudyExportModalOpen, setIsQuickAssignStudyModalOpen, setIsAdvancedSearchModalOpen} = useContext(filterDataContext)
+  const {chatNotificationData, setIsStudyExportModalOpen, setIsQuickAssignStudyModalOpen, setIsAdvancedSearchModalOpen, setChatNotificationData} = useContext(filterDataContext)
   const { studyIdArray, setStudyIdArray } = useContext(StudyIdContext)
   const {
     isFilterSelected,
@@ -68,7 +68,8 @@ const BasicLayout = ({ children }) => {
     setSystemFilterPayload,
     studyDataPayload,
     systemFilterPayload,
-    studyData
+    studyData, 
+    setChatStudyData
   } = useContext(StudyDataContext)
 
   useEffect(() => {
@@ -281,24 +282,39 @@ const BasicLayout = ({ children }) => {
   const [chatNotificationTitle, setChatNotificationTitle] = useState([]) ; 
   const [isFilterChecked, setIsFilterChecked] = useState(null)
   const [isSystemFilterChecked, setIsSystemFilterChecked] = useState(null)
+  
+  // Notification message press handler 
+  const ChatMessageClickHandler = (reference_id) => {
+    setChatStudyData(reference_id)
+  }
 
+  // Clear notification message handler
+  const ClearNotificationMessageHandler = () => {
+    localStorage.removeItem("chat-data") ; 
+    setChatNotificationData([]) ; 
+  }
 
   const notification_content=(
-    <List
-      style={{width:"25rem", height: "30rem", overflowY: "auto"}}
-      itemLayout="horizontal"
-      dataSource={chatNotificationTitle}
-      renderItem={(item, index) => (
-        <List.Item>
-          <List.Item.Meta
-            className='chat-notification'
-            avatar={<Avatar src={`https://api.dicebear.com/7.x/miniavs/svg?seed=${index}`} />}
-            title={item.title}
-            description={item?.description}
-          />
-        </List.Item>
-      )}
-    />
+    <div>
+      <Button danger onClick={() => {ClearNotificationMessageHandler()}}>Clear notification</Button>
+      <List
+        style={{width:"30rem", height: "30rem", overflowY: "auto"}}
+        itemLayout="horizontal"
+        dataSource={chatNotificationTitle}
+        className='chat-message-notification-layout'
+        renderItem={(item, index) => (
+          <List.Item>
+            <List.Item.Meta
+              onClick = {() => {ChatMessageClickHandler(item?.studyId);}}
+              className='chat-notification'
+              avatar={<Avatar src={`https://api.dicebear.com/7.x/miniavs/svg?seed=${index}`} />}
+              title={item.title}
+              description={item?.description}
+            />
+          </List.Item>
+        )}
+      />
+    </div>
   )
 
   const SetChatNotificationData = () => {
@@ -310,16 +326,20 @@ const BasicLayout = ({ children }) => {
       tempData = JSON.parse(tempData) ; 
       const updatedTitles = tempData.map((element) => ({
         title:element?.title, 
-        description : element?.message
+        description : element?.message, 
+        studyId: element?.Patientid
       }));
       
       setChatNotificationTitle([...updatedTitles]);
+    } else{
+      setChatNotificationTitle([]) ; 
     }
     
   } 
 
   useEffect(() => {
     SetChatNotificationData() ; 
+    console.log("Chat notification message fetch run =======>");
   }, [chatNotificationData])
 
 
