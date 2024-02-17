@@ -38,7 +38,7 @@ import {
 } from '../../apis/studiesApi'
 import AssignStudy from '../../components/Studies/AssignStudy'
 import { BsChat, BsEyeFill } from 'react-icons/bs'
-import { IoIosDocument, IoIosShareAlt } from 'react-icons/io'
+import {  IoIosShareAlt } from 'react-icons/io'
 import { MdOutlineHistory } from 'react-icons/md'
 import { AuditOutlined } from '@ant-design/icons'
 import EditActionIcon from '../../components/EditActionIcon'
@@ -58,7 +58,6 @@ import APIHandler from '../../apis/apiHandler'
 import { saveAs } from 'file-saver'
 import * as XLSX from 'xlsx'
 import AssignStudyModified from '../../components/Studies/AssignStudyModified'
-import EditSeriesId from '../../components/EditSeriesId'
 import ImageDrawer from './ImageDrawer'
 import { convertToDDMMYYYY } from '../../helpers/utils'
 import OHIFViewer from "../../assets/images/menu.png";
@@ -143,7 +142,7 @@ const Dicom = () => {
 
   // SeriesId list information 
   const [seriesIdList, setSeriesIdList] = useState([]);
-  const [previousSeriesResponse, setPreviousSeriesResponse] = useState(null);
+  const [setPreviousSeriesResponse] = useState(null);
 
   const [notificationValue, setNotificationValue] = useState(0);
 
@@ -1071,6 +1070,7 @@ const Dicom = () => {
             label: item.name,
             value: item.name
           }))
+
           setInstitutionOptions(resData)
         } else {
           NotificationMessage(
@@ -1090,11 +1090,43 @@ const Dicom = () => {
   }
 
   useEffect(() => {
-    retrieveInstitutionData(0);
+    retrieveInstitutionData();
   }, []);
 
 
   const [quickForm] = Form.useForm();
+
+  // **** Reterive all patient name information **** // 
+  const [patientNameOptions, setPatientNameOptions] = useState([]) ; 
+
+  const AllPatientNameFetch = async () => {
+
+    let responseData = await APIHandler("POST", {}, "studies/v1/all_patient_name") ; 
+
+    if (responseData === false){
+      NotificationMessage("warning", "Network request failed") ; 
+    
+    } else if (responseData?.status){
+      const resData = [] 
+      responseData?.data.map((element) => {
+        resData.push({
+          label: element, 
+          value: element
+        })
+      })
+      console.log("Patient name options information ==========>");
+      console.log(resData);
+      setPatientNameOptions(resData) ; 
+
+    } else {
+      NotificationMessage("warning", "Network request failed", responseData?.message) ; 
+    }
+  }
+
+  useEffect(() => {
+    AllPatientNameFetch() ; 
+  }, []) ; 
+
 
   // **** Apply quick filter option handler **** // 
   const HandleQuickFormSubmit = (value) => {
@@ -1183,7 +1215,8 @@ const Dicom = () => {
             
             <Col span={3}>
 
-              {/* ==== Patient id input ====  */}
+              {/* ===== Patient id input ======  */}
+              
               <Form.Item
                 name="study__patient_id__icontains"
                 rules={[
@@ -1202,7 +1235,7 @@ const Dicom = () => {
               </Form.Item>
             </Col>
 
-            {/* ==== Reference id input ====  */}
+            {/* ===== Reference id  input =====  */}
 
             <Col span={3}>
 
@@ -1223,25 +1256,31 @@ const Dicom = () => {
               </Form.Item>
             </Col>
 
-            {/* ==== Patient name input ====  */}
+            {/* ===== Patient name selection option ======  */}
 
             <Col span={3}>
 
-              <Form.Item
-                name="study__patient_name__icontains"
-                rules={[
-                  {
-                    required: false,
-                    whitespace: true,
-                    message: "Patient Name",
-                  },
-                ]}
-              >
-                <Input 
-                  onPressEnter={() => {quickForm.submit()}}
-                  placeholder="Patient Name" 
+              {patientNameOptions?.length !== 0 && (
+
+                <Form.Item
+                  name="study__patient_name__icontains"
+                  rules={[
+                    {
+                      required: false,
+                      whitespace: true,
+                      message: "Patient Name",
+                    },
+                  ]}
+                >
+                  <Select
+                    placeholder = "Patient name"
+                    options={[...patientNameOptions]}
+                    showSearch
+                    onChange={() => {quickForm.submit()}}
                   />
-              </Form.Item>
+                </Form.Item>
+              )}
+
             </Col>
 
             {/* ==== Modality ====  */}
@@ -1267,6 +1306,7 @@ const Dicom = () => {
             </Col>
 
             {/* ==== Study status ====  */}
+
             <Form.Item
               name="status"
               className='quick-filter-input'
@@ -1283,10 +1323,13 @@ const Dicom = () => {
                 id='quick-filter-institution-selection'
                 options={SelectStatusOption}
                 style={{ width: "9rem" }}
+                onChange={() => {quickForm.submit()}}
               />
+
             </Form.Item>
 
             {/* ==== Institution ====  */}
+
             <Form.Item
               name="institution__name"
               className='quick-filter-input'
@@ -1302,10 +1345,13 @@ const Dicom = () => {
                 id='quick-filter-institution-selection'
                 options={institutionOptions}
                 style={{ width: "10rem" }}
+                onChange={() => {quickForm.submit()}}
               />
+
             </Form.Item>
 
             {/* ==== Study date ====  */}
+            
             <Col span="3">
               <Form.Item
                 name="created_at__startswith"

@@ -399,6 +399,7 @@ const BasicLayout = ({ children }) => {
     setSystemsFilters(modifiedOptions);
   }
 
+
   useEffect(() => {
     if (window.location.pathname === '/studies') {
       fetchSystemFilter()
