@@ -1400,25 +1400,27 @@ const Dicom = () => {
                   },
                 ]}
               >
-                <DatePicker format={"DD-MM-YYYY"} />
+                <DatePicker 
+                  onChange={() => {quickForm.submit()}}
+                  format={"DD-MM-YYYY"} 
+                />
 
               </Form.Item>
-              {/* ==== Clear filter option button ====  */}
             </Col>
             
-            <Button key="submit"
+            {/* <Button key="submit"
               style={{ marginTop: "0.5rem", marginRight: "1rem", marginLeft:"0.5rem" }}
               type="primary"
               onClick={() => { quickForm.submit() }}
             >
               Apply
-            </Button>
+            </Button> */}
 
             {/* ==== Apply filter option button ====  */}
 
             <Button key="submit"
               danger
-              style={{ marginTop: "0.5rem", marginLeft: "0.1rem" }}
+              style={{ marginTop: "0.5rem", marginLeft: "1rem" }}
               onClick={() => { QuickFilterReset() }}
               className={isStudyQuickFilterModalOpen ? 'quick-filter-selected' : ""}
             >
