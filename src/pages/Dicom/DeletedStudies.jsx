@@ -181,7 +181,6 @@ const DeletedStudies = () => {
     <Table
       dataSource={studyData}
       columns={columns}
-      scroll={{ y: 475 }}
       loading={isLoading}
       pagination={{
         current: Pagination.page,
@@ -194,6 +193,7 @@ const DeletedStudies = () => {
         },
         onShowSizeChange: onShowSizeChange
       }}
+      scroll={{y: "70vh"}}
     />
   )
 }

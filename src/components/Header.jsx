@@ -141,7 +141,6 @@ const BasicLayout = ({ children }) => {
   const menuItems = [
 
     // Studies option
-
     checkPermissionStatus('Show Studies option') && {
       label: <NavLink to={'/studies'}>Studies</NavLink>,
       key: 'studies',
@@ -156,8 +155,14 @@ const BasicLayout = ({ children }) => {
       className: 'Chat-icon'
     },
 
-    // Institution option
+    // Billing option
+    checkPermissionStatus('Show Option - Billing option') && {
+      label: <NavLink to={'/billing'}>Billing</NavLink>,
+      key: 'billing',
+      icon: <FaMoneyBill />
+    },
 
+    // Institution option
     checkPermissionStatus('Show Option - Institution option') && {
       label: menuLabel('Institution'),
       key: 'SubMenu',
@@ -175,7 +180,6 @@ const BasicLayout = ({ children }) => {
     },
 
     // User option
-
     checkPermissionStatus('Show Option - User option') && {
       label: menuLabel('Users'),
       key: 'users',
@@ -193,7 +197,6 @@ const BasicLayout = ({ children }) => {
     },
 
     // Filter option
-
     checkPermissionStatus('Show Default Filter list') && {
       label: <NavLink to={'/filters'}>Filters</NavLink>,
       key: 'filters',
@@ -201,7 +204,6 @@ const BasicLayout = ({ children }) => {
     },
 
     // Role option
-
     checkPermissionStatus('Show Option - Role option') && {
       label: <NavLink to={'/users/roles'}>Roles</NavLink>,
       key: 'roles',
@@ -209,23 +211,13 @@ const BasicLayout = ({ children }) => {
     },
 
     // Email option
-
     checkPermissionStatus('Show Option - Email option') && {
       label: <NavLink to={'/users/email'}>Email</NavLink>,
       key: 'email',
       icon: <AiOutlineMail />
     },
 
-    // Billing option
-
-    checkPermissionStatus('Show Option - Billing option') && {
-      label: <NavLink to={'/billing'}>Billing</NavLink>,
-      key: 'billing',
-      icon: <FaMoneyBill />
-    },
-
     // Template option
-
     checkPermissionStatus('Show Option - Template option') && {
       label: <NavLink to={'/reports'}>Templates</NavLink>,
       key: 'templates',
@@ -233,7 +225,6 @@ const BasicLayout = ({ children }) => {
     },
 
     // StudyTable option
-
     userPermissionData['StudyTable view']?.find(
       data => data.permission === 'View Deleted studies'
     )?.permission_value && {
@@ -243,7 +234,6 @@ const BasicLayout = ({ children }) => {
     },
 
     // Support option
-
     {
       label: <NavLink to={'/support'}>Support</NavLink>,
       key: 'support',
