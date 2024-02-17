@@ -285,7 +285,7 @@ const BasicLayout = ({ children }) => {
 
   const notification_content=(
     <List
-      style={{width:"25rem"}}
+      style={{width:"25rem", height: "30rem", overflowY: "auto"}}
       itemLayout="horizontal"
       dataSource={chatNotificationTitle}
       renderItem={(item, index) => (
