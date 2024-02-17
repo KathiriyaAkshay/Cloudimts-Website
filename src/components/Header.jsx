@@ -4,7 +4,7 @@ import {
   MenuUnfoldOutlined,
   WechatOutlined
 } from '@ant-design/icons'
-import { Breadcrumb, Button, Divider, Layout, Menu, List, Popover, Empty, Badge, Popconfirm, Collapse, Checkbox } from 'antd'
+import { Breadcrumb, Button, Divider, Layout, Menu, List, Popover, Empty, Badge, Popconfirm, Collapse, Checkbox, Avatar } from 'antd'
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import {
   Link,
