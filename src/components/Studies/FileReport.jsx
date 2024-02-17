@@ -24,7 +24,6 @@ const FileReport = ({
   isFileReportModalOpen,
   setIsFileReportModalOpen,
   studyID,
-  setStudyID,
   setReportModalOpen, 
   modalData
 }) => {
@@ -35,7 +34,8 @@ const FileReport = ({
   const [imageURL, setImageURL] = useState(null)
   const [value, setValues] = useState([])
 
-  // ===== Simplified report option handling ====== // 
+  // **** Submit simplified report option handle **** // 
+
   const submitReport = async (values, report_attach_data = []) => {
 
     await submitNormalReportFile({
@@ -137,8 +137,8 @@ const FileReport = ({
                 style={{ display: 'flex', gap: '4px', fontWeight: '600',flexWrap:"wrap" }}
               >
                 {item.name}:
-                {item.name === "Patient's id" ||
-                item.name === "Patient's Name" ||
+                {item.name === "Patient id" ||
+                item.name === "Patient Name" ||
                 item.name === 'Study UID' ||
                 item.name === 'Institution Name' ||
                 item.name === 'Series UID' ? (

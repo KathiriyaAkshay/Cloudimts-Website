@@ -222,14 +222,12 @@ const Email = () => {
         headers: { Authorization: `Bearer ${token}` }
       })
         .then(res => {
-          console.log(res);
           if (res.data.status) {
             NotificationMessage('success', 'Email added successfully')
             form.resetFields()
             setIsEmailModalOpen(false)
             retrieveEmailData()
           } else {
-            console.log(res?.data);
             NotificationMessage(
               'warning',
               'Network request failed',

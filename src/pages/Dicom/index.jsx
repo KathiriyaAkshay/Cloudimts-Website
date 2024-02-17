@@ -307,7 +307,6 @@ const Dicom = () => {
           if (Object.keys(responseData?.data).includes(study_id)) {
             return { ...element, count: `${responseData?.data[study_id]?.series_count}/${responseData?.data[study_id]?.instance_count}` }
           } else {
-            console.log("Not match study id");
             return { ...element, count: `0/0` }
           }
 

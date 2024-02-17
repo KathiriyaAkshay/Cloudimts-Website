@@ -138,10 +138,6 @@ const BillingModal = ({ setBillingData, setIsLoading, setCharges }) => {
   const [form] = Form.useForm();
 
   const submitHandler = (values) => {
-
-    console.log("Submit handler functionality call ============>");
-    console.log(values);
-
     if (values?.institution_list === undefined){
 
       NotificationMessage(

@@ -46,9 +46,6 @@ export const getStudyLogsData = async (params) => {
 
 export const getRadiologistList = async (params) => {
   let token = GetToken() ; 
-  console.log("Radiologist fetch token information =======>");
-  console.log(token);
-
   const getRadiologistList = await API.post(
     "/institute/v1/fetch-radiologist-name",
     params,

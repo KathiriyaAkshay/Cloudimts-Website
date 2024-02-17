@@ -469,7 +469,7 @@ const HeaderButton = ({
           <div className='iod-setting-div'>
             <Button
               type='primary'
-              onClick={() => { console.log("Run this function"); setEmailSupportOption(true); setPhoneSupportOption(false); }}
+              onClick={() => { setEmailSupportOption(true); setPhoneSupportOption(false); }}
               className='btn-icon-div header-secondary-option-button'
             >
               Email support details

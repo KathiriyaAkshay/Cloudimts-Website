@@ -29,10 +29,6 @@ const index = () => {
     getReportList({ page_number: currentPagination.page, page_limit: 10 })
       .then(res => {
         if (res.data.status) { 
-
-          console.log("Report information ==========>");
-          console.log(res?.data?.data);
-
           const updatedData = modifyDate(res.data.data)
           setReportsData(updatedData)
         } else {

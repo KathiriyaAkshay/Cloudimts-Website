@@ -21,8 +21,6 @@ const ImageCarousel = ({
   studyData,
 }) => {
 
-  console.log(studyImages);
-
   function isPDF(url) {
     const fileExtension = url.split('.').pop().toLowerCase();
     return fileExtension === 'pdf';
