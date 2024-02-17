@@ -189,7 +189,7 @@ const Dicom = () => {
 
                 chatdata.push(
                   {
-                    'message': `Message send by ${ChatData.sender_username} for Patient - ${element.name}`,
+                    'message': `Message send by ${ChatData.sender_username} for Study Reference id - ${element?.refernce_id}`,
                     "Patientid": element?.refernce_id
                   }
                 )

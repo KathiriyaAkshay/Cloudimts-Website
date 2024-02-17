@@ -339,7 +339,6 @@ const BasicLayout = ({ children }) => {
 
   useEffect(() => {
     SetChatNotificationData() ; 
-    console.log("Chat notification message fetch run =======>");
   }, [chatNotificationData])
 
 
