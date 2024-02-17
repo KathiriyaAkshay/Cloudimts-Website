@@ -637,7 +637,7 @@ const BasicLayout = ({ children }) => {
                   
                   {/* ==== Notification option ====  */}
                   
-                  <Popover content={chatNotificationTitle.length>0?notification_content:<><Empty/></>} 
+                  <Popover content={chatNotificationTitle?.length>0?notification_content:<><Empty/></>} 
                     title={"Notifications"} placement='bottomLeft'>
 
                     <Badge count={chatNotificationTitle?.length}>

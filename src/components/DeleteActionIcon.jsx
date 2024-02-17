@@ -9,7 +9,6 @@ const DeleteActionIcon = ({ deleteActionHandler, title, assign_user }) => {
           <Popconfirm
             title = {title}
             onConfirm={deleteActionHandler}
-            onCancel={() => {console.log("Cancel study model");}}
           >
             <BsTrashFill style={{ fontSize: "20px", color: "#f5473b" }} />
           </Popconfirm>

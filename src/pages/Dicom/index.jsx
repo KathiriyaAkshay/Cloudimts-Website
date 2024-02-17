@@ -811,7 +811,10 @@ const Dicom = () => {
                 <PictureOutlined
                   className='action-icon'
                   style={{ width: "max-content" }}
-                  onClick={() => ImageDrawerHandler(record)}
+                  onClick={() => {
+                    setStudyUId(record.study?.study_uid)
+                    ImageDrawerHandler(record)
+                  }}
                 />
               </Tooltip>
 
@@ -848,6 +851,7 @@ const Dicom = () => {
 
               {checkPermissionStatus('Study delete option') && (
                 <DeleteActionIcon
+                  title = "Delete study"
                   assign_user={record?.assign_user}
                   deleteActionHandler={() => deleteParticularStudy(record?.id)}
                 />
@@ -1028,7 +1032,7 @@ const Dicom = () => {
   // **** Image drawer option handler **** // 
   const ImageDrawerHandler = async (record) => {
 
-    handleCellDoubleClick(record);
+    // handleCellDoubleClick(record);
 
     getInstanceData({ study_id: record.study.study_original_id })
       .then(res => {
@@ -1114,8 +1118,6 @@ const Dicom = () => {
           value: element
         })
       })
-      console.log("Patient name options information ==========>");
-      console.log(resData);
       setPatientNameOptions(resData) ; 
 
     } else {
@@ -1575,6 +1577,7 @@ const Dicom = () => {
         isDrawerOpen={isImageModalOpen}
         setImageDrawerOpen={setImageDrawerOpen}
         imageList={studyImagesList}
+        studyUID={studyUID}
       />
 
       {/* ===== Study Export option modal ======  */}
