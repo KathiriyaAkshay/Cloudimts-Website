@@ -697,7 +697,7 @@ const Dicom = () => {
           </Tooltip>
         </> : <>
           <Tooltip title={`${record.patient_id} | ${record.created_at}`}>
-            {text}
+            <Tag color='#2db7f5'>{text}</Tag>
           </Tooltip>
 
         </>
@@ -734,7 +734,7 @@ const Dicom = () => {
           </Tooltip>
         </> : <>
           <Tooltip title={`${record.patient_id} | ${record.created_at}`}>
-            {text}
+            <Tag color='#2db7f5'>{text}</Tag>
           </Tooltip>
 
         </>
@@ -784,7 +784,10 @@ const Dicom = () => {
       className: `${checkPermissionStatus('View Institution name')
         ? 'Study-count-column patient_name_row'
         : 'column-display-none'
-        }`
+        }`, 
+      render: (text, record) => (
+        <Tag  color='#2db7f5'>{text}</Tag>
+      )
     },
 
     {
