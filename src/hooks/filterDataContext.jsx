@@ -39,6 +39,8 @@ const FilterDataProvider = ({ children }) => {
 
   const [templateOption, setTemplateOption] = useState(null); 
 
+  const [templateInstitutionOption, setTemplateInstitutionOption] = useState(null) ; 
+
   const [studyUIDValue, setStudyUIDValue] = useState(null) ; 
 
   const [emailSupportOption, setEmailSupportOption] = useState(true) ; 
@@ -84,7 +86,9 @@ const FilterDataProvider = ({ children }) => {
         emailSupportOption, 
         phoneSupportOption, 
         chatNotificationData, 
-        setChatNotificationData
+        setChatNotificationData, 
+        templateInstitutionOption, 
+        setTemplateInstitutionOption
       }}
     >
       {children}

@@ -18,22 +18,26 @@ import APIHandler from '../apis/apiHandler'
 import { descriptionOptions } from '../helpers/utils'
 
 const Editor = ({ id }) => {
+
   const [editorData, setEditorData] = useState('')
   const [cardDetails, setCardDetails] = useState({})
   const [isLoading, setIsLoading] = useState(false)
   const { selectedItem, setSelectedItem } = useContext(ReportDataContext) 
-  const {templateOption, setTemplateOption} = useContext(filterDataContext)
+  const {templateOption, setTemplateOption, setTemplateInstitutionOption} = useContext(filterDataContext)
   const [studyImageID, setStudyImageID] = useState(0)
   const [signatureImage, setSignatureImage] = useState(null)
   const [username, setUsername] = useState('')
   const user_id = localStorage.getItem('userID')
   const navigate = useNavigate()
+
   const [isPatientInformationInserted, setIsPatientInformationInserted] =
     useState(false)
-  const [
+  
+    const [
     isInstitutionInformationInserted,
     setIsInstitutionInformationInserted
   ] = useState(false)
+  
   const [isStudyDescriptionInserted, setIsStudyDescriptionInserted] =
     useState(false)
 
@@ -44,7 +48,8 @@ const Editor = ({ id }) => {
   const [form] = Form.useForm();
   const [reportStudyDescription, setReportStudyDescription] = useState(null); 
 
-  const studyUIDInformation = `https://viewer.cloudimts.com/viewer/` + localStorage.getItem("studyUIDValue") ; 
+  // **** StudyUID information **** // 
+  const studyUIDInformation = `https://viewer.cloudimts.com/viewer/` + localStorage.getItem("studyUIDValue") ;  
 
   useEffect(() => {
     setSelectedItem(prev => ({
@@ -57,46 +62,7 @@ const Editor = ({ id }) => {
     }))
   }, [])
 
-  useEffect(() => {
-    retrievePatientDetails()
-    retrieveUserSignature()
-  }, [])
-
-  useEffect(() => {
-    if (selectedItem?.templateId) {
-      setIsPatientInformationInserted(false);
-      setIsInstitutionInformationInserted(false);
-      setIsStudyDescriptionInserted(false);
-      retrieveTemplateData()
-    }
-  }, [selectedItem?.templateId])
-
-  // ==== Fetch particular template information 
-
-  const retrieveTemplateData = async () => {
-    await fetchTemplate({ id: selectedItem?.templateId })
-      .then(res => {
-        if (res.data.status) {
-          setEditorData(res.data.data.report_data)
-        } else {
-          NotificationMessage(
-            'warning',
-            'Network request failed',
-            res.data.message
-          )
-        }
-      })
-      .catch(err =>
-        NotificationMessage(
-          'warning',
-          'Network request failed',
-          err.response.data.message
-        )
-      )
-  }
-
-  // ==== Fetch radiologist signature information
-
+  // **** Reterive user signature related information **** // 
   const retrieveUserSignature = async () => {
     setIsLoading(true)
 
@@ -118,8 +84,7 @@ const Editor = ({ id }) => {
     setIsLoading(false)
   }
 
-  // ==== Fetch Patient details informatioin
-
+  // **** Reterive patient details related information **** // 
   const retrievePatientDetails = async () => {
     setIsLoading(true)
 
@@ -142,14 +107,17 @@ const Editor = ({ id }) => {
       let SeriesIdValue = responseData['data']['series_id']
 
       setSeriesId(SeriesIdValue);
+      setTemplateInstitutionOption(responseData?.data?.institution_id) ; 
 
+      setCardDetails({ "Study_description": responseData['data']?.Study_description })
+      
+      // **** Retervice institution report details information **** // 
+      
       let institutionReportPayload = {
         institution_id: Institution_id,
         study_id: id
       };
-
-      setCardDetails({ "Study_description": responseData['data']?.Study_description })
-
+      
       let reportResponseData = await APIHandler(
         'POST',
         institutionReportPayload,
@@ -161,8 +129,8 @@ const Editor = ({ id }) => {
     }
   }
 
-  // ==== Fetch Study images
-
+  
+  // **** Reterive particular user study image *** // 
   const FetchStudyImage = async () => {
     let requestPayload = {
       series_id: seriesId
@@ -172,23 +140,62 @@ const Editor = ({ id }) => {
       'POST',
       requestPayload,
       'studies/v1/studies_images'
-    )
-
-    let ServerURL = import.meta.env.VITE_APP_BE_ENDPOINT
-
-    if (responseData === false) {
-      NotificationMessage('warning', 'Network request failed')
-    } else if (responseData['status'] === true) {
-      let temp = []
-
-      responseData['data'].map(element => {
-        temp.push({
-          url: `${ServerURL}studies/v1/fetch_instance_image/${element}`
+      )
+      
+      let ServerURL = import.meta.env.VITE_APP_BE_ENDPOINT
+      
+      if (responseData === false) {
+        NotificationMessage('warning', 'Network request failed')
+      } else if (responseData['status'] === true) {
+        let temp = []
+        
+        responseData['data'].map(element => {
+          temp.push({
+            url: `${ServerURL}studies/v1/fetch_instance_image/${element}`
+          })
         })
-      })
-      setImageSlider([...temp])
+        setImageSlider([...temp])
+      }
     }
-  }
+    
+    
+    useEffect(() => {
+      retrievePatientDetails()
+      retrieveUserSignature()
+    }, [])
+
+    // **** Reterive particular template related information **** // 
+    const retrieveTemplateData = async () => {
+      await fetchTemplate({ id: selectedItem?.templateId })
+        .then(res => {
+          if (res.data.status) {
+            setEditorData(res.data.data.report_data)
+          } else {
+            NotificationMessage(
+              'warning',
+              'Network request failed',
+              res.data.message
+            )
+          }
+        })
+        .catch(err =>
+          NotificationMessage(
+            'warning',
+            'Network request failed',
+            err.response.data.message
+          )
+        )
+    }
+
+  useEffect(() => {
+    if (selectedItem?.templateId) {
+      setIsPatientInformationInserted(false);
+      setIsInstitutionInformationInserted(false);
+      setIsStudyDescriptionInserted(false);
+      retrieveTemplateData()
+    }
+  }, [selectedItem?.templateId])
+
 
   useEffect(() => {
     if (seriesId !== null) {
@@ -270,6 +277,7 @@ const Editor = ({ id }) => {
 
   const [imageSlider, setImageSlider] = useState([])
 
+  // **** Submit report handler **** // 
   const handleReportSave = async () => {
 
     if (reportStudyDescription == null) {
@@ -309,11 +317,9 @@ const Editor = ({ id }) => {
 
   const scrollToBottom=()=>{
     var scrollingDiv = document.getElementById("scrollingDiv");
-
-
-      scrollingDiv.scrollTop = scrollingDiv.scrollHeight;
-    
+    scrollingDiv.scrollTop = scrollingDiv.scrollHeight;
   }
+
   return (
     <>
       <div>

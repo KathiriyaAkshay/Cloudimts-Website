@@ -242,37 +242,14 @@ const StudyReports = ({
     isEmailShareModalOpen(true)
   }
 
-  const ClosedStudyHandler = async (id) => {
-
-    setNormalReportClosedLoading(true);
-
-    let requestPayload = { id: studyID };
-
-    let responseData = await APIHandler('POST', requestPayload, 'studies/v1/complete-study');
-
-    setNormalReportClosedLoading(false);
-
-    if (responseData === false) {
-
-      NotificationMessage("warning", "Network request failed");
-
-    } else if (responseData['status'] === true) {
-
-      NotificationMessage("success", "Closed study successfully");
-      setIsReportModalOpen(false);
-
-    } else {
-
-      NotificationMessage("warning", "Network request failed", responseData['message'])
-    }
-  }
-
+  // *** OHIF viewer handler **** // 
   const OHIFViewerHandler = () => {
 
     let url = `https://viewer.cloudimts.com/viewer/${studyUIDInformation}`;
     window.open(url, "_blank");
   }
 
+  // **** Weasis viewer handler **** // 
   const WeasisViewerHandler = () => {
 
     const originalString = '$dicom:rs --url "https://viewer.cloudimts.com/orthanc" -r "patientID=5Yp0E"';
@@ -392,6 +369,7 @@ const StudyReports = ({
         footer={null}
       >
         <Spin spinning={isLoading}>
+          
           <div className='Assign-study-reports-option-input-layout'>
 
             <div className='Report-modal-all-option-div'>

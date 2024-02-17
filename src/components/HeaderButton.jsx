@@ -61,6 +61,7 @@ const HeaderButton = ({
     templateOption,
     setEmailSupportOption,
     setPhoneSupportOption, 
+    templateInstitutionOption
   } = useContext(filterDataContext)
 
   const { setSelectedItem } = useContext(ReportDataContext)
@@ -71,21 +72,16 @@ const HeaderButton = ({
 
   const [systemFilters, setSystemsFilters] = useState([])
 
-  const checkPermissionStatus = name => {
-    const permission = permissionData['Menu Permission']?.find(
-      data => data.permission === name
-    )?.permission_value
-    return permission
-  }
 
   // **** Reterive templates list for Study report page **** //
-
   const retrieveTemplateOptions = async () => {
 
     let requestPayload = {
       "page_number": 1,
       "page_limit": 200,
-      "modality": templateOption
+      "modality": templateOption, 
+      "institution": templateInstitutionOption, 
+      "radiologist": parseInt(localStorage.getItem("userID"))
     };
 
     let responseData = await APIHandler("POST", requestPayload, "report/v1/submitReportlist")
