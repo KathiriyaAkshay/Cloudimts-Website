@@ -22,14 +22,17 @@ const index = () => {
   const { permissionData } = useContext(UserPermissionContext)
 
   // **** Retervie all added templated information **** // 
-
   const retrieveReportsData = pagination => {
     setIsLoading(true)
 
     const currentPagination = pagination || pagi
     getReportList({ page_number: currentPagination.page, page_limit: 10 })
       .then(res => {
-        if (res.data.status) {
+        if (res.data.status) { 
+
+          console.log("Report information ==========>");
+          console.log(res?.data?.data);
+
           const updatedData = modifyDate(res.data.data)
           setReportsData(updatedData)
         } else {
@@ -62,7 +65,6 @@ const index = () => {
   }
 
   // **** Delete templated option handler **** // 
-
   const DeleteTemplateOptionHandler = async id => {
     setIsLoading(true)
 
@@ -101,6 +103,17 @@ const index = () => {
       title: 'Template Name',
       dataIndex: 'name'
     },
+
+    {
+      title: "Institution", 
+      dataIndex: "institution_information"
+    }, 
+
+    {
+      title: "Radiologist", 
+      dataIndex : "radiologist_name"
+    }, 
+
     checkPermissionStatus('View created at') && {
       title: 'Created At',
       dataIndex: 'created_at',
@@ -108,6 +121,7 @@ const index = () => {
         checkPermissionStatus('View created at') ? '' : 'column-display-none'
       }`
     },
+
     checkPermissionStatus('View last updated at') && {
       title: 'Updated At',
       dataIndex: 'updated_at',
@@ -117,6 +131,7 @@ const index = () => {
           : 'column-display-none'
       }`
     },
+
     {
       title: 'Actions',
       dataIndex: 'actions',

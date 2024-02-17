@@ -10,7 +10,9 @@ import {
   updateReport
 } from '../../apis/studiesApi'
 import NotificationMessage from '../../components/NotificationMessage'
-import { descriptionOptions } from '../../helpers/utils'
+import { descriptionOptions } from '../../helpers/utils' 
+import API from '../../apis/getApi'
+import APIHandler from '../../apis/apiHandler'
 
 const AddTemplate = () => {
   const [editorData, setEditorData] = useState('')
@@ -20,7 +22,6 @@ const AddTemplate = () => {
   const { id } = useParams()
 
   // **** Reterive particular template information **** // 
-
   const retrieveTemplateData = () => {
     fetchTemplate({ id })
       .then(res => {
@@ -38,6 +39,62 @@ const AddTemplate = () => {
       .catch(err => NotificationMessage('warning', 'Network request failed', err.response.data.message))
   }
 
+  // **** Reterive institution options **** // 
+  const [institutionOptions, setInstitutionOptions] = useState([]) ; 
+
+  const retrieveInstitutionDataFunction = async () => {
+    const token = localStorage.getItem('token');
+    await API.get('/user/v1/fetch-institution-list', {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then(res => {
+        if (res.data.status) {
+          const resData = res.data.data.map(item => ({
+            label: item.name,
+            value: item.id
+          }))
+          setInstitutionOptions(resData)
+        } else {
+          NotificationMessage(
+            'warning',
+            'Quick Filter',
+            res.data.message
+          )
+        }
+      })
+      .catch(err =>
+        NotificationMessage(
+          'warning',
+          'Quick Filter',
+          err.response.data.message
+        )
+      )
+  }
+
+  // **** Reterive all radiologist options **** // 
+  const [allRadiologistOption, setAllRadiologistOption] = useState([]) ; 
+
+  const FetchAllRadiologist = async () => {
+    let requestPayload = {};
+
+    let responseData = await APIHandler(
+      "POST",
+      requestPayload,
+      "institute/v1/fetch-radiologist-name"
+    );
+
+    if (responseData["status"] === true) {
+
+      const resData = responseData['data'].map((element) => ({
+        label: element.name,
+        value: element.id
+      }))
+
+      setAllRadiologistOption(resData);
+
+    }
+  }
+
   useEffect(() => {
     const crumbs = [{ name: 'Templates', to: '/reports' }]
     if (id) {
@@ -50,15 +107,32 @@ const AddTemplate = () => {
         name: 'Add'
       })
     }
-    changeBreadcrumbs(crumbs)
+    changeBreadcrumbs(crumbs) ; 
+    retrieveInstitutionDataFunction() ;
+    FetchAllRadiologist();  
   }, [])
 
-
+  // **** Template submit request handler **** // 
   const handleSubmit = (values) => {
+
     if (editorData.trim() !== '') {
       if (!id) {
 
-        insertNewTemplate({ name: values.name, data: editorData, description: values.study_description })
+        let requestPayload = {
+          name: values?.name, 
+          data: editorData, 
+          description: values?.study_description
+        }; 
+
+        if (values?.institution_select !== undefined){
+          requestPayload['institution'] = values?.institution_select
+        }
+
+        if (values?.study_radiologist !== undefined){
+          requestPayload['radiologist'] = values?.study_radiologist
+        }
+
+        insertNewTemplate({ ...requestPayload })
           .then(res => {
             if (res.data.status) {
               NotificationMessage('success', 'Template successfully created')
@@ -76,7 +150,22 @@ const AddTemplate = () => {
           )
       } else {
 
-        updateReport({ id, update_data: editorData, update_report_name: values.name, update_report_description: values?.study_description })
+        let requestPayload = {
+          id: id, 
+          update_data: editorData, 
+          update_report_name: values?.name, 
+          update_report_description: values?.study_description
+        }; 
+
+        if (values?.institution_select !== undefined){
+          requestPayload['institution'] = values?.institution_select
+        }
+
+        if (values?.study_radiologist !== undefined){
+          requestPayload['radiologist'] = values?.study_radiologist
+        }
+
+        updateReport({ ...requestPayload })
           .then(res => {
             if (res.data.status) {
               NotificationMessage('success', 'Template updated successfully')
@@ -113,6 +202,8 @@ const AddTemplate = () => {
         >
           <Row gutter={30}>
             <Col lg={8} md={8} sm={8}>
+
+              {/* Template name input  */}
               <Form.Item
                 label='Template Name'
                 name='name'
@@ -128,6 +219,8 @@ const AddTemplate = () => {
                   placeholder='Enter Template Name'
                 />
               </Form.Item>
+
+              {/* Modality selection dropdown  */}
               <Form.Item
                 name="study_description"
                 label="Modality Description"
@@ -151,7 +244,56 @@ const AddTemplate = () => {
                   }
                 />
               </Form.Item>
+            
+              {/* Institution name dropdown  */}
+              <Form.Item
+                name="institution_select"
+                label="Institution"
+                className="category-select"
+
+                rules={[
+                  {
+                    required: false
+                  },
+                ]}
+              >
+                <Select
+                  placeholder="Select Study Description"
+                  options={institutionOptions}
+                  showSearch
+                  filterSort={(optionA, optionB) =>
+                    (optionA?.label ?? "")
+                      .toLowerCase()
+                      .localeCompare((optionB?.label ?? "").toLowerCase())
+                  }
+                />
+              </Form.Item>
+          
+              {/* User name dropdown  */}
+              <Form.Item
+                name="study_radiologist"
+                label="Radiologist"
+                className="category-select"
+
+                rules={[
+                  {
+                    required: false
+                  },
+                ]}
+              >
+                <Select
+                  placeholder="Select Study Description"
+                  options={allRadiologistOption}
+                  showSearch
+                  filterSort={(optionA, optionB) =>
+                    (optionA?.label ?? "")
+                      .toLowerCase()
+                      .localeCompare((optionB?.label ?? "").toLowerCase())
+                  }
+                />
+              </Form.Item>
             </Col>
+            
             <Col
               lg={16}
               md={16}
@@ -170,6 +312,7 @@ const AddTemplate = () => {
                 />
               </Form.Item>
             </Col>
+
             <Form.Item className='btn-div'>
               <Button onClick={() => navigate(-1)}>Cancel</Button>
               <Button type='primary' htmlType='submit'>
