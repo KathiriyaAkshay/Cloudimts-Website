@@ -54,6 +54,14 @@ const ShareStudy = ({
               value: referenceId
             },
             {
+              name: "Study UID", 
+              value: resData?.Study_UID
+            }, 
+            {
+              name: "Series UID", 
+              value: resData?.Series_UID
+            }, 
+            {
               name: "Patient Name",
               value: resData?.Patient_name
             },

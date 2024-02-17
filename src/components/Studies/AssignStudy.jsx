@@ -310,15 +310,9 @@ const AssignStudy = ({
       retrieveStudyData();
       retrieveAssignStudyDetails();
       setValues([]);
+      FetchRadiologist() ; 
     }
   }, [studyID]);
-
-  useEffect(() => {
-    FetchRadiologist() ; 
-    if (assignUserId !== null){
-    }
-  }, [assignUserId, studyID]) ; 
-
 
   return (
     <Modal

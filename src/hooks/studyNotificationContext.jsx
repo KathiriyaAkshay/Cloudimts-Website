@@ -93,7 +93,8 @@ const StudyNotificationProvider = ({ children }) => {
                 
                 return {...element, status: "Assigned", 
                   updated_at: eventData.payload.data.updated_at, 
-                  study_description: eventData.payload.data.study_description
+                  study_description: eventData.payload.data.study_description, 
+                  assign_user: "KeyurVAghasiya"
                 } ;
                  
               } else{

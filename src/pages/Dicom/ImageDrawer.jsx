@@ -3,7 +3,18 @@ import { Modal, Image } from 'antd' ;
 import { Badge } from 'antd';
 const BASE_URL = import.meta.env.VITE_APP_BE_ENDPOINT ; 
 
-const ImageDrawer = ({ isDrawerOpen, setImageDrawerOpen, imageList }) => {
+const ImageDrawer = ({ 
+        isDrawerOpen, 
+        setImageDrawerOpen, 
+        imageList,  
+        studyUID
+    }) => {
+
+    const OHIFViewerHandler = () => {
+
+        let url = `https://viewer.cloudimts.com/viewer/${studyUID}`;
+        window.open(url, "_blank");
+      }
 
     return (
         <Modal
@@ -29,7 +40,8 @@ const ImageDrawer = ({ isDrawerOpen, setImageDrawerOpen, imageList }) => {
                         return(
                             <div style={{marginRight: 15}}>
                                 <Badge count={element.instances} showZero offset={[-18, 12]}>
-                                    <Image  
+                                    <img 
+                                        onClick={() => {OHIFViewerHandler()}}
                                         id='imageElement'
                                         src= {`${BASE_URL}studies/v1/fetch_instance_image/${element.seriesInstance}`}
                                         width={90}
