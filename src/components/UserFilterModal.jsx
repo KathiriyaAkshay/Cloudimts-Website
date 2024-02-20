@@ -18,6 +18,7 @@ const UserFilterModal = ({ name, setInstitutionData, retrieveUsersData }) => {
 
   const [institutionOptions, setInstitutionOptions] = useState([]) ; 
 
+  // **** Reterive all institution name **** // 
   const retrieveInstitutionDataFunction = async () => {
     const token = localStorage.getItem('token');
     await API.get('/user/v1/fetch-institution-list', {
@@ -48,8 +49,38 @@ const UserFilterModal = ({ name, setInstitutionData, retrieveUsersData }) => {
       )
   }
 
+  // **** Reterive all role name **** // 
+  const [roleOptions, setRoleOptions] = useState([]) ; 
+
+  const retrieveRolesData = async () => {
+    const token = localStorage.getItem("token") ; 
+    await API.get('/user/v1/fetch-role-list', {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then(res => {
+        if (res.data.status) {
+          const resData = res.data.data.map(item => ({
+            label: item.role_name,
+            value: item.id
+          }))
+          setRoleOptions(resData)
+        } else {
+          NotificationMessage(
+            'warning',
+            'Network request failed',
+            res.data.message
+          )
+        }
+      })
+      .catch(err => NotificationMessage('warning', 'Network request failed', err?.response?.data?.message))
+  }
+
+
   useEffect(() => {
-    retrieveInstitutionDataFunction() ; 
+    if (isUserFilterModalOpen){
+      retrieveInstitutionDataFunction() ; 
+      retrieveRolesData() ; 
+    }
   }, [isUserFilterModalOpen])
 
   const handleSubmit = (values) => {
@@ -162,15 +193,12 @@ const UserFilterModal = ({ name, setInstitutionData, retrieveUsersData }) => {
             <Form.Item
               name="role__role_name__icontains"
               label="Role Name"
-              rules={[
-                {
-                  required: false,
-                  whitespace: true,
-                  message: "Please enter Role Name",
-                },
-              ]}
             >
-              <Input placeholder="Enter Role Name" />
+              {/* <Input placeholder="Enter Role Name" /> */}
+              <Select
+                placeholder = "Select role"
+                options = {roleOptions}
+              />
             </Form.Item>
           </Col>
           <Col xs={24} lg={12}>

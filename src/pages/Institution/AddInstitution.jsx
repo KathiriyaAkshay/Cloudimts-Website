@@ -188,29 +188,37 @@ const AddInstitution = () => {
 
   const AddModalityDataHandler = () => {
 
-    let alreadInsert = 0;
+    if (chargesName !=  ""){
 
-    tableData.map((element) => {
-      if (element?.id === chargesName) {
-        NotificationMessage(
-          "warning",
-          "Already insert this modality charge"
-        );
-
-        alreadInsert = 1;
+      let alreadInsert = 0;
+  
+      tableData.map((element) => {
+        if (element?.id === chargesName) {
+          NotificationMessage(
+            "warning",
+            "Already insert this modality charge"
+          );
+  
+          alreadInsert = 1;
+        }
+      })
+  
+      if (alreadInsert == 0) {
+        setTableData([...tableData,
+        {
+          id: chargesName,
+          reporting_charge: 0,
+          communication_charge: 0
+        }])
+  
+        setChargesId((prev) => prev + 1);
       }
-    })
 
-    if (alreadInsert == 0) {
-      setTableData([...tableData,
-      {
-        id: chargesName,
-        reporting_charge: 0,
-        communication_charge: 0
-      }])
+    } else {
 
-      setChargesId((prev) => prev + 1);
+      NotificationMessage("warning", "Please, Enter modality name") ; 
     }
+
 
   }
 
