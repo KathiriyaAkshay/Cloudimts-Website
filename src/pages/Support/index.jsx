@@ -15,7 +15,8 @@ const index = () => {
   const { permissionData } = useContext(UserPermissionContext)
   const [supportId, setSupportId] = useState(null)
   
-  const { setIsSupportModalOpen,emailSupportOption, phoneSupportOption  } =useContext(filterDataContext)
+  const { setIsSupportModalOpen,emailSupportOption, phoneSupportOption, 
+    setEmailSupportOption, setPhoneSupportOption  } =useContext(filterDataContext)
   const { changeBreadcrumbs } = useBreadcrumbs()
 
   const [supportTableColumn, setSupportTableColumn] = useState([]) ; 
@@ -33,7 +34,6 @@ const index = () => {
   }
 
   // **** Fetch support table data **** // 
-
   const retrieveSupportData = async () => {
     setIsLoading(true)
     await fetchSupport()
@@ -42,6 +42,7 @@ const index = () => {
 
           let emailtemp = [] ; 
           let phonetemp = [] ; 
+
           res.data.data.map((element) => {
             if (element.option === 1){
               emailtemp.push(element) ; 
@@ -49,11 +50,16 @@ const index = () => {
               phonetemp.push(element) ; 
             }
           })
-          
+
           setEmailTableData([...emailtemp]) ;
-          setPhoneTableData([...phonetemp]) ; 
-          setTableData([...emailtemp]) ; 
-           
+          setPhoneTableData([...phonetemp]) ;  
+
+          if (emailSupportOption){
+            setTableData([...emailtemp]) ; 
+          } else {
+            setTableData([...phonetemp]) ; 
+          }
+
         } else {
           NotificationMessage(
             'warning',

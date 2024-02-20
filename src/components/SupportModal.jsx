@@ -16,7 +16,6 @@ const SupportModal = ({ retrieveSupportData, setSupportId, supportId }) => {
   const [isLoading, setIsLoading] = useState(false)
 
   // **** Retervie particular support details using support id **** // 
-
   const retrieveParticularSupportData = async () => {
     setIsLoading(true)
     await fetchParticularSupport({ id: supportId })
