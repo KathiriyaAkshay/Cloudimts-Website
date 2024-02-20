@@ -62,7 +62,8 @@ import ImageDrawer from './ImageDrawer'
 import { convertToDDMMYYYY } from '../../helpers/utils'
 import OHIFViewer from "../../assets/images/menu.png";
 import WeasisViewer from "../../assets/images/Weasis.png";
-import API from '../../apis/getApi'
+import API from '../../apis/getApi' 
+import { FileDoneOutlined } from '@ant-design/icons'
 
 const BASE_URL = import.meta.env.VITE_APP_SOCKET_BASE_URL
 const Dicom = () => {
@@ -731,7 +732,7 @@ const Dicom = () => {
       render: (text, record) => (
         record.urgent_case ? <>
           <Tooltip title={`${record.patient_id} | ${record.created_at}`} style={{ color: "red" }}>
-            <Tag color='#cd201f'>{text}</Tag>
+            <Tag color='#cd201f'>{text}</Tag> 
           </Tooltip>
         </> : <>
           <Tooltip title={`${record.patient_id} | ${record.created_at}`}>
@@ -798,12 +799,79 @@ const Dicom = () => {
     {
       title: 'Count',
       dataIndex: 'count',
-      width: "7%",
+      width: "6%",
       className: 'Study-count-column',
       render: (text, record) => (
         <Statistic value={record?.count} style={{ fontSize: "1.4rem" }} />
       ),
     },
+
+    {
+      title: "Report",
+      dataIndex: "chat",
+      width: "9%",
+      render: (text, record) => (
+        <>
+          <div>
+            <div>
+              {checkPermissionStatus('Study clinical history option') && (
+                <Tooltip title={`${record?.assign_user !== null ? `${record?.assign_user} =>` : ""} Clinical History`}>
+                  <MdOutlineHistory
+                    className='action-icon'
+                    onClick={() => {
+                      setStudyID(record.id)
+                      setIsAssignModalOpen(true)
+                      setStudyReferenceId(record?.refernce_id)
+                    }}
+                  />
+                </Tooltip>
+              )}
+
+              {checkPermissionStatus('Study data option') && (
+                <Tooltip title={`${record?.assign_user !== null ? `${record?.assign_user} =>` : ""} Study Report`}>
+                  <FileDoneOutlined
+                    className='action-icon'
+                    onClick={() => {
+                      setStudyID(record.id)
+                      setStudyStatus(record.status)
+                      setIsReportModalOpen(true)
+                      setPatientId(record.patient_id)
+                      setPatientName(record.name)
+                      setStudyUId(record.study?.study_uid)
+                      setStudyReferenceId(record?.refernce_id)
+                      localStorage.setItem("studyUIDValue", record.study?.study_uid);
+                    }}
+                  />
+                </Tooltip>
+              )}
+
+              {checkPermissionStatus('Study logs option') && (
+                <Tooltip title={`${record?.assign_user !== null ? `${record?.assign_user} =>` : ""} Auditing`}>
+                  <AuditOutlined
+                    className='action-icon action-icon-primary'
+                    onClick={() => {
+                      setStudyID(record.id)
+                      setIsModalOpen(true)
+                      setStudyReferenceId(record?.refernce_id)
+                    }}
+                  />
+                </Tooltip>
+              )}
+
+              {checkPermissionStatus('Study edit option') && (
+                <EditActionIcon
+                  assign_user={record?.assign_user}
+                  editActionHandler={() => editActionHandler(
+                    record?.id,
+                    record?.refernce_id)}
+                />
+              )}
+            </div>
+          </div>
+        </>
+      )
+    },
+
 
     {
       title: "Others",
@@ -867,85 +935,6 @@ const Dicom = () => {
             </div>
           </div>
 
-        </>
-      )
-    },
-
-    {
-      title: "Report",
-      dataIndex: "chat",
-      width: "9%",
-      render: (text, record) => (
-        <>
-          <div>
-            <div>
-              {checkPermissionStatus('Study clinical history option') && (
-                <Tooltip title={`${record?.assign_user !== null ? `${record?.assign_user} =>` : ""} Clinical History`}>
-                  <MdOutlineHistory
-                    className='action-icon'
-                    onClick={() => {
-                      setStudyID(record.id)
-                      setIsAssignModalOpen(true)
-                      setStudyReferenceId(record?.refernce_id)
-                    }}
-                  />
-                </Tooltip>
-              )}
-
-              {checkPermissionStatus('Study data option') && (
-                <Tooltip title={`${record?.assign_user !== null ? `${record?.assign_user} =>` : ""} Study Report`}>
-                  <EditActionIcon
-                    className='action-icon'
-                    onClick={() => {
-                      setStudyID(record.id)
-                      setStudyStatus(record.status)
-                      setIsReportModalOpen(true)
-                      setPatientId(record.patient_id)
-                      setPatientName(record.name)
-                      setStudyUId(record.study?.study_uid)
-                      setStudyReferenceId(record?.refernce_id)
-                      localStorage.setItem("studyUIDValue", record.study?.study_uid);
-                    }}
-                  />
-                </Tooltip>
-              )}
-
-              {/* {checkPermissionStatus('Study more details option') && (
-                <Tooltip title={`${record?.assign_user !== null ? `${record?.assign_user} =>` : ""} More Details`}>
-                  <BsEyeFill
-                    className='action-icon action-icon-primary'
-                    onClick={() => {
-                      setStudyID(record.id)
-                      setIsStudyModalOpen(true)
-                      setStudyReferenceId(record?.refernce_id)
-                    }}
-                  />
-                </Tooltip>
-              )} */}
-
-              {checkPermissionStatus('Study logs option') && (
-                <Tooltip title={`${record?.assign_user !== null ? `${record?.assign_user} =>` : ""} Auditing`}>
-                  <AuditOutlined
-                    className='action-icon action-icon-primary'
-                    onClick={() => {
-                      setStudyID(record.id)
-                      setIsModalOpen(true)
-                      setStudyReferenceId(record?.refernce_id)
-                    }}
-                  />
-                </Tooltip>
-              )}
-
-              {checkPermissionStatus('Study edit option') && (
-                <EditFilled
-                  assign_user={record?.assign_user}
-                  editActionHandler={() => editActionHandler(
-                    record?.id,
-                    record?.refernce_id)}
-                />
-              )}
-            </div>
-          </div>
         </>
       )
     },
