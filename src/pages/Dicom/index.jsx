@@ -701,7 +701,7 @@ const Dicom = () => {
       render: (text, record) => (
         record.urgent_case ? <>
           <Tooltip title={`${record.patient_id} | ${record.created_at}`} style={{ color: "red" }}>
-            <div style={{ color: "red" }}>{text}</div>
+            <Tag color='#cd201f'>{text}</Tag>
           </Tooltip>
         </> : <>
           <Tooltip title={`${record.patient_id} | ${record.created_at}`}>
@@ -717,16 +717,9 @@ const Dicom = () => {
       width: "7%",
       className: `${checkPermissionStatus('View Patient id') ? '' : 'column-display-none'}`,
       render: (text, record) => (
-        record.urgent_case ? <>
-          <Tooltip title={`${record.patient_id} | ${record.created_at}`} style={{ color: "red" }}>
-            <div style={{ color: "red" }}>{text}</div>
-          </Tooltip>
-        </> : <>
-          <Tooltip title={`${record.patient_id} | ${record.created_at}`}>
-            {text}
-          </Tooltip>
-
-        </>
+        <Tooltip title={`${record.patient_id} | ${record.created_at}`}>
+          {text}
+        </Tooltip>
       ),
     },
 
@@ -738,7 +731,7 @@ const Dicom = () => {
       render: (text, record) => (
         record.urgent_case ? <>
           <Tooltip title={`${record.patient_id} | ${record.created_at}`} style={{ color: "red" }}>
-            <div style={{ color: "red" }}>{text}</div>
+            <Tag color='#cd201f'>{text}</Tag>
           </Tooltip>
         </> : <>
           <Tooltip title={`${record.patient_id} | ${record.created_at}`}>
@@ -794,7 +787,11 @@ const Dicom = () => {
         : 'column-display-none'
         }`, 
       render: (text, record) => (
-        <Tag  color='#2db7f5'>{text}</Tag>
+        record.urgent_case?<>
+          <Tag color='#cd201f'>{text}</Tag>
+        </>:<>
+          <Tag color='#2db7f5'>{text}</Tag>
+        </>
       )
     },
 
