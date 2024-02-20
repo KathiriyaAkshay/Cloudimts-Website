@@ -18,7 +18,7 @@ import {
   Select
 } from 'antd'
 import { AiFillIdcard } from 'react-icons/ai'
-import { CheckCircleOutlined, ClearOutlined, CloseCircleOutlined, FileOutlined, PictureOutlined } from '@ant-design/icons'
+import { CheckCircleOutlined, ClearOutlined, CloseCircleOutlined, FileOutlined, PictureOutlined, EditFilled } from '@ant-design/icons'
 import { useBreadcrumbs } from '../../hooks/useBreadcrumbs'
 import ChatMain from '../../components/Chat/ChatMain'
 import EditStudy from '../../components/Studies/EditStudy'
@@ -897,7 +897,7 @@ const Dicom = () => {
 
               {checkPermissionStatus('Study data option') && (
                 <Tooltip title={`${record?.assign_user !== null ? `${record?.assign_user} =>` : ""} Study Report`}>
-                  <AiFillIdcard
+                  <EditActionIcon
                     className='action-icon'
                     onClick={() => {
                       setStudyID(record.id)
@@ -940,7 +940,7 @@ const Dicom = () => {
               )}
 
               {checkPermissionStatus('Study edit option') && (
-                <EditActionIcon
+                <EditFilled
                   assign_user={record?.assign_user}
                   editActionHandler={() => editActionHandler(
                     record?.id,
