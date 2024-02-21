@@ -665,7 +665,7 @@ const Dicom = () => {
       dataIndex: 'status',
       width: "10%",
       render: (text, record) => (
-        <Tooltip title={`${record.patient_id} | ${record.created_at}`}>
+        <Tooltip title={`${record?.assign_user?.assign_user !== undefined ? `${record?.assign_user?.perform_user} => ${record?.assign_user?.assign_user}` : "Study status"} `}>
           <Tag
             color={
               text === 'New'
@@ -815,7 +815,7 @@ const Dicom = () => {
           <div>
             <div>
               {checkPermissionStatus('Study clinical history option') && (
-                <Tooltip title={`${record?.assign_user !== null ? `${record?.assign_user} =>` : ""} Clinical History`}>
+                <Tooltip title={`Clinical History`}>
                   <MdOutlineHistory
                     className='action-icon'
                     onClick={() => {
@@ -828,7 +828,7 @@ const Dicom = () => {
               )}
 
               {checkPermissionStatus('Study data option') && (
-                <Tooltip title={`${record?.assign_user !== null ? `${record?.assign_user} =>` : ""} Study Report`}>
+                <Tooltip title={`Study Report`}>
                   <FileDoneOutlined
                     className='action-icon'
                     onClick={() => {
@@ -846,7 +846,7 @@ const Dicom = () => {
               )}
 
               {checkPermissionStatus('Study logs option') && (
-                <Tooltip title={`${record?.assign_user !== null ? `${record?.assign_user} =>` : ""} Auditing`}>
+                <Tooltip title={`Auditing`}>
                   <AuditOutlined
                     className='action-icon action-icon-primary'
                     onClick={() => {
@@ -894,7 +894,7 @@ const Dicom = () => {
               </Tooltip>
 
               {checkPermissionStatus('Study share option') && (
-                <Tooltip title={`${record?.assign_user !== null ? `${record?.assign_user} =>` : ""} Share Study`}>
+                <Tooltip title={`Share Study`}>
                   <IoIosShareAlt
                     className='action-icon action-icon-primary'
                     style={{ width: "max-content" }}
@@ -948,7 +948,7 @@ const Dicom = () => {
           <div>
             <div>
 
-              <Tooltip title={`${record?.assign_user !== null ? `${record?.assign_user} =>` : ""} OHIF Viewer`}>
+              <Tooltip title={`OHIF Viewer`}>
                 <img src={OHIFViewer}
                   style={{ cursor: "pointer" }}
                   className='ohif-viwer-option-icon'
@@ -958,7 +958,7 @@ const Dicom = () => {
                   }} />
               </Tooltip>
 
-              <Tooltip title={`${record?.assign_user !== null ? `${record?.assign_user} =>` : ""} Weasis Viewer`}>
+              <Tooltip title={`Weasis Viewer`}>
                 <img
                   src={WeasisViewer}
                   className='Weasis-viewer-option-icon'
