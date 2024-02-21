@@ -159,6 +159,7 @@ const AdvancedSearchModal = ({ name, retrieveStudyData, advanceSearchFilterData,
       retrieveInstitutionData()
       retrieveModalityData()
       retrieveRadiologistData()
+      form.resetFields() ;
     }
   }, [isAdvancedSearchModalOpen]);
 

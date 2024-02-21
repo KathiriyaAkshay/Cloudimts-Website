@@ -16,6 +16,7 @@ const FilterModal = ({ name, setInstitutionData, retrieveInstitutionData }) => {
   const { setIsFilterSelected } = useContext(FilterSelectedContext);
   const [institutionOptions, setInstitutionOptions] = useState([]) ; 
 
+  // **** Reterive instittuion data **** // 
   const retrieveInstitutionDataFunction = async () => {
     const token = localStorage.getItem('token');
     await API.get('/user/v1/fetch-institution-list', {
@@ -51,7 +52,7 @@ const FilterModal = ({ name, setInstitutionData, retrieveInstitutionData }) => {
   }, []);
 
   useEffect(() => {
-    if (isFilterModalOpen === true) {retrieveInstitutionDataFunction() ; }
+    if (isFilterModalOpen === true) {retrieveInstitutionDataFunction() ; form.resetFields(); }
   }, [isFilterModalOpen])
   
 

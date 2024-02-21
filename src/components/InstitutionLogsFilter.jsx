@@ -91,7 +91,7 @@ const InstitutionLogsFilter = ({ name, retrieveRoleData, setFilterValues }) => {
   }
 
   useEffect(() => {
-    if (isInstitutionLogsFilterModalOpen) {retrieveInstitutionDataFunction() ; }
+    if (isInstitutionLogsFilterModalOpen) {retrieveInstitutionDataFunction() ; form.resetFields();}
   }, [isInstitutionLogsFilterModalOpen])
 
   useEffect(() => {

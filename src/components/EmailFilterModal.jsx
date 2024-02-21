@@ -13,6 +13,10 @@ const EmailFilterModal = ({ name, setInstitutionData, retrieveEmailData }) => {
     setIsFilterSelected(false);
   }, []);
 
+  useEffect(() => {
+    form.resetFields() ; 
+  }, [isEmailFilterModalOpen]) ;  
+
   const handleSubmit = (values) => {
 
     let modifiedValues = {
