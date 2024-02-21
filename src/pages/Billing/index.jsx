@@ -16,38 +16,42 @@ const index = () => {
 
   const { isBillingFilterModalOpen, setIsBillingFilterModalOpen } =
     useContext(filterDataContext);
-    
+
   useEffect(() => setIsBillingFilterModalOpen(true), []);
 
-  const [isModalOpen, setIsModalOpen] = useState(false) ; 
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // **** Billling column **** //
   const columns = [
     {
+      title: "Refernce id",
+      dataIndex: "reference_id"
+    }, 
+    {
       title: "Patient ID",
       dataIndex: "patient_id"
     },
-    
+
     {
       title: "Patient Name",
       dataIndex: "patient_name"
     },
-    
+
     {
       title: "Modality",
       dataIndex: "modality",
     },
-    
+
     {
       title: "Institution",
       dataIndex: "institution",
     },
-    
+
     {
       title: "Reporting Time",
       dataIndex: "reporting_time",
     },
-    
+
     {
       title: "Reported by",
       dataIndex: "reported_by",
@@ -62,24 +66,24 @@ const index = () => {
       title: "Reporting type",
       dataIndex: "reporting_type",
     },
-    
+
     {
       title: "Study Description",
       dataIndex: "study_description",
       ellipsis: true,
     },
-    
+
     {
       title: "Study History",
       dataIndex: "study_history",
       ellipsis: true,
     },
-    
+
     {
       title: "Study Date",
       dataIndex: "study_date",
     },
-    
+
     {
       title: "Status",
       dataIndex: "study_status",
@@ -89,8 +93,8 @@ const index = () => {
             text === "New"
               ? "success"
               : text === "Assigned"
-              ? "blue"
-              : "warning"
+                ? "blue"
+                : "warning"
           }
           style={{ textAlign: "center", fontWeight: "600" }}
         >
@@ -123,21 +127,22 @@ const index = () => {
     <div>
 
       {/* ===== Billing data table ======  */}
-      
+
       <Card style={{ marginTop: "30px" }}>
-        
-        {billingData.length !== 0 && 
-        
+
+        {billingData.length !== 0 &&
+
           <div className="Billing-report-information">
 
-            <Button type="primary" onClick={() => setIsModalOpen(true)} 
-              style = {{backgroundColor: "#f5f5f5", color: "#212121 !important"}}>
+            <Button type="primary" onClick={() => setIsModalOpen(true)}
+              style={{ backgroundColor: "#f5f5f5", color: "#212121 !important" }}>
               View Billing information
             </Button>
-          
+
           </div>
         }
 
+        {/* ==== Billing data related table ====  */}
         <div>
           <Table
             columns={columns}
@@ -146,13 +151,13 @@ const index = () => {
             className="Billing-table"
             scroll={{
               x: 1800,
-              y:"45vh"
+              y: "45vh"
             }}
           />
         </div>
 
       </Card>
-    
+
       {/* ===== Search billing related modal ======  */}
 
       <BillingModal
@@ -189,7 +194,7 @@ const index = () => {
           </div>
 
           <Divider style={{ margin: "12px 0" }} />
-          
+
           {/* ==== Communication chrges information ====  */}
 
           <div className="billing-sub-div">
@@ -217,7 +222,7 @@ const index = () => {
           {/* ==== Total amount charges information =====  */}
 
           <div className="billing-sub-div Billing-sub-total-info-div">
-            <Typography className="billing-text" style={{fontWeight: "bold"}}>Total Amount</Typography>
+            <Typography className="billing-text" style={{ fontWeight: "bold" }}>Total Amount</Typography>
             <Typography className="billing-header">
               {Number(charges.total_communication_charge) +
                 Number(charges.total_midnight_charge) +
@@ -228,7 +233,7 @@ const index = () => {
           <Divider style={{ margin: "12px 0", borderWidth: "0" }} />
 
         </div>
-      
+
       </Modal>
     </div>
   );

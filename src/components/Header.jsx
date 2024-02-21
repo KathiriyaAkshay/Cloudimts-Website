@@ -2,7 +2,8 @@ import {
   AppstoreOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
-  WechatOutlined
+  WechatOutlined, 
+  LeftOutlined
 } from '@ant-design/icons'
 import { Breadcrumb, Button, Divider, Layout, Menu, List, Popover, Empty, Badge, Popconfirm, Collapse, Checkbox, Avatar } from 'antd'
 import React, { useContext, useEffect, useRef, useState } from 'react'
@@ -641,7 +642,7 @@ const BasicLayout = ({ children }) => {
                     <Breadcrumb.Item key={index}>
                       {crumb.to ? (
                         <Link to={crumb.to} title={crumb.name}>
-                          {crumb.name}
+                          <LeftOutlined style={{height: "1.5rem", width: "1.5rem"}}/> {crumb.name}
                         </Link>
                       ) : (
                         crumb.name

@@ -55,7 +55,6 @@ const BillingModal = ({ setBillingData, setIsLoading, setCharges }) => {
   ]);
 
   // **** Reterive institution list **** // 
-
   const retrieveInstitutionData = () => {
     getInstitutionList()
       .then((res) => {
@@ -82,7 +81,6 @@ const BillingModal = ({ setBillingData, setIsLoading, setCharges }) => {
   };
 
   // **** Retervice radiologist list **** // 
-  
   const retrieveRadiologistData = () => {
     getRadiologistList({ role_id: localStorage.getItem("role_id") })
       .then((res) => {
