@@ -520,6 +520,7 @@ const AssignStudy = ({
                     imageFile={imageFile}
                     setImageFile={setImageFile}
                     setMultipleImageFile={setMultipleImageFile}
+                    isClinicalHistory={true}
                   />
                 </div>
               </div>

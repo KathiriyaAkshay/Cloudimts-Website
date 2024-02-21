@@ -15,6 +15,7 @@ import logo from '../../assets/images/Imageinet-logo.png'
 import { UserDetailsContext } from '../../hooks/userDetailsContext' ; 
 import NotificationMessage from '../../components/NotificationMessage' ; 
 import APIHandler from '../../apis/apiHandler'
+import LoginBg from '../../assets/images/login.jpeg'
 import axios from 'axios'
 
 const Login = () => {
@@ -86,7 +87,7 @@ const Login = () => {
   }
 
   return (
-    <div className='login-page-wrapper'>
+    <div className='login-page-wrapper' style={{background:"linear-gradient(90deg, rgba(0,0,0,0.529936974789916) 0%, rgba(255,255,255,0.22461484593837533) 100%),url("+LoginBg+")",backgroundSize:"stretch"}}>
       <Row>
         <Col xs={24} md={24} lg={24} className='login-card-wrapper'>
           <Card className='login-card' bordered={false}>
