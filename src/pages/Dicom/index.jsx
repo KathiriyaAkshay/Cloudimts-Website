@@ -1251,7 +1251,7 @@ const Dicom = () => {
                 ]}
               >
                 <Input 
-                  onPressEnter={() => {quickForm.submit()}} 
+                  onPressEnter={() => {quickForm.submit()}}   
                   placeholder="Patient Id" 
                 />
 
