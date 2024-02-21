@@ -14,7 +14,8 @@ const UploadImage = ({
   imageURL,
   multipleImage,
   multipleImageFile,
-  setMultipleImageFile
+  setMultipleImageFile,
+  isClinicalHistory,
 }) => {
 
   const [file, setFile] = useState(imageURL);
@@ -232,7 +233,7 @@ const UploadImage = ({
         </div>
 
         {/* ==== File selection drawer ====  */}
-        <div style={{height:"11.8rem",overflowX:"auto"}}>
+        <div style={{maxHeight:"11rem",minHeight:isClinicalHistory?"6.8rem":"11rem",overflowX:"auto"}}>
           <Dragger
             name="url"
             style={{ height: "100%" }}
@@ -266,9 +267,14 @@ const UploadImage = ({
               }
             }}
           >
+
+            {isClinicalHistory?<></>:
+            <>
             <p className="ant-upload-drag-icon">
               <InboxOutlined />
             </p>
+            </>}
+            
             <p className="ant-upload-text">Drag & drop files or Browse</p>
             <p className="ant-upload-hint">
               Supported formates: JPG, JPEG, PNG, PDF, DOCX

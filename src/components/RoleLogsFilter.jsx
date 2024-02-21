@@ -34,6 +34,10 @@ const RoleLogsFilter = ({
     setIsFilterSelected(false);
   }, []);
 
+  useEffect(() => {
+    form.resetFields() ; 
+  }, [isRoleLogsFilterModalOpen])
+
   const handleSubmit = (values) => {
     setFilterValues({
       ...values,

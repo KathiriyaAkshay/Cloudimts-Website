@@ -81,6 +81,7 @@ const UserFilterModal = ({ name, setInstitutionData, retrieveUsersData }) => {
       retrieveInstitutionDataFunction() ; 
       retrieveRolesData() ; 
     }
+    form.resetFields()  ;
   }, [isUserFilterModalOpen])
 
   const handleSubmit = (values) => {

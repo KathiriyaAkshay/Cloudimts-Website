@@ -51,7 +51,11 @@ const UserLogsFilter = ({ name, retrieveRoleData, setFilterValues }) => {
 
   useEffect(() => {
     setIsFilterSelected(false);
-  }, []);
+  }, []); 
+
+  useEffect(() => {
+    form.resetFields(); 
+  }, [isUserLogsFilterModalOpen])
 
   const handleSubmit = (values) => {
     setFilterValues({
