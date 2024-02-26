@@ -701,13 +701,9 @@ const Dicom = () => {
       className: `${checkPermissionStatus('View Patient id') ? '' : 'column-display-none'}`,
       render: (text, record) => (
         record.urgent_case ? <>
-          <Tooltip title={`${record.patient_id} | ${record.created_at}`} style={{ color: "red" }}>
-            <Tag color='#cd201f'>{text}</Tag>
-          </Tooltip>
+          <Tag color='#cd201f'>{text}</Tag>
         </> : <>
-          <Tooltip title={`${record.patient_id} | ${record.created_at}`}>
-            <Tag color='#2db7f5'>{text}</Tag>
-          </Tooltip>
+          <Tag color='#2db7f5'>{text}</Tag>
 
         </>
       ),
@@ -718,9 +714,7 @@ const Dicom = () => {
       width: "7%",
       className: `${checkPermissionStatus('View Patient id') ? '' : 'column-display-none'}`,
       render: (text, record) => (
-        <Tooltip title={`${record.patient_id} | ${record.created_at}`}>
-          {text}
-        </Tooltip>
+        text
       ),
     },
 
@@ -731,13 +725,9 @@ const Dicom = () => {
       className: `${checkPermissionStatus('View Patient name') ? '' : 'column-display-none'}`,
       render: (text, record) => (
         record.urgent_case ? <>
-          <Tooltip title={`${record.patient_id} | ${record.created_at}`} style={{ color: "red" }}>
-            <Tag color='#cd201f'>{text}</Tag> 
-          </Tooltip>
+          <Tag color='#cd201f'>{text}</Tag>
         </> : <>
-          <Tooltip title={`${record.patient_id} | ${record.created_at}`}>
-            <Tag color='#2db7f5'>{text}</Tag>
-          </Tooltip>
+          <Tag color='#2db7f5'>{text}</Tag>
 
         </>
       ),
@@ -750,9 +740,7 @@ const Dicom = () => {
       width: "7%",
       className: 'Study-count-column',
       render: (text, record) => (
-        <Tooltip title={`${record.patient_id} | ${record.created_at}`}>
-          {text}
-        </Tooltip>
+        text
       ),
     },
 
@@ -765,9 +753,7 @@ const Dicom = () => {
         : 'column-display-none'
         }`,
       render: (text, record) => (
-        <Tooltip title={`${record.patient_id} | ${record.created_at}`}>
-          {text}
-        </Tooltip>
+        text
       ),
     },
 
@@ -1393,14 +1379,6 @@ const Dicom = () => {
 
               </Form.Item>
             </Col>
-            
-            {/* <Button key="submit"
-              style={{ marginTop: "0.5rem", marginRight: "1rem", marginLeft:"0.5rem" }}
-              type="primary"
-              onClick={() => { quickForm.submit() }}
-            >
-              Apply
-            </Button> */}
 
             {/* ==== Apply filter option button ====  */}
 
