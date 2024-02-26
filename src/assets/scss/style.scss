@@ -36,19 +36,23 @@ div, span, article, input, textarea {
   background-size: cover;
   display: flex;
   height: 100vh;
+  width: 100vw;
+  overflow: hidden;
   justify-content: center;
 
   .login-card-wrapper {
     display: flex !important;
     flex-direction: column;
     justify-content: center;
+    overflow-y: hidden;
+    overflow-x: hidden;
 
     .login-card {
       min-width: 485px;
 
       .ant-card-body {
         border-radius: 10px;
-        box-shadow: 0 0 13px 1px rgb(0 0 0 / 15%);
+        // box-shadow: 0 0 13px 1px rgb(0 0 0 / 15%);
         padding: 45px 40px;
 
         .logo-container {
@@ -91,6 +95,19 @@ div, span, article, input, textarea {
       background: rgb(255, 255, 255);
     }
   }
+
+  .login-particular-option{
+    width: 50vw;
+    overflow-y: hidden;
+  }
+
+  .login-image{
+    height: 100vh;
+    width: 50vw;
+    
+  }
+
+
 }
 
 .mb {
