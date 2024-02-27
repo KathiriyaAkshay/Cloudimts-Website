@@ -119,21 +119,7 @@ const DeletedStudies = () => {
       dataIndex: 'status',
       render: (text, record) => (
         <Tag
-          color={
-            text === 'New'
-              ? 'success'
-              : text === 'Assigned'
-                ? 'blue'
-                : text === 'Viewed'
-                  ? 'cyan'
-                  : text === 'ViewReport'
-                    ? 'lime'
-                    : text === 'InReporting'
-                      ? 'magenta'
-                      : text === 'CloseStudy'
-                        ? 'red'
-                        : 'warning'
-          }
+          color={"#795695"}
           style={{ textAlign: 'center', fontWeight: '600' }}
         >
           {text}

@@ -669,18 +669,18 @@ const Dicom = () => {
           <Tag
             color={
               text === 'New'
-                ? 'success'
+                ? '#000000'
                 : text === 'Assigned'
-                  ? 'blue'
+                  ? '#FFA500'
                   : text === 'Viewed'
-                    ? 'cyan'
+                    ? '#e3dc02'
                     : text === 'ViewReport'
                       ? 'lime'
                       : text === 'InReporting'
-                        ? 'magenta'
+                        ? '#795695'
                         : text === 'ClosedStudy'
-                          ? 'red'
-                          : 'warning'
+                          ? '#097969  '
+                          : 'blue'
             }
             style={{ textAlign: 'center', fontWeight: '600' }}
 
