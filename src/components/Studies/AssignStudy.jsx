@@ -34,12 +34,12 @@ const AssignStudy = ({
 
   const [modalData, setModalData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [options, setOptions] = useState([]); 
-  const [institutionRadiologist, setInstitutionRadiologist] = useState([]) ; 
+  const [options, setOptions] = useState([]);
+  const [institutionRadiologist, setInstitutionRadiologist] = useState([]);
   const [multipleImageFile, setMultipleImageFile] = useState([]);
   const [value, setValues] = useState([]);
   const [imageFile, setImageFile] = useState(null);
-  const [assignUserId, setAssignUserId] = useState(null) ; 
+  const [assignUserId, setAssignUserId] = useState(null);
 
   // **** Reterive particular assign study details **** // 
   const retrieveAssignStudyDetails = async () => {
@@ -47,7 +47,7 @@ const AssignStudy = ({
     await fetchAssignStudy({ id: studyID })
       .then((res) => {
         if (res.data.status) {
-          setAssignUserId(res?.data?.assign_user[0]?.assign_user_id) ; 
+          setAssignUserId(res?.data?.assign_user[0]?.assign_user_id);
           form.setFieldsValue({
             ...res.data?.data,
             radiologist: res.data?.assign_user?.map(
@@ -181,7 +181,7 @@ const AssignStudy = ({
                 value: data.id,
               }));
 
-              setInstitutionRadiologist(institutionRadiologist=>[ ...resData]) ; 
+              setInstitutionRadiologist(institutionRadiologist => [...resData]);
             }
           };
 
@@ -206,7 +206,6 @@ const AssignStudy = ({
   };
 
   // **** Retervice all radiologist data **** // 
-
   const FetchRadiologist = async () => {
 
     let requestPayload = {};
@@ -220,11 +219,11 @@ const AssignStudy = ({
     if (responseData["status"] === true) {
 
       responseData?.data?.map((element) => {
-        if (element?.id === assignUserId){
-          const exists=institutionRadiologist.indexOf({label: element?.name, value:element?.id});
-          if(exists!=-1){
-            setInstitutionRadiologist(institutionRadiologist=>[...institutionRadiologist, {label: element?.name, value:element?.id}])
-          } 
+        if (element?.id === assignUserId) {
+          const exists = institutionRadiologist.indexOf({ label: element?.name, value: element?.id });
+          if (exists != -1) {
+            setInstitutionRadiologist(institutionRadiologist => [...institutionRadiologist, { label: element?.name, value: element?.id }])
+          }
         }
       })
 
@@ -233,9 +232,9 @@ const AssignStudy = ({
   };
 
   // **** Retervice particular institution radiologist *** // 
-
   const [form] = Form.useForm();
 
+  // **** Assign study handler **** // 
   const handleSubmit = async (values) => {
     setIsLoading(true);
 
@@ -268,6 +267,7 @@ const AssignStudy = ({
         study_data: {
           images: [],
         },
+        number_of_report: values?.number_of_report
       };
 
       if (multipleImageFile !== undefined) {
@@ -310,7 +310,7 @@ const AssignStudy = ({
       retrieveStudyData();
       retrieveAssignStudyDetails();
       setValues([]);
-      FetchRadiologist() ; 
+      FetchRadiologist();
     }
   }, [studyID]);
 
@@ -394,7 +394,7 @@ const AssignStudy = ({
             )}
           />
 
-          <div className="Study-modal-input-option-division" style={{ width: "50%", height: "100%",overflow:"hidden" }}>
+          <div className="Study-modal-input-option-division" style={{ width: "50%", height: "100%", overflow: "hidden" }}>
             <Form
               labelCol={{
                 span: 24,
@@ -413,32 +413,32 @@ const AssignStudy = ({
                   <Row justify="space-between">
                     <Col span={11}>
 
-                  {/* **** Show paarticular institution radiologist ****  */}
+                      {/* **** Show paarticular institution radiologist ****  */}
 
-                  <Form.Item
-                    label="Choose Radiologist"
-                    name="radiologist"
-                    className="category-select"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Please select radiologist",
-                      },
-                    ]}
-                  >
-                    <Select
-                      placeholder="Select Radiologist"
-                      options={institutionRadiologist}
-                      showSearch
-                      filterSort={(optionA, optionB) =>
-                        (optionA?.label ?? "")
-                          .toLowerCase()
-                          .localeCompare((optionB?.label ?? "").toLowerCase())
-                      }
-                    />
-                  </Form.Item>
-                  </Col>
-                  <Col span={11}>
+                      <Form.Item
+                        label="Choose Radiologist"
+                        name="radiologist"
+                        className="category-select"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Please select radiologist",
+                          },
+                        ]}
+                      >
+                        <Select
+                          placeholder="Select Radiologist"
+                          options={institutionRadiologist}
+                          showSearch
+                          filterSort={(optionA, optionB) =>
+                            (optionA?.label ?? "")
+                              .toLowerCase()
+                              .localeCompare((optionB?.label ?? "").toLowerCase())
+                          }
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col span={11}>
 
                       {/* Study description  */}
 
@@ -468,9 +468,18 @@ const AssignStudy = ({
                     </Col>
                   </Row>
 
-
-
-
+                  <Form.Item
+                    name = "number_of_report"
+                    label = "Number of report"
+                    rules={[
+                      {
+                        required: true, 
+                        message: "Please enter number of report value"
+                      }
+                    ]}
+                  >
+                    <Input/>
+                  </Form.Item>
 
                   {/* Clinical history information  */}
 

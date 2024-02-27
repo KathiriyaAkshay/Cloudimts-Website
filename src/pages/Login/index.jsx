@@ -87,82 +87,90 @@ const Login = () => {
   }
 
   return (
-    <div className='login-page-wrapper' style={{background:"linear-gradient(90deg, rgba(0,0,0,0.529936974789916) 0%, rgba(255,255,255,0.22461484593837533) 100%),url("+LoginBg+")",backgroundSize:"stretch"}}>
-      <Row>
-        <Col xs={24} md={24} lg={24} className='login-card-wrapper'>
-          <Card className='login-card' bordered={false}>
-            <Spin spinning={isLoading}>
-              <img src={logo} alt='Logo' className={'signup-logo'} />
-              <Divider style={{ margin: '24px 0 12px' }} />
-              <Row className='card-header' style={{ margin: 0 }}>
-                <h2>
-                  {window.location.pathname === '/admin/login'
-                    ? 'Admin Login'
-                    : 'User Login'}
-                </h2>
-              </Row>
-              <Form
-                labelCol={{
-                  span: 24
-                }}
-                wrapperCol={{
-                  span: 24
-                }}
-                form={loginForm}
-                onFinish={handleSubmit}
-                autoComplete={'off'}
-              >
-                <Form.Item
-                  name='username'
-                  label='Username'
-                  rules={[
-                    {
-                      required: true,
-                      whitespace: true,
-                      message: 'Please enter username'
-                    }
-                  ]}
-                >
-                  <Input
-                    style={{ marginBottom: '0.5rem' }}
-                    placeholder='Enter Username'
-                  />
-                </Form.Item>
-                <Form.Item
-                  name='password'
-                  label='Password'
-                  preserve={false}
-                  rules={[
-                    {
-                      required: true,
-                      whitespace: true,
-                      message: 'Please enter password'
-                    }
-                  ]}
-                >
-                  <Input.Password
-                    name='password'
-                    autoComplete={'off'}
-                    style={{ marginBottom: '0.5rem' }}
-                    type='password'
-                    placeholder='Enter Password'
-                  />
-                </Form.Item>
+    <div className='login-page-wrapper' >
 
-                <Form.Item className='m-0'>
-                  <Button
-                    type='primary'
-                    htmlType='submit'
-                    className='login-form-button'
+      <div className='login-particular-option'>
+        <img src={LoginBg} alt="" srcset="" className='login-image'/>
+      </div>
+
+      <div className='login-particular-option'>
+
+        <Row>
+          <Col xs={24} md={24} lg={24} className='login-card-wrapper'>
+            <Card className='login-card' bordered={false}>
+              <Spin spinning={isLoading}>
+                <img src={logo} alt='Logo' className={'signup-logo'} />
+                <Row className='card-header' style={{ margin: 0 }}>
+                  <h2>
+                    {window.location.pathname === '/admin/login'
+                      ? 'Admin Login'
+                      : 'User Login'}
+                  </h2>
+                </Row>
+                <Form
+                  labelCol={{
+                    span: 24
+                  }}
+                  wrapperCol={{
+                    span: 24
+                  }}
+                  form={loginForm}
+                  onFinish={handleSubmit}
+                  autoComplete={'off'}
+                >
+                  <Form.Item
+                    name='username'
+                    label='Username'
+                    rules={[
+                      {
+                        required: true,
+                        whitespace: true,
+                        message: 'Please enter username'
+                      }
+                    ]}
                   >
-                    Login
-                  </Button>
-                </Form.Item>
-              </Form>
-            </Spin>
-          </Card>
-        </Col>
-      </Row>
+                    <Input
+                      style={{ marginBottom: '0.5rem' }}
+                      placeholder='Enter Username'
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    name='password'
+                    label='Password'
+                    preserve={false}
+                    rules={[
+                      {
+                        required: true,
+                        whitespace: true,
+                        message: 'Please enter password'
+                      }
+                    ]}
+                  >
+                    <Input.Password
+                      name='password'
+                      autoComplete={'off'}
+                      style={{ marginBottom: '0.5rem' }}
+                      type='password'
+                      placeholder='Enter Password'
+                    />
+                  </Form.Item>
+
+                  <Form.Item className='m-0'>
+                    <Button
+                      type='primary'
+                      htmlType='submit'
+                      className='login-form-button'
+                    >
+                      Login
+                    </Button>
+                  </Form.Item>
+                </Form>
+              </Spin>
+            </Card>
+          </Col>
+        </Row>
+
+      </div>
     </div>
   )
 }

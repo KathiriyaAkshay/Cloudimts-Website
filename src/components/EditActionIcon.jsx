@@ -14,7 +14,7 @@ const EditActionIcon = ({ editActionHandler, assign_user}) => {
     <Space>
       <Typography.Link onClick={editActionHandler} 
         className="action-column">
-        <Tooltip title={`${assign_user !== null && assign_user !== undefined?`${assign_user} =>`:""} Edit`}>
+        <Tooltip title={`Edit study`}>
           <FaEdit className="action-icon"/>
         </Tooltip>
       </Typography.Link>
