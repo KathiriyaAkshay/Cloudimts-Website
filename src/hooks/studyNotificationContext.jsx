@@ -91,7 +91,7 @@ const StudyNotificationProvider = ({ children }) => {
               if (element.id === StudyId){  
                 updateStudyStatus = 1; 
                 
-                return {...element, status: "Assigned", 
+                return {...element, status: eventData.payload.data.assign_user !== null?"Assigned":element?.status , 
                   updated_at: eventData.payload.data.updated_at, 
                   study_description: eventData.payload.data.study_description, 
                   assign_user: eventData.payload.data.assign_user
