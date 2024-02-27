@@ -63,7 +63,7 @@ const BillingModal = ({ setBillingData, setIsLoading, setCharges }) => {
           value: data.id,
           label: data.name,
         }));
-        setInstitutionOptions([...resData]);
+        setInstitutionOptions([{value: "All", label: "All"},  ...resData]);
         } else {
           NotificationMessage(
             'warning',
@@ -89,7 +89,7 @@ const BillingModal = ({ setBillingData, setIsLoading, setCharges }) => {
           label: data.name,
           value: data.id,
         }));
-        setRadiologistOptions([...resData]);
+        setRadiologistOptions([{label: "All", value: "All"}, ...resData]);
         } else {
           NotificationMessage(
             'warning',
@@ -113,6 +113,7 @@ const BillingModal = ({ setBillingData, setIsLoading, setCharges }) => {
     }
   }, [isBillingFilterModalOpen]);
 
+
   // **** Handle institution select change **** // 
   const handleInstitutionSelectChange = (value) => {
     if (value.includes("all")) {
@@ -135,43 +136,73 @@ const BillingModal = ({ setBillingData, setIsLoading, setCharges }) => {
 
   const [form] = Form.useForm();
 
+  // Submit option handler 
   const submitHandler = (values) => {
-    if (values?.institution_list === undefined){
+    if (values?.from_date === undefined){
 
       NotificationMessage(
         "warning", 
-        "Please select institution for billing"
-      )
-
-    } else if (values?.user === undefined){
-
-      NotificationMessage(
-        "warning", 
-        "Please select user for billing"
-      )
-    
-    } else if (values?.from_date === undefined){
-
-      NotificationMessage(
-        "warning", 
-        "Please select billing from date"
+        "Please, Select billing start date"
       )
     
     } else if (values?.to_date === undefined){
 
       NotificationMessage(
         "warning", 
-        "Please select billing end date"
-      )
-    
-    } else if (values?.study_status === undefined){
-
-      NotificationMessage(
-        "warning", 
-        "Please select study status"
+        "Please, Select billing end date"
       )
     
     } else {
+
+      let select_institution_all_option = null ; 
+      let select_institution_list = null ; 
+      let select_user_all_option = null ; 
+      let select_user_list = null ; 
+      let select_status_all_option = null ; 
+      let select_status_value = null ; 
+
+      // Handle institution option selection
+      if (values?.institution_list == undefined){
+        select_institution_all_option = true ; 
+        select_institution_list = [] ; 
+      } else {  
+        select_institution_list = values?.institution_list
+
+        if (select_institution_list.includes("All")){
+          select_institution_all_option = true ; 
+          select_institution_list = select_institution_list.filter(item => item !== "All")
+
+        }
+      }
+
+      // Handler user option selection 
+      if (values?.user == undefined){
+        select_user_all_option = true; 
+        select_user_list = [] ; 
+      } else {
+        select_user_list = values?.user ; 
+
+        if (select_user_list?.includes("All")){
+          select_user_all_option = true; 
+          select_user_list = select_user_list.filter(item => item!== "All")
+        }
+      }
+
+      // Handle Study status value 
+    
+      if (values?.study_status == undefined){
+        select_status_all_option = true;  
+        select_status_value = "Reported" ; 
+      } else{
+
+        if (values?.study_status == "all"){
+          select_status_all_option = true ; 
+          select_status_value = values?.study_status
+        }
+      }
+
+      console.log(values?.study_status);
+      
 
       setIsLoading(true);
   
@@ -189,17 +220,14 @@ const BillingModal = ({ setBillingData, setIsLoading, setCharges }) => {
         ...values,
         from_date: values?.from_date?.format("YYYY-MM-DD"),
         to_date: values?.to_date?.format("YYYY-MM-DD"),
-        institution_list: [values?.institution_list],
-        institution_all_option: false,
-        user: values?.user?.includes("all") ? [] : values?.user,
-        user_all_option: values?.user?.includes("all") ? true : false,
+        institution_list: select_institution_list,
+        institution_all_option: select_institution_all_option,
+        user: select_user_list,
+        user_all_option: select_institution_all_option,
         page_number: 1,
         page_size: 10,
-        study_status: values?.study_status?.includes("all")
-          ? "all": values?.study_status,
-        study_status_all_option: values?.study_status?.includes("all")
-          ? true
-          : false,
+        study_status: select_status_value,
+        study_status_all_option: select_status_all_option,
       };
       
       getBillingData(modifiedObj)
@@ -257,18 +285,12 @@ const BillingModal = ({ setBillingData, setIsLoading, setCharges }) => {
               <Form.Item
                 name="institution_list"
                 label="Institution Name"
-                required
-                rules={[
-                  {
-                    required: false,
-                    message: "Please enter Institution Name",
-                  },
-                ]}
               >
                 <Select
                   placeholder="Select Institution"
                   options={institutionOptions}
                   onChange={handleInstitutionSelectChange}
+                  mode="multiple"
                   filterSort={(optionA, optionB) =>
                     (optionA?.label ?? "")
                       .toLowerCase()
@@ -286,13 +308,6 @@ const BillingModal = ({ setBillingData, setIsLoading, setCharges }) => {
               <Form.Item
                 name="user"
                 label="User"
-                required
-                rules={[
-                  {
-                    required: false,
-                    message: "Please enter Assigned User",
-                  },
-                ]}
               >
                 <Select
                   placeholder="Select Radiologist"
@@ -353,13 +368,6 @@ const BillingModal = ({ setBillingData, setIsLoading, setCharges }) => {
                 name="study_status"
                 label="Study Status"
                 className="category-select"
-                required
-                rules={[
-                  {
-                    required: false,
-                    message: "Please enter Study Status",
-                  },
-                ]}
               >
                 <Select
                   placeholder="Select Status"

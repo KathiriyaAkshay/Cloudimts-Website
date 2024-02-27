@@ -26,7 +26,7 @@ const index = () => {
     {
       title: "Refernce id",
       dataIndex: "reference_id"
-    }, 
+    },
     {
       title: "Patient ID",
       dataIndex: "patient_id"
@@ -48,7 +48,22 @@ const index = () => {
     },
 
     {
-      title: "Reporting Time",
+      title: "Study description",
+      dataIndex: "study_description",
+      ellipsis: true,
+    },
+
+    {
+      title: "Report description",
+      dataIndex: "reporting_study_description",
+    },
+
+    {
+      title: "Study Date/Time",
+      dataIndex: "study_date",
+    },
+    {
+      title: "Reporting Date/Time",
       dataIndex: "reporting_time",
     },
 
@@ -57,31 +72,10 @@ const index = () => {
       dataIndex: "reported_by",
     },
 
-    {
-      title: "Reporting description",
-      dataIndex: "reporting_study_description",
-    },
 
     {
       title: "Reporting type",
       dataIndex: "reporting_type",
-    },
-
-    {
-      title: "Study Description",
-      dataIndex: "study_description",
-      ellipsis: true,
-    },
-
-    {
-      title: "Study History",
-      dataIndex: "study_history",
-      ellipsis: true,
-    },
-
-    {
-      title: "Study Date",
-      dataIndex: "study_date",
     },
 
     {
@@ -108,7 +102,7 @@ const index = () => {
       fixed: 'right'
     },
     {
-      title: "Comu -Charge",
+      title: "Communication charge",
       dataIndex: "comunication_charge",
       fixed: 'right'
     },
@@ -128,7 +122,7 @@ const index = () => {
 
       {/* ===== Billing data table ======  */}
 
-      <Card style={{ marginTop: "30px" }}>
+      <Card style={{ marginTop: "30px" }} className="billing-card-layout">
 
         {billingData.length !== 0 &&
 
@@ -150,7 +144,7 @@ const index = () => {
             loading={isLoading}
             className="Billing-table"
             scroll={{
-              x: 1800,
+              x: 1300,
               y: "45vh"
             }}
           />
