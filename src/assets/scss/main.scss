@@ -2824,3 +2824,22 @@ form.ant-form .ant-form-item .ant-form-item-label label{
   height: 1rem;
   width: 1rem;
 }
+
+.billing-card-layout{
+
+  .ant-card-body{
+    padding: 0px !important;
+    padding-left: 5px !important;
+    padding-right: 5px !important;
+    padding-top: 10px !important;
+  }
+}
+
+.study-report-icon{
+  height: 18px;
+}
+
+.selected-profile-image{
+  height: 4rem !important;
+  width: 9rem !important;
+}

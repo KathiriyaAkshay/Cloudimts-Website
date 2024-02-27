@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useBreadcrumbs } from "../../hooks/useBreadcrumbs";
 import BillingModal from "../../components/BillingModal";
-import { Card, Divider, Table, Tag, Typography, Button, Modal } from "antd";
+import { Card, Divider, Table, Tag, Typography, Button, Modal, Tooltip } from "antd";
 import { filterDataContext } from "../../hooks/filterDataContext";
 
 const index = () => {
@@ -14,19 +14,17 @@ const index = () => {
     total_reporting_charge: 0,
   });
 
-  const { isBillingFilterModalOpen, setIsBillingFilterModalOpen } =
-    useContext(filterDataContext);
+  const { setIsBillingFilterModalOpen, billingInformationModal, setBillingInformationModal, 
+    totalBillingReportingCharge, totalBillingCommunicationCharge, totalBillingMidnightCharge} = useContext(filterDataContext);
 
   useEffect(() => setIsBillingFilterModalOpen(true), []);
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // **** Billling column **** //
   const columns = [
     {
-      title: "Refernce id",
+      title: "Id",
       dataIndex: "reference_id"
-    }, 
+    },
     {
       title: "Patient ID",
       dataIndex: "patient_id"
@@ -34,7 +32,13 @@ const index = () => {
 
     {
       title: "Patient Name",
-      dataIndex: "patient_name"
+      dataIndex: "patient_name", 
+      ellipsis: true, 
+      render: (text, record) => (
+        <Tooltip title = {text}>
+          {text}
+        </Tooltip>
+      )
     },
 
     {
@@ -48,7 +52,22 @@ const index = () => {
     },
 
     {
-      title: "Reporting Time",
+      title: "Study description",
+      dataIndex: "study_description",
+      ellipsis: true,
+    },
+
+    {
+      title: "Report description",
+      dataIndex: "reporting_study_description",
+    },
+
+    {
+      title: "Study Date/Time",
+      dataIndex: "study_date",
+    },
+    {
+      title: "Reporting Date/Time",
       dataIndex: "reporting_time",
     },
 
@@ -57,31 +76,10 @@ const index = () => {
       dataIndex: "reported_by",
     },
 
-    {
-      title: "Reporting description",
-      dataIndex: "reporting_study_description",
-    },
 
     {
       title: "Reporting type",
       dataIndex: "reporting_type",
-    },
-
-    {
-      title: "Study Description",
-      dataIndex: "study_description",
-      ellipsis: true,
-    },
-
-    {
-      title: "Study History",
-      dataIndex: "study_history",
-      ellipsis: true,
-    },
-
-    {
-      title: "Study Date",
-      dataIndex: "study_date",
     },
 
     {
@@ -103,19 +101,14 @@ const index = () => {
       ),
     },
     {
-      title: "Reporting Charge",
+      title: "Charge",
       dataIndex: "reporting_charge",
-      fixed: 'right'
-    },
-    {
-      title: "Comu -Charge",
-      dataIndex: "comunication_charge",
-      fixed: 'right'
-    },
-    {
-      title: "Midnight Charge",
-      dataIndex: "midnight_charge",
-      fixed: 'right'
+      fixed: 'right', 
+      render: (text, record) => (
+        <div>
+          {parseInt(record?.reporting_charge) + parseInt(record?.comunication_charge) + parseInt(record?.midnight_charge) }
+        </div>
+      )
     },
   ];
 
@@ -128,35 +121,16 @@ const index = () => {
 
       {/* ===== Billing data table ======  */}
 
-      <Card style={{ marginTop: "30px" }}>
-
-        {billingData.length !== 0 &&
-
-          <div className="Billing-report-information">
-
-            <Button type="primary" onClick={() => setIsModalOpen(true)}
-              style={{ backgroundColor: "#f5f5f5", color: "#212121 !important" }}>
-              View Billing information
-            </Button>
-
-          </div>
-        }
-
-        {/* ==== Billing data related table ====  */}
-        <div>
-          <Table
-            columns={columns}
-            dataSource={billingData}
-            loading={isLoading}
-            className="Billing-table"
-            scroll={{
-              x: 1800,
-              y: "45vh"
-            }}
-          />
-        </div>
-
-      </Card>
+      <Table
+        columns={columns}
+        dataSource={billingData}
+        loading={isLoading}
+        className="Billing-table"
+        scroll={{
+          x: 1300,
+          y: "calc(100vh - 310px)"
+        }}
+      />
 
       {/* ===== Search billing related modal ======  */}
 
@@ -170,10 +144,10 @@ const index = () => {
 
       <Modal
         title="Billing information"
-        open={isModalOpen}
+        open={billingInformationModal}
         centered
-        onOk={() => setIsModalOpen(false)}
-        onCancel={() => setIsModalOpen(false)}
+        onOk={() => setBillingInformationModal(false)}
+        onCancel={() => setBillingInformationModal(false)}
         footer={null}
       >
         <div className="billing-main-div">
@@ -189,7 +163,7 @@ const index = () => {
           <div className="billing-sub-div">
             <Typography className="billing-text">Reporting Charges</Typography>
             <Typography className="billing-text">
-              {charges.total_reporting_charge}
+              {totalBillingReportingCharge}
             </Typography>
           </div>
 
@@ -202,7 +176,7 @@ const index = () => {
               Communication Charges
             </Typography>
             <Typography className="billing-text">
-              {charges.total_communication_charge}
+              {totalBillingCommunicationCharge}
             </Typography>
           </div>
 
@@ -213,7 +187,7 @@ const index = () => {
           <div className="billing-sub-div">
             <Typography className="billing-text">Midnight Charges</Typography>
             <Typography className="billing-text">
-              {charges.total_midnight_charge}
+              {totalBillingMidnightCharge}
             </Typography>
           </div>
 
@@ -224,9 +198,9 @@ const index = () => {
           <div className="billing-sub-div Billing-sub-total-info-div">
             <Typography className="billing-text" style={{ fontWeight: "bold" }}>Total Amount</Typography>
             <Typography className="billing-header">
-              {Number(charges.total_communication_charge) +
-                Number(charges.total_midnight_charge) +
-                Number(charges.total_reporting_charge)}
+              {Number(totalBillingReportingCharge) +
+                Number(totalBillingCommunicationCharge) +
+                Number(totalBillingMidnightCharge)}
             </Typography>
           </div>
 
@@ -235,6 +209,7 @@ const index = () => {
         </div>
 
       </Modal>
+      
     </div>
   );
 };

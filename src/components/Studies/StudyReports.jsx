@@ -61,7 +61,6 @@ const StudyReports = ({
 
   const [normalReportImages, setNormalReportImages] = useState([])
   const [normalReportModalData, setNormalReportModalData] = useState({})
-  const [normalReportClosedLoading, setNormalReportClosedLoading] = useState(false);
 
   // ** Permission handler ** //
   const checkPermissionStatus = name => {

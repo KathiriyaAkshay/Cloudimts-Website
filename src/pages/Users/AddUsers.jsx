@@ -14,7 +14,8 @@ import {
   Modal,
   Spin,
   Upload,
-  message
+  message, 
+  Image
 } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
 import { useBreadcrumbs } from "../../hooks/useBreadcrumbs";
@@ -638,8 +639,9 @@ const AddUsers = () => {
                       }}
                     >
                       {imageUrl ? (
-                        <img
-                          src={imageUrl}
+                        <Image
+                          src={imageUrl} 
+                          className='selected-profile-image'
                           alt="avatar"
                           style={{
                             width: '100%',

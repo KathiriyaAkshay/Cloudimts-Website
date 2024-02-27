@@ -263,12 +263,17 @@ const AssignStudy = ({
       let modifiedPayload = {
         ...payloadObj,
         id: studyID,
-        assign_user: values.radiologist,
         study_data: {
           images: [],
         },
         number_of_report: values?.number_of_report
       };
+
+      if (values?.radiologist !== undefined){
+        modifiedPayload['assign_user'] = values?.radiologist
+      } else {
+        modifiedPayload['assign_user'] = null ; 
+      }
 
       if (multipleImageFile !== undefined) {
         modifiedPayload['study_data']['images'] = [...multipleImageFile, ...images]
@@ -419,12 +424,12 @@ const AssignStudy = ({
                         label="Choose Radiologist"
                         name="radiologist"
                         className="category-select"
-                        rules={[
-                          {
-                            required: true,
-                            message: "Please select radiologist",
-                          },
-                        ]}
+                        // rules={[
+                        //   {
+                        //     required: true,
+                        //     message: "Please select radiologist",
+                        //   },
+                        // ]}
                       >
                         <Select
                           placeholder="Select Radiologist"

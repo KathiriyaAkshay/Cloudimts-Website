@@ -17,7 +17,6 @@ import {
   Button,
   Select
 } from 'antd'
-import { AiFillIdcard } from 'react-icons/ai'
 import { CheckCircleOutlined, ClearOutlined, CloseCircleOutlined, FileOutlined, PictureOutlined, EditFilled } from '@ant-design/icons'
 import { useBreadcrumbs } from '../../hooks/useBreadcrumbs'
 import ChatMain from '../../components/Chat/ChatMain'
@@ -63,7 +62,8 @@ import { convertToDDMMYYYY } from '../../helpers/utils'
 import OHIFViewer from "../../assets/images/menu.png";
 import WeasisViewer from "../../assets/images/Weasis.png";
 import API from '../../apis/getApi' 
-import { FileDoneOutlined } from '@ant-design/icons'
+import { FileDoneOutlined } from '@ant-design/icons'; 
+import StudyReportIcon from "../../assets/images/study-report.png"
 
 const BASE_URL = import.meta.env.VITE_APP_SOCKET_BASE_URL
 const Dicom = () => {
@@ -669,18 +669,20 @@ const Dicom = () => {
           <Tag
             color={
               text === 'New'
-                ? 'success'
-                : text === 'Assigned'
-                  ? 'blue'
+                ? '#000000'
+                : (text === 'Assigned' && record?.top_assign == 0)
+                  ? '#FFA500' 
+                : (text === 'Assigned' && record?.top_assign == 1)
+                  ? '#D22B2B' 
                   : text === 'Viewed'
-                    ? 'cyan'
+                    ? '#e3dc02'
                     : text === 'ViewReport'
                       ? 'lime'
                       : text === 'InReporting'
-                        ? 'magenta'
+                        ? '#795695'
                         : text === 'ClosedStudy'
-                          ? 'red'
-                          : 'warning'
+                          ? '#097969  '
+                          : 'blue'
             }
             style={{ textAlign: 'center', fontWeight: '600' }}
 
@@ -815,8 +817,8 @@ const Dicom = () => {
 
               {checkPermissionStatus('Study data option') && (
                 <Tooltip title={`Study Report`}>
-                  <FileDoneOutlined
-                    className='action-icon'
+                  <img src={StudyReportIcon}
+                    className='action-icon study-report-icon'
                     onClick={() => {
                       setStudyID(record.id)
                       setStudyStatus(record.status)

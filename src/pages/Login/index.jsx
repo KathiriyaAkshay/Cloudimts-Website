@@ -12,11 +12,9 @@ import { Link, useNavigate } from 'react-router-dom'
 import API from '../../apis/getApi'
 import { useContext, useEffect, useState } from 'react'
 import logo from '../../assets/images/Imageinet-logo.png'
-import { UserDetailsContext } from '../../hooks/userDetailsContext' ; 
 import NotificationMessage from '../../components/NotificationMessage' ; 
 import APIHandler from '../../apis/apiHandler'
 import LoginBg from '../../assets/images/login.jpeg'
-import axios from 'axios'
 
 const Login = () => {
   const navigate = useNavigate() ; 
@@ -166,6 +164,13 @@ const Login = () => {
                   </Form.Item>
                 </Form>
               </Spin>
+                    
+              {/* Copy right information  */}
+
+              <div style={{marginLeft: "auto", marginRight: "auto", textAlign: "center", marginTop: "2rem", fontWeight: 600}}>
+                A Product of Imageinet Telesolutions copy right 2024
+              </div>
+           
             </Card>
           </Col>
         </Row>
