@@ -7,9 +7,13 @@ import APIHandler from "../apis/apiHandler";
 
 export const handleDownloadPDF = async (billingData) => {
 
+  // Reporting data 
   let ReportingData = {};
 
-  // ====== Filtering data 
+  console.log("Billing data information ==========>");
+  console.log(billingData);
+
+  // ====== Filtering data based on Modality information ======= // 
 
   for (let i = 0; i < billingData.length; i++) {
     let {
@@ -18,21 +22,25 @@ export const handleDownloadPDF = async (billingData) => {
       midnight_charge,
       modality,
     } = billingData[i];
+
+    console.log("Particular modality inforamtion ==========>");
+    console.log(modality);
   
-    let reportingCharge = parseInt(reporting_charge);
+    let reportingCharge = parseInt(reporting_charge); 
     let communicationCharge = parseInt(modality_communication_charge);
     let midnightCharge = parseInt(midnight_charge);
   
     if (reportingCharge !== 0) {
+
       if (modality in ReportingData) {
 
         ReportingData[modality] = {
         
           total_object: ReportingData[modality].total_object + 1,
           total_report_charge: reportingCharge + communicationCharge,
-          total_midnight_charge:
-            ReportingData[modality].total_midnight_charge + midnightCharge
-        };
+          total_midnight_charge: ReportingData[modality].total_midnight_charge + midnightCharge
+        };  
+        
       } else {
 
         ReportingData[modality] = {
@@ -44,12 +52,13 @@ export const handleDownloadPDF = async (billingData) => {
       }
 
     }
-  }
+  } 
 
-  let bill_total_amount_information = 0 ; 
-  let bill_tax_amount_information = 400 ; 
-  let bill_all_amount_information = 0 ; 
+  let bill_total_amount_information = 0 ; // Bill total amount information 
+  let bill_tax_amount_information = 400 ;  // Bill tax amount information 
+  let bill_all_amount_information = 0 ; // Bill final amount information after tax
 
+  // Generate bill total amount 
   Object.keys(ReportingData).forEach((key => {
     ReportingData[key]['total_amount'] = parseInt(parseInt(ReportingData[key]['total_object'])*ReportingData[key]['total_report_charge']) + ReportingData[key]['total_midnight_charge']
     bill_total_amount_information = bill_total_amount_information + ReportingData[key]['total_amount'] ; 
@@ -57,13 +66,13 @@ export const handleDownloadPDF = async (billingData) => {
 
   bill_all_amount_information = bill_total_amount_information + bill_tax_amount_information ; 
 
-  // ===== Get Filter data information 
-  
+  // Filter data context
   let FilterData = localStorage.getItem("BillingFilterValues") ; 
   FilterData = JSON.parse(FilterData) ;
 
-  // Fetch Institution data information 
-  if (FilterData?.institution.length > 1){
+  if (FilterData?.institution === undefined){
+    NotificationMessage("warning", "Not able to generate bill without institution selection") ; 
+  } else if (FilterData?.institution.length > 1){
     NotificationMessage("warning", "Not able to generate bill for multiple Institution") ; 
   } else{
 
@@ -371,6 +380,7 @@ export const handleDownloadPDF = async (billingData) => {
 
 };
 
+// Handle data to export option handler 
 export const handleExport = (tableData) => {
   // Create a new workbook
   const workbook = XLSX.utils.book_new();

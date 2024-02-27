@@ -170,7 +170,8 @@ const BillingModal = ({ setBillingData, setIsLoading, setCharges }) => {
         if (select_institution_list.includes("All")){
           select_institution_all_option = true ; 
           select_institution_list = select_institution_list.filter(item => item !== "All")
-
+        } else {
+          select_institution_all_option = false ; 
         }
       }
 
@@ -184,6 +185,8 @@ const BillingModal = ({ setBillingData, setIsLoading, setCharges }) => {
         if (select_user_list?.includes("All")){
           select_user_all_option = true; 
           select_user_list = select_user_list.filter(item => item!== "All")
+        } else {
+          select_user_all_option = false ; 
         }
       }
 
@@ -197,6 +200,8 @@ const BillingModal = ({ setBillingData, setIsLoading, setCharges }) => {
         if (values?.study_status == "all"){
           select_status_all_option = true ; 
           select_status_value = values?.study_status
+        } else {
+          select_status_all_option = false; 
         }
       }
       setIsLoading(true);

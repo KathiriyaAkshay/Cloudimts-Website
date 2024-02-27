@@ -22,7 +22,7 @@ const index = () => {
   // **** Billling column **** //
   const columns = [
     {
-      title: "Refernce id",
+      title: "Id",
       dataIndex: "reference_id"
     },
     {
@@ -101,19 +101,14 @@ const index = () => {
       ),
     },
     {
-      title: "Reporting Charge",
+      title: "Charge",
       dataIndex: "reporting_charge",
-      fixed: 'right'
-    },
-    {
-      title: "Communication charge",
-      dataIndex: "comunication_charge",
-      fixed: 'right'
-    },
-    {
-      title: "Midnight Charge",
-      dataIndex: "midnight_charge",
-      fixed: 'right'
+      fixed: 'right', 
+      render: (text, record) => (
+        <div>
+          {parseInt(record?.reporting_charge) + parseInt(record?.comunication_charge) + parseInt(record?.midnight_charge) }
+        </div>
+      )
     },
   ];
 
