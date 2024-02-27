@@ -376,8 +376,34 @@ export const handleExport = (tableData) => {
   const workbook = XLSX.utils.book_new();
   const sheetName = "BillingData";
 
+  const sheetNameValue = prompt("Enter Excel sheet name:"); 
+  let excelTempData = [] ; 
+
+  tableData.map((element) => {
+    excelTempData.push(
+      {
+        "Id" : element?.id, 
+        "Patient id": element?.patient_id, 
+        "Patient name": element?.patient_name, 
+        "Reference id": element?.reference_id, 
+        "Modality": element?.modality, 
+        "Institution": element?.institution, 
+        "Study description" : element?.study_description, 
+        "Report description": element?.reporting_study_description, 
+        "Study Date/Time": element?.study_date, 
+        "Reporting Date/Time": element?.reporting_time, 
+        "Status": element?.study_status, 
+        "Reported by": element?.reported_by, 
+        "Reporting charge": element?.reporting_charge, 
+        "Communication charge": element?.comunication_charge, 
+        "Midnight charge": element?.midnight_charge, 
+        "Charge": parseInt(element?.reporting_charge) + parseInt(element?.comunication_charge) + parseInt(element?.midnight_charge)
+      }
+    )
+  })
+
   // Convert your data to worksheet
-  const worksheet = XLSX.utils.json_to_sheet(tableData);
+  const worksheet = XLSX.utils.json_to_sheet(excelTempData);
 
   // Add the worksheet to the workbook
   XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
@@ -391,7 +417,7 @@ export const handleExport = (tableData) => {
   });
 
   // Create a unique file name
-  const fileName = "billing_data.xlsx";
+  const fileName = `${sheetNameValue}.xlsx`;
 
   // Save the file using file-saver
   saveAs(blob, fileName);
