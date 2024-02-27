@@ -11,11 +11,10 @@ import NotificationMessage from "./NotificationMessage";
 
 const BillingModal = ({ setBillingData, setIsLoading, setCharges }) => {
   
-  const { isBillingFilterModalOpen, setIsBillingFilterModalOpen } =
-    useContext(filterDataContext);
+  const { isBillingFilterModalOpen, setIsBillingFilterModalOpen,  setTotalBillingReportingCharge, 
+    setTotalCommunicationCharge, setTotalMidnightCharge, setBillingDataLength} =useContext(filterDataContext);
 
-  const { billingFilterData, setBillingFilterData } =
-    useContext(BillingDataContext);
+  const {setBillingFilterData } = useContext(BillingDataContext);
   
   const [institutionOptions, setInstitutionOptions] = useState([]);
   const [radiologistOptions, setRadiologistOptions] = useState([]);
@@ -200,10 +199,6 @@ const BillingModal = ({ setBillingData, setIsLoading, setCharges }) => {
           select_status_value = values?.study_status
         }
       }
-
-      console.log(values?.study_status);
-      
-
       setIsLoading(true);
   
       // Set Userinput selection in localStorage 
@@ -235,11 +230,9 @@ const BillingModal = ({ setBillingData, setIsLoading, setCharges }) => {
             if (res.data.status) {
           setBillingData(res.data.data);
           setBillingFilterData(res.data.data);
-          setCharges({
-            total_reporting_charge: res.data.total_reporting_charge,
-            total_communication_charge: res.data.total_communication_charge,
-            total_midnight_charge: res.data.total_midnight_charge,
-          });
+          setTotalBillingReportingCharge(res?.data?.total_reporting_charge) ; 
+          setTotalCommunicationCharge(res?.data?.total_communication_charge) ; 
+          setTotalMidnightCharge(res?.data?.total_midnight_charge) ; 
           setIsBillingFilterModalOpen(false);
           } else {
             NotificationMessage(

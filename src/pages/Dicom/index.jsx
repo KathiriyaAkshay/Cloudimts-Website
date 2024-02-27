@@ -17,7 +17,6 @@ import {
   Button,
   Select
 } from 'antd'
-import { AiFillIdcard } from 'react-icons/ai'
 import { CheckCircleOutlined, ClearOutlined, CloseCircleOutlined, FileOutlined, PictureOutlined, EditFilled } from '@ant-design/icons'
 import { useBreadcrumbs } from '../../hooks/useBreadcrumbs'
 import ChatMain from '../../components/Chat/ChatMain'

@@ -28,7 +28,6 @@ import {
 } from '@ant-design/icons'
 import { handleDownloadPDF, handleExport } from '../helpers/billingTemplate'
 import { BillingDataContext } from '../hooks/billingDataContext'
-import { StudyIdContext } from '../hooks/studyIdContext'
 import NotificationMessage from './NotificationMessage'
 import { FilterSelectedContext } from '../hooks/filterSelectedContext'
 import StudyFilterModal from './StudyFilterModal'
@@ -61,8 +60,10 @@ const HeaderButton = ({
     templateOption,
     setEmailSupportOption,
     setPhoneSupportOption, 
-    templateInstitutionOption
-  } = useContext(filterDataContext)
+    templateInstitutionOption, 
+    setBillingInformationModal,
+  } = useContext(filterDataContext) ; 
+  
 
   const { setSelectedItem } = useContext(ReportDataContext)
   const { billingFilterData, setBillingFilterData } =
@@ -429,6 +430,22 @@ const HeaderButton = ({
 
       {window.location.pathname === '/billing' && (
         <div className='iod-setting-div'>
+
+          {billingFilterData?.length > 0?<>
+            <Button type="primary" onClick={() => setBillingInformationModal(true)}
+              style={{ backgroundColor: "#f5f5f5", color: "#212121 !important" }}>
+              View Billing information
+            </Button>
+          </>:<></>}
+
+          <Button
+            type='primary'
+            className='btn-icon-div'
+            onClick={() => setIsBillingFilterModalOpen(true)}
+          >
+            <SearchOutlined /> Search Billing
+          </Button>
+          
           {permissionData['Other option permission'] &&
             permissionData['Other option permission'].find(
               data =>
@@ -443,13 +460,6 @@ const HeaderButton = ({
               </Button>
             )}
 
-          <Button
-            type='primary'
-            className='btn-icon-div header-secondary-option-button'
-            onClick={() => setIsBillingFilterModalOpen(true)}
-          >
-            <SearchOutlined /> Search Billing
-          </Button>
 
           <Button
             type='primary'

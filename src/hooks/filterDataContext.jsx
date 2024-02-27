@@ -46,7 +46,12 @@ const FilterDataProvider = ({ children }) => {
   const [emailSupportOption, setEmailSupportOption] = useState(true) ; 
   const [phoneSupportOption, setPhoneSupportOption] = useState(false) ; 
 
-  const [chatNotificationData, setChatNotificationData] = useState([]) ; 
+  const [chatNotificationData, setChatNotificationData] = useState([]) ;  
+
+  const [billingInformationModal, setBillingInformationModal] = useState(false) ; 
+  const [totalBillingReportingCharge, setTotalBillingReportingCharge] = useState(null) ; 
+  const [totalBillingCommunicationCharge, setTotalCommunicationCharge] = useState(null) ; 
+  const [totalBillingMidnightCharge, setTotalMidnightCharge] = useState(null) ; 
 
   return (
     <filterDataContext.Provider
@@ -88,7 +93,15 @@ const FilterDataProvider = ({ children }) => {
         chatNotificationData, 
         setChatNotificationData, 
         templateInstitutionOption, 
-        setTemplateInstitutionOption
+        setTemplateInstitutionOption, 
+        billingInformationModal, 
+        setBillingInformationModal, 
+        totalBillingReportingCharge, 
+        setTotalBillingReportingCharge, 
+        totalBillingCommunicationCharge, 
+        setTotalCommunicationCharge, 
+        totalBillingMidnightCharge, 
+        setTotalMidnightCharge
       }}
     >
       {children}
