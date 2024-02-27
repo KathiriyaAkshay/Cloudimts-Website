@@ -670,8 +670,10 @@ const Dicom = () => {
             color={
               text === 'New'
                 ? '#000000'
-                : text === 'Assigned'
-                  ? '#FFA500'
+                : (text === 'Assigned' && record?.top_assign == 0)
+                  ? '#FFA500' 
+                : (text === 'Assigned' && record?.top_assign == 1)
+                  ? '#D22B2B' 
                   : text === 'Viewed'
                     ? '#e3dc02'
                     : text === 'ViewReport'
