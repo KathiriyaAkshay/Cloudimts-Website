@@ -63,7 +63,8 @@ import { convertToDDMMYYYY } from '../../helpers/utils'
 import OHIFViewer from "../../assets/images/menu.png";
 import WeasisViewer from "../../assets/images/Weasis.png";
 import API from '../../apis/getApi' 
-import { FileDoneOutlined } from '@ant-design/icons'
+import { FileDoneOutlined } from '@ant-design/icons'; 
+import StudyReportIcon from "../../assets/images/study-report.png"
 
 const BASE_URL = import.meta.env.VITE_APP_SOCKET_BASE_URL
 const Dicom = () => {
@@ -815,8 +816,8 @@ const Dicom = () => {
 
               {checkPermissionStatus('Study data option') && (
                 <Tooltip title={`Study Report`}>
-                  <FileDoneOutlined
-                    className='action-icon'
+                  <img src={StudyReportIcon}
+                    className='action-icon study-report-icon'
                     onClick={() => {
                       setStudyID(record.id)
                       setStudyStatus(record.status)
