@@ -94,7 +94,8 @@ const StudyNotificationProvider = ({ children }) => {
                 return {...element, status: eventData.payload.data.assign_user !== null?"Assigned":element?.status , 
                   updated_at: eventData.payload.data.updated_at, 
                   study_description: eventData.payload.data.study_description, 
-                  assign_user: eventData.payload.data.assign_user
+                  assign_user: eventData.payload.data.assign_user, 
+                  top_assign: eventData.payload.data.top_assign
                 } ;
                  
               } else{
