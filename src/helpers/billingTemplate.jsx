@@ -393,32 +393,48 @@ export const handleDownloadPDF = async (billingData) => {
       </tbody>
       </table>
 
-      <div class="d-flex flex-row justify-content-between mt-3">
-        <div class="w-50" style="font-size: small;font-weight: 500;">
-          <div>Important Information</div>
-          <div>
-            1. Imageinet Telesolutuons is only a communication service provider and will not be responsible for the content of the radiologist's Report.
-            2. Bill Receipt: You are billed on a monthly basis. In case you do not receive bill on time, please call 9500067654 and we will tell you the amount payable and arrange to send you a duplicate bill. Non - receipt of bill would not affect your obligations to pay the bill before due date.
-            3. Variations, if any, should be informed within 48 hours of receipt of electronic invoice; else it would be deemed to have been accepted by the customer and payment will have to be made as per the invoice within the due date.
-          </div>
+      <div class="d-flex flex-row justify-content-between mt-3 w-100">
+      <div class="w-50" style="font-size: small;font-weight: 500;">
+        <div>Important Information</div>
+        <div>
+          1. Imageinet Telesolutuons is only a communication service provider and will not be responsible for the content of the radiologist's Report.
+          2. Bill Receipt: You are billed on a monthly basis. In case you do not receive bill on time, please call 9500067654 and we will tell you the amount payable and arrange to send you a duplicate bill. Non - receipt of bill would not affect your obligations to pay the bill before due date.
+          3. Variations, if any, should be informed within 48 hours of receipt of electronic invoice; else it would be deemed to have been accepted by the customer and payment will have to be made as per the invoice within the due date.
         </div>
-        <div classname="d-flex w-50 justify-content-between" style="font-size: 0.9rem;">
-          <div class="">
-            <div class="d-flex justify-content-end">
-              <p class="text-muted me-3" style="font-weight: bold ; ">Subtotal:</p>
-              <span>₹${bill_total_amount_information}/-</span>
-            </div>
-            <div class="d-flex justify-content-end">
-              <p class="text-muted me-3" style="font-weight: bold; ">Tax:</p>
-              <span>₹${bill_tax_amount_information}/-</span>
-            </div>
-            <div class="d-flex justify-content-end mt-3">
-              <h5 class="me-3">Due amount:</h5>
-              <h5 class="text-success">₹${bill_all_amount_information}/-</h5>
-            </div>
+      </div>
+      <div class="d-flex w-50 justify-content-between" style="font-size: 0.9rem;">
+        <div class="w-100">
+          <div class="d-flex justify-content-end">
+            <p class="text-muted text-end me-3 w-75" style="font-weight: bold; ">Subtotal:</p>
+            <span class="w-25">₹0/-</span>
+          </div>
+          <div class="d-flex justify-content-end">
+            <p class="text-muted text-end me-3 w-75" style="font-weight: bold ; ">Discount:</p>
+            <span class="w-25">₹0/-</span>
+          </div>
+          <div class="d-flex justify-content-end">
+            <p class="text-muted text-end me-3 w-75" style="font-weight: bold ; ">Subtotal Less Discount:</p>
+            <span class="w-25">₹0/-</span>
+          </div>
+          <div class="d-flex justify-content-end">
+            <p class="text-muted text-end me-3 w-75" style="font-weight: bold; ">Tax Rate:</p>
+            <span class="w-25">₹400/-</span>
+          </div>
+          <div class="d-flex justify-content-end">
+            <p class="text-muted text-end me-3 w-75" style="font-weight: bold; ">Total Tax:</p>
+            <span class="w-25">₹400/-</span>
+          </div>
+          <div class="d-flex justify-content-end">
+            <p class="text-muted text-end me-3 w-75" style="font-weight: bold; ">Outstanding:</p>
+            <span class="w-25">₹400/-</span>
+          </div>
+          <div class="d-flex justify-content-end mt-3">
+            <h5 class="me-3 w-75 text-end">Due amount:</h5>
+            <h5 class="text-success w-25">₹400/-</h5>
           </div>
         </div>
       </div>
+    </div>
 
      
     </div>
