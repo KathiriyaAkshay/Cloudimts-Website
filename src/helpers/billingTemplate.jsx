@@ -536,11 +536,12 @@ const pdfOptions = {
   html2canvas: {
     scale: 2,
     logging: false,
-    
+
     scrollY: 0,
     width: 1650
   },
-  // jsPDF: { unit: 'px', format: [element.offsetWidth, element.offsetHeight], orientation: 'portrait' },
+  jsPDF:        {orientation: 'landscape' }
+
 };
 
 html2pdf().set(pdfOptions).from(html).save();
