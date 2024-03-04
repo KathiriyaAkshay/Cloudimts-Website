@@ -37,18 +37,20 @@ const index = () => {
       title: "id",
       dataIndex: "id",
       editable: true,
+      sorter: (a, b) => a.id - b.id,
 
     },
     {
       title: "reference Id",
       dataIndex: "reference_id",
       editable: true,
-
+            sorter: (a, b) => a.reference_id - b.reference_id,
     },
     {
       title: "Patient ID",
       dataIndex: "patient_id",
       editable: true,
+            sorter: (a, b) => a.patient_id - b.patient_id,
 
     },
 
@@ -57,6 +59,7 @@ const index = () => {
       dataIndex: "patient_name",
       ellipsis: true,
       editable: true,
+            sorter: (a, b) => a.patient_name.localeCompare(b.patient_name),
       render: (text, record) => (
         <Tooltip title={text}>
           {text}
@@ -68,6 +71,7 @@ const index = () => {
       title: "Modality",
       dataIndex: "modality",
       editable: true,
+            sorter: (a, b) => a.modality.localeCompare(b.modality),
 
     },
 
@@ -75,6 +79,7 @@ const index = () => {
       title: "Institution",
       dataIndex: "institution",
       editable: true,
+            sorter: (a, b) => a.institution.localeCompare(b.institution),
 
     },
 
@@ -83,6 +88,7 @@ const index = () => {
       dataIndex: "study_description",
       ellipsis: true,
       editable: true,
+            sorter: (a, b) => a.study_description.localeCompare( b.study_description),
 
     },
 
@@ -90,6 +96,7 @@ const index = () => {
       title: "Report description",
       dataIndex: "reporting_study_description",
       editable: true,
+      sorter: (a, b) => a.reporting_study_description.localeCompare(b.reporting_study_description),
 
     },
 
@@ -97,20 +104,21 @@ const index = () => {
       title: "Study Date/Time",
       dataIndex: "study_date",
       editable: true,
+      sorter: (a, b) => a.study_date.localeCompare(b.study_date),
 
     },
     {
       title: "Reporting Date/Time",
       dataIndex: "reporting_time",
       editable: true,
-
+      sorter: (a, b) => a.reporting_time.localeCompare(b.reporting_time),
     },
 
     {
       title: "Reported by",
       dataIndex: "reported_by",
       editable: true,
-
+      sorter: (a, b) => a.reported_by.localeCompare(b.reported_by),
     },
 
 
@@ -118,13 +126,14 @@ const index = () => {
       title: "Reporting type",
       dataIndex: "reporting_type",
       editable: true,
-
+      sorter: (a, b) => a.reporting_type.localeCompare(b.reporting_type),
     },
 
     {
       title: "Status",
       dataIndex: "study_status",
       editable: true,
+      sorter: (a, b) => a.study_status.localeCompare(b.study_status),
       render: (text, record) => (
         <Tag
           color={
@@ -145,7 +154,6 @@ const index = () => {
       dataIndex: "reporting_charge",
       fixed: 'right',
       editable: true,
-
       render: (text, record) => (
         <div>
           {parseInt(record?.reporting_charge) + parseInt(record?.comunication_charge) + parseInt(record?.midnight_charge)}
@@ -308,7 +316,11 @@ const index = () => {
     };
   });
 
-  //edit rows logig ends
+  //edit rows logic ends
+
+
+//filter and sorting logic starts
+
 
 
 
