@@ -4,6 +4,7 @@ import * as htmlToImage from 'html-to-image';
 import { jsPDF } from "jspdf";
 import NotificationMessage from "../components/NotificationMessage" ; 
 import APIHandler from "../apis/apiHandler";
+import html2pdf from 'html2pdf.js';
 
 export const handleDownloadPDF = async (billingData) => {
 
@@ -432,3 +433,117 @@ export const handleExport = (tableData) => {
   // Save the file using file-saver
   saveAs(blob, fileName);
 };
+
+export const handlePdfExport=(tableData)=>{
+
+  var html=`
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simple and Good Looking Table</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+
+    th, td {
+      padding: 10px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    tr:hover {
+      background-color: #f2f2f2;
+    }
+  </style>
+</head>
+<body>
+
+
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Patient ID</th>
+      <th>Patient Name</th>      
+      <th>Reference ID</th>
+      <th>Modality</th>
+      <th>Institution</th>
+      <th>Study Description</th>
+      <th>Report description</th>
+      <th>Study Date/Time</th>
+      <th>Reporting Date/Time</th>
+      <th>Status</th>
+      <th>Reported By</th>
+      <th>Reporting Charge</th>
+      <th>Communication Charge</th>
+      <th>Midnight Charge</th>
+      <th>Charge</th>
+    </tr>
+  </thead>
+  <tbody>`
+
+  
+  tableData.map((element) => {
+    html+=
+    `
+    <tr>
+  <td>${element?.id}</td>
+  <td>${element?.patient_id}</td>
+  <td>${element?.patient_name}</td>      
+  <td>${element?.reference_id}</td>
+  <td>${element?.modality}</td>
+  <td>${element?.institution}</td>
+  <td>${element?.study_description}</td>
+  <td>${element?.reporting_study_description}</td>
+  <td>${element?.study_date}</td>
+  <td>${element?.reporting_time}</td>
+  <td>${element?.study_status}</td>
+  <td>${element?.reported_by}</td>
+  <td>${element?.reporting_charge}</td>
+  <td>${element?.comunication_charge}</td>
+  <td>${element?.midnight_charge}</td>
+  <td>${parseInt(element?.reporting_charge) + parseInt(element?.comunication_charge) + parseInt(element?.midnight_charge)}</td>
+</tr>
+    `
+  })
+
+
+html+=` </tbody>
+</table>
+
+</body>
+</html>`
+
+
+const pdfOptions = {
+  filename: 'document.pdf',
+  html2canvas: {
+    scale: 2,
+    logging: false,
+    
+    scrollY: 0,
+    width: 1650
+  },
+  // jsPDF: { unit: 'px', format: [element.offsetWidth, element.offsetHeight], orientation: 'portrait' },
+};
+
+html2pdf().set(pdfOptions).from(html).save();
+
+  
+}
