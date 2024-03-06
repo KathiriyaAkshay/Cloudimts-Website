@@ -1,10 +1,10 @@
 import React, { useContext, useEffect, useState, useRef } from "react";
 import { useBreadcrumbs } from "../../hooks/useBreadcrumbs";
 import BillingModal from "../../components/BillingModal";
-import { Card, Divider, Table, Tag, Typography, Button, Modal, Tooltip, Form, Input } from "antd";
+import { Card, Divider, Table, Tag, Typography, Button, Modal, Tooltip, Form, Input, Row, Col, DatePicker,Select } from "antd";
 import { filterDataContext } from "../../hooks/filterDataContext";
 import { BillingDataContext } from "../../hooks/billingDataContext";
-import { DeleteOutlined } from "@ant-design/icons";
+import { DeleteOutlined, FilterOutlined } from "@ant-design/icons";
 
 
 const EditableContext = React.createContext(null);
@@ -26,6 +26,7 @@ const index = () => {
     totalBillingReportingCharge, totalBillingCommunicationCharge, totalBillingMidnightCharge } = useContext(filterDataContext);
   const { billingFilterData, setBillingFilterData, selectedData, setSelectedData } =
     useContext(BillingDataContext)
+  const [filterModal, setIsFilterModalOpen] = useState(false);
   const [isDeleteDisabled, setIsDeleteDisabled] = useState(true);
 
 
@@ -44,13 +45,13 @@ const index = () => {
       title: "reference Id",
       dataIndex: "reference_id",
       editable: true,
-            sorter: (a, b) => a.reference_id - b.reference_id,
+      sorter: (a, b) => a.reference_id - b.reference_id,
     },
     {
       title: "Patient ID",
       dataIndex: "patient_id",
       editable: true,
-            sorter: (a, b) => a.patient_id - b.patient_id,
+      sorter: (a, b) => a.patient_id - b.patient_id,
 
     },
 
@@ -59,7 +60,7 @@ const index = () => {
       dataIndex: "patient_name",
       ellipsis: true,
       editable: true,
-            sorter: (a, b) => a.patient_name.localeCompare(b.patient_name),
+      sorter: (a, b) => a.patient_name.localeCompare(b.patient_name),
       render: (text, record) => (
         <Tooltip title={text}>
           {text}
@@ -71,7 +72,7 @@ const index = () => {
       title: "Modality",
       dataIndex: "modality",
       editable: true,
-            sorter: (a, b) => a.modality.localeCompare(b.modality),
+      sorter: (a, b) => a.modality.localeCompare(b.modality),
 
     },
 
@@ -79,7 +80,7 @@ const index = () => {
       title: "Institution",
       dataIndex: "institution",
       editable: true,
-            sorter: (a, b) => a.institution.localeCompare(b.institution),
+      sorter: (a, b) => a.institution.localeCompare(b.institution),
 
     },
 
@@ -88,7 +89,7 @@ const index = () => {
       dataIndex: "study_description",
       ellipsis: true,
       editable: true,
-            sorter: (a, b) => a.study_description.localeCompare( b.study_description),
+      sorter: (a, b) => a.study_description.localeCompare(b.study_description),
 
     },
 
@@ -105,6 +106,12 @@ const index = () => {
       dataIndex: "study_date",
       editable: true,
       sorter: (a, b) => a.study_date.localeCompare(b.study_date),
+      ellipsis: true,
+      render: (study_date, record) => (
+        <Tooltip title={study_date}>
+          {study_date}
+        </Tooltip>
+      )
 
     },
     {
@@ -319,8 +326,18 @@ const index = () => {
   //edit rows logic ends
 
 
-//filter and sorting logic starts
+  //filter and sorting logic starts
 
+
+  const showModal = () => {
+    setIsFilterModalOpen(true);
+  };
+  const handleOk = () => {
+    setIsFilterModalOpen(false);
+  };
+  const handleCancel = () => {
+    setIsFilterModalOpen(false);
+  };
 
 
 
@@ -337,6 +354,14 @@ const index = () => {
       >
         <DeleteOutlined />Delete Bills
       </Button>
+      <Button
+        // type='primary'
+        className='btn-icon-div position-absolute top-0'
+        onClick={() => showModal()}
+        style={{ position: "absolute", top: "-3rem", left: "9rem" }}
+      >
+        <FilterOutlined />Filters
+      </Button>
 
 
       <Table
@@ -351,7 +376,7 @@ const index = () => {
         className="Billing-table"
         scroll={{
           x: 1300,
-          y: "calc(100vh - 310px)"
+          y: "calc(100vh - 275px)"
         }}
       />
 
@@ -431,6 +456,170 @@ const index = () => {
 
         </div>
 
+      </Modal>
+
+      <Modal title="Filters" open={filterModal} onOk={handleOk} onCancel={handleCancel} footer={[]}>
+        <Form
+          name="basic"
+          labelCol={{
+            span: 8,
+          }}
+          wrapperCol={{
+            span: 16,
+          }}
+          style={{
+            maxWidth: 600,
+          }}
+          initialValues={{
+            remember: true,
+          }}
+          // onFinish={onFinish}
+          // onFinishFailed={onFinishFailed}
+          autoComplete="off"
+        >
+
+          <Row justify="space-evenly">
+            <Col span={11}>
+              <Form.Item
+                label="Patient Id"
+                name="patient_id"
+                rules={[
+
+                ]}
+                labelCol={{
+                  span: 24,
+                }}
+                wrapperCol={{
+                  span: 24,
+                }}
+              >
+                <Input />
+              </Form.Item>
+            </Col>
+            <Col span={11}>
+              <Form.Item
+                label="Patient Name"
+                name="patient_name"
+                rules={[
+                ]}
+                labelCol={{
+                  span: 24,
+                }}
+                wrapperCol={{
+                  span: 24,
+                }}
+              >
+                <Input />
+              </Form.Item>
+
+            </Col>
+          </Row>
+
+
+          <Row justify="space-evenly">
+            <Col span={11}>
+              <Form.Item
+                label="Modality"
+                name="modality"
+                rules={[
+
+                ]}
+                labelCol={{
+                  span: 24,
+                }}
+                wrapperCol={{
+                  span: 24,
+                }}
+              >
+                <Input />
+              </Form.Item>
+            </Col>
+            <Col span={11}>
+              <Form.Item
+                label="institution"
+                name="institution"
+                rules={[
+                ]}
+                labelCol={{
+                  span: 24,
+                }}
+                wrapperCol={{
+                  span: 24,
+                }}
+              >
+                <Input />
+              </Form.Item>
+
+            </Col>
+          </Row>
+
+          <Row justify="space-evenly">
+            <Col span={11}>
+              <Form.Item
+                label="Status"
+                name="status"
+                rules={[
+
+                ]}
+                labelCol={{
+                  span: 24,
+                }}
+                wrapperCol={{
+                  span: 24,
+                }}
+              >
+                <Select
+                  defaultValue="lucy"
+                  options={[
+                    {
+                      value: 'jack',
+                      label: 'Jack',
+                    },
+                    {
+                      value: 'lucy',
+                      label: 'Lucy',
+                    },
+                    {
+                      value: 'Yiminghe',
+                      label: 'yiminghe',
+                    }
+                  ]}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={11}>
+              <Form.Item
+                label="Study date"
+                name="study_date"
+                rules={[
+                ]}
+                labelCol={{
+                  span: 24,
+                }}
+                wrapperCol={{
+                  span: 24,
+                }}
+              >
+                <DatePicker />
+              </Form.Item>
+
+            </Col>
+          </Row>
+
+
+
+
+          <Form.Item
+            wrapperCol={{
+              offset: 8,
+              span: 16,
+            }}
+          >
+            <Button type="primary" htmlType="submit">
+              Submit
+            </Button>
+          </Form.Item>
+        </Form>
       </Modal>
 
     </div>

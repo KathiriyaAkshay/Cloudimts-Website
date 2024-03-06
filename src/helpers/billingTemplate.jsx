@@ -435,6 +435,8 @@ export const handleExport = (tableData) => {
 };
 
 export const handlePdfExport=(tableData)=>{
+  const pdfName = prompt("Enter PDF sheet name:"); 
+
 
   var html=`
   <!DOCTYPE html>
@@ -473,6 +475,8 @@ export const handlePdfExport=(tableData)=>{
   </style>
 </head>
 <body>
+
+<h2 style="width:1700px;text-align:center;margin:20px 0px"}>Cloudimts</h2>
 
 
 <table>
@@ -532,15 +536,15 @@ html+=` </tbody>
 
 
 const pdfOptions = {
-  filename: 'document.pdf',
+  filename: pdfName+'.pdf',
   html2canvas: {
     scale: 2,
     logging: false,
 
     scrollY: 0,
-    width: 1650
+    width: 1750
   },
-  jsPDF:        {orientation: 'landscape' }
+  jsPDF:{orientation: 'landscape' }
 
 };
 
