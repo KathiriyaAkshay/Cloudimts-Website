@@ -1,11 +1,11 @@
 import React, { useContext, useEffect, useState, useRef } from "react";
 import { useBreadcrumbs } from "../../hooks/useBreadcrumbs";
 import BillingModal from "../../components/BillingModal";
-import { Card, Divider, Table, Tag, Typography, Button, Modal, Tooltip, Form, Input, Row, Col, DatePicker,Select } from "antd";
+import { Card, Divider, Table, Tag, Typography, Button, Modal, Tooltip, Form, Input, Row, Col, DatePicker, Select } from "antd";
 import { filterDataContext } from "../../hooks/filterDataContext";
 import { BillingDataContext } from "../../hooks/billingDataContext";
 import { DeleteOutlined, FilterOutlined } from "@ant-design/icons";
-
+import moment from 'moment'
 
 const EditableContext = React.createContext(null);
 
@@ -21,14 +21,19 @@ const index = () => {
     total_communication_charge: 0,
     total_reporting_charge: 0,
   });
-
+  const [form] = Form.useForm();
   const { setIsBillingFilterModalOpen, billingInformationModal, setBillingInformationModal,
     totalBillingReportingCharge, totalBillingCommunicationCharge, totalBillingMidnightCharge } = useContext(filterDataContext);
   const { billingFilterData, setBillingFilterData, selectedData, setSelectedData } =
     useContext(BillingDataContext)
   const [filterModal, setIsFilterModalOpen] = useState(false);
   const [isDeleteDisabled, setIsDeleteDisabled] = useState(true);
+  const [selectedDate, setSelectedDate] = useState(moment()); // Initialize with current date
 
+  const handleDateChange = (date, dateString) => {
+    setSelectedDate(date);
+    console.log(date, dateString);
+  };
 
   useEffect(() => setIsBillingFilterModalOpen(true), []);
 
@@ -339,6 +344,55 @@ const index = () => {
     setIsFilterModalOpen(false);
   };
 
+  const compareVal=(a,b)=>{
+
+    if(a!=undefined || a==""){
+
+      if(a==b){
+        return true;
+      }else{
+        return false;
+      }
+    }
+
+    return false;
+
+  }
+  
+
+  const onFinish = (values) => {
+    console.log('Success:', values);
+    var exists = false;
+    var filter={};
+    for (let key in values) {
+      if (values[key]!=undefined && values[key]!=""){
+
+          if(key=="study_date"){
+            filter[key]=moment(selectedDate).format("YYYY-MM-DD")
+          }else{
+          filter[key]=values[key];
+          }
+      }
+    }
+
+    const filteredData = billingFilterData.filter(item => {
+      for (let key in filter) {
+        console.log('====================================');
+        console.log(item[key],filter[key]);
+        console.log('====================================');
+        if(!item[key].includes(filter[key])){
+          return false;
+        }
+      }
+      return true;
+    });
+    setBillingData(filteredData);
+    setIsFilterModalOpen(false);
+  };
+  const onFinishFailed = (errorInfo) => {
+
+  };
+
 
 
   return (
@@ -461,6 +515,7 @@ const index = () => {
       <Modal title="Filters" open={filterModal} onOk={handleOk} onCancel={handleCancel} footer={[]}>
         <Form
           name="basic"
+          form={form}
           labelCol={{
             span: 8,
           }}
@@ -473,8 +528,8 @@ const index = () => {
           initialValues={{
             remember: true,
           }}
-          // onFinish={onFinish}
-          // onFinishFailed={onFinishFailed}
+          onFinish={onFinish}
+          onFinishFailed={onFinishFailed}
           autoComplete="off"
         >
 
@@ -557,7 +612,7 @@ const index = () => {
             <Col span={11}>
               <Form.Item
                 label="Status"
-                name="status"
+                name="study_status"
                 rules={[
 
                 ]}
@@ -569,19 +624,18 @@ const index = () => {
                 }}
               >
                 <Select
-                  defaultValue="lucy"
                   options={[
                     {
-                      value: 'jack',
-                      label: 'Jack',
+                      value: 'New',
+                      label: 'New',
                     },
                     {
-                      value: 'lucy',
-                      label: 'Lucy',
+                      value: 'Deleted',
+                      label: 'Deleted',
                     },
                     {
-                      value: 'Yiminghe',
-                      label: 'yiminghe',
+                      value: 'Assigned',
+                      label: 'Assigned',
                     }
                   ]}
                 />
@@ -600,25 +654,56 @@ const index = () => {
                   span: 24,
                 }}
               >
-                <DatePicker />
+                <DatePicker onChange={handleDateChange} value={selectedDate} />
               </Form.Item>
 
+            </Col>
+          </Row>
+
+          <Row justify="space-evenly">
+            <Col span={11}>
+              <Form.Item
+                label="Reference Id"
+                name="reference_id"
+                rules={[
+
+                ]}
+                labelCol={{
+                  span: 24,
+                }}
+                wrapperCol={{
+                  span: 24,
+                }}
+              >
+                <Input />
+              </Form.Item>
+            </Col>
+            <Col span={11}>
+
+            </Col>
+          </Row>
+
+          <Row align="end">
+            <Col>
+              <Form.Item>
+                <Button type="primary" htmlType="submit">
+                  Submit
+                </Button>
+              </Form.Item>
+            </Col>
+            <Col>
+              <Form.Item>
+                <Button onClick={()=>{setBillingData(billingFilterData);form.resetFields();}}>
+                  Clear All
+                </Button>
+              </Form.Item>
             </Col>
           </Row>
 
 
 
 
-          <Form.Item
-            wrapperCol={{
-              offset: 8,
-              span: 16,
-            }}
-          >
-            <Button type="primary" htmlType="submit">
-              Submit
-            </Button>
-          </Form.Item>
+
         </Form>
       </Modal>
 
