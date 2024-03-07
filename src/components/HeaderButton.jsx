@@ -20,13 +20,15 @@ import { filterDataContext } from '../hooks/filterDataContext'
 import { ReportDataContext } from '../hooks/reportDataContext'
 import { UserPermissionContext } from '../hooks/userPermissionContext'
 import { SiMicrosoftexcel } from 'react-icons/si'
+import { FaFilePdf } from "react-icons/fa";
+
 import {
   DownloadOutlined,
   FilterOutlined,
   PlusOutlined,
   SearchOutlined
 } from '@ant-design/icons'
-import { handleDownloadPDF, handleExport } from '../helpers/billingTemplate'
+import { handleDownloadPDF, handleExport,handlePdfExport } from '../helpers/billingTemplate'
 import { BillingDataContext } from '../hooks/billingDataContext'
 import NotificationMessage from './NotificationMessage'
 import { FilterSelectedContext } from '../hooks/filterSelectedContext'
@@ -142,6 +144,7 @@ const HeaderButton = ({
       fetchSystemFilter()
     }
   }, [window.location.pathname])
+
 
 
   return (
@@ -451,6 +454,7 @@ const HeaderButton = ({
               data =>
                 data.permission === 'Show Billing - export to excel option'
             )?.permission_value && (
+              <>
               <Button
                 type='primary'
                 className='btn-icon-div header-secondary-option-button'
@@ -458,6 +462,15 @@ const HeaderButton = ({
               >
                 <SiMicrosoftexcel style={{ fontWeight: '500' }} /> Export Excel
               </Button>
+              <Button
+                type='primary'
+                className='btn-icon-div header-secondary-option-button'
+                onClick={() => handlePdfExport(billingFilterData)}
+              >
+                <FaFilePdf style={{ fontWeight: '500' }} /> Export PDF
+              </Button>
+              </>
+              
             )}
 
 
