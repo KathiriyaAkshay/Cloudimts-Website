@@ -168,7 +168,7 @@ const Login = () => {
               {/* Copy right information  */}
 
               <div style={{marginLeft: "auto", marginRight: "auto", textAlign: "center", marginTop: "2rem", fontWeight: 600}}>
-                A Product of Imageinet Telesolutions copy right 2024
+                A Product of Imageinet Telesolutions © 2024
               </div>
            
             </Card>
