@@ -2135,8 +2135,13 @@ thead>tr>th {
 }
 
 .update-button-option {
-  background-color: #CCCCCC !important;
+  background-color: #f3f3f3 !important;
   color: #212121 !important;
+  transition: background-color 0.2 ease-in;
+}
+
+.update-button-option:hover{
+  background-color: #eaeaea !important;
 }
 
 .message-option-division {
@@ -2851,7 +2856,7 @@ form.ant-form .ant-form-item .ant-form-item-label label{
   .ant-form{
     overflow-y: auto !important;
     overflow-x: hidden  ;
-    max-height: 75vh;
+    max-height: 78vh;
   }
 }
 

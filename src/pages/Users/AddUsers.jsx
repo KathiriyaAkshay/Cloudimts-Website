@@ -15,7 +15,8 @@ import {
   Spin,
   Upload,
   message, 
-  Image
+  Image,
+  Popconfirm
 } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
 import { useBreadcrumbs } from "../../hooks/useBreadcrumbs";
@@ -616,10 +617,10 @@ const AddUsers = () => {
 
           <Steps current={currentStep} className="mb">
 
-            <Step title="Basic Info" />
+            <Step title="Basic details" />
             <Step title="Availability" />
-            <Step title="Assigned Details" />
-            <Step title="Upload Signature" />
+            <Step title="Assigned Institution" />
+            <Step title="User Signature" />
             <Step title="Modality" />
 
           </Steps>
@@ -1208,9 +1209,15 @@ const AddUsers = () => {
                   >
                     Previous
                   </Button>
-                  <Button type='primary' htmlType='submit' className='user-update-option-button'>
-                    {id ? 'Update' : 'Submit'}
-                  </Button>
+                  <Popconfirm
+                    title = "Create user"
+                    description = "Are you sure you want to create user ?"
+                    onConfirm={(e) => {e.preventDefault() ; form.submit()}}
+                  >
+                    <Button type='primary' className='user-update-option-button'>
+                      {id ? 'Update' : 'Submit'}
+                    </Button>
+                  </Popconfirm>
                 </Col>
               </Row>
             </Form>
