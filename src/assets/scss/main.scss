@@ -2870,8 +2870,6 @@ form.ant-form .ant-form-item .ant-form-item-label label{
   background-color: #4d76ad !important;
 }
 
-
-
 .user-details-update-conformation-modal{
   .ant-modal-header{
     background-color: #ff6767 !important;
@@ -2885,5 +2883,13 @@ form.ant-form .ant-form-item .ant-form-item-label label{
   }
   .conformation-description{
     font-size: 0.95rem;
+  }
+}
+
+// ==== Update table pagination select option css ==== // 
+
+.ant-table-wrapper{
+  .ant-select-selection-item{
+    margin-top: 3px !important;
   }
 }
