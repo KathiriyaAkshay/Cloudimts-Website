@@ -221,6 +221,23 @@ const AddTemplate = () => {
                 />
               </Form.Item>
 
+              {/* Modality option input  */}
+              <Form.Item
+                label='Modality'
+                name='name'
+                rules={[
+                  {
+                    required: true,
+                    whitespace: true,
+                    message: 'Please Enter Template Name'
+                  }
+                ]}
+              >
+                <Input
+                  placeholder='Enter Template Name'
+                />
+              </Form.Item>
+
               {/* Modality selection dropdown  */}
               <Form.Item
                 name="study_description"
