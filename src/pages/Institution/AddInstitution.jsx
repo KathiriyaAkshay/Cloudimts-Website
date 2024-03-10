@@ -222,6 +222,7 @@ const AddInstitution = () => {
 
   }
 
+  const [updateOptionActivate, setUpdateOptionActivate] = useState(false) ; 
   const handleSubmit = async values => {
     if (currentStep === 0) {
 
@@ -265,7 +266,12 @@ const AddInstitution = () => {
 
       }
 
-      handleNextStep();
+      if (updateOptionActivate){
+        setUpdateOptionActivate(false) ; 
+      } else {
+        handleNextStep();
+      }
+    
 
     } else if (currentStep === 1) {
 
@@ -319,13 +325,23 @@ const AddInstitution = () => {
             )
           setIsLoading(false)
 
-          handleNextStep()
+          
+          if (updateOptionActivate){
+            setUpdateOptionActivate(false) ; 
+          } else {
+            handleNextStep();
+          }
 
         }
 
       } else{
 
-        handleNextStep()
+        
+      if (updateOptionActivate){
+        setUpdateOptionActivate(false) ; 
+      } else {
+        handleNextStep();
+      }
       }
 
 
@@ -379,7 +395,12 @@ const AddInstitution = () => {
           })
         setIsLoading(false)
       }
-      handleNextStep();
+      
+      if (updateOptionActivate){
+        setUpdateOptionActivate(false) ; 
+      } else {
+        handleNextStep();
+      }
 
     } else if (currentStep === 3) {
       setPayload(prev => ({
@@ -418,7 +439,12 @@ const AddInstitution = () => {
           })
         setIsLoading(false)
       }
-      handleNextStep()
+      
+      if (updateOptionActivate){
+        setUpdateOptionActivate(false) ; 
+      } else {
+        handleNextStep();
+      }
     } else if (currentStep === 4) {
       setPayload(prev => ({
         ...prev,
@@ -446,7 +472,12 @@ const AddInstitution = () => {
             NotificationMessage('warning', 'Network request failed', err?.response?.data?.message)
           })
       }
-      handleNextStep()
+      
+      if (updateOptionActivate){
+        setUpdateOptionActivate(false) ; 
+      } else {
+        handleNextStep();
+      }
     } else if (currentStep === 5) {
       setPayload(prev => ({
         ...prev,
@@ -842,8 +873,7 @@ const AddInstitution = () => {
                     rules={[
                       {
                         required: true,
-                        message: 'Enter storage allocated Limit',
-                        validator: validateInput
+                        message: 'Enter storage allocated Limit'
                       }
                     ]}
                   >
@@ -863,9 +893,13 @@ const AddInstitution = () => {
                   <Button
                     type='primary'
                     onClick={() => {
-                      if (id) setIsModalOpen(true)
+                      if (id) {
+                        setUpdateOptionActivate(true) ; 
+                        setIsModalOpen(true) ; 
+                      }
                       else form.submit()
                     }}
+                    className='user-update-option-button'
                   >
                     {id ? 'Update' : 'Next'}
                   </Button>
@@ -963,10 +997,14 @@ const AddInstitution = () => {
                   <Button
                     type='primary'
                     onClick={() => {
-                      if (id) setIsModalOpen(true)
+                      if (id) {
+                        setUpdateOptionActivate(true) ; 
+                        setIsModalOpen(true) ; 
+                      }
                       else form.submit()
                     }}
                     style={{ marginLeft: '10px' }}
+                    className='user-update-option-button'
                   >
                     {id ? 'Update' : 'Next'}
                   </Button>
@@ -1013,10 +1051,14 @@ const AddInstitution = () => {
                   <Button
                     type='primary'
                     onClick={() => {
-                      if (id) setIsModalOpen(true)
+                      if (id) {
+                        setUpdateOptionActivate(true) ; 
+                        setIsModalOpen(true) ; 
+                      }
                       else form.submit()
                     }}
                     style={{ marginLeft: '10px' }}
+                    className='user-update-option-button'
                   >
                     {id ? 'Update' : 'Next'}
                   </Button>
@@ -1061,10 +1103,14 @@ const AddInstitution = () => {
                   <Button
                     type='primary'
                     onClick={() => {
-                      if (id) setIsModalOpen(true)
+                      if (id) {
+                        setUpdateOptionActivate(true) ; 
+                        setIsModalOpen(true) ; 
+                      }
                       else form.submit()
                     }}
                     style={{ marginLeft: '10px' }}
+                    className='user-update-option-button'
                   >
                     {id ? 'Update' : 'Next'}
                   </Button>
@@ -1131,10 +1177,14 @@ const AddInstitution = () => {
                   <Button
                     type='primary'
                     onClick={() => {
-                      if (id) setIsModalOpen(true)
+                      if (id) {
+                        setUpdateOptionActivate(true) ; 
+                        setIsModalOpen(true) ; 
+                      }
                       else form.submit()
                     }}
                     style={{ marginLeft: '10px' }}
+                    className='user-update-option-button'
                   >
                     {id ? 'Update' : 'Next'}
                   </Button>
@@ -1201,7 +1251,7 @@ const AddInstitution = () => {
                       className='update-button-option' style={{ marginRight: "0.4rem" }}>
                       Previous
                     </Button>
-                    <Button type='primary' htmlType='submit'>
+                    <Button type='primary' htmlType='submit' className='user-update-option-button'>
                       Submit
                     </Button>
                   </div>
@@ -1219,11 +1269,12 @@ const AddInstitution = () => {
 
       <Modal
         centered
-        title='Confirmation'
+        title='Conformation'
         open={isModalOpen}
         onOk={() => form.submit()}
         onCancel={() => setIsModalOpen(false)}
-        okText='Update & Next'
+        okText='Update'
+        className='user-details-update-conformation-modal'
       >
         <p>Are you sure you want to update this details?</p>
       </Modal>
