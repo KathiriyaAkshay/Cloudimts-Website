@@ -2135,8 +2135,13 @@ thead>tr>th {
 }
 
 .update-button-option {
-  background-color: #CCCCCC !important;
+  background-color: #f3f3f3 !important;
   color: #212121 !important;
+  transition: background-color 0.2 ease-in;
+}
+
+.update-button-option:hover{
+  background-color: #eaeaea !important;
 }
 
 .message-option-division {
@@ -2770,6 +2775,10 @@ form.ant-form .ant-form-item .ant-form-item-label label{
   background-color: #3d5a80 !important;
 }
 
+.header-secondary-option-button:hover{
+  background-color: #547db4 !important;
+}
+
 .study-quick-filter-form :where(.css-dev-only-do-not-override-15rg2km).ant-select-single .ant-select-selector .ant-select-selection-item,.study-quick-filter-form :where(.css-dev-only-do-not-override-15rg2km).ant-select-single .ant-select-selector .ant-select-selection-placeholder {
   // padding: 0;
   line-height: 45px;
@@ -2842,4 +2851,49 @@ form.ant-form .ant-form-item .ant-form-item-label label{
 .selected-profile-image{
   height: 4rem !important;
   width: 9rem !important;
+}
+
+// ==== User creation card ==== // 
+.user-creation-card{
+  overflow-y: hidden;
+
+  .ant-form{
+    overflow-y: auto !important;
+    overflow-x: hidden  ;
+    max-height: 78vh;
+  }
+}
+
+// ==== User details update conformation modal ===== // 
+
+.user-update-option-button{
+  background-color: #3d5a80 !important;
+}
+
+.user-update-option-button:hover{
+  background-color: #4d76ad !important;
+}
+
+.user-details-update-conformation-modal{
+  .ant-modal-header{
+    background-color: #ff6767 !important;
+    border-bottom: 0px !important;
+  }
+  .ant-btn-primary{
+    background-color: #ff6767 !important;
+  }
+  .ant-btn-primary:hover{
+    background-color: rgb(255, 62, 62) !important;
+  }
+  .conformation-description{
+    font-size: 0.95rem;
+  }
+}
+
+// ==== Update table pagination select option css ==== // 
+
+.ant-table-wrapper{
+  .ant-select-selection-item{
+    margin-top: 3px !important;
+  }
 }

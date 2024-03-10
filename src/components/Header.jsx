@@ -149,21 +149,6 @@ const BasicLayout = ({ children }) => {
       icon: <AiOutlineFileSync />
     },
 
-    // Chat option
-    checkPermissionStatus('Show Chat Option') && {
-      label: <NavLink to={'/chats'}>Chats</NavLink>,
-      key: 'Chats',
-      icon: <WechatOutlined style={{ height: '20px', width: '20px' }} />,
-      className: 'Chat-icon'
-    },
-
-    // Billing option
-    checkPermissionStatus('Show Option - Billing option') && {
-      label: <NavLink to={'/billing'}>Billing</NavLink>,
-      key: 'billing',
-      icon: <FaMoneyBill />
-    },
-
     // Institution option
     checkPermissionStatus('Show Option - Institution option') && {
       label: menuLabel('Institution'),
@@ -198,18 +183,19 @@ const BasicLayout = ({ children }) => {
       ]
     },
 
-    // Filter option
-    checkPermissionStatus('Show Default Filter list') && {
-      label: <NavLink to={'/filters'}>Filters</NavLink>,
-      key: 'filters',
-      icon: <AiOutlineFilter />
-    },
-
     // Role option
     checkPermissionStatus('Show Option - Role option') && {
       label: <NavLink to={'/users/roles'}>Roles</NavLink>,
       key: 'roles',
       icon: <FaUserLock />
+    },
+
+    // Chat option
+    checkPermissionStatus('Show Chat Option') && {
+      label: <NavLink to={'/chats'}>Chats</NavLink>,
+      key: 'Chats',
+      icon: <WechatOutlined style={{ height: '20px', width: '20px' }} />,
+      className: 'Chat-icon'
     },
 
     // Email option
@@ -226,6 +212,13 @@ const BasicLayout = ({ children }) => {
       icon: <CgTemplate />
     },
 
+    // Billing option
+    checkPermissionStatus('Show Option - Billing option') && {
+      label: <NavLink to={'/billing'}>Billing</NavLink>,
+      key: 'billing',
+      icon: <FaMoneyBill />
+    },
+
     // StudyTable option
     userPermissionData['StudyTable view']?.find(
       data => data.permission === 'View Deleted studies'
@@ -235,12 +228,21 @@ const BasicLayout = ({ children }) => {
       icon: <MdDeleteSweep color='red' />
     },
 
+
     // Support option
     {
       label: <NavLink to={'/support'}>Support</NavLink>,
       key: 'support',
       icon: <BiSupport />
-    }
+    }, 
+
+    // Filter option
+    checkPermissionStatus('Show Default Filter list') && {
+      label: <NavLink to={'/filters'}>Filters</NavLink>,
+      key: 'filters',
+      icon: <AiOutlineFilter />
+    },
+
   ].filter(Boolean)
 
   const menu = (
