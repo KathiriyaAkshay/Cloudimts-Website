@@ -26,7 +26,13 @@ const AddTemplate = () => {
     fetchTemplate({ id })
       .then(res => {
         if (res.data.status) {
-          form.setFieldsValue({ name: res.data.data.report_name, study_description: res?.data?.data?.report_description })
+          form.setFieldsValue({ 
+            name: res.data.data.report_name, 
+            study_description: res?.data?.data?.report_description,  
+            modality: res?.data?.data?.modality, 
+            institution_select: res?.data?.data?.institution, 
+            study_radiologist: res?.data?.data?.radiologist_id
+          })
           setEditorData(res.data.data.report_data)
         } else {
           NotificationMessage(
@@ -102,10 +108,6 @@ const AddTemplate = () => {
       requestPayload, 
       "institute/v1/modality/fetch"
     ); 
-
-    console.log("Response data ==========>");
-    console.log(responseData);
-
     if (responseData?.status){
       const resData = responseData?.data?.map((element) => ({
         label: element?.name, 
@@ -143,7 +145,8 @@ const AddTemplate = () => {
         let requestPayload = {
           name: values?.name, 
           data: editorData, 
-          description: values?.study_description
+          description: values?.study_description, 
+          modality: values?.modality
         }; 
 
         if (values?.institution_select !== undefined){
@@ -246,7 +249,7 @@ const AddTemplate = () => {
               {/* Modality option input  */}
               <Form.Item
                 label='Modality'
-                name='name'
+                name='modality'
                 rules={[
                   {
                     required: true,
