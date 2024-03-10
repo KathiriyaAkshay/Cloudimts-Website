@@ -17,7 +17,7 @@ import {
   Button,
   Select
 } from 'antd'
-import { CheckCircleOutlined, ClearOutlined, CloseCircleOutlined, FileOutlined, PictureOutlined, EditFilled } from '@ant-design/icons'
+import { CheckCircleOutlined, ClearOutlined, CloseCircleOutlined, PictureOutlined } from '@ant-design/icons'
 import { useBreadcrumbs } from '../../hooks/useBreadcrumbs'
 import ChatMain from '../../components/Chat/ChatMain'
 import EditStudy from '../../components/Studies/EditStudy'
@@ -36,7 +36,7 @@ import {
   getInstanceData
 } from '../../apis/studiesApi'
 import AssignStudy from '../../components/Studies/AssignStudy'
-import { BsChat, BsEyeFill } from 'react-icons/bs'
+import { BsChat } from 'react-icons/bs'
 import {  IoIosShareAlt } from 'react-icons/io'
 import { MdOutlineHistory } from 'react-icons/md'
 import { AuditOutlined } from '@ant-design/icons'
@@ -66,6 +66,7 @@ import { FileDoneOutlined } from '@ant-design/icons';
 import StudyReportIcon from "../../assets/images/study-report.png"
 
 const BASE_URL = import.meta.env.VITE_APP_SOCKET_BASE_URL
+let timeOut = null ; 
 const Dicom = () => {
 
   const [isLoading, setIsLoading] = useState(false)
@@ -490,7 +491,6 @@ const Dicom = () => {
     setIsEditModalOpen(true)
   }
 
-
   // **** Study status = Reporting update handler **** // 
   const studyStatusHandler = async () => {
 
@@ -657,7 +657,7 @@ const Dicom = () => {
       saveAs(blob, fileName)
     }
   }
-
+  
 
   const columns = [
     {
