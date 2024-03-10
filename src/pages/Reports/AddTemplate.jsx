@@ -200,7 +200,8 @@ const AddTemplate = () => {
           form={form}
           onFinish={handleSubmit}
         >
-          <Row gutter={30}>
+          <Row gutter={30} style={{height: "70vh"}}>
+
             <Col lg={8} md={8} sm={8}>
 
               {/* Template name input  */}
@@ -298,7 +299,9 @@ const AddTemplate = () => {
               lg={16}
               md={16}
               sm={16}
-              style={{ height: 'calc(100vh - 300px)', overflow: 'auto' }}
+              // style={{ height: 'calc(100vh - 300px)', overflow: 'auto' }}
+              className='add-template-option-editor'
+              style={{height:"70vh", overflow: "hidden"}}
             >
 
               <Form.Item label='Create Template'>

@@ -2897,3 +2897,17 @@ form.ant-form .ant-form-item .ant-form-item-label label{
     margin-top: 3px !important;
   }
 }
+
+// ==== Templates option editor ==== // 
+
+.add-template-option-editor{
+  .ck-editor__main{
+    height: 60vh;
+    overflow-y: auto;
+    width: calc(100%) ;
+  }
+
+  .ck-editor__editable{
+    height: 60vh;
+  }
+}
