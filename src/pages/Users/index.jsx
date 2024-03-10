@@ -223,7 +223,7 @@ const Users = () => {
           NotificationMessage('success', 'User password updated successfully')
           setUserID(null)
           setIsModalOpen(false)
-          retrieveUsersData();
+          // retrieveUsersData(); 
         } else {
           NotificationMessage(
             'warning',
@@ -354,7 +354,8 @@ const Users = () => {
           </Tooltip>
 
           <DeleteActionIcon
-            title={"Are you sure you want to delete this user?"}
+            title = "Delete user"
+            description={"Are you sure you want to delete this user?"}
             deleteActionHandler={() => deleteActionHandler(record.id)}
           />
 

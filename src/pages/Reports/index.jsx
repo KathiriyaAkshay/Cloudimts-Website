@@ -51,7 +51,7 @@ const index = () => {
 
   useEffect(() => {
     changeBreadcrumbs([{ name: 'Templates' }])
-    retrieveReportsData()
+    // retrieveReportsData()
   }, [])
 
   // **** Edit templated option handler **** // 
@@ -143,7 +143,8 @@ const index = () => {
 
           {checkPermissionStatus('Delete template option') && (
                 <DeleteActionIcon 
-                  title = "Are you sure you want to delete this template?"
+                  title = "Delete template"
+                  description = "Are you sure you want to delete this template?"
                   deleteActionHandler={() => DeleteTemplateOptionHandler(record.id)}
                 />
           )}

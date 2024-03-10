@@ -41,7 +41,6 @@ const Institution = () => {
   }
 
   // **** Reterive table institution data **** // 
-
   const retrieveInstitutionData = async (pagination, values = {}) => {
     setIsLoading(true)
 
@@ -73,7 +72,6 @@ const Institution = () => {
 
   useEffect(() => {
     changeBreadcrumbs([{ name: 'Institution' }])
-    retrieveInstitutionData()
   }, [])
 
 
@@ -326,6 +324,8 @@ const Institution = () => {
           </Tooltip>
 
           <DeleteActionIcon
+            title = "Delete Institution"
+            description={"Are you sure you want to delete this Institution?"}
             deleteActionHandler={() => deleteActionHandler(record)}
           />
 
