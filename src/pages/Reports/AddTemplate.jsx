@@ -41,7 +41,6 @@ const AddTemplate = () => {
 
   // **** Reterive institution options **** // 
   const [institutionOptions, setInstitutionOptions] = useState([]) ; 
-
   const retrieveInstitutionDataFunction = async () => {
     const token = localStorage.getItem('token');
     await API.get('/user/v1/fetch-institution-list', {
@@ -73,7 +72,6 @@ const AddTemplate = () => {
 
   // **** Reterive all radiologist options **** // 
   const [allRadiologistOption, setAllRadiologistOption] = useState([]) ; 
-
   const FetchAllRadiologist = async () => {
     let requestPayload = {};
 
@@ -95,6 +93,29 @@ const AddTemplate = () => {
     }
   }
 
+  // **** Reterive institution modality name list options **** // 
+  const [modalityOptions, setModalityOptions] = useState([]) ; 
+  const FetchInstitutionModalityList = async() => {
+    let requestPayload = {} ; 
+    let responseData = await APIHandler(
+      "GET", 
+      requestPayload, 
+      "institute/v1/modality/fetch"
+    ); 
+
+    console.log("Response data ==========>");
+    console.log(responseData);
+
+    if (responseData?.status){
+      const resData = responseData?.data?.map((element) => ({
+        label: element?.name, 
+        value: element?.name
+      }))
+      setModalityOptions(resData) ; 
+    }
+
+  }
+
   useEffect(() => {
     const crumbs = [{ name: 'Templates', to: '/reports' }]
     if (id) {
@@ -110,6 +131,7 @@ const AddTemplate = () => {
     changeBreadcrumbs(crumbs) ; 
     retrieveInstitutionDataFunction() ;
     FetchAllRadiologist();  
+    FetchInstitutionModalityList() ; 
   }, [])
 
   // **** Template submit request handler **** // 
@@ -233,8 +255,15 @@ const AddTemplate = () => {
                   }
                 ]}
               >
-                <Input
-                  placeholder='Enter Template Name'
+                <Select
+                  placeholder="Select Study Description"
+                  options={modalityOptions}
+                  showSearch
+                  filterSort={(optionA, optionB) =>
+                    (optionA?.label ?? "")
+                      .toLowerCase()
+                      .localeCompare((optionB?.label ?? "").toLowerCase())
+                  }
                 />
               </Form.Item>
 
@@ -268,7 +297,6 @@ const AddTemplate = () => {
                 name="institution_select"
                 label="Institution"
                 className="category-select"
-
                 rules={[
                   {
                     required: false
