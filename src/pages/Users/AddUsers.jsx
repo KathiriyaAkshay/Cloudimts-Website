@@ -67,7 +67,6 @@ const AddUsers = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   // **** Retervie particular user information on edit user details time **** // 
-
   const retrieveUserData = async () => {
     await API.post(
       '/user/v1/particular-user-fetch',
@@ -114,7 +113,6 @@ const AddUsers = () => {
   }
 
   // **** Retervie Institution list for User creation **** // 
-
   const retrieveInstitutionData = async () => {
     setIsLoading(true)
     await API.get('/user/v1/fetch-institution-list', {
@@ -143,7 +141,6 @@ const AddUsers = () => {
   }
   
   // **** Retervide all available role list for User creation **** // 
-
   const retrieveRolesData = async () => {
     setIsLoading(true)
     await API.get('/user/v1/fetch-role-list', {
@@ -169,7 +166,6 @@ const AddUsers = () => {
   }
 
   // **** Retervie modality list for User creation **** // 
-
   const retrieveModalityList = async () => {
     setIsLoading(true)
     await API.get('/user/v1/fetch-modality-list', {
@@ -215,13 +211,11 @@ const AddUsers = () => {
     if (currentStep === 3) {
 
       if (imageURL === null) {
-
         if (value?.length === 0) {
           NotificationMessage("warning", "Please, Select signature image")
         } else {
           setCurrentStep(prevStep => prevStep + 1)
         }
-
       } else {
         setCurrentStep(prevStep => prevStep + 1)
       }
@@ -273,6 +267,12 @@ const AddUsers = () => {
     }
     return modifiedObject
   }
+
+  useEffect(() => {
+    if (currentStep == 3){
+      setValues([]) ; 
+    }
+  }, [currentStep])
 
   const handleSubmit = async (values) => {
     setIsLoading(true)
@@ -344,7 +344,12 @@ const AddUsers = () => {
         setIsLoading(false)
       }
 
-      handleNextStep()
+      if (updateOptionActivate){
+        setUpdateOptionActivate(false) ; 
+      } else {
+        handleNextStep()
+      }
+
 
     } else if (currentStep === 2) {
 
@@ -373,16 +378,23 @@ const AddUsers = () => {
           )
         setIsLoading(false)
       }
-      handleNextStep()
+
+      if (updateOptionActivate){
+        setUpdateOptionActivate(false) ; 
+      } else{
+        handleNextStep()
+      }
+
     } else if (currentStep === 3) {
-      setIsLoading(true)
+
+      setIsLoading(true) ; 
       let signature_image = '';
 
       if (value?.length > 0) {
 
         try {
           const formData = {
-            image: value[0]?.url
+            image: value[value?.length-1]?.url
           }
           const res = await uploadImage(formData)
           signature_image = res.data.image_url
@@ -390,6 +402,7 @@ const AddUsers = () => {
             ...prev,
             signature_image: res.data.image_url
           }))
+          setImageURL(res?.data?.image_url)
         } catch (err) {
           NotificationMessage('warning', "Network request failed", err.response.data.message)
         }
@@ -427,8 +440,13 @@ const AddUsers = () => {
             NotificationMessage('warning', "Network request failed", err.response.data.message)
           )
       }
-      setIsLoading(false)
-      handleNextStep();
+      setIsLoading(false) ; 
+
+      if (updateOptionActivate){
+        setUpdateOptionActivate(false) ; 
+      } else{
+        handleNextStep();
+      }
 
     } else if (currentStep === 4) {
       setIsLoading(true)
@@ -486,6 +504,7 @@ const AddUsers = () => {
       }
       setIsLoading(false)
     }
+
     setIsLoading(false)
     setIsModalOpen(false)
   }
@@ -536,6 +555,7 @@ const AddUsers = () => {
 
   const [profileLoading, setProfileLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState();
+  const [updateOptionActivate, setUpdateOptionActivate] = useState(false) ; 
 
   const handleProfileChange = (info) => {
     if (info.file.status === 'uploading') {
@@ -588,7 +608,7 @@ const AddUsers = () => {
           {id && (
             <div style={{ cursor: "pointer" }} onClick={
               () => { if (currentStep === 4) { setCurrentStep(0) } else { setCurrentStep(4) } }}>
-              {currentStep === 4 ? "SKip To First" : "Skip To Last"}
+              {currentStep === 4 ? "Skip to first" : "Skip to last"}
             </div>
           )}
         </div>
@@ -624,7 +644,7 @@ const AddUsers = () => {
 
                   <Form.Item
                     name="user_profile_image"
-                  >
+                  > 
                     <Upload
                       name="avatar"
                       listType="picture-card"
@@ -651,7 +671,6 @@ const AddUsers = () => {
                         uploadButton
                       )}
                     </Upload>
-
                   </Form.Item>
 
                 </Col>
@@ -682,7 +701,7 @@ const AddUsers = () => {
                       }
                     ]}
                   >
-                    <Input placeholder='Enter Username' />
+                    <Input placeholder='Enter Username' autoComplete='fal' />
                   </Form.Item>
                 </Col>
 
@@ -965,7 +984,7 @@ const AddUsers = () => {
                       }
                     ]}
                   >
-                    <TimePicker.RangePicker />
+                    <TimePicker.RangePicker/>
                   </Form.Item>
                 </Col>
 
@@ -978,7 +997,8 @@ const AddUsers = () => {
                     display: "flex",
                     flexDirection: "row",
                     justifyContent: "flex-end",
-                    alignItems: "center"
+                    alignItems: "center", 
+                    marginTop: "auto"
                   }}
                 >
                   <Button type='primary' onClick={handlePrevStep}
@@ -989,9 +1009,14 @@ const AddUsers = () => {
                   <Button
                     type='primary'
                     onClick={() => {
-                      if (id) setIsModalOpen(true)
-                      else form.submit()
+                      if (id) {
+                        setIsModalOpen(true);
+                        setUpdateOptionActivate(true);
+                      } else {
+                        form.submit();
+                      }
                     }}
+                    className='user-update-option-button'
                     style={{ marginLeft: '10px' }}
                   >
                     {id ? 'Update' : 'Next'}
@@ -1046,9 +1071,14 @@ const AddUsers = () => {
                   <Button
                     type='primary'
                     onClick={() => {
-                      if (id) setIsModalOpen(true)
-                      else form.submit()
+                      if (id) {
+                        setIsModalOpen(true);
+                        setUpdateOptionActivate(true);
+                      } else {
+                        form.submit();
+                      }
                     }}
+                    className='user-update-option-button'
                     style={{ marginLeft: '10px' }}
                   >
                     {id ? 'Update' : 'Next'}
@@ -1085,13 +1115,15 @@ const AddUsers = () => {
             >
               <Row>
                 <Col lg={12} xs={24}>
-                  <UploadImage
-                    values={value}
-                    setValues={setValues}
-                    imageFile={imageFile}
-                    setImageFile={setImageFile}
-                    imageURL={imageURL}
-                  />
+                  <div className='user-create-signature'>
+                    <UploadImage
+                      values={value}
+                      setValues={setValues}
+                      imageFile={imageFile}
+                      setImageFile={setImageFile}
+                      imageURL={imageURL}
+                    />
+                  </div>
                 </Col>
 
                 <Col
@@ -1114,9 +1146,14 @@ const AddUsers = () => {
                   <Button
                     type='primary'
                     onClick={() => {
-                      if (id) setIsModalOpen(true)
-                      else form.submit()
+                      if (id) {
+                        setIsModalOpen(true);
+                        setUpdateOptionActivate(true);
+                      } else {
+                        form.submit();
+                      }
                     }}
+                    className='user-update-option-button'
                     style={{ marginLeft: '10px' }}
                   >
                     {id ? 'Update' : 'Next'}
@@ -1171,7 +1208,7 @@ const AddUsers = () => {
                   >
                     Previous
                   </Button>
-                  <Button type='primary' htmlType='submit'>
+                  <Button type='primary' htmlType='submit' className='user-update-option-button'>
                     {id ? 'Update' : 'Submit'}
                   </Button>
                 </Col>
@@ -1187,14 +1224,15 @@ const AddUsers = () => {
 
       <Modal
         centered
-        title='Confirmation'
+        title='Conformation'
         open={isModalOpen}
         onOk={() => form.submit()}
         onCancel={() => setIsModalOpen(false)}
-        okText='Update & Next'
+        okText='Update'
+        className='user-details-update-conformation-modal'
       >
         <Spin spinning={isLoading}>
-          <p>Are you sure you want to update this details?</p>
+          <p className='conformation-description'>Are you sure you want to update this details?</p>
         </Spin>
 
       </Modal>

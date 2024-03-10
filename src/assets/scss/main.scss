@@ -2843,3 +2843,42 @@ form.ant-form .ant-form-item .ant-form-item-label label{
   height: 4rem !important;
   width: 9rem !important;
 }
+
+// ==== User creation card ==== // 
+.user-creation-card{
+  overflow-y: hidden;
+
+  .ant-form{
+    overflow-y: auto !important;
+    overflow-x: hidden  ;
+    max-height: 75vh;
+  }
+}
+
+// ==== User details update conformation modal ===== // 
+
+.user-update-option-button{
+  background-color: #3d5a80 !important;
+}
+
+.user-update-option-button:hover{
+  background-color: #4d76ad !important;
+}
+
+
+
+.user-details-update-conformation-modal{
+  .ant-modal-header{
+    background-color: #ff6767 !important;
+    border-bottom: 0px !important;
+  }
+  .ant-btn-primary{
+    background-color: #ff6767 !important;
+  }
+  .ant-btn-primary:hover{
+    background-color: rgb(255, 62, 62) !important;
+  }
+  .conformation-description{
+    font-size: 0.95rem;
+  }
+}
