@@ -179,15 +179,38 @@ const AddTemplate = () => {
           id: id, 
           update_data: editorData, 
           update_report_name: values?.name, 
-          update_report_description: values?.study_description
+          update_report_description: values?.study_description, 
+          update_modality: values?.modality
         }; 
+        let institutionMatch = 0 ; 
+        let institutionMatchValue = null ; 
+      
+        for(let i = 0; i<institutionOptions?.length; i++){
+          let item = institutionOptions[i]; 
+          if (item['label'] === values?.institution_select){
+            institutionMatchValue = item['value'] ; 
+            institutionMatch = 1 ; 
+          }
+        }
+
+        let radiologistMatch = 0 ; 
+        let radiologistMatchValue = null ; 
+
+        for (let i = 0; i<allRadiologistOption?.length; i++){
+          let item = allRadiologistOption[i] ; 
+          if  (item['label'] === values?.study_radiologist){
+            radiologistMatch = 1 ; 
+            radiologistMatchValue = item['value'] ; 
+          }
+        }
+        
 
         if (values?.institution_select !== undefined){
-          requestPayload['institution'] = values?.institution_select
+          requestPayload['institution'] = institutionMatch == 1?institutionMatchValue:values?.institution_select
         }
 
         if (values?.study_radiologist !== undefined){
-          requestPayload['radiologist'] = values?.study_radiologist
+          requestPayload['radiologist'] = radiologistMatch == 1?radiologistMatchValue:values?.study_radiologist
         }
 
         updateReport({ ...requestPayload })

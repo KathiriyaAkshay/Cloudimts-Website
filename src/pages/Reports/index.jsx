@@ -101,6 +101,16 @@ const index = () => {
     },
 
     {
+      title: 'Modality',
+      dataIndex: 'modality'
+    },
+    
+    {
+      title: 'Modality description',
+      dataIndex: 'description   '
+    },
+
+    {
       title: "Institution", 
       dataIndex: "institution_information"
     }, 
