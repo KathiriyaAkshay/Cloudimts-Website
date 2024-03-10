@@ -158,7 +158,7 @@ const AddInstitution = () => {
     if (currentStep === 1) {
       if (tableData?.length === 0) {
 
-        NotificationMessage("warning", "Please, Include modality charge details");
+        NotificationMessage("warning", "Please, Include modality charges details");
       } else {
 
         setCurrentStep(prevStep => prevStep + 1)
