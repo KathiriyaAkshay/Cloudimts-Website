@@ -228,7 +228,6 @@ const BasicLayout = ({ children }) => {
       icon: <MdDeleteSweep color='red' />
     },
 
-
     // Support option
     {
       label: <NavLink to={'/support'}>Support</NavLink>,
@@ -243,7 +242,8 @@ const BasicLayout = ({ children }) => {
       icon: <AiOutlineFilter />
     },
 
-  ].filter(Boolean)
+  ].filter(Boolean); 
+
 
   const menu = (
     <Sider
@@ -275,7 +275,7 @@ const BasicLayout = ({ children }) => {
           items={menuItems}
           className='header-menu'
         />
-      </div>
+      </div>  
 
     </Sider>
   ) 
@@ -630,7 +630,7 @@ const BasicLayout = ({ children }) => {
               <Divider type='vertical' className='vertical-divider' />
 
               <Breadcrumb
-                separator='/'
+                separator='|'
                 style={{
                   fontSize: '18px',
                   fontWeight: 500,
@@ -644,7 +644,7 @@ const BasicLayout = ({ children }) => {
                     <Breadcrumb.Item key={index}>
                       {crumb.to ? (
                         <Link to={crumb.to} title={crumb.name}>
-                          <LeftOutlined style={{height: "1.5rem", width: "1.5rem"}}/> {crumb.name}
+                          {crumb.name}
                         </Link>
                       ) : (
                         crumb.name
@@ -775,7 +775,7 @@ const BasicLayout = ({ children }) => {
 
                 </div>
 
-              )}
+                )}
 
 
               <UserProfile />

@@ -26,7 +26,13 @@ const AddTemplate = () => {
     fetchTemplate({ id })
       .then(res => {
         if (res.data.status) {
-          form.setFieldsValue({ name: res.data.data.report_name, study_description: res?.data?.data?.report_description })
+          form.setFieldsValue({ 
+            name: res.data.data.report_name, 
+            study_description: res?.data?.data?.report_description,  
+            modality: res?.data?.data?.modality, 
+            institution_select: res?.data?.data?.institution, 
+            study_radiologist: res?.data?.data?.radiologist_id
+          })
           setEditorData(res.data.data.report_data)
         } else {
           NotificationMessage(
@@ -41,7 +47,6 @@ const AddTemplate = () => {
 
   // **** Reterive institution options **** // 
   const [institutionOptions, setInstitutionOptions] = useState([]) ; 
-
   const retrieveInstitutionDataFunction = async () => {
     const token = localStorage.getItem('token');
     await API.get('/user/v1/fetch-institution-list', {
@@ -73,7 +78,6 @@ const AddTemplate = () => {
 
   // **** Reterive all radiologist options **** // 
   const [allRadiologistOption, setAllRadiologistOption] = useState([]) ; 
-
   const FetchAllRadiologist = async () => {
     let requestPayload = {};
 
@@ -95,6 +99,25 @@ const AddTemplate = () => {
     }
   }
 
+  // **** Reterive institution modality name list options **** // 
+  const [modalityOptions, setModalityOptions] = useState([]) ; 
+  const FetchInstitutionModalityList = async() => {
+    let requestPayload = {} ; 
+    let responseData = await APIHandler(
+      "GET", 
+      requestPayload, 
+      "institute/v1/modality/fetch"
+    ); 
+    if (responseData?.status){
+      const resData = responseData?.data?.map((element) => ({
+        label: element?.name, 
+        value: element?.name
+      }))
+      setModalityOptions(resData) ; 
+    }
+
+  }
+
   useEffect(() => {
     const crumbs = [{ name: 'Templates', to: '/reports' }]
     if (id) {
@@ -110,6 +133,7 @@ const AddTemplate = () => {
     changeBreadcrumbs(crumbs) ; 
     retrieveInstitutionDataFunction() ;
     FetchAllRadiologist();  
+    FetchInstitutionModalityList() ; 
   }, [])
 
   // **** Template submit request handler **** // 
@@ -121,7 +145,8 @@ const AddTemplate = () => {
         let requestPayload = {
           name: values?.name, 
           data: editorData, 
-          description: values?.study_description
+          description: values?.study_description, 
+          modality: values?.modality
         }; 
 
         if (values?.institution_select !== undefined){
@@ -154,15 +179,38 @@ const AddTemplate = () => {
           id: id, 
           update_data: editorData, 
           update_report_name: values?.name, 
-          update_report_description: values?.study_description
+          update_report_description: values?.study_description, 
+          update_modality: values?.modality
         }; 
+        let institutionMatch = 0 ; 
+        let institutionMatchValue = null ; 
+      
+        for(let i = 0; i<institutionOptions?.length; i++){
+          let item = institutionOptions[i]; 
+          if (item['label'] === values?.institution_select){
+            institutionMatchValue = item['value'] ; 
+            institutionMatch = 1 ; 
+          }
+        }
+
+        let radiologistMatch = 0 ; 
+        let radiologistMatchValue = null ; 
+
+        for (let i = 0; i<allRadiologistOption?.length; i++){
+          let item = allRadiologistOption[i] ; 
+          if  (item['label'] === values?.study_radiologist){
+            radiologistMatch = 1 ; 
+            radiologistMatchValue = item['value'] ; 
+          }
+        }
+        
 
         if (values?.institution_select !== undefined){
-          requestPayload['institution'] = values?.institution_select
+          requestPayload['institution'] = institutionMatch == 1?institutionMatchValue:values?.institution_select
         }
 
         if (values?.study_radiologist !== undefined){
-          requestPayload['radiologist'] = values?.study_radiologist
+          requestPayload['radiologist'] = radiologistMatch == 1?radiologistMatchValue:values?.study_radiologist
         }
 
         updateReport({ ...requestPayload })
@@ -200,7 +248,8 @@ const AddTemplate = () => {
           form={form}
           onFinish={handleSubmit}
         >
-          <Row gutter={30}>
+          <Row gutter={30} style={{height: "70vh"}}>
+
             <Col lg={8} md={8} sm={8}>
 
               {/* Template name input  */}
@@ -217,6 +266,30 @@ const AddTemplate = () => {
               >
                 <Input
                   placeholder='Enter Template Name'
+                />
+              </Form.Item>
+
+              {/* Modality option input  */}
+              <Form.Item
+                label='Modality'
+                name='modality'
+                rules={[
+                  {
+                    required: true,
+                    whitespace: true,
+                    message: 'Please Enter Template Name'
+                  }
+                ]}
+              >
+                <Select
+                  placeholder="Select Study Description"
+                  options={modalityOptions}
+                  showSearch
+                  filterSort={(optionA, optionB) =>
+                    (optionA?.label ?? "")
+                      .toLowerCase()
+                      .localeCompare((optionB?.label ?? "").toLowerCase())
+                  }
                 />
               </Form.Item>
 
@@ -250,7 +323,6 @@ const AddTemplate = () => {
                 name="institution_select"
                 label="Institution"
                 className="category-select"
-
                 rules={[
                   {
                     required: false
@@ -298,7 +370,9 @@ const AddTemplate = () => {
               lg={16}
               md={16}
               sm={16}
-              style={{ height: 'calc(100vh - 300px)', overflow: 'auto' }}
+              // style={{ height: 'calc(100vh - 300px)', overflow: 'auto' }}
+              className='add-template-option-editor'
+              style={{height:"70vh", overflow: "hidden"}}
             >
 
               <Form.Item label='Create Template'>

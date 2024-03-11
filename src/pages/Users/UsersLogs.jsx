@@ -62,7 +62,7 @@ const UsersLogs = () => {
       name: 'Users Logs'
     })
     changeBreadcrumbs(crumbs)
-    retrieveStudyData()
+    // retrieveStudyData()
   }, [])
 
 

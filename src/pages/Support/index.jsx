@@ -133,7 +133,8 @@ const index = () => {
         
           {checkPermissionStatus('Delete Support details') && (
             <DeleteActionIcon
-              title = "Are you sure you want to delete this Support details?"
+              title = "Delete support"
+              description = "Are you sure you want to delete this Support details?"
               deleteActionHandler={() => deleteActionHandler(record.id)}
             />
           )}

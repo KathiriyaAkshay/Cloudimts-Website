@@ -273,8 +273,9 @@ const AddUsers = () => {
     if (currentStep == 3){
       setValues([]) ; 
     }
-  }, [currentStep])
+  }, [currentStep]); 
 
+  const [isUpdateOptionActivate, setIsUpdateOptionActivate] = useState(false) ;
   const handleSubmit = async (values) => {
     setIsLoading(true)
 

@@ -116,8 +116,10 @@ const index = () => {
               }
               onConfirm={() => DeleteFilterOptionHandler(record.id)}>
               <DeleteActionIcon
+                title = "Delete Filter"
+                description = "Are you sure you want to delete this filter?"
                 deleteActionHandler={() => deleteParticularStudy(record?.id)}
-                />
+              />
 
             </Popconfirm>
           )}
