@@ -124,7 +124,6 @@ const HeaderButton = ({
   }, [window.location.pathname, templateOption])
 
   // **** Reterive system filter list for Study page **** // 
-
   const fetchSystemFilter = async () => {
 
     const response = await retrieveSystemFilters()

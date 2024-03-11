@@ -426,7 +426,6 @@ const StudyReports = ({
                   background: '#ebf7fd',
                   fontWeight: '600',
                   padding: '10px 24px',
-                  paddingRight: '0px',
                   borderRadius: '0px',
                   margin: '0 -24px',
                   display: 'flex',
