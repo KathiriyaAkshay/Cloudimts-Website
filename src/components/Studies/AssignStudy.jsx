@@ -269,10 +269,10 @@ const AssignStudy = ({
         number_of_report: values?.number_of_report
       };
 
-      if (values?.radiologist !== undefined){
+      if (values?.radiologist !== undefined) {
         modifiedPayload['assign_user'] = values?.radiologist
       } else {
-        modifiedPayload['assign_user'] = null ; 
+        modifiedPayload['assign_user'] = null;
       }
 
       if (multipleImageFile !== undefined) {
@@ -424,12 +424,12 @@ const AssignStudy = ({
                         label="Choose Radiologist"
                         name="radiologist"
                         className="category-select"
-                        // rules={[
-                        //   {
-                        //     required: true,
-                        //     message: "Please select radiologist",
-                        //   },
-                        // ]}
+                      // rules={[
+                      //   {
+                      //     required: true,
+                      //     message: "Please select radiologist",
+                      //   },
+                      // ]}
                       >
                         <Select
                           placeholder="Select Radiologist"
@@ -473,40 +473,22 @@ const AssignStudy = ({
                     </Col>
                   </Row>
 
-                  <Form.Item
-                    name = "number_of_report"
-                    label = "Number of report"
-                    rules={[
-                      {
-                        required: true, 
-                        message: "Please enter number of report value"
-                      }
-                    ]}
-                  >
-                    <Input/>
-                  </Form.Item>
 
-                  {/* Clinical history information  */}
-
-                  <Form.Item
-                    name="study_history"
-                    label="Clinical History"
-                    rules={[
-                      {
-                        required: true,
-                        whitespace: true,
-                        message: "Please enter clinical history",
-                      },
-                    ]}
-                  >
-                    <Input.TextArea placeholder="Enter Clinical History" />
-                  </Form.Item>
-
-                </div>
-
-                <div className="Assign-study-specific-option">
-
-                  {/* Uregent case information  */}
+                  <Row justify="space-between">
+                    <Col span={11}>
+                      <Form.Item
+                        name="number_of_report"
+                        label="Number of report"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Please enter number of report value"
+                          }
+                        ]}
+                      >
+                        <Input />
+                      </Form.Item>
+                                        {/* Uregent case information  */}
 
                   <Form.Item
                     name="urgent_case"
@@ -523,6 +505,37 @@ const AssignStudy = ({
                       <Radio value={true}>Urgent</Radio>
                     </Radio.Group>
                   </Form.Item>
+
+                    </Col>
+                    <Col span={11}>
+
+
+                      {/* Clinical history information  */}
+
+                      <Form.Item
+                        name="study_history"
+                        label="Clinical History"
+                        rules={[
+                          {
+                            required: true,
+                            whitespace: true,
+                            message: "Please enter clinical history",
+                          },
+                        ]}
+                      >
+                        <Input.TextArea placeholder="Enter Clinical History" rows={5}/>
+                      </Form.Item>
+
+
+                    </Col>
+                  </Row>
+
+
+
+                </div>
+
+                <div className="Assign-study-specific-option">
+
 
                   {/* Upload image information  */}
 

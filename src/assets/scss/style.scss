@@ -176,7 +176,7 @@ form.ant-form {
             border: transparent;
             border-radius: 10px !important;
             min-height: 48px;
-            width: 100%;
+            width: 100% !important; 
 
             &:focus {
               box-shadow: none;

@@ -711,7 +711,8 @@ const BasicLayout = ({ children }) => {
                   {/* ==== Study export option handler ====  */}
                   
                   <Button
-                    type='export'
+                                      type='primary'
+
                     onClick={() => setIsStudyExportModalOpen(true)}
                     className='header-secondary-option-button'
                   >
