@@ -4,7 +4,7 @@ import * as htmlToImage from 'html-to-image';
 import { jsPDF } from "jspdf";
 import NotificationMessage from "../components/NotificationMessage" ; 
 import APIHandler from "../apis/apiHandler";
-import logo from '../assets/images/imageinet-logo.png'
+import logo from "../assets/images/Imageinet-logo.png";
 import html2pdf from 'html2pdf.js';
 
 export const handleDownloadPDF = async (billingData) => {
