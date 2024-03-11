@@ -1,4 +1,4 @@
-import { Col, DatePicker, Form, Modal, Row, Select } from "antd";
+import { Col, DatePicker, Form, Modal, Row, Select, Spin } from "antd";
 import React, { useContext, useEffect, useState } from "react";
 import {
   getBillingData,
@@ -134,9 +134,10 @@ const BillingModal = ({ setBillingData, setIsLoading, setCharges }) => {
   };
 
   const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false) ; 
 
-  // Submit option handler 
   const submitHandler = (values) => {
+    setLoading(true) ; 
     if (values?.from_date === undefined){
 
       NotificationMessage(
@@ -191,7 +192,6 @@ const BillingModal = ({ setBillingData, setIsLoading, setCharges }) => {
       }
 
       // Handle Study status value 
-    
       if (values?.study_status == undefined){
         select_status_all_option = true;  
         select_status_value = "Reported" ; 
@@ -204,6 +204,7 @@ const BillingModal = ({ setBillingData, setIsLoading, setCharges }) => {
           select_status_all_option = false; 
         }
       }
+
       setIsLoading(true);
   
       // Set Userinput selection in localStorage 
@@ -249,6 +250,7 @@ const BillingModal = ({ setBillingData, setIsLoading, setCharges }) => {
         })
         .catch((err) =>  NotificationMessage('warning', 'Network request failed', err.response.data.message));
       setIsLoading(false);
+      setLoading(false) ; 
 
     }
 
@@ -274,114 +276,119 @@ const BillingModal = ({ setBillingData, setIsLoading, setCharges }) => {
           form={form}
           onFinish={submitHandler}
           autoComplete={"off"}
-        >
-          <Row gutter={15}>
-            
-            {/* ===== Institution selection option =====  */}
+        > 
 
-            <Col xs={24} lg={12}>
-              <Form.Item
-                name="institution_list"
-                label="Institution Name"
-              >
-                <Select
-                  placeholder="Select Institution"
-                  options={institutionOptions}
-                  onChange={handleInstitutionSelectChange}
-                  mode="multiple"
-                  filterSort={(optionA, optionB) =>
-                    (optionA?.label ?? "")
-                      .toLowerCase()
-                      .localeCompare((optionB?.label ?? "").toLowerCase())
-                  }
-                  showSearch
-                  // onChange={appliedOnChangeHandler}
-                />
-              </Form.Item>
-            </Col>
+          <Spin spinning = {loading}>
 
-            {/* ==== Radioligist selection option ====  */}
+            <Row gutter={15}>
+              
+              {/* ===== Institution selection option =====  */}
 
-            <Col xs={24} lg={12}>
-              <Form.Item
-                name="user"
-                label="User"
-              >
-                <Select
-                  placeholder="Select Radiologist"
-                  options={radiologistOptions}
-                  showSearch
-                  onChange={handleUserSelectChange}
-                  mode="multiple"
-                  filterSort={(optionA, optionB) =>
-                    (optionA?.label ?? "")
-                      .toLowerCase()
-                      .localeCompare((optionB?.label ?? "").toLowerCase())
-                  }
-                  // onChange={appliedOnChangeHandler}
-                />
-              </Form.Item>
-            </Col>
+              <Col xs={24} lg={12}>
+                <Form.Item
+                  name="institution_list"
+                  label="Institution Name"
+                >
+                  <Select
+                    placeholder="Select Institution"
+                    options={institutionOptions}
+                    onChange={handleInstitutionSelectChange}
+                    mode="multiple"
+                    filterSort={(optionA, optionB) =>
+                      (optionA?.label ?? "")
+                        .toLowerCase()
+                        .localeCompare((optionB?.label ?? "").toLowerCase())
+                    }
+                    showSearch
+                    // onChange={appliedOnChangeHandler}
+                  />
+                </Form.Item>
+              </Col>
 
-            {/* ==== From date selection option =====  */}
+              {/* ==== Radioligist selection option ====  */}
 
-            <Col xs={24} lg={12}>
-              <Form.Item
-                name="from_date"
-                label="From Date"
-                required
-                rules={[
-                  {
-                    required: false,
-                    message: "Please enter From Date",
-                  },
-                ]}
-              >
-                <DatePicker format={"DD-MM-YYYY"} />
-              </Form.Item>
-            </Col>
+              <Col xs={24} lg={12}>
+                <Form.Item
+                  name="user"
+                  label="User"
+                >
+                  <Select
+                    placeholder="Select Radiologist"
+                    options={radiologistOptions}
+                    showSearch
+                    onChange={handleUserSelectChange}
+                    mode="multiple"
+                    filterSort={(optionA, optionB) =>
+                      (optionA?.label ?? "")
+                        .toLowerCase()
+                        .localeCompare((optionB?.label ?? "").toLowerCase())
+                    }
+                    // onChange={appliedOnChangeHandler}
+                  />
+                </Form.Item>
+              </Col>
 
-            {/* ==== To date selection option ====  */}
+              {/* ==== From date selection option =====  */}
 
-            <Col xs={24} lg={12}>
-              <Form.Item
-                name="to_date"
-                label="To Date"
-                required
-                rules={[
-                  {
-                    required: false,
-                    message: "Please enter to date",
-                  },
-                ]}
-              >
-                <DatePicker format={"DD-MM-YYYY "} />
-              </Form.Item>
-            </Col>
+              <Col xs={24} lg={12}>
+                <Form.Item
+                  name="from_date"
+                  label="From Date"
+                  required
+                  rules={[
+                    {
+                      required: false,
+                      message: "Please enter From Date",
+                    },
+                  ]}
+                >
+                  <DatePicker format={"DD-MM-YYYY"} />
+                </Form.Item>
+              </Col>
 
-            {/* ==== Study status selection option ====  */}
+              {/* ==== To date selection option ====  */}
 
-            <Col xs={24} lg={12}>
-              <Form.Item
-                name="study_status"
-                label="Study Status"
-                className="category-select"
-              >
-                <Select
-                  placeholder="Select Status"
-                  options={statusOptions}
-                  showSearch
+              <Col xs={24} lg={12}>
+                <Form.Item
+                  name="to_date"
+                  label="To Date"
+                  required
+                  rules={[
+                    {
+                      required: false,
+                      message: "Please enter to date",
+                    },
+                  ]}
+                >
+                  <DatePicker format={"DD-MM-YYYY "} />
+                </Form.Item>
+              </Col>
 
-                  filterSort={(optionA, optionB) =>
-                    (optionA?.label ?? "")
-                      .toLowerCase()
-                      .localeCompare((optionB?.label ?? "").toLowerCase())
-                  }
-                />
-              </Form.Item>
-            </Col>
+              {/* ==== Study status selection option ====  */}
 
-          </Row>
+              <Col xs={24} lg={12}>
+                <Form.Item
+                  name="study_status"
+                  label="Study Status"
+                  className="category-select"
+                >
+                  <Select
+                    placeholder="Select Status"
+                    options={statusOptions}
+                    showSearch
+
+                    filterSort={(optionA, optionB) =>
+                      (optionA?.label ?? "")
+                        .toLowerCase()
+                        .localeCompare((optionB?.label ?? "").toLowerCase())
+                    }
+                  />
+                </Form.Item>
+              </Col>
+
+            </Row>
+                    
+          </Spin>
 
         </Form>
 
