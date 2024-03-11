@@ -12,9 +12,6 @@ export const handleDownloadPDF = async (billingData) => {
   // Reporting data 
   let ReportingData = {};
 
-  console.log("Billing data information ==========>");
-  console.log(billingData);
-
   // ====== Filtering data based on Modality information ======= // 
 
   for (let i = 0; i < billingData.length; i++) {
