@@ -254,7 +254,7 @@ export const handleDownloadPDF = async (billingData) => {
                       Service bill for the month of November 2023
                     </h5>
                     <div class="w-25">
-                      <img src="/src/assets/images/Imageinet-logo.png" alt="" height="120px" width="200px">
+                      <img src="${logo}" alt="" height="120px" width="200px">
                     </div>
                   </div>
                 </div>
