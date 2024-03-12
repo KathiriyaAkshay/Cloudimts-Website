@@ -17,7 +17,7 @@ import {
   Button,
   Select
 } from 'antd'
-import { CheckCircleOutlined, ClearOutlined, CloseCircleOutlined, PictureOutlined } from '@ant-design/icons'
+import { CheckCircleOutlined, ClearOutlined, CloseCircleOutlined, CloseOutlined, PictureOutlined } from '@ant-design/icons'
 import { useBreadcrumbs } from '../../hooks/useBreadcrumbs'
 import ChatMain from '../../components/Chat/ChatMain'
 import EditStudy from '../../components/Studies/EditStudy'
@@ -1538,6 +1538,17 @@ const Dicom = () => {
         open={isDrawerOpen}
         className='chat-drawer'
       >
+        <div style={{position:"absolute",right:"0.5rem",top:"1rem",zIndex:"999"}}>
+          <CloseOutlined style={{font:"1.3rem",cursor:"pointer"}} onClick={() => {
+              setStudyID(null)
+              setSeriesID(null)
+              setIsDrawerOpen(false)
+              setMessages([])
+              setPersonName(null)
+              localStorage.removeItem("currentChatId")
+            }
+          }/>
+        </div>
         <ChatMain
           referenceid={studyReferenceId}
           userId={studyID}
@@ -1594,7 +1605,16 @@ const Dicom = () => {
         className='Study-export-option-modal'
       >
         <Spin spinning={studyExportLoading}>
-          <Form form={form} onFinish={StudyExportOptionHandler}>
+          <Form 
+          form={form} 
+          onFinish={StudyExportOptionHandler} 
+          labelCol={{
+            span: 6,
+          }}
+          wrapperCol={{
+            span: 18,
+          }}
+          >
             <Row gutter={15}>
               <Col xs={24} lg={24} style={{ marginTop: '20px' }}>
                 {/* ===== Study export from date selection ======= */}
@@ -1609,7 +1629,7 @@ const Dicom = () => {
                     }
                   ]}
                 >
-                  <DatePicker format={'DD-MM-YYYY'} />
+                  <DatePicker format={'DD-MM-YYYY'}/>
                 </Form.Item>
               </Col>
 
@@ -1626,7 +1646,22 @@ const Dicom = () => {
                     }
                   ]}
                 >
-                  <DatePicker format={'DD-MM-YYYY'} />
+                  <DatePicker format={'DD-MM-YYYY'}/>
+                </Form.Item>
+              </Col>
+
+              <Col xs={24} lg={24}>
+                <Form.Item
+                  name='study_name'
+                  label='Study Name'
+                  rules={[
+                    {
+                      required: true,
+                      message: 'Please Enter Study Name'
+                    }
+                  ]}
+                >
+                <Input placeholder='Study name'/>
                 </Form.Item>
               </Col>
             </Row>
