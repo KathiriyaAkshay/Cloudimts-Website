@@ -12,8 +12,13 @@ const ReportDataProvider = ({ children }) => {
     isStudyDescriptionSelected: false,
   });
 
+  const [docFiledata,setDocFileData]=useState("");
+
+
+
+
   return (
-    <ReportDataContext.Provider value={{ selectedItem, setSelectedItem }}>
+    <ReportDataContext.Provider value={{ selectedItem, setSelectedItem,docFiledata,setDocFileData }}>
       {children}
     </ReportDataContext.Provider>
   );

@@ -10,7 +10,8 @@ import {
   Badge,
   Avatar,
   List,
-  Empty
+  Empty,
+  Upload
 } from 'antd'
 import React, { useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -21,14 +22,15 @@ import { ReportDataContext } from '../hooks/reportDataContext'
 import { UserPermissionContext } from '../hooks/userPermissionContext'
 import { SiMicrosoftexcel } from 'react-icons/si'
 import { FaFilePdf } from "react-icons/fa";
-
+import mammoth from 'mammoth'
 import {
   DownloadOutlined,
   FilterOutlined,
   PlusOutlined,
-  SearchOutlined
+  SearchOutlined,
+  UploadOutlined
 } from '@ant-design/icons'
-import { handleDownloadPDF, handleExport,handlePdfExport } from '../helpers/billingTemplate'
+import { handleDownloadPDF, handleExport, handlePdfExport } from '../helpers/billingTemplate'
 import { BillingDataContext } from '../hooks/billingDataContext'
 import NotificationMessage from './NotificationMessage'
 import { FilterSelectedContext } from '../hooks/filterSelectedContext'
@@ -61,13 +63,13 @@ const HeaderButton = ({
     setIsSupportModalOpen,
     templateOption,
     setEmailSupportOption,
-    setPhoneSupportOption, 
-    templateInstitutionOption, 
+    setPhoneSupportOption,
+    templateInstitutionOption,
     setBillingInformationModal,
-  } = useContext(filterDataContext) ; 
-  
+  } = useContext(filterDataContext);
 
-  const { setSelectedItem } = useContext(ReportDataContext)
+
+  const { setSelectedItem, setDocFileData } = useContext(ReportDataContext)
   const { billingFilterData, setBillingFilterData } =
     useContext(BillingDataContext)
   const [templateOptions, setTemplateOptions] = useState([])
@@ -82,8 +84,8 @@ const HeaderButton = ({
     let requestPayload = {
       "page_number": 1,
       "page_limit": 200,
-      "modality": templateOption, 
-      "institution": templateInstitutionOption, 
+      "modality": templateOption,
+      "institution": templateInstitutionOption,
       "radiologist": parseInt(localStorage.getItem("userID"))
     };
 
@@ -144,6 +146,73 @@ const HeaderButton = ({
     }
   }, [window.location.pathname])
 
+  // Function to handle file selection and conversion
+  const handleFileChange = (event) => {
+    const file = event.file.originFileObj;
+        if (file) {
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        const arrayBuffer = reader.result;
+        const text = await mammoth.convertToHtml({ arrayBuffer });
+
+        const data = `
+          <!DOCTYPE html>
+  <html lang="en">
+  <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Centered Content with Table Border</title>
+  <style>
+      body {
+          margin: 0;
+          padding: 0;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 100vh;
+          width:100%;
+      }
+      .container {
+          text-align: center;
+          border: 2px solid #000;
+          padding: 20px;
+      }
+      table {
+          border-collapse: collapse;
+          margin: auto;
+      }
+      table, th, td {
+          padding:5px !important;
+          border: 1px solid #000;
+      }
+  </style>
+  </head>
+  <body>
+  <div class="container">`+ text.value + `
+  </div>
+  </body>
+  </html>
+   
+  `
+        setDocFileData(text.value);
+
+      };
+      reader.readAsArrayBuffer(file);
+    }
+  };
+
+  const props = {
+    name: 'file',
+    action: 'https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188',
+    headers: {
+      authorization: 'authorization-text',
+    },
+    showUploadList:false,
+    onChange(info) {
+     handleFileChange(info)
+    },
+  };
+
 
 
   return (
@@ -163,8 +232,8 @@ const HeaderButton = ({
             <FilterOutlined style={{ fontWeight: '500' }} /> Filter
           </Button>
 
-          <Button 
-            type='primary' 
+          <Button
+            type='primary'
             onClick={() => navigate('/institutions-logs')}
             className='header-secondary-option-button'>
             Institution Logs
@@ -209,8 +278,8 @@ const HeaderButton = ({
             <FilterOutlined style={{ fontWeight: '500' }} /> Filter
           </Button>
 
-          <Button 
-            type='primary' 
+          <Button
+            type='primary'
             onClick={() => navigate('/users-logs')}
             className='header-secondary-option-button'>
             Users Logs
@@ -257,8 +326,8 @@ const HeaderButton = ({
                 <PlusOutlined style={{ fontWeight: '500' }} /> Add Role
               </Button>
             )}
-          <Button 
-            type='primary' 
+          <Button
+            type='primary'
             onClick={() => navigate('/role-logs')}
             className='header-secondary-option-button'>
             Role Logs
@@ -327,6 +396,11 @@ const HeaderButton = ({
       {window.location.pathname === `/reports/${id}` && (
         <div className='iod-setting-div'>
 
+<Upload {...props}>
+    <Button icon={<UploadOutlined />}>Insert Doc File</Button>
+  </Upload>
+
+
           <Button
             type='primary'
             onClick={() =>
@@ -351,7 +425,6 @@ const HeaderButton = ({
                 isInstitutionSelected: false,
                 isImagesSelected: false,
                 isOhifViewerSelected: false,
-
                 templateId: prev?.templateId,
                 isStudyDescriptionSelected: true
               }))
@@ -433,12 +506,12 @@ const HeaderButton = ({
       {window.location.pathname === '/billing' && (
         <div className='iod-setting-div'>
 
-          {billingFilterData?.length > 0?<>
+          {billingFilterData?.length > 0 ? <>
             <Button type="primary" onClick={() => setBillingInformationModal(true)}
               style={{ backgroundColor: "#f5f5f5", color: "#212121 !important" }}>
               View Billing information
             </Button>
-          </>:<></>}
+          </> : <></>}
 
           <Button
             type='primary'
@@ -447,29 +520,29 @@ const HeaderButton = ({
           >
             <SearchOutlined /> Search Billing
           </Button>
-          
+
           {permissionData['Other option permission'] &&
             permissionData['Other option permission'].find(
               data =>
                 data.permission === 'Show Billing - export to excel option'
             )?.permission_value && (
               <>
-              <Button
-                type='primary'
-                className='btn-icon-div header-secondary-option-button'
-                onClick={() => handleExport(billingFilterData)}
-              >
-                <SiMicrosoftexcel style={{ fontWeight: '500' }} /> Export Excel
-              </Button>
-              <Button
-                type='primary'
-                className='btn-icon-div header-secondary-option-button'
-                onClick={() => handlePdfExport(billingFilterData)}
-              >
-                <FaFilePdf style={{ fontWeight: '500' }} /> Export PDF
-              </Button>
+                <Button
+                  type='primary'
+                  className='btn-icon-div header-secondary-option-button'
+                  onClick={() => handleExport(billingFilterData)}
+                >
+                  <SiMicrosoftexcel style={{ fontWeight: '500' }} /> Export Excel
+                </Button>
+                <Button
+                  type='primary'
+                  className='btn-icon-div header-secondary-option-button'
+                  onClick={() => handlePdfExport(billingFilterData)}
+                >
+                  <FaFilePdf style={{ fontWeight: '500' }} /> Export PDF
+                </Button>
               </>
-              
+
             )}
 
 
@@ -516,7 +589,7 @@ const HeaderButton = ({
 
         </>
       )}
-      
+
       <StudyFilterModal
         isFilterModalOpen={isAddFilterModalOpen}
         setIsFilterModalOpen={setIsAddFilterModalOpen}
