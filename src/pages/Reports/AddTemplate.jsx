@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useBreadcrumbs } from '../../hooks/useBreadcrumbs'
-import { Button, Card, Col, Form, Input, Row, Select, Radio,Upload } from 'antd'
+import { Button, Card, Col, Form, Input, Row, Select, Radio, Upload } from 'antd'
 import '../../../ckeditor5/build/ckeditor'
 import { CKEditor } from '@ckeditor/ckeditor5-react'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -298,9 +298,9 @@ const AddTemplate = () => {
     headers: {
       authorization: 'authorization-text',
     },
-    showUploadList:false,
+    showUploadList: false,
     onChange(info) {
-     handleFileChange(info)
+      handleFileChange(info)
     },
   };
 
@@ -471,7 +471,7 @@ const AddTemplate = () => {
               <Form.Item style={{ position: "relative" }}>
 
 
-                <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <div style={{ display: "flex", justifyContent: "space-between",marginBottom:"3px" }}>
                   {/* Template Doc input  */}
                   <div style={{ fontWeight: "700" }}>Create Template</div>
                   {/* <div>
@@ -483,9 +483,9 @@ const AddTemplate = () => {
 
                     />
                   </div> */}
-                   <Upload {...props}>
-    <Button icon={<UploadOutlined />}>Insert Doc File</Button>
-  </Upload>
+                  <Upload {...props} className='m'>
+                    <Button type='primary' icon={<UploadOutlined />}>Insert Doc File</Button>
+                  </Upload>
 
                 </div>
 

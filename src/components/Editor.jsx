@@ -22,7 +22,7 @@ const Editor = ({ id }) => {
   const [editorData, setEditorData] = useState('')
   const [cardDetails, setCardDetails] = useState({})
   const [isLoading, setIsLoading] = useState(false)
-  const { selectedItem, setSelectedItem, docFiledata } = useContext(ReportDataContext)
+  const {selectedItem, setSelectedItem, docFiledata } = useContext(ReportDataContext)
   const { templateOption, setTemplateOption, setTemplateInstitutionOption } = useContext(filterDataContext)
   const [studyImageID, setStudyImageID] = useState(0)
   const [signatureImage, setSignatureImage] = useState(null)
@@ -243,7 +243,7 @@ const Editor = ({ id }) => {
       </tbody>
     </table>
   </div>`
-  return data;
+    return data;
   }
 
   const convertPatientDataToTable = (insertImage) => {
@@ -319,7 +319,6 @@ const Editor = ({ id }) => {
       })
         .then(res => {
           if (res.data.status) {
-            NotificationMessage('success', 'Your report submit successfully')
             navigate(-1)
           } else {
             NotificationMessage(
@@ -511,11 +510,11 @@ const Editor = ({ id }) => {
 
                 <Form
                   labelCol={{
-                    span: 8,
+                    span: 4,
                     // offset:3,
                   }}
                   wrapperCol={{
-                    span: 22,
+                    span: 20,
                   }}
                   labelAlign="left"
                   form={form}
@@ -548,6 +547,7 @@ const Editor = ({ id }) => {
                 </Form>
 
                 <CKEditor
+                style={{height:"100%"}}
                   editor={ClassicEditor}
                   data={editorData}
                   onChange={(event, editor) => {

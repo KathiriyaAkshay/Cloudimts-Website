@@ -499,9 +499,6 @@ export const handleExport = (tableData) => {
         "Reporting Date/Time": element?.reporting_time, 
         "Status": element?.study_status, 
         "Reported by": element?.reported_by, 
-        "Reporting charge": element?.reporting_charge, 
-        "Communication charge": element?.comunication_charge, 
-        "Midnight charge": element?.midnight_charge, 
         "Charge": parseInt(element?.reporting_charge) + parseInt(element?.comunication_charge) + parseInt(element?.midnight_charge)
       }
     )
@@ -588,9 +585,6 @@ export const handlePdfExport=(tableData)=>{
       <th>Reporting Date/Time</th>
       <th>Status</th>
       <th>Reported By</th>
-      <th>Reporting Charge</th>
-      <th>Communication Charge</th>
-      <th>Midnight Charge</th>
       <th>Charge</th>
     </tr>
   </thead>
@@ -613,9 +607,6 @@ export const handlePdfExport=(tableData)=>{
   <td>${element?.reporting_time}</td>
   <td>${element?.study_status}</td>
   <td>${element?.reported_by}</td>
-  <td>${element?.reporting_charge}</td>
-  <td>${element?.comunication_charge}</td>
-  <td>${element?.midnight_charge}</td>
   <td>${parseInt(element?.reporting_charge) + parseInt(element?.comunication_charge) + parseInt(element?.midnight_charge)}</td>
 </tr>
     `

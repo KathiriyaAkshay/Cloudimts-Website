@@ -32,8 +32,7 @@ const index = () => {
 
   const handleDateChange = (date, dateString) => {
     setSelectedDate(date);
-    console.log(date, dateString);
-  };
+x  };
 
   useEffect(() => setIsBillingFilterModalOpen(true), []);
 
@@ -133,13 +132,12 @@ const index = () => {
       sorter: (a, b) => a.reported_by.localeCompare(b.reported_by),
     },
 
-
-    {
-      title: "Reporting type",
-      dataIndex: "reporting_type",
-      editable: true,
-      sorter: (a, b) => a.reporting_type.localeCompare(b.reporting_type),
-    },
+    // {
+    //   title: "Reporting type",
+    //   dataIndex: "reporting_type",
+    //   editable: true,
+    //   sorter: (a, b) => a.reporting_type.localeCompare(b.reporting_type),
+    // },
 
     {
       title: "Status",
@@ -344,20 +342,20 @@ const index = () => {
     setIsFilterModalOpen(false);
   };
 
-  const compareVal=(a,b)=>{
+  // const compareVal=(a,b)=>{
 
-    if(a!=undefined || a==""){
+  //   if(a!=undefined || a==""){
 
-      if(a==b){
-        return true;
-      }else{
-        return false;
-      }
-    }
+  //     if(a==b){
+  //       return true;
+  //     }else{
+  //       return false;
+  //     }
+  //   }
 
-    return false;
+  //   return false;
 
-  }
+  // }
   
 
   const onFinish = (values) => {
@@ -377,9 +375,9 @@ const index = () => {
 
     const filteredData = billingFilterData.filter(item => {
       for (let key in filter) {
-        console.log('====================================');
-        console.log(item[key],filter[key]);
-        console.log('====================================');
+        // console.log('====================================');
+        // console.log(item[key],filter[key]);
+        // console.log('====================================');
         if(!item[key].includes(filter[key])){
           return false;
         }

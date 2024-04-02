@@ -397,7 +397,7 @@ const HeaderButton = ({
         <div className='iod-setting-div'>
 
 <Upload {...props}>
-    <Button icon={<UploadOutlined />}>Insert Doc File</Button>
+<Button type='primary' icon={<UploadOutlined />}>Insert Doc File</Button>
   </Upload>
 
 
@@ -449,7 +449,7 @@ const HeaderButton = ({
           >
             Patient Information
           </Button>
-
+{/* 
           <Button
             type='primary'
             onClick={() =>
@@ -465,7 +465,7 @@ const HeaderButton = ({
             }
           >
             Institution Information
-          </Button>
+          </Button> */}
 
           <Button
             type='primary'
@@ -480,7 +480,22 @@ const HeaderButton = ({
               }))
             }
           >
-            OHIF Viewer
+            OHIF Viewer V1.0
+          </Button>
+          <Button
+            type='primary'
+            onClick={() =>
+              setSelectedItem(prev => ({
+                isPatientSelected: false,
+                isInstitutionSelected: false,
+                isImagesSelected: false,
+                isOhifViewerSelected: true,
+                templateId: prev?.templateId,
+                isStudyDescriptionSelected: false
+              }))
+            }
+          >
+            OHIF Viewer V2.0
           </Button>
 
           <Select

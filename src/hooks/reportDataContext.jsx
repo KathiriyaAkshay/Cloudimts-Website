@@ -4,7 +4,7 @@ export const ReportDataContext = createContext();
 
 const ReportDataProvider = ({ children }) => {
   const [selectedItem, setSelectedItem] = useState({
-    isPatientSelected: false,
+    isPatientSelected:false,
     isInstitutionSelected: false,
     isImagesSelected: false,
     isOhifViewerSelected:false,

@@ -723,7 +723,8 @@ const Dicom = () => {
     checkPermissionStatus('View Patient name') && {
       title: "Patient's Name",
       dataIndex: 'name',
-      width: "14%",
+      ellipsis:true,
+      width: "17%",
       className: `${checkPermissionStatus('View Patient name') ? '' : 'column-display-none'}`,
       render: (text, record) => (
         record.urgent_case ? <>
