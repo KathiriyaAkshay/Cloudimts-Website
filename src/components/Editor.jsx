@@ -53,7 +53,7 @@ const Editor = ({ id }) => {
 
   useEffect(() => {
     setSelectedItem(prev => ({
-      isPatientSelected: false,
+      isPatientSelected: true,
       isInstitutionSelected: false,
       isImagesSelected: false,
       isOhifViewerSelected: false,
@@ -125,6 +125,7 @@ const Editor = ({ id }) => {
       )
       if (reportResponseData['status'] === true) {
         setInstitutionReport({ ...reportResponseData['data'] })
+        convertedPatientTableInitially({...reportResponseData['data']})
       }
     }
   }
@@ -248,9 +249,10 @@ const Editor = ({ id }) => {
 
   const convertPatientDataToTable = (insertImage) => {
     const data =
-      selectedItem.isPatientSelected
-        ? convertedPatientTable()
-        : selectedItem.isInstitutionSelected
+      // selectedItem.isPatientSelected
+      //   ? convertedPatientTable()
+      //   : 
+        selectedItem.isInstitutionSelected
           ? `<div>
           
               <h2 style = "text-align: center;">Institution Information</h2>
@@ -301,6 +303,46 @@ const Editor = ({ id }) => {
   }
 
   const [imageSlider, setImageSlider] = useState([])
+
+  const convertedPatientTableInitially = (institutionReport) => {
+    institutionReport.patient_details=Object.assign(institutionReport.patient_details)
+    const keys = Object.keys(institutionReport?.institution_details);
+    var temp = ``;
+    const data = `<div>
+    <h2 style = "text-align: center;">Patient Information</h2>
+
+    <table style="width: 100%; border-collapse: collapse;">
+      <tbody>
+        ${institutionReport.hasOwnProperty('patient_details') && selectedItem.isPatientSelected ?
+        Object.entries(institutionReport?.patient_details)
+          .map(([key, value], index) => {
+            temp = `
+            <tr>
+              <td style="text-align: left; padding: 8px;font-weight:600">${key}</td>
+              <td style="padding: 8px;">${value}</td>`;
+
+            if (index < keys.length) {
+              temp +=
+                `<td style="text-align: left; padding: 8px;font-weight:600  ">${keys[index]}</td>
+              <td style="padding: 8px;">${institutionReport.institution_details[keys[index]]}</td></tr>`;
+            } else {
+              temp += `</tr>`
+            }
+
+            return temp;
+
+          })
+          .join('')
+        : ''}
+
+
+      </tbody>
+    </table>
+  </div>`
+  setEditorData(prev =>
+   `${prev}${data}`
+  )
+  }
 
   // **** Submit report handler **** // 
   const handleReportSave = async () => {

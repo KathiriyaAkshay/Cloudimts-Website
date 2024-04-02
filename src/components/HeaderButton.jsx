@@ -7,6 +7,7 @@ import {
   Popover,
   Select,
   Popconfirm,
+  Tag,
   Badge,
   Avatar,
   List,
@@ -433,7 +434,7 @@ const HeaderButton = ({
             Study Description
           </Button>
 
-          <Button
+          {/* <Button
             type='primary'
             onClick={() =>
               setSelectedItem(prev => ({
@@ -448,7 +449,7 @@ const HeaderButton = ({
             }
           >
             Patient Information
-          </Button>
+          </Button> */}
 {/* 
           <Button
             type='primary'
@@ -480,7 +481,8 @@ const HeaderButton = ({
               }))
             }
           >
-            OHIF Viewer V1.0
+            OHIF Viewer&nbsp; 
+            <Tag color="#2db7f5">V1.0</Tag>
           </Button>
           <Button
             type='primary'
@@ -495,7 +497,8 @@ const HeaderButton = ({
               }))
             }
           >
-            OHIF Viewer V2.0
+            OHIF Viewer&nbsp;<Tag color="#2db7f5">V2.0</Tag>
+
           </Button>
 
           <Select
