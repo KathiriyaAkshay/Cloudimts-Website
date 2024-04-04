@@ -125,7 +125,54 @@ const StudyNotificationProvider = ({ children }) => {
           }
   
         
-        } else if (eventData.payload.status === "Reporting") {
+        } else if (eventData.payload.status === "Un-Assigned") {
+  
+          // Assigned study status handler 
+          let StudyId = eventData.payload.data.id ; 
+          let InstitutionId = eventData.payload.data?.institution?.id ;
+          
+          let updateStudyStatus = 0 ; 
+  
+          setStudyData((prev) => {
+            return prev.map((element) => {
+              if (element.id === StudyId){  
+                updateStudyStatus = 1; 
+                
+                return {...element, status: "Un-Assigned" , 
+                  updated_at: eventData.payload.data.updated_at, 
+                  study_description: eventData.payload.data.study_description, 
+                  assign_user: eventData.payload.data.assign_user, 
+                  top_assign: eventData.payload.data.top_assign
+                } ;
+                 
+              } else{
+                return {...element} ; 
+              }
+            })
+          })
+  
+          let AllPermissionId = JSON.parse(localStorage.getItem("all_permission_id")) ; 
+          let AllAssignId = JSON.parse(localStorage.getItem("all_assign_id")) ; 
+  
+          if (AllPermissionId.includes(InstitutionId) && updateStudyStatus === 0){
+            setStudyData((prev) => [{...eventData.payload.data, 
+              name: eventData.payload.data.study.patient_name,
+              institution: eventData.payload.data.institution.name, 
+              patient_id: eventData.payload.data.study.patient_id, 
+              study_id: eventData.payload.data.study.id} , ...prev]) ; 
+          } else {
+  
+            if (AllAssignId.includes(InstitutionId) && updateStudyStatus === 0){
+              setStudyData((prev) => [{...eventData.payload.data, 
+                name: eventData.payload.data.study.patient_name,
+                institution: eventData.payload.data.institution.name, 
+                patient_id: eventData.payload.data.study.patient_id, 
+                study_id: eventData.payload.data.study.id} , ...prev]) ; 
+            }
+          }
+  
+        
+        }else if (eventData.payload.status === "Reporting") {
           
           setStudyData((prevStudyData) => {
             const updatedData = prevStudyData.map((data) => {

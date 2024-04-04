@@ -30,6 +30,10 @@ const AdvancedSearchModal = ({ name, retrieveStudyData, advanceSearchFilterData,
       value: 'Assigned'
     },
     {
+      label: 'Un-Assigned',
+      value: 'Un-Assigned'
+    },
+    {
       label: 'InReporting',
       value: 'InReporting'
     },

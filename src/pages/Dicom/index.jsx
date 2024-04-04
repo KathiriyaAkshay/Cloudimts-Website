@@ -1170,6 +1170,10 @@ const Dicom = () => {
       value: "Assigned"
     },
     {
+      label: "Un-Assigned",
+      value: "Un-Assigned"
+    },
+    {
       label: "InReporting",
       value: "InReporting"
     },
