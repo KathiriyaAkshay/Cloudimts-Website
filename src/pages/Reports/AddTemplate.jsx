@@ -1,18 +1,20 @@
 import React, { useEffect, useState } from 'react'
 import { useBreadcrumbs } from '../../hooks/useBreadcrumbs'
-import { Button, Card, Col, Form, Input, Row, Select } from 'antd'
+import { Button, Card, Col, Form, Input, Row, Select, Radio, Upload } from 'antd'
 import '../../../ckeditor5/build/ckeditor'
 import { CKEditor } from '@ckeditor/ckeditor5-react'
 import { useNavigate, useParams } from 'react-router-dom'
+import mammoth from 'mammoth';
 import {
   fetchTemplate,
   insertNewTemplate,
   updateReport
 } from '../../apis/studiesApi'
 import NotificationMessage from '../../components/NotificationMessage'
-import { descriptionOptions } from '../../helpers/utils' 
+import { descriptionOptions } from '../../helpers/utils'
 import API from '../../apis/getApi'
 import APIHandler from '../../apis/apiHandler'
+import { UploadOutlined } from '@ant-design/icons'
 
 const AddTemplate = () => {
   const [editorData, setEditorData] = useState('')
@@ -26,11 +28,11 @@ const AddTemplate = () => {
     fetchTemplate({ id })
       .then(res => {
         if (res.data.status) {
-          form.setFieldsValue({ 
-            name: res.data.data.report_name, 
-            study_description: res?.data?.data?.report_description,  
-            modality: res?.data?.data?.modality, 
-            institution_select: res?.data?.data?.institution, 
+          form.setFieldsValue({
+            name: res.data.data.report_name,
+            study_description: res?.data?.data?.report_description,
+            modality: res?.data?.data?.modality,
+            institution_select: res?.data?.data?.institution,
             study_radiologist: res?.data?.data?.radiologist_id
           })
           setEditorData(res.data.data.report_data)
@@ -46,7 +48,7 @@ const AddTemplate = () => {
   }
 
   // **** Reterive institution options **** // 
-  const [institutionOptions, setInstitutionOptions] = useState([]) ; 
+  const [institutionOptions, setInstitutionOptions] = useState([]);
   const retrieveInstitutionDataFunction = async () => {
     const token = localStorage.getItem('token');
     await API.get('/user/v1/fetch-institution-list', {
@@ -77,7 +79,7 @@ const AddTemplate = () => {
   }
 
   // **** Reterive all radiologist options **** // 
-  const [allRadiologistOption, setAllRadiologistOption] = useState([]) ; 
+  const [allRadiologistOption, setAllRadiologistOption] = useState([]);
   const FetchAllRadiologist = async () => {
     let requestPayload = {};
 
@@ -100,20 +102,20 @@ const AddTemplate = () => {
   }
 
   // **** Reterive institution modality name list options **** // 
-  const [modalityOptions, setModalityOptions] = useState([]) ; 
-  const FetchInstitutionModalityList = async() => {
-    let requestPayload = {} ; 
+  const [modalityOptions, setModalityOptions] = useState([]);
+  const FetchInstitutionModalityList = async () => {
+    let requestPayload = {};
     let responseData = await APIHandler(
-      "GET", 
-      requestPayload, 
+      "GET",
+      requestPayload,
       "institute/v1/modality/fetch"
-    ); 
-    if (responseData?.status){
+    );
+    if (responseData?.status) {
       const resData = responseData?.data?.map((element) => ({
-        label: element?.name, 
+        label: element?.name,
         value: element?.name
       }))
-      setModalityOptions(resData) ; 
+      setModalityOptions(resData);
     }
 
   }
@@ -130,10 +132,10 @@ const AddTemplate = () => {
         name: 'Add'
       })
     }
-    changeBreadcrumbs(crumbs) ; 
-    retrieveInstitutionDataFunction() ;
-    FetchAllRadiologist();  
-    FetchInstitutionModalityList() ; 
+    changeBreadcrumbs(crumbs);
+    retrieveInstitutionDataFunction();
+    FetchAllRadiologist();
+    FetchInstitutionModalityList();
   }, [])
 
   // **** Template submit request handler **** // 
@@ -143,17 +145,17 @@ const AddTemplate = () => {
       if (!id) {
 
         let requestPayload = {
-          name: values?.name, 
-          data: editorData, 
-          description: values?.study_description, 
+          name: values?.name,
+          data: editorData,
+          description: values?.study_description,
           modality: values?.modality
-        }; 
+        };
 
-        if (values?.institution_select !== undefined){
+        if (values?.institution_select !== undefined) {
           requestPayload['institution'] = values?.institution_select
         }
 
-        if (values?.study_radiologist !== undefined){
+        if (values?.study_radiologist !== undefined) {
           requestPayload['radiologist'] = values?.study_radiologist
         }
 
@@ -176,41 +178,41 @@ const AddTemplate = () => {
       } else {
 
         let requestPayload = {
-          id: id, 
-          update_data: editorData, 
-          update_report_name: values?.name, 
-          update_report_description: values?.study_description, 
+          id: id,
+          update_data: editorData,
+          update_report_name: values?.name,
+          update_report_description: values?.study_description,
           update_modality: values?.modality
-        }; 
-        let institutionMatch = 0 ; 
-        let institutionMatchValue = null ; 
-      
-        for(let i = 0; i<institutionOptions?.length; i++){
-          let item = institutionOptions[i]; 
-          if (item['label'] === values?.institution_select){
-            institutionMatchValue = item['value'] ; 
-            institutionMatch = 1 ; 
+        };
+        let institutionMatch = 0;
+        let institutionMatchValue = null;
+
+        for (let i = 0; i < institutionOptions?.length; i++) {
+          let item = institutionOptions[i];
+          if (item['label'] === values?.institution_select) {
+            institutionMatchValue = item['value'];
+            institutionMatch = 1;
           }
         }
 
-        let radiologistMatch = 0 ; 
-        let radiologistMatchValue = null ; 
+        let radiologistMatch = 0;
+        let radiologistMatchValue = null;
 
-        for (let i = 0; i<allRadiologistOption?.length; i++){
-          let item = allRadiologistOption[i] ; 
-          if  (item['label'] === values?.study_radiologist){
-            radiologistMatch = 1 ; 
-            radiologistMatchValue = item['value'] ; 
+        for (let i = 0; i < allRadiologistOption?.length; i++) {
+          let item = allRadiologistOption[i];
+          if (item['label'] === values?.study_radiologist) {
+            radiologistMatch = 1;
+            radiologistMatchValue = item['value'];
           }
         }
-        
 
-        if (values?.institution_select !== undefined){
-          requestPayload['institution'] = institutionMatch == 1?institutionMatchValue:values?.institution_select
+
+        if (values?.institution_select !== undefined) {
+          requestPayload['institution'] = institutionMatch == 1 ? institutionMatchValue : values?.institution_select
         }
 
-        if (values?.study_radiologist !== undefined){
-          requestPayload['radiologist'] = radiologistMatch == 1?radiologistMatchValue:values?.study_radiologist
+        if (values?.study_radiologist !== undefined) {
+          requestPayload['radiologist'] = radiologistMatch == 1 ? radiologistMatchValue : values?.study_radiologist
         }
 
         updateReport({ ...requestPayload })
@@ -235,6 +237,73 @@ const AddTemplate = () => {
     }
   }
 
+  // Function to handle file selection and conversion
+  const handleFileChange = (event) => {
+    const file = event.file.originFileObj;
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        const arrayBuffer = reader.result;
+        const text = await mammoth.convertToHtml({ arrayBuffer });
+
+        const data = `
+        <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Centered Content with Table Border</title>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        width:100%;
+    }
+    .container {
+        text-align: center;
+        border: 2px solid #000;
+        padding: 20px;
+    }
+    table {
+        border-collapse: collapse;
+        margin: auto;
+    }
+    table, th, td {
+        padding:5px !important;
+        border: 1px solid #000;
+    }
+</style>
+</head>
+<body>
+<div class="container">`+ text.value + `
+</div>
+</body>
+</html>
+ 
+`
+        setEditorData(text.value);
+
+        console.log(editorData);
+      };
+      reader.readAsArrayBuffer(file);
+    }
+  };
+  const props = {
+    name: 'file',
+    action: 'https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188',
+    headers: {
+      authorization: 'authorization-text',
+    },
+    showUploadList: false,
+    onChange(info) {
+      handleFileChange(info)
+    },
+  };
+
   return (
     <div>
       <Card className='report-template-card'>
@@ -248,9 +317,11 @@ const AddTemplate = () => {
           form={form}
           onFinish={handleSubmit}
         >
-          <Row gutter={30} style={{height: "70vh"}}>
+          <Row gutter={30} style={{ height: "70vh" }}>
 
             <Col lg={8} md={8} sm={8}>
+
+
 
               {/* Template name input  */}
               <Form.Item
@@ -317,7 +388,7 @@ const AddTemplate = () => {
                   }
                 />
               </Form.Item>
-            
+
               {/* Institution name dropdown  */}
               <Form.Item
                 name="institution_select"
@@ -340,7 +411,7 @@ const AddTemplate = () => {
                   }
                 />
               </Form.Item>
-          
+
               {/* User name dropdown  */}
               <Form.Item
                 name="study_radiologist"
@@ -364,18 +435,61 @@ const AddTemplate = () => {
                   }
                 />
               </Form.Item>
+
+              {/* Gender  */}
+              <Form.Item
+                label='Gender'
+                name='gender'
+                rules={[
+                  {
+                    required: false,
+                    // whitespace: true,
+                    // message: 'Please Select Template'
+                  }
+                ]}
+              >
+                <Radio.Group >
+                  <Radio value={1}>Male</Radio>
+                  <Radio value={2}>Female</Radio>
+                  <Radio value={3}>others</Radio>
+
+                </Radio.Group>
+
+              </Form.Item>
+
             </Col>
-            
+
             <Col
               lg={16}
               md={16}
               sm={16}
               // style={{ height: 'calc(100vh - 300px)', overflow: 'auto' }}
               className='add-template-option-editor'
-              style={{height:"70vh", overflow: "hidden"}}
+              style={{ height: "70vh", overflow: "hidden", position: "relative" }}
             >
 
-              <Form.Item label='Create Template'>
+              <Form.Item style={{ position: "relative" }}>
+
+
+                <div style={{ display: "flex", justifyContent: "space-between",marginBottom:"3px" }}>
+                  {/* Template Doc input  */}
+                  <div style={{ fontWeight: "700" }}>Create Template</div>
+                  {/* <div>
+                    <input
+                      type='file'
+                      class="custom-file-input"
+                      // placeholder='Enter Template Name'
+                      onChange={handleFileChange}
+
+                    />
+                  </div> */}
+                  <Upload {...props} className='m'>
+                    <Button type='primary' icon={<UploadOutlined />}>Insert Doc File</Button>
+                  </Upload>
+
+                </div>
+
+
                 <CKEditor
                   editor={ClassicEditor}
                   data={editorData}

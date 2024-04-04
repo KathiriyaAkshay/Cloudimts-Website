@@ -2,7 +2,7 @@ import { saveAs } from "file-saver";
 import * as XLSX from "xlsx";
 import * as htmlToImage from 'html-to-image';
 import { jsPDF } from "jspdf";
-import NotificationMessage from "../components/NotificationMessage" ; 
+import NotificationMessage from "../components/NotificationMessage";
 import APIHandler from "../apis/apiHandler";
 import logo from "../assets/images/Imageinet-logo.png";
 import html2pdf from 'html2pdf.js';
@@ -24,22 +24,22 @@ export const handleDownloadPDF = async (billingData) => {
 
     console.log("Particular modality inforamtion ==========>");
     console.log(modality);
-  
-    let reportingCharge = parseInt(reporting_charge); 
+
+    let reportingCharge = parseInt(reporting_charge);
     let communicationCharge = parseInt(modality_communication_charge);
     let midnightCharge = parseInt(midnight_charge);
-  
+
     if (reportingCharge !== 0) {
 
       if (modality in ReportingData) {
 
         ReportingData[modality] = {
-        
+
           total_object: ReportingData[modality].total_object + 1,
           total_report_charge: reportingCharge + communicationCharge,
           total_midnight_charge: ReportingData[modality].total_midnight_charge + midnightCharge
-        };  
-        
+        };
+
       } else {
 
         ReportingData[modality] = {
@@ -47,65 +47,65 @@ export const handleDownloadPDF = async (billingData) => {
           total_report_charge: reportingCharge + communicationCharge,
           total_midnight_charge: midnightCharge
         };
-        
+
       }
 
     }
-  } 
+  }
 
-  let bill_total_amount_information = 0 ; // Bill total amount information 
-  let bill_tax_amount_information = 400 ;  // Bill tax amount information 
-  let bill_all_amount_information = 0 ; // Bill final amount information after tax
+  let bill_total_amount_information = 0; // Bill total amount information 
+  let bill_tax_amount_information = 400;  // Bill tax amount information 
+  let bill_all_amount_information = 0; // Bill final amount information after tax
 
   // Generate bill total amount 
   Object.keys(ReportingData).forEach((key => {
-    ReportingData[key]['total_amount'] = parseInt(parseInt(ReportingData[key]['total_object'])*ReportingData[key]['total_report_charge']) + ReportingData[key]['total_midnight_charge']
-    bill_total_amount_information = bill_total_amount_information + ReportingData[key]['total_amount'] ; 
+    ReportingData[key]['total_amount'] = parseInt(parseInt(ReportingData[key]['total_object']) * ReportingData[key]['total_report_charge']) + ReportingData[key]['total_midnight_charge']
+    bill_total_amount_information = bill_total_amount_information + ReportingData[key]['total_amount'];
   }))
 
-  bill_all_amount_information = bill_total_amount_information + bill_tax_amount_information ; 
+  bill_all_amount_information = bill_total_amount_information + bill_tax_amount_information;
 
   // Filter data context
-  let FilterData = localStorage.getItem("BillingFilterValues") ; 
-  FilterData = JSON.parse(FilterData) ;
+  let FilterData = localStorage.getItem("BillingFilterValues");
+  FilterData = JSON.parse(FilterData);
 
-  if (FilterData?.institution === undefined){
-    NotificationMessage("warning", "Not able to generate bill without institution selection") ; 
-  } else if (FilterData?.institution.length > 1){
-    NotificationMessage("warning", "Not able to generate bill for multiple Institution") ; 
-  } else{
+  if (FilterData?.institution === undefined) {
+    NotificationMessage("warning", "Not able to generate bill without institution selection");
+  } else if (FilterData?.institution.length > 1) {
+    NotificationMessage("warning", "Not able to generate bill for multiple Institution");
+  } else {
 
     // Fetch Institution Data information 
-    let responseData = await APIHandler("POST", {id: FilterData?.institution[0]}, "institute/v1/institution-address" ) ; 
-    if (responseData === false){
+    let responseData = await APIHandler("POST", { id: FilterData?.institution[0] }, "institute/v1/institution-address");
+    if (responseData === false) {
 
-      NotificationMessage("warning", "Network request failed") ; 
-    
-    } else if (responseData['status'] !== true){
+      NotificationMessage("warning", "Network request failed");
 
-      NotificationMessage("warning", "Network request failed", responseData['message']) ; 
-      
+    } else if (responseData['status'] !== true) {
+
+      NotificationMessage("warning", "Network request failed", responseData['message']);
+
     }
 
-    let BillingStartDate = FilterData['fromdate'] ; 
-    let BillingEndDate = FilterData['todate'] ; 
-    let ShowBillingEndDate = FilterData['todate'] ; 
-    let formattedFutureDate = null ; 
-  
+    let BillingStartDate = FilterData['fromdate'];
+    let BillingEndDate = FilterData['todate'];
+    let ShowBillingEndDate = FilterData['todate'];
+    let formattedFutureDate = null;
+
     // Convert BillingEndDate to a Date object if it's a string
     if (typeof BillingEndDate === 'string') {
       BillingEndDate = new Date(BillingEndDate);
     }
-  
+
     if (!isNaN(BillingEndDate.getTime())) {
       const futureDate = new Date(BillingEndDate);
       futureDate.setDate(BillingEndDate.getDate() + 30);
-  
+
       const formattedBillingEndDate = BillingEndDate.toISOString().split('T')[0];
       formattedFutureDate = futureDate.toISOString().split('T')[0];
-      
-    } 
-  
+
+    }
+
     // Create an HTML template with billing data and company logo
     let htmlContent = `
     <html>
@@ -376,9 +376,9 @@ export const handleDownloadPDF = async (billingData) => {
                   </thead>
                   <tbody>
       `
-      Object.keys(ReportingData).forEach(key  => {
-        let reportStudyData = ReportingData[key] ; 
-        htmlContent = htmlContent + `
+    Object.keys(ReportingData).forEach(key => {
+      let reportStudyData = ReportingData[key];
+      htmlContent = htmlContent + `
           <tr>
             <td class="px-0" style = "width: 30%;">${key} reporting charges repoting charges </td>
             <td class="px-0" style = "text-align: center;">${reportStudyData['total_object']}</td>
@@ -387,8 +387,8 @@ export const handleDownloadPDF = async (billingData) => {
             <td class="px-0" style = "text-align: center; font-weight: bold;">₹${reportStudyData['total_amount']}/-</td>
           </tr>
         `
-      })
-      htmlContent = htmlContent + `
+    })
+    htmlContent = htmlContent + `
       </tbody>
       </table>
 
@@ -451,13 +451,13 @@ export const handleDownloadPDF = async (billingData) => {
 </html>                
           
     `;
-  
+
     // Create a new window/tab to display the HTML content
     const newWindow = window.open("", "_blank");
     newWindow.document.open();
     newWindow.document.write(htmlContent);
     newWindow.document.close();
-  
+
     newWindow.onload = function () {
       htmlToImage.toPng(newWindow.document.getElementById('Billing-information-page'), { quality: 0.95 })
         .then(function (dataUrl) {
@@ -481,30 +481,28 @@ export const handleExport = (tableData) => {
   const workbook = XLSX.utils.book_new();
   const sheetName = "BillingData";
 
-  const sheetNameValue = prompt("Enter Excel sheet name:"); 
-  let excelTempData = [] ; 
+  const sheetNameValue = prompt("Enter Excel sheet name:");
+  let excelTempData = [];
 
   tableData.map((element) => {
-    excelTempData.push(
-      {
-        "Id" : element?.id, 
-        "Patient id": element?.patient_id, 
-        "Patient name": element?.patient_name, 
-        "Reference id": element?.reference_id, 
-        "Modality": element?.modality, 
-        "Institution": element?.institution, 
-        "Study description" : element?.study_description, 
-        "Report description": element?.reporting_study_description, 
-        "Study Date/Time": element?.study_date, 
-        "Reporting Date/Time": element?.reporting_time, 
-        "Status": element?.study_status, 
-        "Reported by": element?.reported_by, 
-        "Reporting charge": element?.reporting_charge, 
-        "Communication charge": element?.comunication_charge, 
-        "Midnight charge": element?.midnight_charge, 
-        "Charge": parseInt(element?.reporting_charge) + parseInt(element?.comunication_charge) + parseInt(element?.midnight_charge)
-      }
-    )
+    if (element.study_status != "Deleted")
+      excelTempData.push(
+        {
+          "Id": element?.id,
+          "Patient id": element?.patient_id,
+          "Patient name": element?.patient_name,
+          "Reference id": element?.reference_id,
+          "Modality": element?.modality,
+          "Institution": element?.institution,
+          "Study description": element?.study_description,
+          "Report description": element?.reporting_study_description,
+          "Study Date/Time": element?.study_date,
+          "Reporting Date/Time": element?.reporting_time,
+          "Status": element?.study_status,
+          "Reported by": element?.reported_by,
+          "Charge": parseInt(element?.reporting_charge) + parseInt(element?.comunication_charge) + parseInt(element?.midnight_charge)
+        }
+      )
   })
 
   // Convert your data to worksheet
@@ -528,11 +526,11 @@ export const handleExport = (tableData) => {
   saveAs(blob, fileName);
 };
 
-export const handlePdfExport=(tableData)=>{
-  const pdfName = prompt("Enter PDF sheet name:"); 
+export const handlePdfExport = (tableData) => {
+  const pdfName = prompt("Enter PDF sheet name:");
 
 
-  var html=`
+  var html = `
   <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -588,18 +586,16 @@ export const handlePdfExport=(tableData)=>{
       <th>Reporting Date/Time</th>
       <th>Status</th>
       <th>Reported By</th>
-      <th>Reporting Charge</th>
-      <th>Communication Charge</th>
-      <th>Midnight Charge</th>
       <th>Charge</th>
     </tr>
   </thead>
   <tbody>`
 
-  
+
   tableData.map((element) => {
-    html+=
-    `
+    if (element.study_status != "Deleted") {
+      html +=
+        `
     <tr>
   <td>${element?.id}</td>
   <td>${element?.patient_id}</td>
@@ -613,36 +609,34 @@ export const handlePdfExport=(tableData)=>{
   <td>${element?.reporting_time}</td>
   <td>${element?.study_status}</td>
   <td>${element?.reported_by}</td>
-  <td>${element?.reporting_charge}</td>
-  <td>${element?.comunication_charge}</td>
-  <td>${element?.midnight_charge}</td>
   <td>${parseInt(element?.reporting_charge) + parseInt(element?.comunication_charge) + parseInt(element?.midnight_charge)}</td>
 </tr>
     `
+    }
   })
 
 
-html+=` </tbody>
+  html += ` </tbody>
 </table>
 
 </body>
 </html>`
 
 
-const pdfOptions = {
-  filename: pdfName+'.pdf',
-  html2canvas: {
-    scale: 2,
-    logging: false,
+  const pdfOptions = {
+    filename: pdfName + '.pdf',
+    html2canvas: {
+      scale: 2,
+      logging: false,
 
-    scrollY: 0,
-    width: 1750
-  },
-  jsPDF:{orientation: 'landscape' }
+      scrollY: 0,
+      width: 1400
+    },
+    jsPDF: { orientation: 'landscape' }
 
-};
+  };
 
-html2pdf().set(pdfOptions).from(html).save();
+  html2pdf().set(pdfOptions).from(html).save();
 
-  
+
 }

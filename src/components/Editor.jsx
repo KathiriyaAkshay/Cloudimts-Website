@@ -22,34 +22,34 @@ const Editor = ({ id }) => {
   const [editorData, setEditorData] = useState('')
   const [cardDetails, setCardDetails] = useState({})
   const [isLoading, setIsLoading] = useState(false)
-  const { selectedItem, setSelectedItem } = useContext(ReportDataContext) 
-  const {templateOption, setTemplateOption, setTemplateInstitutionOption} = useContext(filterDataContext)
+  const {selectedItem, setSelectedItem, docFiledata } = useContext(ReportDataContext)
+  const { templateOption, setTemplateOption, setTemplateInstitutionOption } = useContext(filterDataContext)
   const [studyImageID, setStudyImageID] = useState(0)
   const [signatureImage, setSignatureImage] = useState(null)
   const [username, setUsername] = useState('')
   const user_id = localStorage.getItem('userID')
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
-  const [isPatientInformationInserted, setIsPatientInformationInserted] =
-    useState(false)
-  
-    const [
-    isInstitutionInformationInserted,
-    setIsInstitutionInformationInserted
-  ] = useState(false)
-  
-  const [isStudyDescriptionInserted, setIsStudyDescriptionInserted] =
-    useState(false)
+  // const [isPatientInformationInserted, setIsPatientInformationInserted] =
+  //   useState(false)
+
+  //   const [
+  //   isInstitutionInformationInserted,
+  //   setIsInstitutionInformationInserted
+  // ] = useState(false)
+
+  // const [isStudyDescriptionInserted, setIsStudyDescriptionInserted] =
+  //   useState(false)
 
   const [institutionReport, setInstitutionReport] = useState({});
   const [referenceImageCount, setReferenceImageCount] = useState(1);
   const [seriesId, setSeriesId] = useState(null);
 
   const [form] = Form.useForm();
-  const [reportStudyDescription, setReportStudyDescription] = useState(null); 
+  const [reportStudyDescription, setReportStudyDescription] = useState(null);
 
   // **** StudyUID information **** // 
-  const studyUIDInformation = `https://viewer.cloudimts.com/viewer/` + localStorage.getItem("studyUIDValue") ;  
+  const studyUIDInformation = `https://viewer.cloudimts.com/viewer/` + localStorage.getItem("studyUIDValue");
 
   useEffect(() => {
     setSelectedItem(prev => ({
@@ -101,23 +101,23 @@ const Editor = ({ id }) => {
 
     } else if (responseData['status'] === true) {
 
-      setTemplateOption(responseData['data']['Modality']) ; 
+      setTemplateOption(responseData['data']['Modality']);
 
       let Institution_id = responseData['data']['institution_id']
       let SeriesIdValue = responseData['data']['series_id']
 
       setSeriesId(SeriesIdValue);
-      setTemplateInstitutionOption(responseData?.data?.institution_id) ; 
+      setTemplateInstitutionOption(responseData?.data?.institution_id);
 
       setCardDetails({ "Study_description": responseData['data']?.Study_description })
-      
+
       // **** Retervice institution report details information **** // 
-      
+
       let institutionReportPayload = {
         institution_id: Institution_id,
         study_id: id
       };
-      
+
       let reportResponseData = await APIHandler(
         'POST',
         institutionReportPayload,
@@ -125,11 +125,12 @@ const Editor = ({ id }) => {
       )
       if (reportResponseData['status'] === true) {
         setInstitutionReport({ ...reportResponseData['data'] })
+        convertedPatientTableInitially({...reportResponseData['data']})
       }
     }
   }
 
-  
+
   // **** Reterive particular user study image *** // 
   const FetchStudyImage = async () => {
     let requestPayload = {
@@ -140,58 +141,58 @@ const Editor = ({ id }) => {
       'POST',
       requestPayload,
       'studies/v1/studies_images'
-      )
-      
-      let ServerURL = import.meta.env.VITE_APP_BE_ENDPOINT
-      
-      if (responseData === false) {
-        NotificationMessage('warning', 'Network request failed')
-      } else if (responseData['status'] === true) {
-        let temp = []
-        
-        responseData['data'].map(element => {
-          temp.push({
-            url: `${ServerURL}studies/v1/fetch_instance_image/${element}`
-          })
-        })
-        setImageSlider([...temp])
-      }
-    }
-    
-    
-    useEffect(() => {
-      retrievePatientDetails()
-      retrieveUserSignature()
-    }, [])
+    )
 
-    // **** Reterive particular template related information **** // 
-    const retrieveTemplateData = async () => {
-      await fetchTemplate({ id: selectedItem?.templateId })
-        .then(res => {
-          if (res.data.status) {
-            setEditorData(res.data.data.report_data)
-          } else {
-            NotificationMessage(
-              'warning',
-              'Network request failed',
-              res.data.message
-            )
-          }
+    let ServerURL = import.meta.env.VITE_APP_BE_ENDPOINT
+
+    if (responseData === false) {
+      NotificationMessage('warning', 'Network request failed')
+    } else if (responseData['status'] === true) {
+      let temp = []
+
+      responseData['data'].map(element => {
+        temp.push({
+          url: `${ServerURL}studies/v1/fetch_instance_image/${element}`
         })
-        .catch(err =>
+      })
+      setImageSlider([...temp])
+    }
+  }
+
+
+  useEffect(() => {
+    retrievePatientDetails()
+    retrieveUserSignature()
+  }, [])
+
+  // **** Reterive particular template related information **** // 
+  const retrieveTemplateData = async () => {
+    await fetchTemplate({ id: selectedItem?.templateId })
+      .then(res => {
+        if (res.data.status) {
+          setEditorData(res.data.data.report_data)
+        } else {
           NotificationMessage(
             'warning',
             'Network request failed',
-            err.response.data.message
+            res.data.message
           )
+        }
+      })
+      .catch(err =>
+        NotificationMessage(
+          'warning',
+          'Network request failed',
+          err.response.data.message
         )
-    }
+      )
+  }
 
   useEffect(() => {
     if (selectedItem?.templateId) {
-      setIsPatientInformationInserted(false);
-      setIsInstitutionInformationInserted(false);
-      setIsStudyDescriptionInserted(false);
+      // setIsPatientInformationInserted(false);
+      // setIsInstitutionInformationInserted(false);
+      // setIsStudyDescriptionInserted(false);
       retrieveTemplateData()
     }
   }, [selectedItem?.templateId])
@@ -203,31 +204,57 @@ const Editor = ({ id }) => {
     }
   }, [seriesId])
 
-  const convertPatientDataToTable = () => {
-    const data =
-      selectedItem.isPatientSelected && !isPatientInformationInserted
-        ? `<div>
-        <h2 style = "text-align: center; ">Patient Information</h2>
-        <table>
-          <tbody>
-            ${institutionReport.hasOwnProperty('patient_details') &&
+  useEffect(() => {
+    convertPatientDataToTable();
+  }, [selectedItem])
+
+
+  const convertedPatientTable = () => {
+
+    const keys = Object.keys(institutionReport?.institution_details);
+    var temp = ``;
+    const data = `<div>
+    <h2 style = "text-align: center;">Patient Information</h2>
+
+    <table style="width: 100%; border-collapse: collapse;">
+      <tbody>
+        ${institutionReport.hasOwnProperty('patient_details') && selectedItem.isPatientSelected ?
         Object.entries(institutionReport?.patient_details)
-          .map(([key, value]) => {
-            return `
-                <tr>
-                  <td>${key}</td>
-                  <td>${value}</td>
-                </tr>
-              `
+          .map(([key, value], index) => {
+            temp = `
+            <tr>
+              <td style="text-align: left; padding: 8px;font-weight:600">${key}</td>
+              <td style="padding: 8px;">${value}</td>`;
+
+            if (index < keys.length) {
+              temp +=
+                `<td style="text-align: left; padding: 8px;font-weight:600  ">${keys[index]}</td>
+              <td style="padding: 8px;">${institutionReport.institution_details[keys[index]]}</td></tr>`;
+            } else {
+              temp += `</tr>`
+            }
+
+            return temp;
+
           })
           .join('')
-        }
-          </tbody>
-        </table>
-        </div>`
-        : selectedItem.isInstitutionSelected &&
-          !isInstitutionInformationInserted
+        : ''}
+
+
+      </tbody>
+    </table>
+  </div>`
+    return data;
+  }
+
+  const convertPatientDataToTable = (insertImage) => {
+    const data =
+      // selectedItem.isPatientSelected
+      //   ? convertedPatientTable()
+      //   : 
+        selectedItem.isInstitutionSelected
           ? `<div>
+          
               <h2 style = "text-align: center;">Institution Information</h2>
               <table>
                 <tbody>
@@ -236,7 +263,7 @@ const Editor = ({ id }) => {
             .map(([key, value]) => {
               return `
                   <tr>
-                    <td>${key}</td>
+                    <th>${key}</th>
                     <td>${value}</td>
                   </tr>
                 `
@@ -246,19 +273,19 @@ const Editor = ({ id }) => {
                 </tbody>
         </table>
       </div>`
-          : selectedItem.isImagesSelected
+          : selectedItem.isImagesSelected && insertImage
             ? `
           <h3 style = "text-align:center;">Reference image ${referenceImageCount}</h3>
           <figure class="image">
           <img src="${imageSlider[studyImageID]?.url}" alt="study image" style="width: 256px; height: 200px;" class="Reference-image">
           </figure>`
-            : selectedItem.isStudyDescriptionSelected && !isStudyDescriptionInserted
+            : selectedItem.isStudyDescriptionSelected
               ? `<div>
         <h3 style = "text-align:center;">Study Description</h3>
         <p style = "text-align: center ; ">${cardDetails?.Study_description}</p>
         </div>`
               : selectedItem.isOhifViewerSelected
-                ? `<div>asdsa</div>`
+                ? `<div></div>`
                 : ``
 
     setEditorData(prev =>
@@ -267,15 +294,55 @@ const Editor = ({ id }) => {
         : `${prev}${data}`
     )
 
-    selectedItem.isPatientSelected && setIsPatientInformationInserted(true)
-    selectedItem.isInstitutionSelected &&
-      setIsInstitutionInformationInserted(true)
-    selectedItem.isStudyDescriptionSelected &&
-      setIsStudyDescriptionInserted(true)
+    // selectedItem.isPatientSelected && setIsPatientInformationInserted(true)
+    // selectedItem.isInstitutionSelected &&
+    // setIsInstitutionInformationInserted(true)
+    // selectedItem.isStudyDescriptionSelected &&
+    // setIsStudyDescriptionInserted(true)
     selectedItem.isImagesSelected && setReferenceImageCount(prev => prev + 1)
   }
 
   const [imageSlider, setImageSlider] = useState([])
+
+  const convertedPatientTableInitially = (institutionReport) => {
+    institutionReport.patient_details=Object.assign(institutionReport.patient_details)
+    const keys = Object.keys(institutionReport?.institution_details);
+    var temp = ``;
+    const data = `<div>
+    <h2 style = "text-align: center;">Patient Information</h2>
+
+    <table style="width: 100%; border-collapse: collapse;">
+      <tbody>
+        ${institutionReport.hasOwnProperty('patient_details') && selectedItem.isPatientSelected ?
+        Object.entries(institutionReport?.patient_details)
+          .map(([key, value], index) => {
+            temp = `
+            <tr>
+              <td style="text-align: left; padding: 8px;font-weight:600">${key}</td>
+              <td style="padding: 8px;">${value}</td>`;
+
+            if (index < keys.length) {
+              temp +=
+                `<td style="text-align: left; padding: 8px;font-weight:600  ">${keys[index]}</td>
+              <td style="padding: 8px;">${institutionReport.institution_details[keys[index]]}</td></tr>`;
+            } else {
+              temp += `</tr>`
+            }
+
+            return temp;
+
+          })
+          .join('')
+        : ''}
+
+
+      </tbody>
+    </table>
+  </div>`
+  setEditorData(prev =>
+   `${prev}${data}`
+  )
+  }
 
   // **** Submit report handler **** // 
   const handleReportSave = async () => {
@@ -294,7 +361,6 @@ const Editor = ({ id }) => {
       })
         .then(res => {
           if (res.data.status) {
-            NotificationMessage('success', 'Your report submit successfully')
             navigate(-1)
           } else {
             NotificationMessage(
@@ -315,7 +381,12 @@ const Editor = ({ id }) => {
     setReportStudyDescription(selectionOption);
   }
 
-  const scrollToBottom=()=>{
+  useEffect(() => {
+    setEditorData(prev => prev + docFiledata)
+  }, [docFiledata])
+
+
+  const scrollToBottom = () => {
     var scrollingDiv = document.getElementById("scrollingDiv");
     scrollingDiv.scrollTop = scrollingDiv.scrollHeight;
   }
@@ -329,12 +400,12 @@ const Editor = ({ id }) => {
         >
           <Spin spinning={isLoading}>
             <Row gutter={30}>
-              <Col xs={24} sm={12} md={selectedItem.isOhifViewerSelected ? 9 : 7}>
+              <Col xs={24} sm={12} md={selectedItem.isOhifViewerSelected ? 9 : selectedItem.isImagesSelected ? 7 : 0}>
                 <div className='report-details-div'>
 
                   {/* ==== Show Patient details ====  */}
 
-                  {selectedItem?.isPatientSelected && (
+                  {/* {selectedItem?.isPatientSelected && (
                     <>
                       <Typography className='card-heading'>
                         Patient Information
@@ -361,10 +432,10 @@ const Editor = ({ id }) => {
                         </tbody>
                       </table>
                     </>
-                  )}
+                  )} */}
 
                   {/* ==== Show Institution details ====  */}
-
+                  {/* 
                   {selectedItem?.isInstitutionSelected && (
                     <>
                       <Typography className='card-heading'>
@@ -394,10 +465,10 @@ const Editor = ({ id }) => {
                         </table>
                       </div>
                     </>
-                  )}
+                  )} */}
 
                   {/* ==== Show Study description ====  */}
-
+                  {/* 
                   {selectedItem?.isStudyDescriptionSelected && (
                     <>
                       <Typography className='card-heading'>
@@ -415,7 +486,7 @@ const Editor = ({ id }) => {
                         </div>
                       </div>
                     </>
-                  )}
+                  )} */}
 
                   {/* ==== Show Image slider information ====  */}
 
@@ -456,8 +527,8 @@ const Editor = ({ id }) => {
 
                   {selectedItem?.isOhifViewerSelected && (
                     <>
-                      <div style={{width:"100%",height:"100%",overflowY:"auto"  }} onBeforeInput={scrollToBottom}>
-                      <iframe src={studyUIDInformation} width="100%" height="800px" className='ohif-container'></iframe>
+                      <div style={{ width: "100%", height: "100%", overflowY: "auto" }} onBeforeInput={scrollToBottom}>
+                        <iframe src={studyUIDInformation} width="100%" height="800px" className='ohif-container'></iframe>
 
                       </div>
                     </>
@@ -466,29 +537,26 @@ const Editor = ({ id }) => {
                   {!selectedItem?.isOhifViewerSelected && (
                     <>
                       <div className='btn-div insert-report-details-option'>
-                        <Button type='primary' onClick={convertPatientDataToTable}>
+                        <Button type='primary' onClick={() => convertPatientDataToTable(true)}>
                           Insert
                         </Button>
                       </div>
 
                     </>
                   )}
-
-
-
                 </div>
               </Col>
 
-              <Col xs={24} sm={12} md={selectedItem.isOhifViewerSelected ? 15 : 17} 
+              <Col xs={24} sm={12} md={selectedItem.isOhifViewerSelected ? 15 : selectedItem.isImagesSelected ? 17 : 24}
                 className='report-editor-div'>
 
                 <Form
                   labelCol={{
-                    span: 8,
+                    span: 4,
                     // offset:3,
                   }}
                   wrapperCol={{
-                    span: 22,
+                    span: 20,
                   }}
                   labelAlign="left"
                   form={form}
@@ -521,6 +589,7 @@ const Editor = ({ id }) => {
                 </Form>
 
                 <CKEditor
+                style={{height:"100%"}}
                   editor={ClassicEditor}
                   data={editorData}
                   onChange={(event, editor) => {
