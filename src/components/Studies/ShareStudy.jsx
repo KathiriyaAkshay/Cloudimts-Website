@@ -303,9 +303,9 @@ const ShareStudy = ({
           setStudyID(null)
           setIsShareStudyModalOpen(false)
         }}
-        width={1000}
+        width={1200}
         centered
-        footer={null}
+        footer={[]}
         className='share-study-modal'
       >
         <Spin spinning={isLoading}>
@@ -574,8 +574,9 @@ const ShareStudy = ({
             name='active_status'
             label='Active'
             valuePropName='checked'
+            initialValue={false}
           >
-            <Switch defaultChecked />
+            <Switch/>
           </Form.Item>
 
         </Form>

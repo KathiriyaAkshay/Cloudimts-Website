@@ -147,7 +147,7 @@ const ChatMessangerFooter = (props) => {
                   <input
                     type="file"
                     id="myfile"
-                    accept="image/png, image/jpeg"
+                    accept="image/png, image/jpeg, .pdf, .doc, .docx, application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                     name="myfile"
                     onChange={(e) => handleImageStore(e)}
                     multiple="multiple"

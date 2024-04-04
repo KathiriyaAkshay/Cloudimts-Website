@@ -23,6 +23,7 @@ const ImageDrawer = ({
             onOk={() => setImageDrawerOpen(false)}
             onCancel={() => {setImageDrawerOpen(false)}}
             width={1000}
+            footer={null}
             centered
         >   
             <div style={{ display: "flex", 

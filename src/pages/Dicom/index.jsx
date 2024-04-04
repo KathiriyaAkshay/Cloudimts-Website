@@ -916,6 +916,7 @@ const Dicom = () => {
               {checkPermissionStatus('Study delete option') && (
                 <DeleteActionIcon
                   title = "Delete study"
+                  description={"are you sure you want to delete this study?"}
                   assign_user={record?.assign_user}
                   deleteActionHandler={() => deleteParticularStudy(record?.id)}
                 />
@@ -1536,6 +1537,7 @@ const Dicom = () => {
           setPersonName(null)
           localStorage.removeItem("currentChatId")
         }}
+        width={700}
         open={isDrawerOpen}
         className='chat-drawer'
       >

@@ -509,7 +509,6 @@ x  };
         </div>
 
       </Modal>
-
       <Modal title="Filters" open={filterModal} onOk={handleOk} onCancel={handleCancel} footer={[]}>
         <Form
           name="basic"

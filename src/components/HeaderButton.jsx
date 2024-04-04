@@ -150,7 +150,7 @@ const HeaderButton = ({
   // Function to handle file selection and conversion
   const handleFileChange = (event) => {
     const file = event.file.originFileObj;
-        if (file) {
+    if (file) {
       const reader = new FileReader();
       reader.onload = async (e) => {
         const arrayBuffer = reader.result;
@@ -208,9 +208,10 @@ const HeaderButton = ({
     headers: {
       authorization: 'authorization-text',
     },
-    showUploadList:false,
+    accept:".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    showUploadList: false,
     onChange(info) {
-     handleFileChange(info)
+      handleFileChange(info)
     },
   };
 
@@ -397,9 +398,44 @@ const HeaderButton = ({
       {window.location.pathname === `/reports/${id}` && (
         <div className='iod-setting-div'>
 
-<Upload {...props}>
-<Button type='primary' icon={<UploadOutlined />}>Insert Doc File</Button>
-  </Upload>
+          <Upload {...props}>
+            <Button type='primary' icon={<UploadOutlined />}>Insert Doc File</Button>
+          </Upload>
+
+
+          <Button
+            type='primary'
+            onClick={() =>
+              setSelectedItem(prev => ({
+                isPatientSelected: false,
+                isInstitutionSelected: false,
+                isImagesSelected: false,
+                isOhifViewerSelected: true,
+                templateId: prev?.templateId,
+                isStudyDescriptionSelected: false
+              }))
+            }
+          >
+            OHIF Viewer&nbsp;
+            <Tag color="#2db7f5">V1.0</Tag>
+          </Button>
+          <Button
+            type='primary'
+            onClick={() =>
+              setSelectedItem(prev => ({
+                isPatientSelected: false,
+                isInstitutionSelected: false,
+                isImagesSelected: false,
+                isOhifViewerSelected: true,
+                templateId: prev?.templateId,
+                isStudyDescriptionSelected: false
+              }))
+            }
+          >
+            OHIF Viewer&nbsp;<Tag color="red">V2.0</Tag>
+
+          </Button>
+
 
 
           <Button
@@ -431,7 +467,7 @@ const HeaderButton = ({
               }))
             }
           >
-            Study Description
+           Insert Study Description
           </Button>
 
           {/* <Button
@@ -450,7 +486,7 @@ const HeaderButton = ({
           >
             Patient Information
           </Button> */}
-{/* 
+          {/* 
           <Button
             type='primary'
             onClick={() =>
@@ -467,39 +503,6 @@ const HeaderButton = ({
           >
             Institution Information
           </Button> */}
-
-          <Button
-            type='primary'
-            onClick={() =>
-              setSelectedItem(prev => ({
-                isPatientSelected: false,
-                isInstitutionSelected: false,
-                isImagesSelected: false,
-                isOhifViewerSelected: true,
-                templateId: prev?.templateId,
-                isStudyDescriptionSelected: false
-              }))
-            }
-          >
-            OHIF Viewer&nbsp; 
-            <Tag color="#2db7f5">V1.0</Tag>
-          </Button>
-          <Button
-            type='primary'
-            onClick={() =>
-              setSelectedItem(prev => ({
-                isPatientSelected: false,
-                isInstitutionSelected: false,
-                isImagesSelected: false,
-                isOhifViewerSelected: true,
-                templateId: prev?.templateId,
-                isStudyDescriptionSelected: false
-              }))
-            }
-          >
-            OHIF Viewer&nbsp;<Tag color="#2db7f5">V2.0</Tag>
-
-          </Button>
 
           <Select
             style={{ width: "12rem" }}
