@@ -1650,7 +1650,7 @@ const Dicom = () => {
                     }
                   ]}
                 >
-                  <DatePicker format={'DD-MM-YYYY'}/>
+                  <DatePicker format={'DD/MM/YYYY'}/>
                 </Form.Item>
               </Col>
 
@@ -1667,7 +1667,7 @@ const Dicom = () => {
                     }
                   ]}
                 >
-                  <DatePicker format={'DD-MM-YYYY'}/>
+                  <DatePicker format={'DD/MM/YYYY'}/>
                 </Form.Item>
               </Col>
 
