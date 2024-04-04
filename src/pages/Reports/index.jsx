@@ -2,10 +2,9 @@ import React, { useContext, useEffect, useState } from 'react'
 import TableWithFilter from '../../components/TableWithFilter'
 import EditActionIcon from '../../components/EditActionIcon'
 import DeleteActionIcon from '../../components/DeleteActionIcon'
-import { DeleteOutlined } from '@ant-design/icons'
 import { getReportList } from '../../apis/studiesApi'
 import { useBreadcrumbs } from '../../hooks/useBreadcrumbs'
-import { Button, Space, Popconfirm } from 'antd'
+import { Space, Tag } from 'antd'
 import { useNavigate } from 'react-router-dom'
 import { UserPermissionContext } from '../../hooks/userPermissionContext'
 import APIHandler from '../../apis/apiHandler'
@@ -108,6 +107,14 @@ const index = () => {
     {
       title: 'Modality description',
       dataIndex: 'description   '
+    },
+
+    {
+      title: 'Gender',
+      dataIndex: 'gender', 
+      render: (text, record) => (
+        text == "Male"?<Tag color = "magenta">Male</Tag>: text == "Female"?<Tag color='cyan'>Female</Tag>:<Tag color="geekblue">Others</Tag>
+      )
     },
 
     {
