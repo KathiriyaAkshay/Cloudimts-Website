@@ -1139,6 +1139,16 @@ const Dicom = () => {
     setIsAdvanceSearchSelected(false);
   }
 
+  // *** Set Patient id change value **** // 
+  const HandlePatientIdChange = (value) => {
+
+    if (timeOut) clearTimeout(timeOut) ; 
+
+    timeOut = setTimeout(() => {
+      quickForm.submit() ; 
+    }, 500) ;
+  }
+
   // **** Quick filter reset option handler **** //
   const QuickFilterReset = () => {
     quickForm.resetFields();
@@ -1241,6 +1251,9 @@ const Dicom = () => {
               >
                 <Input 
                   onPressEnter={() => {quickForm.submit()}}   
+                  onChange={(e) => {
+                    HandlePatientIdChange(e.target.value)
+                  }}
                   placeholder="Patient Id" 
                 />
 
@@ -1264,6 +1277,9 @@ const Dicom = () => {
                 <Input 
                   onPressEnter={() => {quickForm.submit()}}
                   placeholder="Reference Id" 
+                  onChange={(e) => {
+                    HandlePatientIdChange(e.target.value)
+                  }}
                 />
               </Form.Item>
             </Col>
