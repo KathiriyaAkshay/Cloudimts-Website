@@ -1622,6 +1622,7 @@ const Dicom = () => {
         centered
         open={isStudyExportModalOpen}
         onOk={() => form.submit()}
+        okText = "Export"
         onCancel={() => setIsStudyExportModalOpen(false)}
         className='Study-export-option-modal'
       >
@@ -1668,21 +1669,6 @@ const Dicom = () => {
                   ]}
                 >
                   <DatePicker format={'DD/MM/YYYY'}/>
-                </Form.Item>
-              </Col>
-
-              <Col xs={24} lg={24}>
-                <Form.Item
-                  name='study_name'
-                  label='Study Name'
-                  rules={[
-                    {
-                      required: true,
-                      message: 'Please Enter Study Name'
-                    }
-                  ]}
-                >
-                <Input placeholder='Study name'/>
                 </Form.Item>
               </Col>
             </Row>
