@@ -24,6 +24,8 @@ import TableWithFilter from "../../components/TableWithFilter";
 import API from "../../apis/getApi";
 import NotificationMessage from "../../components/NotificationMessage";
 import dayjs from "dayjs";
+import { cities } from '../../helpers/utils';
+import { states } from '../../helpers/utils';
 import UploadImage from "../../components/UploadImage";
 import { uploadImage } from "../../apis/studiesApi";
 import { LoadingOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
@@ -796,23 +798,27 @@ const AddUsers = () => {
 
                 </Col>
 
-                <Col xs={24} sm={12} md={12} lg={8}>
+                <Col xs={24} sm={12} md={12} lg={6}>
                   <Form.Item
-                    name="city"
-                    label="City"
+                    name='city'
+                    label='City'
                     rules={[
                       {
                         required: true,
                         whitespace: true,
-                        message: "Please enter city",
-                      },
+                        message: 'Please enter city'
+                      }
                     ]}
                   >
-                    <Input placeholder="Enter City" />
+                     <Select
+                      placeholder="City"
+                      options={[...cities]}
+                      showSearch
+                    // onChange={() => { form.submit() }}
+                    />
                   </Form.Item>
-
                 </Col>
-
+               
                 <Col xs={24} sm={12} md={12} lg={8}>
                   <Form.Item
                     name="address"
@@ -829,19 +835,24 @@ const AddUsers = () => {
                   </Form.Item>
                 </Col>
 
-                <Col xs={24} sm={12} md={12} lg={8}>
+                <Col xs={24} sm={12} md={12} lg={6}>
                   <Form.Item
-                    name="state"
-                    label="State"
+                    name='state'
+                    label='State'
                     rules={[
                       {
                         required: true,
                         whitespace: true,
-                        message: "Please enter state",
-                      },
+                        message: 'Please enter state'
+                      }
                     ]}
                   >
-                    <Input placeholder="Enter State" />
+                    <Select
+                      placeholder="states"
+                      options={[...states]}
+                      showSearch
+                    // onChange={() => { form.submit() }}
+                    />
                   </Form.Item>
                 </Col>
 
