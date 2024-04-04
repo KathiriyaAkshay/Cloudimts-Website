@@ -2,7 +2,7 @@ import {
   AppstoreOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
-  WechatOutlined, 
+  WechatOutlined,
   LeftOutlined
 } from '@ant-design/icons'
 import { Breadcrumb, Button, Divider, Layout, Menu, List, Popover, Empty, Badge, Popconfirm, Collapse, Checkbox, Avatar } from 'antd'
@@ -15,7 +15,7 @@ import {
 } from 'react-router-dom'
 import { useBreadcrumbs } from '../hooks/useBreadcrumbs'
 import UserProfile from './UserProfile'
-import logo from '../assets/images/Imageinet-logo.png'
+import logo from '../assets/images/cloudimts.jpg'
 import { NotificationOutlined, DeleteOutlined, ReloadOutlined, ExportOutlined, SearchOutlined, FilterOutlined } from '@ant-design/icons'
 import { MdDeleteSweep, MdOutlineHomeWork } from 'react-icons/md'
 import { AiOutlinePlus } from 'react-icons/ai'
@@ -32,12 +32,12 @@ import { UserPermissionContext } from '../hooks/userPermissionContext'
 import { FaMoneyBill, FaUserLock } from 'react-icons/fa'
 import { CgTemplate } from 'react-icons/cg'
 import { BiSupport } from 'react-icons/bi'
-import { filterDataContext } from '../hooks/filterDataContext' 
-import NotificationMessage from './NotificationMessage' 
+import { filterDataContext } from '../hooks/filterDataContext'
+import NotificationMessage from './NotificationMessage'
 import { StudyIdContext } from '../hooks/studyIdContext'
-import { deleteStudy } from '../apis/studiesApi' 
+import { deleteStudy } from '../apis/studiesApi'
 import { FilterSelectedContext } from '../hooks/filterSelectedContext'
-import { retrieveSystemFilters } from '../helpers/studyDataFilter' 
+import { retrieveSystemFilters } from '../helpers/studyDataFilter'
 import { StudyDataContext } from '../hooks/studyDataContext'
 
 const { Header, Sider, Content } = Layout
@@ -56,7 +56,7 @@ const BasicLayout = ({ children }) => {
   const [userPermissionData, setUserPermissionData] = useState({})
 
   // Study page related context 
-  const {chatNotificationData, setIsStudyExportModalOpen, setIsQuickAssignStudyModalOpen, setIsAdvancedSearchModalOpen, setChatNotificationData} = useContext(filterDataContext)
+  const { chatNotificationData, setIsStudyExportModalOpen, setIsQuickAssignStudyModalOpen, setIsAdvancedSearchModalOpen, setChatNotificationData } = useContext(filterDataContext)
   const { studyIdArray, setStudyIdArray } = useContext(StudyIdContext)
   const {
     isFilterSelected,
@@ -69,7 +69,7 @@ const BasicLayout = ({ children }) => {
     setSystemFilterPayload,
     studyDataPayload,
     systemFilterPayload,
-    studyData, 
+    studyData,
     setChatStudyData
   } = useContext(StudyDataContext)
 
@@ -233,7 +233,7 @@ const BasicLayout = ({ children }) => {
       label: <NavLink to={'/support'}>Support</NavLink>,
       key: 'support',
       icon: <BiSupport />
-    }, 
+    },
 
     // Filter option
     checkPermissionStatus('Show Default Filter list') && {
@@ -242,7 +242,7 @@ const BasicLayout = ({ children }) => {
       icon: <AiOutlineFilter />
     },
 
-  ].filter(Boolean); 
+  ].filter(Boolean);
 
 
   const menu = (
@@ -255,17 +255,17 @@ const BasicLayout = ({ children }) => {
       onCollapse={onCollapse}
       width={240}
     >
-      {checkPermissionStatus("Show Dashboard option") ?<>
+      {checkPermissionStatus("Show Dashboard option") ? <>
         <Link to='/dashboard'>
           <div className='logo sidebar-logo'>
             <img src={logo} alt='Logo' />
           </div>
         </Link>
-      </>:<>
-          <div className='logo sidebar-logo'>
-            <img src={logo} alt='Logo' />
-          </div>
-      
+      </> : <>
+        <div className='logo sidebar-logo'>
+          <img src={logo} alt='Logo' />
+        </div>
+
       </>}
 
       <div className='sidebar-menu-wrap' style={{ overflow: 'hidden' }}>
@@ -275,17 +275,17 @@ const BasicLayout = ({ children }) => {
           items={menuItems}
           className='header-menu'
         />
-      </div>  
+      </div>
 
     </Sider>
-  ) 
+  )
 
   // **** Chat notification data handle **** // 
 
-  const [chatNotificationTitle, setChatNotificationTitle] = useState([]) ; 
+  const [chatNotificationTitle, setChatNotificationTitle] = useState([]);
   const [isFilterChecked, setIsFilterChecked] = useState(null)
   const [isSystemFilterChecked, setIsSystemFilterChecked] = useState(null)
-  
+
   // Notification message press handler 
   const ChatMessageClickHandler = (reference_id) => {
     setChatStudyData(reference_id)
@@ -293,22 +293,22 @@ const BasicLayout = ({ children }) => {
 
   // Clear notification message handler
   const ClearNotificationMessageHandler = () => {
-    localStorage.removeItem("chat-data") ; 
-    setChatNotificationData([]) ; 
+    localStorage.removeItem("chat-data");
+    setChatNotificationData([]);
   }
 
-  const notification_content=(
+  const notification_content = (
     <div>
-      <Button danger onClick={() => {ClearNotificationMessageHandler()}}>Clear notification</Button>
+      <Button danger onClick={() => { ClearNotificationMessageHandler() }}>Clear notification</Button>
       <List
-        style={{width:"30rem", height: "30rem", overflowY: "auto"}}
+        style={{ width: "30rem", height: "30rem", overflowY: "auto" }}
         itemLayout="horizontal"
         dataSource={chatNotificationTitle}
         className='chat-message-notification-layout'
         renderItem={(item, index) => (
           <List.Item>
             <List.Item.Meta
-              onClick = {() => {ChatMessageClickHandler(item?.studyId);}}
+              onClick={() => { ChatMessageClickHandler(item?.studyId); }}
               className='chat-notification'
               avatar={<Avatar src={`https://api.dicebear.com/7.x/miniavs/svg?seed=${index}`} />}
               title={item.title}
@@ -322,26 +322,26 @@ const BasicLayout = ({ children }) => {
 
   const SetChatNotificationData = () => {
 
-    let tempData = localStorage.getItem("chat-data") ; 
+    let tempData = localStorage.getItem("chat-data");
 
-    if (tempData !== null){
+    if (tempData !== null) {
 
-      tempData = JSON.parse(tempData) ; 
+      tempData = JSON.parse(tempData);
       const updatedTitles = tempData.map((element) => ({
-        title:element?.title, 
-        description : element?.message, 
+        title: element?.title,
+        description: element?.message,
         studyId: element?.Patientid
       }));
-      
+
       setChatNotificationTitle([...updatedTitles]);
-    } else{
-      setChatNotificationTitle([]) ; 
+    } else {
+      setChatNotificationTitle([]);
     }
-    
-  } 
+
+  }
 
   useEffect(() => {
-    SetChatNotificationData() ; 
+    SetChatNotificationData();
   }, [chatNotificationData])
 
 
@@ -618,14 +618,14 @@ const BasicLayout = ({ children }) => {
               )}
 
               {/* Dashboard option  */}
-              {checkPermissionStatus("Show Dashboard option") && 
-              
+              {checkPermissionStatus("Show Dashboard option") &&
+
                 <AppstoreOutlined
                   style={{ fontSize: '24px', color: '#000000b4' }}
                   onClick={() => navigate('/dashboard')}
                 />
               }
-              
+
 
               <Divider type='vertical' className='vertical-divider' />
 
@@ -655,11 +655,11 @@ const BasicLayout = ({ children }) => {
 
               {window.location.pathname == "/studies" && (
 
-                <div className='iod-setting-div' style = {{marginLeft: "1rem"}}>
-                  
+                <div className='iod-setting-div' style={{ marginLeft: "1rem" }}>
+
                   {/* ==== Notification option ====  */}
-                  
-                  <Popover content={chatNotificationTitle?.length>0?notification_content:<><Empty/></>} 
+
+                  <Popover content={chatNotificationTitle?.length > 0 ? notification_content : <><Empty /></>}
                     title={"Notifications"} placement='bottomLeft'>
 
                     <Badge count={chatNotificationTitle?.length}>
@@ -671,7 +671,7 @@ const BasicLayout = ({ children }) => {
                         <NotificationOutlined />
                       </Button>
                     </Badge>
-                  </Popover> 
+                  </Popover>
 
                   {/* ==== Delete Study option ====  */}
 
@@ -709,9 +709,9 @@ const BasicLayout = ({ children }) => {
                   </Popconfirm>
 
                   {/* ==== Study export option handler ====  */}
-                  
+
                   <Button
-                                      type='primary'
+                    type='primary'
 
                     onClick={() => setIsStudyExportModalOpen(true)}
                     className='header-secondary-option-button'
@@ -720,7 +720,7 @@ const BasicLayout = ({ children }) => {
                   </Button>
 
                   {/* ==== Assign study option handler ====  */}
-                  
+
                   <Button
                     type='primary'
                     onClick={() => QuickAssignStudyModalHandler()}
@@ -731,11 +731,11 @@ const BasicLayout = ({ children }) => {
 
                   {/* ==== Study logs option ====  */}
 
-                  <Button 
-                    type='primary' 
+                  <Button
+                    type='primary'
                     onClick={() => navigate('/study-logs')}
                     className='header-secondary-option-button'
-                    >
+                  >
                     Study logs
                   </Button>
 
@@ -776,13 +776,13 @@ const BasicLayout = ({ children }) => {
 
                 </div>
 
-                )}
+              )}
 
 
               <UserProfile />
-            
+
             </div>
-          
+
           </Header>
 
           <Content
@@ -790,23 +790,23 @@ const BasicLayout = ({ children }) => {
             className='site-layout-background'
             style={
               window.location.pathname === '/chats' ||
-              window.location.pathname === '/dashboard' ||
-              window.location.pathname === `/create-orders/${id}/edit` ||
-              window.location.pathname === `/reports/${id}`
+                window.location.pathname === '/dashboard' ||
+                window.location.pathname === `/create-orders/${id}/edit` ||
+                window.location.pathname === `/reports/${id}`
                 ? {
-                    padding: 0,
-                    height: 'calc(100vh - 75px)',
-                    overflow: 'hidden',
-                    overflowX: 'hidden',
-                    minHeight: 280
-                  }
+                  padding: 0,
+                  height: 'calc(100vh - 75px)',
+                  overflow: 'hidden',
+                  overflowX: 'hidden',
+                  minHeight: 280
+                }
                 : {
-                    height: 'calc(100vh - 75px)',
-                    overflow: 'hidden',
-                    overflowX: 'hidden',
-                    minHeight: 280,
-                    paddingBottom: 20
-                  }
+                  height: 'calc(100vh - 75px)',
+                  overflow: 'hidden',
+                  overflowX: 'hidden',
+                  minHeight: 280,
+                  paddingBottom: 20
+                }
             }
           >
             {' '}
@@ -825,18 +825,18 @@ const BasicLayout = ({ children }) => {
               style={
                 window.location.pathname !== '/chats'
                   ? {
-                      paddingLeft: '12px',
-                      paddingRight: '12px'
-                    }
+                    paddingLeft: '12px',
+                    paddingRight: '12px'
+                  }
                   : { padding: '0px' }
               }
             >
               {children}
             </div>
           </Content>
-        
+
         </Layout>
-      
+
       </Layout>
 
       <StudyFilterModal

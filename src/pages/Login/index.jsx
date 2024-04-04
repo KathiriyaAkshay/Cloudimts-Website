@@ -11,7 +11,7 @@ import {
 import { Link, useNavigate } from 'react-router-dom'
 import API from '../../apis/getApi'
 import { useContext, useEffect, useState } from 'react'
-import logo from '../../assets/images/Imageinet-logo.png'
+import logo from '../../assets/images/cloudimts.jpg'
 import NotificationMessage from '../../components/NotificationMessage' ; 
 import APIHandler from '../../apis/apiHandler'
 import LoginBg from '../../assets/images/login.jpeg'
@@ -97,14 +97,7 @@ const Login = () => {
           <Col xs={24} md={24} lg={24} className='login-card-wrapper'>
             <Card className='login-card' bordered={false}>
               <Spin spinning={isLoading}>
-                <img src={logo} alt='Logo' className={'signup-logo'} />
-                <Row className='card-header' style={{ margin: 0 }}>
-                  <h2>
-                    {window.location.pathname === '/admin/login'
-                      ? 'Admin Login'
-                      : 'User Login'}
-                  </h2>
-                </Row>
+                <img src={logo} alt='Logo' className={'signup-logo'} style={{marginBottom:"30px"}} />
                 <Form
                   labelCol={{
                     span: 24
