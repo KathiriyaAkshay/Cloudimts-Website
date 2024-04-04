@@ -826,9 +826,9 @@ const Dicom = () => {
                       setIsReportModalOpen(true)
                       setPatientId(record.patient_id)
                       setPatientName(record.name)
-                      setStudyUId(record.study?.study_uid)
+                      setStudyUId(record.study?.study_original_id)
                       setStudyReferenceId(record?.refernce_id)
-                      localStorage.setItem("studyUIDValue", record.study?.study_uid);
+                      localStorage.setItem("studyUIDValue", record.study?.study_original_id);
                     }}
                   />
                 </Tooltip>
@@ -943,7 +943,7 @@ const Dicom = () => {
                   className='ohif-viwer-option-icon'
                   onClick={() => {
                     handleCellDoubleClick(record);
-                    window.open(`https://viewer.cloudimts.com/viewer/${record?.study?.study_uid}`, "_blank");
+                    window.open(`https://viewer.cloudimts.com/ohif/viewer?url=../studies/${record?.study?.study_original_id}/ohif-dicom-json`, "_blank");
                   }} />
               </Tooltip>
 

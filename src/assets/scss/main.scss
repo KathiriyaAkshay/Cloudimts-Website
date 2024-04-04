@@ -2911,3 +2911,52 @@ form.ant-form .ant-form-item .ant-form-item-label label{
     height: 60vh;
   }
 }
+
+// ==== Advance file related option ==== // 
+
+.ohif-option-image{
+  height: 16px;
+  width: 16px;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+.viewer-option-layout{
+  display: flex;
+  flex-direction: row;
+}
+
+.viewer-option-text{
+  margin-left: 8px;
+  font-size: 0.80rem !important;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+.ohif-basic-viewer-option{
+  background-color: #FFFFFF !important;
+  span{
+    color: #FFA500 !important;
+  }
+}
+
+.ohif-basic-viewer-option:hover{
+  background-color: #FFA500 !important;
+  span{
+    color: #FFFFFF !important;
+  }
+}
+
+.kiware-viewer-option{
+  background-color:  #FFFFFF !important;
+  span{
+    color: #000000 !important;
+  }
+}
+
+.kiware-viewer-option:hover{
+  background-color: #3d5a80 !important;
+  span{
+    color: #FFFFFF !important;
+  }
+}

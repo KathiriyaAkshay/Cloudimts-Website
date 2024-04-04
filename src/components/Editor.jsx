@@ -30,17 +30,6 @@ const Editor = ({ id }) => {
   const user_id = localStorage.getItem('userID')
   const navigate = useNavigate();
 
-  // const [isPatientInformationInserted, setIsPatientInformationInserted] =
-  //   useState(false)
-
-  //   const [
-  //   isInstitutionInformationInserted,
-  //   setIsInstitutionInformationInserted
-  // ] = useState(false)
-
-  // const [isStudyDescriptionInserted, setIsStudyDescriptionInserted] =
-  //   useState(false)
-
   const [institutionReport, setInstitutionReport] = useState({});
   const [referenceImageCount, setReferenceImageCount] = useState(1);
   const [seriesId, setSeriesId] = useState(null);
@@ -49,7 +38,7 @@ const Editor = ({ id }) => {
   const [reportStudyDescription, setReportStudyDescription] = useState(null);
 
   // **** StudyUID information **** // 
-  const studyUIDInformation = `https://viewer.cloudimts.com/viewer/` + localStorage.getItem("studyUIDValue");
+  const studyUIDInformation = `https://viewer.cloudimts.com/ohif/viewer?url=../studies/` + localStorage.getItem("studyUIDValue") + "/ohif-dicom-json";
 
   useEffect(() => {
     setSelectedItem(prev => ({
