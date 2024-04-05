@@ -4,6 +4,9 @@ import ChatBox from "./ChatBox";
 
 const ChatMain = (props) => { 
 
+  console.log("Series id information ========>");
+  console.log(props.orderId);
+
   const [chatList, setChatList] = useState({
     chatListData: [],
     searchInputShow: false,

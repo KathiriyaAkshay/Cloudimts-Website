@@ -25,7 +25,6 @@ const ChatMessanger = props => {
     chatDataInfo,
     originated,
     isHousemateChat,
-    handleChatListData,
     userId,
     orderId,
     restaurantName,
@@ -35,7 +34,10 @@ const ChatMessanger = props => {
     isDrawerOpen, 
     urgentCase, 
     referenceid
-  } = props || {}
+  } = props || {} 
+
+  console.log("Props orderId information ===========>");
+  console.log(orderId);
 
   const userDetail = userProfileData
 
@@ -310,8 +312,9 @@ const ChatMessanger = props => {
           is_quoted: true,
           quoted_message: quotedMessageInfo?.media, 
           urgent_case: urgentCase,
+          reference_id: referenceid
+          
         } ;
-        reference_id: referenceid
         
       } else {
         
@@ -338,19 +341,15 @@ const ChatMessanger = props => {
           if (res.data.status) {
             // NotificationMessage('success', "Message send successfully")
           } else {
-            NotificationMessage(
-              'warning',
-              'Network request failed',
-              res.data.message
-            )
+            // NotificationMessage(
+            //   'warning',
+            //   'Network request failed',
+            //   res.data.message
+            // )
           }
         })
         .catch(err =>
-          NotificationMessage(
-            'warning',
-            'Network request failed',
-            err.response.data.message
-          )
+          console.log("Failed to send chat media")
         )
       setForwardMessage({ ...forwardMessage, quoted: false }) ; 
       ScrollToBottom() ; 
@@ -414,6 +413,9 @@ const ChatMessanger = props => {
       }  else {
         
         if (chatData) {
+
+          console.log("Run this function ===========?");
+          console.log(chatData);
   
           let modifiedObj  = {}; 
     

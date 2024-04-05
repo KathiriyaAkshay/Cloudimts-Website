@@ -62,8 +62,8 @@ import { convertToDDMMYYYY } from '../../helpers/utils'
 import OHIFViewer from "../../assets/images/menu.png";
 import WeasisViewer from "../../assets/images/Weasis.png";
 import API from '../../apis/getApi' 
-import { FileDoneOutlined } from '@ant-design/icons'; 
 import StudyReportIcon from "../../assets/images/study-report.png"
+import { RoomDataContext } from '../../hooks/roomDataContext'
 
 const BASE_URL = import.meta.env.VITE_APP_SOCKET_BASE_URL
 let timeOut = null ; 
@@ -156,6 +156,7 @@ const Dicom = () => {
     )?.permission_value
     return permission
   }
+  const { setRoomID } = useContext(RoomDataContext)
 
 
   // **** Setup Chat notification socket connection **** // 
@@ -902,6 +903,7 @@ const Dicom = () => {
                 <BsChat
                   className='action-icon action-icon-primary study-table-chat-option'
                   onClick={() => {
+                    setRoomID(record?.series_id)
                     setStudyReferenceId(record?.refernce_id)
                     setSeriesID(record.series_id)
                     setStudyID(record.id)
