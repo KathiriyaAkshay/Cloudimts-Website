@@ -15,11 +15,11 @@ import { SiMicrosoftexcel } from 'react-icons/si'
 import { FaFilePdf } from "react-icons/fa";
 import mammoth from 'mammoth'
 import {
-  DownloadOutlined,
   FilterOutlined,
   PlusOutlined,
   SearchOutlined,
-  UploadOutlined
+  UploadOutlined, 
+  EyeOutlined
 } from '@ant-design/icons'
 import { handleDownloadPDF, handleExport, handlePdfExport } from '../helpers/billingTemplate'
 import { BillingDataContext } from '../hooks/billingDataContext'
@@ -558,7 +558,7 @@ const HeaderButton = ({
           {billingFilterData?.length > 0 ? <>
             <Button type="primary" onClick={() => setBillingInformationModal(true)}
               style={{ backgroundColor: "#f5f5f5", color: "#212121 !important" }}>
-              View Billing information
+              <EyeOutlined/> &nbsp; Billing info
             </Button>
           </> : <></>}
 
@@ -595,13 +595,13 @@ const HeaderButton = ({
             )}
 
 
-          <Button
+          {/* <Button
             type='primary'
             className='btn-icon-div header-secondary-option-button'
             onClick={() => handleDownloadPDF(billingFilterData)}
           >
             <DownloadOutlined /> Download Bill
-          </Button>
+          </Button> */}
         </div>
       )}
 

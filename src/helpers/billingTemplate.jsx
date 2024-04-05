@@ -495,15 +495,37 @@ export const handleExport = (tableData) => {
           "Modality": element?.modality,
           "Institution": element?.institution,
           "Study description": element?.study_description,
+          "Clinical history": element?.study_history, 
           "Report description": element?.reporting_study_description,
           "Study Date/Time": element?.study_date,
           "Reporting Date/Time": element?.reporting_time,
           "Status": element?.study_status,
           "Reported by": element?.reported_by,
-          "Charge": parseInt(element?.reporting_charge) + parseInt(element?.comunication_charge) + parseInt(element?.midnight_charge)
+          "Turn around": element?.turn_around_time, 
+          "Charge": ((parseFloat(element?.reporting_charge) || 0) + (parseFloat(element?.comunication_charge) || 0) + (parseFloat(element?.midnight_charge) || 0)).toFixed(2)
         }
       )
   })
+
+  // // Convert your data to worksheet
+  // const worksheet = XLSX.utils.json_to_sheet(excelTempData);
+
+  // // Add the worksheet to the workbook
+  // XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
+
+  // // Generate a blob from the workbook
+  // const arrayBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+
+  // // Create a blob from the ArrayBuffer
+  // const blob = new Blob([arrayBuffer], {
+  //   type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  // });
+
+  // // Create a unique file name
+  // const fileName = `${sheetNameValue}.xlsx`;
+
+  // // Save the file using file-saver
+  // saveAs(blob, fileName);
 
   // Convert your data to worksheet
   const worksheet = XLSX.utils.json_to_sheet(excelTempData);
@@ -511,107 +533,133 @@ export const handleExport = (tableData) => {
   // Add the worksheet to the workbook
   XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
 
+  // Auto-size the columns based on content
+  const colSizes = excelTempData.reduce((acc, row) => {
+      Object.keys(row).forEach(key => {
+          const len = String(row[key]).length;
+          acc[key] = Math.max(acc[key] || 0, len);
+      });
+      return acc;
+  }, {});
+
+  Object.keys(colSizes).forEach(col => {
+      const width = colSizes[col] + 2; // Add some extra width
+      worksheet['!cols'] = worksheet['!cols'] || [];
+      worksheet['!cols'].push({ wch: width });
+  });
+
   // Generate a blob from the workbook
   const arrayBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
 
   // Create a blob from the ArrayBuffer
   const blob = new Blob([arrayBuffer], {
-    type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
   });
 
   // Create a unique file name
   const fileName = `${sheetNameValue}.xlsx`;
 
   // Save the file using file-saver
-  saveAs(blob, fileName);
+  saveAs(blob, fileName); 
 };
 
 export const handlePdfExport = (tableData) => {
   const pdfName = prompt("Enter PDF sheet name:");
-
-
   var html = `
   <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Simple and Good Looking Table</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
-      margin: 0;
-      padding: 20px;
-    }
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <style>
+        body {
+          font-family: Arial, sans-serif;
+          background-color: #f4f4f4;
+        }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 20px;
-    }
+        table {
+          border-collapse: collapse;
+          margin-bottom: 20px;
+        }
 
-    th, td {
-      padding: 10px;
-      text-align: left;
-      border-bottom: 1px solid #ddd;
-    }
+        th, td {
+          padding: 5px;
+          text-align: left;
+          border-bottom: 1px solid #ddd;
+        }
 
-    th {
-      background-color: #f2f2f2;
-    }
+        th {
+          background-color: #33b3e9;
+          color: #ffffff; 
+        }
 
-    tr:hover {
-      background-color: #f2f2f2;
-    }
-  </style>
-</head>
-<body>
+        tr:hover {
+          background-color: #f2f2f2;
+        }
 
-<h2 style="width:1700px;text-align:center;margin:20px 0px"}>Cloudimts</h2>
+        th:nth-child(1), td:nth-child(1) { width: 8%; } /* Reference ID */
+        th:nth-child(2), td:nth-child(2) { width: 10%; } /* Patient ID */
+        th:nth-child(3), td:nth-child(3) { width: 10%; } /* Patient Name */
+        th:nth-child(4), td:nth-child(4) { width: 5%; } /* Modality */
+        th:nth-child(5), td:nth-child(5) { width: 10%; } /* Institution */
+        th:nth-child(6), td:nth-child(6) { width: 10%; } /* Study Description */
+        th:nth-child(7), td:nth-child(7) { width: 10%; } /* Report Description */
+        th:nth-child(8), td:nth-child(8) { width: 10%; } /* Clinical history */
 
-
-<table>
-  <thead>
-    <tr>
-      <th>ID</th>
-      <th>Patient ID</th>
-      <th>Patient Name</th>      
-      <th>Reference ID</th>
-      <th>Modality</th>
-      <th>Institution</th>
-      <th>Study Description</th>
-      <th>Report description</th>
-      <th>Study Date/Time</th>
-      <th>Reporting Date/Time</th>
-      <th>Status</th>
-      <th>Reported By</th>
-      <th>Charge</th>
-    </tr>
-  </thead>
-  <tbody>`
-
-
-  tableData.map((element) => {
-    if (element.study_status != "Deleted") {
-      html +=
-        `
-    <tr>
-  <td>${element?.id}</td>
-  <td>${element?.patient_id}</td>
-  <td>${element?.patient_name}</td>      
-  <td>${element?.reference_id}</td>
-  <td>${element?.modality}</td>
-  <td>${element?.institution}</td>
-  <td>${element?.study_description}</td>
-  <td>${element?.reporting_study_description}</td>
-  <td>${element?.study_date}</td>
-  <td>${element?.reporting_time}</td>
-  <td>${element?.study_status}</td>
-  <td>${element?.reported_by}</td>
-  <td>${parseInt(element?.reporting_charge) + parseInt(element?.comunication_charge) + parseInt(element?.midnight_charge)}</td>
-</tr>
-    `
+        th:nth-child(9), td:nth-child(9) { width: 5%; } /* Study Date/Time */
+        th:nth-child(10), td:nth-child(10) { width: 5%; } /* Reporting Date/Time */
+        th:nth-child(11), td:nth-child(11) { width: 4%; } /* Status */
+        th:nth-child(12), td:nth-child(12) { width: 5%; } /* Reported By */
+        th:nth-child(13), td:nth-child(13) { width: 4%; } /* Turn around */
+        th:nth-child(14), td:nth-child(14) { width: 10%; } /* Charge */
+        
+      </style>
+    </head>
+    <body>
+      <div style="margin-left:auto; margin-right:auto; width: 1400px ;">
+        <h2 style="margin:20px 0px;  text-align: center;">Cloudimts</h2>
+      </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Reference ID</th>
+          <th>Patient ID</th>
+          <th>Patient Name</th>      
+          <th>Modality</th>
+          <th>Institution</th>
+          <th>Study Description</th>
+          <th>Report description</th>
+          <th>Clinical history</th>
+          <th>Study Date/Time</th>
+          <th>Reporting Date/Time</th>
+          <th>Status</th>
+          <th>Reported By</th>
+          <th>Turn around</th>
+          <th>Charge</th>
+        </tr>
+      </thead>
+      <tbody>`
+        tableData.map((element) => {
+          if (element.study_status != "Deleted") {
+            html +=
+              `
+          <tr>
+        <td>${element?.reference_id}</td>
+        <td>${element?.patient_id}</td>
+        <td>${element?.patient_name}</td>      
+        <td>${element?.modality}</td>
+        <td>${element?.institution}</td>
+        <td>${element?.study_description == null?"":element?.study_description}</td>
+        <td>${element?.reporting_study_description == null?"":element?.reporting_study_description}</td>
+        <td>${element?.study_history == null?"":element?.study_history}</td>
+        <td>${element?.study_date}</td>
+        <td>${element?.reporting_time == null?"":element?.reporting_time}</td>
+        <td>${element?.study_status}</td>
+        <td>${element?.reported_by}</td>
+        <td>${element?.turn_around_time}</td>
+        <td>${((parseFloat(element?.reporting_charge) || 0) + (parseFloat(element?.comunication_charge) || 0) + (parseFloat(element?.midnight_charge) || 0)).toFixed(2)}</td>
+      </tr>
+      `
     }
   })
 

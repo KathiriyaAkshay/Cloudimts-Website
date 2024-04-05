@@ -2960,3 +2960,13 @@ form.ant-form .ant-form-item .ant-form-item-label label{
     color: #FFFFFF !important;
   }
 }
+
+// Delete billing data button 
+
+.delete-record-option-button:hover{
+  border-color: red !important;
+
+  span{
+    color: red !important;
+  }
+}
