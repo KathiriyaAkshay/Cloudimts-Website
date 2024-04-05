@@ -11,8 +11,7 @@ const ImageDrawer = ({
     }) => {
 
     const OHIFViewerHandler = () => {
-
-        let url = `https://viewer.cloudimts.com/viewer/${studyUID}`;
+        let url = `https://viewer.cloudimts.com/ohif/viewer?url=../studies/${studyUID}/ohif-dicom-json`;
         window.open(url, "_blank");
       }
 
@@ -23,6 +22,7 @@ const ImageDrawer = ({
             onOk={() => setImageDrawerOpen(false)}
             onCancel={() => {setImageDrawerOpen(false)}}
             width={1000}
+            footer={null}
             centered
         >   
             <div style={{ display: "flex", 

@@ -1,16 +1,17 @@
 import { Button, Col, DatePicker, Form, Input, Modal, Row, Select } from 'antd'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useLayoutEffect, useState } from 'react'
 import { filterDataContext } from '../hooks/filterDataContext'
 import { FilterSelectedContext } from '../hooks/filterSelectedContext'
 import { getModalityList, getRadiologistList } from '../apis/studiesApi'
 import API from '../apis/getApi';
 import NotificationMessage from './NotificationMessage';
+import APIHandler from '../apis/apiHandler'
 
 const AdvancedSearchModal = ({ name, retrieveStudyData, advanceSearchFilterData, quickFilterform }) => {
 
   const { isAdvancedSearchModalOpen, setIsAdvancedSearchModalOpen, setIsStudyQuickFilterModalOpen } = useContext(filterDataContext);
   const { setIsFilterSelected, setIsAdvanceSearchSelected } = useContext(FilterSelectedContext);
-
+  const [patientNameOptions, setPatientNameOptions] = useState([]) ; 
   const [form] = Form.useForm();
 
   const [institutionOptions, setInstitutionOptions] = useState([])
@@ -28,6 +29,10 @@ const AdvancedSearchModal = ({ name, retrieveStudyData, advanceSearchFilterData,
     {
       label: 'Assigned',
       value: 'Assigned'
+    },
+    {
+      label: 'Un-Assigned',
+      value: 'Un-Assigned'
     },
     {
       label: 'InReporting',
@@ -68,8 +73,8 @@ const AdvancedSearchModal = ({ name, retrieveStudyData, advanceSearchFilterData,
     setIsAdvancedSearchModalOpen(false)
     setIsFilterSelected(false)
     setIsAdvanceSearchSelected(true)
-    setIsStudyQuickFilterModalOpen(false) ; 
-    quickFilterform.resetFields() ; 
+    setIsStudyQuickFilterModalOpen(false);
+    quickFilterform.resetFields();
   }
 
   const retrieveInstitutionData = async () => {
@@ -153,15 +158,40 @@ const AdvancedSearchModal = ({ name, retrieveStudyData, advanceSearchFilterData,
         )
       )
   }
+  const AllPatientNameFetch = async () => {
+
+    let responseData = await APIHandler("POST", {}, "studies/v1/all_patient_name") ; 
+
+    if (responseData === false){
+      NotificationMessage("warning", "Network request failed") ; 
+    
+    } else if (responseData?.status){
+      const resData = [] 
+      responseData?.data.map((element) => {
+        resData.push({
+          label: element, 
+          value: element
+        })
+      })
+      setPatientNameOptions(resData) ; 
+
+    } else {
+      NotificationMessage("warning", "Network request failed", responseData?.message) ; 
+    }
+  }
+
 
   useEffect(() => {
     if (isAdvancedSearchModalOpen) {
       retrieveInstitutionData()
       retrieveModalityData()
       retrieveRadiologistData()
-      form.resetFields() ;
+      AllPatientNameFetch() ; 
+
+      form.resetFields();
     }
   }, [isAdvancedSearchModalOpen]);
+
 
   return (
     <Modal
@@ -232,7 +262,13 @@ const AdvancedSearchModal = ({ name, retrieveStudyData, advanceSearchFilterData,
                 }
               ]}
             >
-              <Input placeholder='Enter Patient Name' />
+
+                <Select
+                  placeholder="Patient name"
+                  options={[...patientNameOptions]}
+                  showSearch
+                  // onChange={() => { form.submit() }}
+                />
             </Form.Item>
           </Col>
 

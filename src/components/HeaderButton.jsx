@@ -1,17 +1,7 @@
 import {
   Button,
-  Checkbox,
-  Collapse,
-  Divider,
-  Menu,
-  Popover,
   Select,
-  Popconfirm,
   Tag,
-  Badge,
-  Avatar,
-  List,
-  Empty,
   Upload
 } from 'antd'
 import React, { useContext, useEffect, useState } from 'react'
@@ -25,11 +15,11 @@ import { SiMicrosoftexcel } from 'react-icons/si'
 import { FaFilePdf } from "react-icons/fa";
 import mammoth from 'mammoth'
 import {
-  DownloadOutlined,
   FilterOutlined,
   PlusOutlined,
   SearchOutlined,
-  UploadOutlined
+  UploadOutlined, 
+  EyeOutlined
 } from '@ant-design/icons'
 import { handleDownloadPDF, handleExport, handlePdfExport } from '../helpers/billingTemplate'
 import { BillingDataContext } from '../hooks/billingDataContext'
@@ -40,6 +30,8 @@ import {
   retrieveSystemFilters
 } from '../helpers/studyDataFilter'
 import APIHandler from '../apis/apiHandler'
+import OHIF from "../assets/images/menu.png" ; 
+import KitWareViewer from "../assets/images/viewers.png"
 
 const HeaderButton = ({
   id,
@@ -150,7 +142,7 @@ const HeaderButton = ({
   // Function to handle file selection and conversion
   const handleFileChange = (event) => {
     const file = event.file.originFileObj;
-        if (file) {
+    if (file) {
       const reader = new FileReader();
       reader.onload = async (e) => {
         const arrayBuffer = reader.result;
@@ -208,11 +200,26 @@ const HeaderButton = ({
     headers: {
       authorization: 'authorization-text',
     },
-    showUploadList:false,
+    accept:".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    showUploadList: false,
     onChange(info) {
-     handleFileChange(info)
+      handleFileChange(info)
     },
   };
+
+  // OHIF viewer option handler 
+  const OHIFViewerOptionHandler = (option) => {
+    let studyId = localStorage.getItem("studyUIDValue"); 
+    
+    if (option == "volume"){
+      window.open(`https://viewer.cloudimts.com/ohif/viewer?hangingprotocolId=mprAnd3DVolumeViewport&url=../studies/${studyId}//ohif-dicom-json`, "_blank") ; 
+    } else if (option == "total"){
+      window.open(`https://viewer.cloudimts.com/ohif/tmtv?url=../studies/${studyId}//ohif-dicom-json`, "_blank") ; 
+    } else if (option == "kitware"){
+      window.open(`https://viewer.cloudimts.com/volview/index.html?names=[archive.zip]&urls=[../studies/${studyId}/archive]`, "_blank") ; 
+
+    }
+  }
 
 
 
@@ -397,10 +404,66 @@ const HeaderButton = ({
       {window.location.pathname === `/reports/${id}` && (
         <div className='iod-setting-div'>
 
-<Upload {...props}>
-<Button type='primary' icon={<UploadOutlined />}>Insert Doc File</Button>
-  </Upload>
+          <Button
+            type='primary'
+            className='ohif-basic-viewer-option'
+            onClick={() =>
+              {setSelectedItem(prev => ({
+                isPatientSelected: false,
+                isInstitutionSelected: false,
+                isImagesSelected: false,
+                isOhifViewerSelected: true,
+                templateId: prev?.templateId,
+                isStudyDescriptionSelected: false
+              })) ; }
+            }
+          > 
 
+            <div className='viewer-option-layout'>
+              <img className='ohif-option-image' src={OHIF} alt="" srcset="" />
+              <span className='viewer-option-text'>v1 | Basic</span>
+            </div>
+          </Button>
+
+          <Button
+            type='primary'
+            className='ohif-basic-viewer-option'
+            onClick={() => {OHIFViewerOptionHandler("volume")}}
+          > 
+
+            <div className='viewer-option-layout'>
+              <img className='ohif-option-image' src={OHIF} alt="" srcset="" />
+              <span className='viewer-option-text'>v2 | Volume</span>
+            </div>
+          </Button>
+
+          <Button
+            type='primary'
+            className='ohif-basic-viewer-option'
+            onClick={() => {OHIFViewerOptionHandler("total")}}
+          > 
+
+            <div className='viewer-option-layout'>
+              <img className='ohif-option-image' src={OHIF} alt="" srcset="" />
+              <span className='viewer-option-text'>v3 | Total Metabolic</span>
+            </div>
+          </Button>
+
+          <Button
+            type='primary'
+            className='kiware-viewer-option'
+            onClick={() => {OHIFViewerOptionHandler("kitware")}}
+          > 
+
+            <div className='viewer-option-layout'>
+              <img className='ohif-option-image' src={KitWareViewer} alt="" srcset="" />
+              <span className='viewer-option-text'>Kitware's VolView</span>
+            </div>
+          </Button>
+
+          <Upload {...props}>
+            <Button type='primary' icon={<UploadOutlined />}>Insert Doc File</Button>
+          </Upload>
 
           <Button
             type='primary'
@@ -431,7 +494,7 @@ const HeaderButton = ({
               }))
             }
           >
-            Study Description
+           Insert Study Description
           </Button>
 
           {/* <Button
@@ -450,7 +513,7 @@ const HeaderButton = ({
           >
             Patient Information
           </Button> */}
-{/* 
+          {/* 
           <Button
             type='primary'
             onClick={() =>
@@ -467,39 +530,6 @@ const HeaderButton = ({
           >
             Institution Information
           </Button> */}
-
-          <Button
-            type='primary'
-            onClick={() =>
-              setSelectedItem(prev => ({
-                isPatientSelected: false,
-                isInstitutionSelected: false,
-                isImagesSelected: false,
-                isOhifViewerSelected: true,
-                templateId: prev?.templateId,
-                isStudyDescriptionSelected: false
-              }))
-            }
-          >
-            OHIF Viewer&nbsp; 
-            <Tag color="#2db7f5">V1.0</Tag>
-          </Button>
-          <Button
-            type='primary'
-            onClick={() =>
-              setSelectedItem(prev => ({
-                isPatientSelected: false,
-                isInstitutionSelected: false,
-                isImagesSelected: false,
-                isOhifViewerSelected: true,
-                templateId: prev?.templateId,
-                isStudyDescriptionSelected: false
-              }))
-            }
-          >
-            OHIF Viewer&nbsp;<Tag color="#2db7f5">V2.0</Tag>
-
-          </Button>
 
           <Select
             style={{ width: "12rem" }}
@@ -527,7 +557,7 @@ const HeaderButton = ({
           {billingFilterData?.length > 0 ? <>
             <Button type="primary" onClick={() => setBillingInformationModal(true)}
               style={{ backgroundColor: "#f5f5f5", color: "#212121 !important" }}>
-              View Billing information
+              <EyeOutlined/> &nbsp; Billing info
             </Button>
           </> : <></>}
 
@@ -564,13 +594,13 @@ const HeaderButton = ({
             )}
 
 
-          <Button
+          {/* <Button
             type='primary'
             className='btn-icon-div header-secondary-option-button'
             onClick={() => handleDownloadPDF(billingFilterData)}
           >
             <DownloadOutlined /> Download Bill
-          </Button>
+          </Button> */}
         </div>
       )}
 

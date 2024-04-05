@@ -244,7 +244,7 @@ const StudyReports = ({
   // *** OHIF viewer handler **** // 
   const OHIFViewerHandler = () => {
 
-    let url = `https://viewer.cloudimts.com/viewer/${studyUIDInformation}`;
+    let url = `https://viewer.cloudimts.com/ohif/viewer?url=../studies/${studyUIDInformation}/ohif-dicom-json`;
     window.open(url, "_blank");
   }
 

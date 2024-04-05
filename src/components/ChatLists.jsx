@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import ProfileImage from '../assets/images/ProfileImg.png'
 import UrgentCase from '../assets/images/urgentCase.png'
 import NormalCase from '../assets/images/normalCase.png'
-import { Divider, Typography } from 'antd'
+import { Divider, Typography, Empty } from 'antd'
 import { getAllChatList } from '../apis/studiesApi'
 import NotificationMessage from './NotificationMessage'
 import { convertToDDMMYYYY } from '../helpers/utils'
@@ -14,8 +14,7 @@ const ChatLists = ({ setSeriesId, setStudyId, setPersonName, studyId, setUrgentC
     retrieveChatListData()
   }, [])
 
-  // Fetch all chat information
-
+  // *** Retervie chatlist informaton *** // 
   const retrieveChatListData = () => {
     getAllChatList({
       current_timestamp: Date.now()
@@ -32,8 +31,6 @@ const ChatLists = ({ setSeriesId, setStudyId, setPersonName, studyId, setUrgentC
           })
 
           const resData = res.data.data.map(data => (
-
-            // console.log(data)
 
             {
               ...data,
@@ -133,45 +130,41 @@ const ChatLists = ({ setSeriesId, setStudyId, setPersonName, studyId, setUrgentC
                   </Typography>
 
                   <div className='study-description-data'>
-
-
                     <div className='chats-modality-status'>
-                    <Typography
-                      className='particular-study-chat-description'
-                      style={{ fontSize: '12px' }}
-                    >
-                      <div className='chats-study-id'>
-                        <span style={{fontWeight: 600 }}>
-                          StudyId -{' '}
-                        </span>
-                        {data.id}
-
-                      </div>
-
-                    </Typography>
                       <Typography
                         className='particular-study-chat-description'
                         style={{ fontSize: '12px' }}
                       >
-                         <div className='chats-study-modality'>
-                         <span style={{ color: '#A6A6A6', fontWeight: 600 }}>
-                          Modality -{' '}
-                        </span>
-                        {data.modality}
+                        <div className='chats-study-id'>
+                          <span style={{ fontWeight: 600 }}>
+                            StudyId -{' '}
+                          </span>
+                          {data.id}
+                        </div>
+                      </Typography>
+                      <Typography
+                        className='particular-study-chat-description'
+                        style={{ fontSize: '12px' }}
+                      >
+                        <div className='chats-study-modality'>
+                          <span style={{ color: '#A6A6A6', fontWeight: 600 }}>
+                            Modality -{' '}
+                          </span>
+                          {data.modality}
                         </div>
                       </Typography>
 
 
                     </div>
                     <Typography
-                        className='particular-study-chat-description'
-                        style={{ fontSize: '12px' }}
-                      >
-                        <span style={{ color: '#A6A6A6', fontWeight: 600 }}>
-                          Status -{' '}
-                        </span>
-                        {data.status}
-                      </Typography>
+                      className='particular-study-chat-description'
+                      style={{ fontSize: '12px' }}
+                    >
+                      <span style={{ color: '#A6A6A6', fontWeight: 600 }}>
+                        Status -{' '}
+                      </span>
+                      {data.status}
+                    </Typography>
 
 
                     {data.latest_timestamp !== null ? (
@@ -197,6 +190,13 @@ const ChatLists = ({ setSeriesId, setStudyId, setPersonName, studyId, setUrgentC
             </div>
           </>
         ))}
+
+        {chatListData?.length == 0 && (
+          <Empty
+            style={{marginTop: 30}}
+            description = "Not found any chat within 10 days"
+          />
+        )}
       </div>
     </div>
   )

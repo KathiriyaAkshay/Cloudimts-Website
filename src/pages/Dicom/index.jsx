@@ -62,8 +62,8 @@ import { convertToDDMMYYYY } from '../../helpers/utils'
 import OHIFViewer from "../../assets/images/menu.png";
 import WeasisViewer from "../../assets/images/Weasis.png";
 import API from '../../apis/getApi' 
-import { FileDoneOutlined } from '@ant-design/icons'; 
 import StudyReportIcon from "../../assets/images/study-report.png"
+import { RoomDataContext } from '../../hooks/roomDataContext'
 
 const BASE_URL = import.meta.env.VITE_APP_SOCKET_BASE_URL
 let timeOut = null ; 
@@ -156,6 +156,7 @@ const Dicom = () => {
     )?.permission_value
     return permission
   }
+  const { setRoomID } = useContext(RoomDataContext)
 
 
   // **** Setup Chat notification socket connection **** // 
@@ -728,10 +729,9 @@ const Dicom = () => {
       className: `${checkPermissionStatus('View Patient name') ? '' : 'column-display-none'}`,
       render: (text, record) => (
         record.urgent_case ? <>
-          <Tag color='#cd201f'>{text}</Tag>
+          <Tag color='#cd201f' style={{maxWidth:"100%",whiteSpace:"normal"}}>{text}</Tag>
         </> : <>
-          <Tag color='#2db7f5'>{text}</Tag>
-
+          <Tag color='#2db7f5' style={{maxWidth:"100%",whiteSpace:"normal"}}>{text}</Tag>
         </>
       ),
 
@@ -826,9 +826,9 @@ const Dicom = () => {
                       setIsReportModalOpen(true)
                       setPatientId(record.patient_id)
                       setPatientName(record.name)
-                      setStudyUId(record.study?.study_uid)
+                      setStudyUId(record.study?.study_original_id)
                       setStudyReferenceId(record?.refernce_id)
-                      localStorage.setItem("studyUIDValue", record.study?.study_uid);
+                      localStorage.setItem("studyUIDValue", record.study?.study_original_id);
                     }}
                   />
                 </Tooltip>
@@ -876,7 +876,7 @@ const Dicom = () => {
                   className='action-icon'
                   style={{ width: "max-content" }}
                   onClick={() => {
-                    setStudyUId(record.study?.study_uid)
+                    setStudyUId(record.study?.study_original_id)
                     ImageDrawerHandler(record)
                   }}
                 />
@@ -902,6 +902,7 @@ const Dicom = () => {
                 <BsChat
                   className='action-icon action-icon-primary study-table-chat-option'
                   onClick={() => {
+                    setRoomID(record?.series_id)
                     setStudyReferenceId(record?.refernce_id)
                     setSeriesID(record.series_id)
                     setStudyID(record.id)
@@ -916,6 +917,7 @@ const Dicom = () => {
               {checkPermissionStatus('Study delete option') && (
                 <DeleteActionIcon
                   title = "Delete study"
+                  description={"are you sure you want to delete this study?"}
                   assign_user={record?.assign_user}
                   deleteActionHandler={() => deleteParticularStudy(record?.id)}
                 />
@@ -943,7 +945,7 @@ const Dicom = () => {
                   className='ohif-viwer-option-icon'
                   onClick={() => {
                     handleCellDoubleClick(record);
-                    window.open(`https://viewer.cloudimts.com/viewer/${record?.study?.study_uid}`, "_blank");
+                    window.open(`https://viewer.cloudimts.com/ohif/viewer?url=../studies/${record?.study?.study_original_id}/ohif-dicom-json`, "_blank");
                   }} />
               </Tooltip>
 
@@ -1139,6 +1141,16 @@ const Dicom = () => {
     setIsAdvanceSearchSelected(false);
   }
 
+  // *** Set Patient id change value **** // 
+  const HandlePatientIdChange = (value) => {
+
+    if (timeOut) clearTimeout(timeOut) ; 
+
+    timeOut = setTimeout(() => {
+      quickForm.submit() ; 
+    }, 500) ;
+  }
+
   // **** Quick filter reset option handler **** //
   const QuickFilterReset = () => {
     quickForm.resetFields();
@@ -1158,6 +1170,10 @@ const Dicom = () => {
     {
       label: "Assigned",
       value: "Assigned"
+    },
+    {
+      label: "Un-Assigned",
+      value: "Un-Assigned"
     },
     {
       label: "InReporting",
@@ -1241,6 +1257,9 @@ const Dicom = () => {
               >
                 <Input 
                   onPressEnter={() => {quickForm.submit()}}   
+                  onChange={(e) => {
+                    HandlePatientIdChange(e.target.value)
+                  }}
                   placeholder="Patient Id" 
                 />
 
@@ -1264,6 +1283,9 @@ const Dicom = () => {
                 <Input 
                   onPressEnter={() => {quickForm.submit()}}
                   placeholder="Reference Id" 
+                  onChange={(e) => {
+                    HandlePatientIdChange(e.target.value)
+                  }}
                 />
               </Form.Item>
             </Col>
@@ -1536,6 +1558,7 @@ const Dicom = () => {
           setPersonName(null)
           localStorage.removeItem("currentChatId")
         }}
+        width={700}
         open={isDrawerOpen}
         className='chat-drawer'
       >
@@ -1602,6 +1625,7 @@ const Dicom = () => {
         centered
         open={isStudyExportModalOpen}
         onOk={() => form.submit()}
+        okText = "Export"
         onCancel={() => setIsStudyExportModalOpen(false)}
         className='Study-export-option-modal'
       >
@@ -1630,7 +1654,7 @@ const Dicom = () => {
                     }
                   ]}
                 >
-                  <DatePicker format={'DD-MM-YYYY'}/>
+                  <DatePicker format={'DD/MM/YYYY'}/>
                 </Form.Item>
               </Col>
 
@@ -1647,22 +1671,7 @@ const Dicom = () => {
                     }
                   ]}
                 >
-                  <DatePicker format={'DD-MM-YYYY'}/>
-                </Form.Item>
-              </Col>
-
-              <Col xs={24} lg={24}>
-                <Form.Item
-                  name='study_name'
-                  label='Study Name'
-                  rules={[
-                    {
-                      required: true,
-                      message: 'Please Enter Study Name'
-                    }
-                  ]}
-                >
-                <Input placeholder='Study name'/>
+                  <DatePicker format={'DD/MM/YYYY'}/>
                 </Form.Item>
               </Col>
             </Row>
