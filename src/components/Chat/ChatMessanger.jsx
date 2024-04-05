@@ -36,9 +36,6 @@ const ChatMessanger = props => {
     referenceid
   } = props || {} 
 
-  console.log("Props orderId information ===========>");
-  console.log(orderId);
-
   const userDetail = userProfileData
 
   const [layoutHeight, setLayoutHeight] = useState(null)
@@ -313,7 +310,7 @@ const ChatMessanger = props => {
           quoted_message: quotedMessageInfo?.media, 
           urgent_case: urgentCase,
           reference_id: referenceid
-          
+
         } ;
         
       } else {
@@ -413,9 +410,6 @@ const ChatMessanger = props => {
       }  else {
         
         if (chatData) {
-
-          console.log("Run this function ===========?");
-          console.log(chatData);
   
           let modifiedObj  = {}; 
     

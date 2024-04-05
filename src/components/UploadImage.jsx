@@ -247,7 +247,6 @@ const UploadImage = ({
             onChange={(info, _) => {
               switch (info.file.status) {
                 case "error":
-                  console.log(info.file.status);
                   setImageUploadError(info.file.response);
                   break;
                 case "uploading":

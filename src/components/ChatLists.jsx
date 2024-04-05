@@ -32,8 +32,6 @@ const ChatLists = ({ setSeriesId, setStudyId, setPersonName, studyId, setUrgentC
 
           const resData = res.data.data.map(data => (
 
-            // console.log(data)
-
             {
               ...data,
               room_id: data.room.id,

@@ -22,9 +22,6 @@ export const handleDownloadPDF = async (billingData) => {
       modality,
     } = billingData[i];
 
-    console.log("Particular modality inforamtion ==========>");
-    console.log(modality);
-
     let reportingCharge = parseInt(reporting_charge);
     let communicationCharge = parseInt(modality_communication_charge);
     let midnightCharge = parseInt(midnight_charge);
