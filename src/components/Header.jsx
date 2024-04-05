@@ -752,7 +752,7 @@ const BasicLayout = ({ children }) => {
 
                   {/* ==== Filter option ====  */}
 
-                  <div style={{ position: 'relative' }}>
+                  {/* <div style={{ position: 'relative' }}>
                     <Popover
                       content={content}
                       title={null}
@@ -771,7 +771,7 @@ const BasicLayout = ({ children }) => {
                         <FilterOutlined style={{ fontWeight: '500' }} /> Filters
                       </Button>
                     </Popover>
-                  </div>
+                  </div> */}
 
 
                 </div>
