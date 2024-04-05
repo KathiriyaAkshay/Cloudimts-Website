@@ -876,7 +876,7 @@ const Dicom = () => {
                   className='action-icon'
                   style={{ width: "max-content" }}
                   onClick={() => {
-                    setStudyUId(record.study?.study_uid)
+                    setStudyUId(record.study?.study_original_id)
                     ImageDrawerHandler(record)
                   }}
                 />
