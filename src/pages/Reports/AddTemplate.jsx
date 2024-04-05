@@ -280,8 +280,6 @@ const AddTemplate = () => {
 
             <Col lg={8} md={8} sm={8}>
 
-
-
               {/* Template name input  */}
               <Form.Item
                 label='Template Name'

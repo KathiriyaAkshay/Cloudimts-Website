@@ -939,6 +939,10 @@
 
 .report-card {
   position: relative;
+  .ant-card-body{
+    padding-top: 0.60rem;
+    padding-bottom: 0px;
+  }
 
   .ant-card-body {
     min-height: calc(100vh - 200px);
@@ -2916,7 +2920,19 @@ form.ant-form .ant-form-item .ant-form-item-label label{
   }
 
   .ck-editor__editable{
-    height: 60vh;
+    height: 59vh;
+  }
+}
+
+.advance-report-file-option-editor{
+  .ck-editor__main{
+    height: 56vh;
+    overflow-y: auto;
+    width: calc(100%) ;
+  }
+
+  .ck-editor__editable{
+    height: 53vh;
   }
 }
 

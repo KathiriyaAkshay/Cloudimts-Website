@@ -119,7 +119,6 @@ const Editor = ({ id }) => {
     }
   }
 
-
   // **** Reterive particular user study image *** // 
   const FetchStudyImage = async () => {
     let requestPayload = {
@@ -135,7 +134,7 @@ const Editor = ({ id }) => {
     let ServerURL = import.meta.env.VITE_APP_BE_ENDPOINT
 
     if (responseData === false) {
-      NotificationMessage('warning', 'Network request failed')
+      // NotificationMessage('warning', 'Network request failed')
     } else if (responseData['status'] === true) {
       let temp = []
 
@@ -147,7 +146,6 @@ const Editor = ({ id }) => {
       setImageSlider([...temp])
     }
   }
-
 
   useEffect(() => {
     retrievePatientDetails()
@@ -179,9 +177,6 @@ const Editor = ({ id }) => {
 
   useEffect(() => {
     if (selectedItem?.templateId) {
-      // setIsPatientInformationInserted(false);
-      // setIsInstitutionInformationInserted(false);
-      // setIsStudyDescriptionInserted(false);
       retrieveTemplateData()
     }
   }, [selectedItem?.templateId])
@@ -196,7 +191,6 @@ const Editor = ({ id }) => {
   useEffect(() => {
     convertPatientDataToTable();
   }, [selectedItem])
-
 
   const convertedPatientTable = () => {
 
@@ -238,9 +232,6 @@ const Editor = ({ id }) => {
 
   const convertPatientDataToTable = (insertImage) => {
     const data =
-      // selectedItem.isPatientSelected
-      //   ? convertedPatientTable()
-      //   : 
         selectedItem.isInstitutionSelected
           ? `<div>
           
@@ -283,11 +274,6 @@ const Editor = ({ id }) => {
         : `${prev}${data}`
     )
 
-    // selectedItem.isPatientSelected && setIsPatientInformationInserted(true)
-    // selectedItem.isInstitutionSelected &&
-    // setIsInstitutionInformationInserted(true)
-    // selectedItem.isStudyDescriptionSelected &&
-    // setIsStudyDescriptionInserted(true)
     selectedItem.isImagesSelected && setReferenceImageCount(prev => prev + 1)
   }
 
@@ -392,93 +378,6 @@ const Editor = ({ id }) => {
               <Col xs={24} sm={12} md={selectedItem.isOhifViewerSelected ? 9 : selectedItem.isImagesSelected ? 7 : 0}>
                 <div className='report-details-div'>
 
-                  {/* ==== Show Patient details ====  */}
-
-                  {/* {selectedItem?.isPatientSelected && (
-                    <>
-                      <Typography className='card-heading'>
-                        Patient Information
-                      </Typography>
-                      <table className='Report-info-table'>
-                        <thead>
-                          <tr>
-                            <th>Name</th>
-                            <th>Information</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {institutionReport.hasOwnProperty(
-                            'patient_details'
-                          ) &&
-                            Object.entries(
-                              institutionReport?.patient_details
-                            ).map(([key, value]) => (
-                              <tr key={key}>
-                                <td>{key}</td>
-                                <td>{value}</td>
-                              </tr>
-                            ))}
-                        </tbody>
-                      </table>
-                    </>
-                  )} */}
-
-                  {/* ==== Show Institution details ====  */}
-                  {/* 
-                  {selectedItem?.isInstitutionSelected && (
-                    <>
-                      <Typography className='card-heading'>
-                        Institution Information
-                      </Typography>
-                      <div>
-                        <table className='Report-info-table'>
-                          <thead>
-                            <tr>
-                              <th>Name</th>
-                              <th>Information</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {institutionReport.hasOwnProperty(
-                              'institution_details'
-                            ) &&
-                              Object.entries(
-                                institutionReport?.institution_details
-                              ).map(([key, value]) => (
-                                <tr key={key}>
-                                  <td>{key}</td>
-                                  <td>{value}</td>
-                                </tr>
-                              ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    </>
-                  )} */}
-
-                  {/* ==== Show Study description ====  */}
-                  {/* 
-                  {selectedItem?.isStudyDescriptionSelected && (
-                    <>
-                      <Typography className='card-heading'>
-                        Study Description
-                      </Typography>
-                      <div>
-                        <Divider />
-                        <div className='report-main-div'>
-                          <Typography className='report-text-primary'>
-                            Study Description:
-                          </Typography>
-                          <Typography>
-                            {cardDetails?.Study_description}
-                          </Typography>
-                        </div>
-                      </div>
-                    </>
-                  )} */}
-
-                  {/* ==== Show Image slider information ====  */}
-
                   {selectedItem?.isImagesSelected && imageSlider.length > 0 && (
                     <>
                       <Typography className='card-heading'>
@@ -510,7 +409,6 @@ const Editor = ({ id }) => {
                       </div>
                     </>
                   )}
-
 
                   {/* ==== Show OHIF Viewer information ====  */}
 
@@ -576,16 +474,17 @@ const Editor = ({ id }) => {
                     />
                   </Form.Item>
                 </Form>
-
-                <CKEditor
-                style={{height:"100%"}}
-                  editor={ClassicEditor}
-                  data={editorData}
-                  onChange={(event, editor) => {
-                    const data = editor.getData()
-                    setEditorData(data)
-                  }}
-                />
+                
+                <div className='advance-report-file-option-editor'>
+                  <CKEditor
+                    editor={ClassicEditor}
+                    data={editorData}
+                    onChange={(event, editor) => {
+                      const data = editor.getData()
+                      setEditorData(data)
+                    }}
+                  />
+                </div>
 
               </Col>
 
