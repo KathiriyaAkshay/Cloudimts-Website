@@ -24,6 +24,7 @@ const UploadImage = ({
   const [previewImage, setPreviewImage] = useState("");
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewTitle, setPreviewTitle] = useState("");
+  const [drawerHeight, setDrawerHeight] = useState(11) ; 
 
   useEffect(() => {
     setFile(imageURL);
@@ -79,10 +80,27 @@ const UploadImage = ({
 
   // Download option button handler
   const handleDownload = (imageUrl) => {
-    const link = document.createElement('a');
-    link.href = imageUrl;
-    link.download = imageURL
-    link.click();
+    // URL of the PDF file
+    var pdfUrl = imageUrl;
+
+    // Create a temporary anchor element
+    var downloadLink = document.createElement('a');
+    downloadLink.href = pdfUrl;
+    downloadLink.download = 'filename.pdf'; // Optional, specify a filename for the downloaded file
+
+    // Append the anchor element to the body
+    document.body.appendChild(downloadLink);
+
+    // Trigger a click event on the anchor element
+    downloadLink.click();
+
+    // Remove the anchor element from the body
+    document.body.removeChild(downloadLink);
+
+    // const link = document.createElement('a');
+    // link.href = imageUrl;
+    // link.download = imageURL
+    // link.click();
   };
 
   // Delete option handler 
@@ -102,8 +120,8 @@ const UploadImage = ({
           setImageFile(e.target.files[0]);
         }}
         valuePropName="value1"
+        className="upload-image-selection-division"
         preserve={false}
-        // style={{overflow:"auto"}}
       >
         {file && (
           <Row
@@ -124,16 +142,17 @@ const UploadImage = ({
 
         <div>
           {multipleImageFile?.length > 0 && (
-            <Row className="ant-upload-list-item">
+            <div className="all-upload-document-list-div">
               {multipleImageFile.map((data) => (
 
                 isPDF(data) === "pdf" ? <>
 
                   {/* ==== Pdf file option ====  */}
-                  <Col xs={4} className="Report-reference-document">
+                  <div className="Report-reference-document">
 
                     <div className="Reference-option-button-layout">
 
+                      {/* Particular pdf file delete option  */}
                       <Tooltip title={getFileNameFromURL(data)}>
                         <Button danger className="Reference-download-option-button"
                           icon={<DeleteOutlined />}
@@ -141,6 +160,7 @@ const UploadImage = ({
                         </Button>
                       </Tooltip>
 
+                      {/* Particular pdf file download option  */}
                       <Tooltip title={getFileNameFromURL(data)}>
                         <Button type="primary" className="Reference-download-option-button"
                           icon={<DownloadOutlined />}
@@ -149,24 +169,25 @@ const UploadImage = ({
                       </Tooltip>
                     </div>
 
-                    <Image
+                    <img
                       style={{ width: "100px", height: "100px" }}
                       src={PDFFileIcon}
                       onLoad={() => setImageLoaded(true)}
                       alt="file"
                       className="Reference-image"
                     />
-                  </Col>
+                  </div>
 
                 </> : <>
 
                   {isPDF(data) === "image" ? <>
 
                     {/* ==== Image File option ====  */}
-                    <Col xs={4} className="Report-reference-document">
+                    <div className="Report-reference-document">
 
                       <div className="Reference-option-button-layout">
 
+                        {/* Image file delete option  */}
                         <Tooltip title={getFileNameFromURL(data)}>
                           <Button danger className="Reference-download-option-button"
                             icon={<DeleteOutlined />}
@@ -174,6 +195,7 @@ const UploadImage = ({
                           </Button>
                         </Tooltip>
 
+                        {/* Image file download option  */}
                         <Tooltip title={getFileNameFromURL(data)}>
                           <Button type="primary" className="Reference-download-option-button"
                             icon={<DownloadOutlined />}
@@ -190,11 +212,12 @@ const UploadImage = ({
                         alt="file"
                         className="Reference-image"
                       />
-                    </Col>
+                    </div>
 
                   </> : <>
+
                     {/* ==== Other file option ====  */}
-                    <Col xs={4} className="Report-reference-document">
+                    <div className="Report-reference-document">
 
                       <div className="Reference-option-button-layout">
 
@@ -221,17 +244,18 @@ const UploadImage = ({
                         alt="file"
                         className="Reference-image"
                       />
-                    </Col>
+                    </div>
 
                   </>}
                 </>
               ))}
-            </Row>
+              
+            </div>
           )}
         </div>
 
         {/* ==== File selection drawer ====  */}
-        <div style={{maxHeight:"11rem",minHeight:isClinicalHistory?"6.8rem":"11rem",overflowX:"auto"}}>
+        <div style={{maxHeight:`${drawerHeight}rem`,minHeight:isClinicalHistory?"6.8rem":"11rem",overflowX:"auto"}}>
           <Dragger
             name="url"
             style={{ height: "100%" }}
@@ -251,7 +275,7 @@ const UploadImage = ({
                   break;
                 case "done":
                   setImageUploadError("");
-                  // setFile(info?.file);
+                  setDrawerHeight((prev) => prev + 4)
                   setValues((prev) => ([
                     ...prev,
                     { url: info?.file?.originFileObj }
@@ -281,8 +305,6 @@ const UploadImage = ({
             </p>
           </Dragger>
         </div>
-
-
 
       </Form.Item>
 

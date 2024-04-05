@@ -333,7 +333,6 @@ const AssignStudy = ({
         form.resetFields();
       }}
       width={1300}
-
       style={{
         top: 20,
         height: '80vh'
@@ -488,23 +487,23 @@ const AssignStudy = ({
                       >
                         <Input />
                       </Form.Item>
-                                        {/* Uregent case information  */}
+                      {/* Uregent case information  */}
 
-                  <Form.Item
-                    name="urgent_case"
-                    label="Report Required"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Please select Report Required",
-                      },
-                    ]}
-                  >
-                    <Radio.Group>
-                      <Radio value={false}>Regular</Radio>
-                      <Radio value={true}>Urgent</Radio>
-                    </Radio.Group>
-                  </Form.Item>
+                      <Form.Item
+                        name="urgent_case"
+                        label="Report Required"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Please select Report Required",
+                          },
+                        ]}
+                      >
+                        <Radio.Group>
+                          <Radio value={false}>Regular</Radio>
+                          <Radio value={true}>Urgent</Radio>
+                        </Radio.Group>
+                      </Form.Item>
 
                     </Col>
                     <Col span={11}>
@@ -523,22 +522,18 @@ const AssignStudy = ({
                           },
                         ]}
                       >
-                        <Input.TextArea placeholder="Enter Clinical History" rows={5}/>
+                        <Input.TextArea placeholder="Enter Clinical History" rows={5} />
                       </Form.Item>
 
 
                     </Col>
                   </Row>
 
-
-
                 </div>
 
                 <div className="Assign-study-specific-option">
 
-
                   {/* Upload image information  */}
-
                   <UploadImage
                     multipleImage={true}
                     multipleImageFile={multipleImageFile}

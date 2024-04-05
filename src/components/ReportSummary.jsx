@@ -210,8 +210,8 @@ const ReportSummary = () => {
 
         // Remove the anchor element from the body
         document.body.removeChild(downloadLink);
-            setIsLoading(false);
-        }
+        setIsLoading(false);
+    }
 
     useEffect(() => {
         FetchReportInformation();

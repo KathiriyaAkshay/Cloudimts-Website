@@ -2706,13 +2706,6 @@ form.ant-form .ant-form-item .ant-form-item-label label{
   overflow-y: hidden !important;
 }
 
-.Report-reference-document{
-  margin-bottom: 0.8rem;
-  margin-top: 0.5rem;
-  margin-right: 0.8rem;
-  margin-left: auto;
-  margin-right: auto;
-}
 
 .Reference-option-button-layout{
   justify-content: right;
@@ -2728,9 +2721,6 @@ form.ant-form .ant-form-item .ant-form-item-label label{
   z-index: 100;
 }
 
-.Reference-image{
-  height: 4.5rem !important;
-}
 
 .study-more-details .ant-modal-body{
   max-height: 87vh !important;
@@ -3009,4 +2999,36 @@ form.ant-form .ant-form-item .ant-form-item-label label{
 .report-back-option-button:hover{
   background-color: #0e386e !important;
 
+}
+
+.upload-image-selection-division{
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+// Upload image information layout 
+
+.all-upload-document-list-div{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: left;
+  text-align: left;
+
+}
+
+.Report-reference-document{
+  margin-bottom: 0.8rem;
+  margin-top: 1rem;
+  margin-right: 0.8rem;
+  margin-left: auto;
+  margin-right: auto;
+  width: 20%;
+}
+
+.Reference-image{
+  height: 4rem !important;
+  width: 90% ;
+  margin-left: auto;
+  margin-right: auto;
 }
