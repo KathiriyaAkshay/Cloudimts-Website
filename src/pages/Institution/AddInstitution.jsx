@@ -23,6 +23,8 @@ import TableWithFilter from '../../components/TableWithFilter'
 import API from '../../apis/getApi'
 import NotificationMessage from '../../components/NotificationMessage'
 import dayjs from 'dayjs'
+import { cities } from '../../helpers/utils';
+import { states } from '../../helpers/utils';
 import {
   getRadiologistList,
   updateBlockUsers,
@@ -188,21 +190,21 @@ const AddInstitution = () => {
 
   const AddModalityDataHandler = () => {
 
-    if (chargesName !=  ""){
+    if (chargesName != "") {
 
       let alreadInsert = 0;
-  
+
       tableData.map((element) => {
         if (element?.id === chargesName) {
           NotificationMessage(
             "warning",
             "Already insert this modality charge"
           );
-  
+
           alreadInsert = 1;
         }
       })
-  
+
       if (alreadInsert == 0) {
         setTableData([...tableData,
         {
@@ -210,19 +212,19 @@ const AddInstitution = () => {
           reporting_charge: 0,
           communication_charge: 0
         }])
-  
+
         setChargesId((prev) => prev + 1);
       }
 
     } else {
 
-      NotificationMessage("warning", "Please, Enter modality name") ; 
+      NotificationMessage("warning", "Please, Enter modality name");
     }
 
 
   }
 
-  const [updateOptionActivate, setUpdateOptionActivate] = useState(false) ; 
+  const [updateOptionActivate, setUpdateOptionActivate] = useState(false);
   const handleSubmit = async values => {
     if (currentStep === 0) {
 
@@ -266,12 +268,12 @@ const AddInstitution = () => {
 
       }
 
-      if (updateOptionActivate){
-        setUpdateOptionActivate(false) ; 
+      if (updateOptionActivate) {
+        setUpdateOptionActivate(false);
       } else {
         handleNextStep();
       }
-    
+
 
     } else if (currentStep === 1) {
 
@@ -284,12 +286,12 @@ const AddInstitution = () => {
       });
 
       setPayload(prev => ({ ...prev, modality: modality_details }))
-      
+
       if (id) {
-        
-        if (tableData?.length === 0){
+
+        if (tableData?.length === 0) {
           NotificationMessage("warning", "Please, Include modality charge details");
-        } else{
+        } else {
 
           setIsLoading(true)
 
@@ -300,7 +302,7 @@ const AddInstitution = () => {
               "communication_charge": values[`${element?.id}_communication_charge`]
             }
           });
-  
+
           await API.post(
             '/institute/v1/institute-modality-update',
             {
@@ -325,23 +327,23 @@ const AddInstitution = () => {
             )
           setIsLoading(false)
 
-          
-          if (updateOptionActivate){
-            setUpdateOptionActivate(false) ; 
+
+          if (updateOptionActivate) {
+            setUpdateOptionActivate(false);
           } else {
             handleNextStep();
           }
 
         }
 
-      } else{
-
-        
-      if (updateOptionActivate){
-        setUpdateOptionActivate(false) ; 
       } else {
-        handleNextStep();
-      }
+
+
+        if (updateOptionActivate) {
+          setUpdateOptionActivate(false);
+        } else {
+          handleNextStep();
+        }
       }
 
 
@@ -395,9 +397,9 @@ const AddInstitution = () => {
           })
         setIsLoading(false)
       }
-      
-      if (updateOptionActivate){
-        setUpdateOptionActivate(false) ; 
+
+      if (updateOptionActivate) {
+        setUpdateOptionActivate(false);
       } else {
         handleNextStep();
       }
@@ -439,9 +441,9 @@ const AddInstitution = () => {
           })
         setIsLoading(false)
       }
-      
-      if (updateOptionActivate){
-        setUpdateOptionActivate(false) ; 
+
+      if (updateOptionActivate) {
+        setUpdateOptionActivate(false);
       } else {
         handleNextStep();
       }
@@ -472,9 +474,9 @@ const AddInstitution = () => {
             NotificationMessage('warning', 'Network request failed', err?.response?.data?.message)
           })
       }
-      
-      if (updateOptionActivate){
-        setUpdateOptionActivate(false) ; 
+
+      if (updateOptionActivate) {
+        setUpdateOptionActivate(false);
       } else {
         handleNextStep();
       }
@@ -701,7 +703,7 @@ const AddInstitution = () => {
             <Steps title='Blocked Users' />
             <Steps title='In house Radiologist' />
           </Steps>
-          
+
           {/* Step1 --- Institution details  */}
 
           {currentStep === 0 && (
@@ -804,7 +806,12 @@ const AddInstitution = () => {
                       }
                     ]}
                   >
-                    <Input placeholder='Enter City' />
+                     <Select
+                      placeholder="City"
+                      options={[...cities]}
+                      showSearch
+                    // onChange={() => { form.submit() }}
+                    />
                   </Form.Item>
                 </Col>
                 <Col xs={24} sm={12} md={12} lg={6}>
@@ -819,7 +826,12 @@ const AddInstitution = () => {
                       }
                     ]}
                   >
-                    <Input placeholder='Enter State' />
+                    <Select
+                      placeholder="states"
+                      options={[...states]}
+                      showSearch
+                    // onChange={() => { form.submit() }}
+                    />
                   </Form.Item>
                 </Col>
                 <Col xs={24} sm={12} md={12} lg={6}>
@@ -894,8 +906,8 @@ const AddInstitution = () => {
                     type='primary'
                     onClick={() => {
                       if (id) {
-                        setUpdateOptionActivate(true) ; 
-                        setIsModalOpen(true) ; 
+                        setUpdateOptionActivate(true);
+                        setIsModalOpen(true);
                       }
                       else form.submit()
                     }}
@@ -998,8 +1010,8 @@ const AddInstitution = () => {
                     type='primary'
                     onClick={() => {
                       if (id) {
-                        setUpdateOptionActivate(true) ; 
-                        setIsModalOpen(true) ; 
+                        setUpdateOptionActivate(true);
+                        setIsModalOpen(true);
                       }
                       else form.submit()
                     }}
@@ -1052,8 +1064,8 @@ const AddInstitution = () => {
                     type='primary'
                     onClick={() => {
                       if (id) {
-                        setUpdateOptionActivate(true) ; 
-                        setIsModalOpen(true) ; 
+                        setUpdateOptionActivate(true);
+                        setIsModalOpen(true);
                       }
                       else form.submit()
                     }}
@@ -1104,8 +1116,8 @@ const AddInstitution = () => {
                     type='primary'
                     onClick={() => {
                       if (id) {
-                        setUpdateOptionActivate(true) ; 
-                        setIsModalOpen(true) ; 
+                        setUpdateOptionActivate(true);
+                        setIsModalOpen(true);
                       }
                       else form.submit()
                     }}
@@ -1178,8 +1190,8 @@ const AddInstitution = () => {
                     type='primary'
                     onClick={() => {
                       if (id) {
-                        setUpdateOptionActivate(true) ; 
-                        setIsModalOpen(true) ; 
+                        setUpdateOptionActivate(true);
+                        setIsModalOpen(true);
                       }
                       else form.submit()
                     }}

@@ -200,6 +200,7 @@ const HeaderButton = ({
     headers: {
       authorization: 'authorization-text',
     },
+    accept:".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     showUploadList: false,
     onChange(info) {
       handleFileChange(info)
@@ -493,7 +494,7 @@ const HeaderButton = ({
               }))
             }
           >
-            Study Description
+           Insert Study Description
           </Button>
 
           {/* <Button
@@ -512,7 +513,6 @@ const HeaderButton = ({
           >
             Patient Information
           </Button> */}
-
           {/* 
           <Button
             type='primary'
@@ -530,7 +530,6 @@ const HeaderButton = ({
           >
             Institution Information
           </Button> */}
-
 
           <Select
             style={{ width: "12rem" }}

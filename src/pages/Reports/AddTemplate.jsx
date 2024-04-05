@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useBreadcrumbs } from '../../hooks/useBreadcrumbs'
-import { Button, Card, Col, Form, Input, Row, Select, Radio, Upload } from 'antd'
+import { Button, Card, Col, Form, Input, Row, Select, Radio, Upload,message } from 'antd'
 import '../../../ckeditor5/build/ckeditor'
 import { CKEditor } from '@ckeditor/ckeditor5-react'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -246,12 +246,20 @@ const AddTemplate = () => {
   const props = {
     name: 'file',
     action: 'https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188',
+    accept:".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     headers: {
       authorization: 'authorization-text',
     },
     showUploadList: false,
     onChange(info) {
       handleFileChange(info)
+    },
+    beforeUpload: (file) => {
+      const isFileValid = (file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+      if (!isFileValid) {
+        message.error(`${file.name} is not a valid file`);
+      }
+      return isFileValid || Upload.LIST_IGNORE;
     },
   };
 

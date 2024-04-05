@@ -81,10 +81,8 @@ const UploadImage = ({
   const handleDownload = (imageUrl) => {
     const link = document.createElement('a');
     link.href = imageUrl;
-    link.target = "_blank";
-    document.body.appendChild(link);
+    link.download = imageURL
     link.click();
-    document.body.removeChild(link);
   };
 
   // Delete option handler 
@@ -238,7 +236,7 @@ const UploadImage = ({
             name="url"
             style={{ height: "100%" }}
             multiple={multipleImage ? true : false}
-            accept=".png,.jpeg,.jpg,.pdf,.docx"
+            accept={isClinicalHistory?".png,.jpeg,.jpg,.pdf":".png,.jpeg,.jpg,.pdf,.docx"}
             listType="picture-card"
             maxCount={multipleImage ? 10 : 1}
             customRequest={dummyRequest}
@@ -276,7 +274,10 @@ const UploadImage = ({
             
             <p className="ant-upload-text">Drag & drop files or Browse</p>
             <p className="ant-upload-hint">
-              Supported formates: JPG, JPEG, PNG, PDF, DOCX
+              {
+                isClinicalHistory?<>Supported formates: JPG, JPEG, PNG, PDF</>:<>Supported formates: JPG, JPEG, PNG, PDF, DOCX</>
+              }
+              
             </p>
           </Dragger>
         </div>
