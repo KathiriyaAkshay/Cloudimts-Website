@@ -88,7 +88,7 @@ const Login = () => {
     <div className='login-page-wrapper' >
 
       <div className='login-particular-option'>
-        <img src={LoginBg} alt="" srcset="" className='login-image'/>
+        <img src={"https://media.istockphoto.com/id/1326234214/photo/two-mri-radiologists-sitting-in-the-control-room-and-operating-the-mri-scanner.webp?b=1&s=170667a&w=0&k=20&c=yzk8xDQ8jV9G2Y6C2WZ_8Gy7-wKX50kxKBqMAMWxmPw="} alt="" srcset="" className='login-image'/>
       </div>
 
       <div className='login-particular-option'>
