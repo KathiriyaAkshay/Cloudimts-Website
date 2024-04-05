@@ -728,10 +728,9 @@ const Dicom = () => {
       className: `${checkPermissionStatus('View Patient name') ? '' : 'column-display-none'}`,
       render: (text, record) => (
         record.urgent_case ? <>
-          <Tag color='#cd201f'>{text}</Tag>
+          <Tag color='#cd201f' style={{maxWidth:"100%",whiteSpace:"normal"}}>{text}</Tag>
         </> : <>
-          <Tag color='#2db7f5'>{text}</Tag>
-
+          <Tag color='#2db7f5' style={{maxWidth:"100%",whiteSpace:"normal"}}>{text}</Tag>
         </>
       ),
 
