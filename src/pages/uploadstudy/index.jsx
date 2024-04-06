@@ -84,29 +84,21 @@ const UploadStudyImages = () => {
         <div>
 
             <Spin spinning = {loading}>
-
-                <div className='upload-directory-upload-option'>
-                    {/* Upload directory option button  */}
-                    <Upload  action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload" directory>
-                        <Button className='upload-directory-option-button' icon={<SelectOutlined />}>Select Folder</Button>
-                    </Upload>
-                
-                    <Button onClick={UploadStudyHandler} type='primary' style={{marginLeft: "auto"}} icon={<UploadOutlined />}>Upload Study</Button>
-                
+                <div className='w-100'>
+                    <Button onClick={UploadStudyHandler} type='primary' style={{float: "right"}} icon={<UploadOutlined />}>Upload Study</Button>
                 </div>
 
-                {/* Upload dicom image selector optoin  */}
-                <Dragger {...props} className='dicom-upload-image-drawer'
-                    fileList={allSelectImages}
-                    onChange={({ fileList }) => setAllSelectImages(fileList)}
-                >
-                    <p className="ant-upload-drag-icon">
-                    <InboxOutlined />
-                    </p>
-                    <p className="ant-upload-hint" style = {{color: "#000000"}}>
-                        Please select dicom images for upload study
-                    </p>
-                </Dragger>
+                <div className='w-100'>
+                    {/* Upload directory option button  */}
+                    <Upload className='dicom-upload-image-drawer' 
+                        {...props}
+                        fileList={allSelectImages}
+                        onChange={({fileList}) => setAllSelectImages(fileList)}
+                        action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload" 
+                        directory>
+                        <Button className='upload-directory-option-button' icon={<SelectOutlined />}>Select Folder</Button>
+                    </Upload>
+                </div>
             </Spin> 
         </div>
     )
