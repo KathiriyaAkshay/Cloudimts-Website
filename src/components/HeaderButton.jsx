@@ -19,7 +19,8 @@ import {
   PlusOutlined,
   SearchOutlined,
   UploadOutlined, 
-  EyeOutlined
+  EyeOutlined, 
+  HistoryOutlined
 } from '@ant-design/icons'
 import { handleDownloadPDF, handleExport, handlePdfExport } from '../helpers/billingTemplate'
 import { BillingDataContext } from '../hooks/billingDataContext'

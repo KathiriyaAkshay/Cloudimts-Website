@@ -15,7 +15,7 @@ import {
 import { useBreadcrumbs } from '../hooks/useBreadcrumbs'
 import UserProfile from './UserProfile'
 import logo from '../assets/images/cloudimts.jpg'
-import { NotificationOutlined, DeleteOutlined, ReloadOutlined, ExportOutlined, SearchOutlined, CloudUploadOutlined } from '@ant-design/icons'
+import { NotificationOutlined, DeleteOutlined, ReloadOutlined, ExportOutlined, SearchOutlined, CloudUploadOutlined, HistoryOutlined } from '@ant-design/icons'
 import { MdDeleteSweep, MdOutlineHomeWork } from 'react-icons/md'
 import { AiOutlinePlus } from 'react-icons/ai'
 import {
@@ -239,6 +239,13 @@ const BasicLayout = ({ children }) => {
       label: <NavLink to={'/upload'}>Upload image</NavLink>,
       key: 'Upload image',
       icon: <CloudUploadOutlined />
+    },
+
+    // Upload history related option
+    {
+      label: <NavLink to={'/uploadhistory'}>Upload history</NavLink>,
+      key: 'Upload history',
+      icon: <HistoryOutlined />
     },
 
     // Filter option
