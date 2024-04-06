@@ -1,13 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { InboxOutlined, UploadOutlined, SelectOutlined } from '@ant-design/icons';
 import { message, Upload, Button, Spin } from 'antd';
+import { useEffect } from 'react';
+import { useBreadcrumbs } from '../../hooks/useBreadcrumbs';
 const { Dragger } = Upload;
-
+const BASE_URL = import.meta.env.VITE_APP_BE_ENDPOINT;
 
 const UploadStudyImages = () => {
 
+    const UploadRef = useRef(null) ; 
     const [allSelectImages, setAllSelectImages] = useState([]) ; 
-    const [loading, setLoading] = useState(false) ; 
+    const [loading, setLoading] = useState(false) ;
+    const { changeBreadcrumbs } = useBreadcrumbs()
+
+    useEffect(() => {
+        changeBreadcrumbs([{ name: 'Upload DICOM images' }])
+    }, []) ; 
 
     const props = {
         name: 'file',
@@ -34,29 +42,39 @@ const UploadStudyImages = () => {
             message.warning("Please, Select at least one dicom image for upload") ; 
         }   else {
             
-            const username = 'orthanc';
-            const password = 'orthanc';
-            const basicAuth = 'Basic ' + btoa(username + ':' + password);
-            
-            const formValue = new FormData() ; 
-            allSelectImages?.map((element) => {
-                formValue.append("file", element) ; 
-            })
+            setLoading(true) ; 
 
-            var requestOptions = {
-                method: 'POST',
-                headers: {
-                    'Authorization': basicAuth,
-                    'Content-Type': 'application/json'
-                },
-                body: formValue,
-                redirect: 'follow'
-            };
+            for (const element of allSelectImages) {
+                const token = localStorage.getItem("token");
+                const formValue = new FormData();
+                formValue.append("file", element?.originFileObj);
+        
+                var requestOptions = {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                    },
+                    body: formValue,
+                    redirect: 'follow'
+                };
+        
+                try {
+                    const response = await fetch(`${BASE_URL}image/v1/dicom_upload`, requestOptions);
+                    const result = await response.json();
 
-            fetch("https://viewer.cloudimts.com/instances/", requestOptions)
-                .then(response => response.text())
-                .then(result => console.log(result))
-                .catch(error => console.log('error', error));
+                    if (response?.status == 200){
+                        message.success("Image uploaded successfully")
+                    }   else {
+                        message.warning(result?.message) ; 
+                    }
+                } catch (error) {
+                    console.log('error', error);
+                }
+            }
+
+            setLoading(false) ; 
+            setAllSelectImages([]) ; 
+            UploadRef.current.clear() ; 
 
 
         }
@@ -78,7 +96,10 @@ const UploadStudyImages = () => {
                 </div>
 
                 {/* Upload dicom image selector optoin  */}
-                <Dragger {...props} className='dicom-upload-image-drawer'>
+                <Dragger {...props} className='dicom-upload-image-drawer'
+                    fileList={allSelectImages}
+                    onChange={({ fileList }) => setAllSelectImages(fileList)}
+                >
                     <p className="ant-upload-drag-icon">
                     <InboxOutlined />
                     </p>
