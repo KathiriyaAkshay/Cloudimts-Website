@@ -3,7 +3,6 @@ import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   WechatOutlined,
-  LeftOutlined
 } from '@ant-design/icons'
 import { Breadcrumb, Button, Divider, Layout, Menu, List, Popover, Empty, Badge, Popconfirm, Collapse, Checkbox, Avatar } from 'antd'
 import React, { useContext, useEffect, useRef, useState } from 'react'
@@ -16,7 +15,7 @@ import {
 import { useBreadcrumbs } from '../hooks/useBreadcrumbs'
 import UserProfile from './UserProfile'
 import logo from '../assets/images/cloudimts.jpg'
-import { NotificationOutlined, DeleteOutlined, ReloadOutlined, ExportOutlined, SearchOutlined, FilterOutlined } from '@ant-design/icons'
+import { NotificationOutlined, DeleteOutlined, ReloadOutlined, ExportOutlined, SearchOutlined, CloudUploadOutlined } from '@ant-design/icons'
 import { MdDeleteSweep, MdOutlineHomeWork } from 'react-icons/md'
 import { AiOutlinePlus } from 'react-icons/ai'
 import {
@@ -233,6 +232,13 @@ const BasicLayout = ({ children }) => {
       label: <NavLink to={'/support'}>Support</NavLink>,
       key: 'support',
       icon: <BiSupport />
+    },
+
+    // Support option
+    {
+      label: <NavLink to={'/upload'}>Upload image</NavLink>,
+      key: 'Upload image',
+      icon: <CloudUploadOutlined />
     },
 
     // Filter option
