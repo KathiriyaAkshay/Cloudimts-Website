@@ -3048,3 +3048,70 @@ form.ant-form .ant-form-item .ant-form-item-label label{
   margin-left: auto;
   margin-right: auto;
 }
+
+
+// dicom images upload study 
+
+.upload-directory-option-button{
+  background-color: #3d5a80 !important;
+  color: #FFFFFF !important;
+  margin-bottom: 0.60rem;
+}
+
+.upload-directory-option-button:hover{
+  background-color: #3769ab !important;
+}
+
+
+.upload-directory-upload-option{
+  display: flex;
+  flex-direction: row;
+}
+
+.dicom-upload-image-drawer{
+  .ant-upload{
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
+  .ant-upload-list-item{
+    height: auto !important;
+    padding: 0.60rem;
+    margin-top: 0.20rem;
+    background-color: #FFFFFF !important;
+    border-radius: 8px ;
+    transition: 0.2s ease background-color;
+  }
+
+  .anticon-paper-clip{
+    color: #000000 !important;
+  }
+
+  .ant-upload-list-item-name{
+    color: #000000 !important;
+  }
+
+  .ant-tooltip{
+    display: none !important;
+  }
+
+  .ant-upload-list{
+    height: 62vh !important;
+    overflow-y: auto;
+  }
+
+  .ant-upload-list-item:hover{
+    background-color: #3d5a80 !important;
+    border: 1px solid #c5c5c5;
+
+    .anticon-paper-clip{
+      color: #FFFFFF !important;
+    }
+  
+    .ant-upload-list-item-name{
+      color: #FFFFFF !important;
+    }
+
+  
+  }
+}

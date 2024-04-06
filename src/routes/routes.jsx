@@ -31,6 +31,7 @@ const Support = React.lazy(() => import("../pages/Support"));
 const DeletedStudies = React.lazy(() =>
   import("../pages/Dicom/DeletedStudies")
 );
+const UploadStudyImages = React.lazy(() => import("../pages/uploadstudy"))
 
 export const routes = [
   { path: "/dashboard", component: <Loader component={Home} /> },
@@ -70,6 +71,7 @@ export const routes = [
   { path: "/filters", component: <Loader component={Filters} /> },
   { path: "/billing", component: <Loader component={Billing} /> },
   { path: "/support", component: <Loader component={Support} /> },
+  { path: "/upload", component: <Loader component={UploadStudyImages} /> },
   {
     path: "/deleted-studies",
     component: <Loader component={DeletedStudies} />,
