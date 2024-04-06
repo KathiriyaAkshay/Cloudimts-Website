@@ -207,7 +207,7 @@ const Dicom = () => {
 
                   NotificationMessage("important",
                     "New chat message", `Message send by ${ChatData.sender_username} for Patient - ${element.name} and Patient Id - ${element.refernce_id}`,
-                    6,
+                    2,
                     "topLeft");
 
                 } else {
@@ -218,7 +218,7 @@ const Dicom = () => {
                   
                   NotificationMessage("success",
                     "New chat message", `Message send by ${ChatData.sender_username} for Patient - ${element.name} and Patient Id - ${element.refernce_id}`,
-                    6,
+                    2,
                     "topLeft");
                 }
               }

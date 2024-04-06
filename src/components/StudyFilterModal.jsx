@@ -140,7 +140,7 @@ const StudyFilterModal = ({
         }
       })
       .catch(err =>
-        cNotificationMessage(
+        NotificationMessage(
           'warning',
           'Network request failed',
           err.response.data.message

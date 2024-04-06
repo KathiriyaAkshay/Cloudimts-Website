@@ -91,7 +91,8 @@ const StudyNotificationProvider = ({ children }) => {
               if (element.id === StudyId){  
                 updateStudyStatus = 1; 
                 
-                return {...element, status: eventData.payload.data.assign_user !== null?"Assigned":element?.status , 
+                return {...element, 
+                  status: eventData.payload.data.assign_user !== null?"Assigned":element?.status , 
                   updated_at: eventData.payload.data.updated_at, 
                   study_description: eventData.payload.data.study_description, 
                   assign_user: eventData.payload.data.assign_user, 
@@ -172,7 +173,7 @@ const StudyNotificationProvider = ({ children }) => {
           }
   
         
-        }else if (eventData.payload.status === "Reporting") {
+        } else if (eventData.payload.status === "Reporting") {
           
           setStudyData((prevStudyData) => {
             const updatedData = prevStudyData.map((data) => {
