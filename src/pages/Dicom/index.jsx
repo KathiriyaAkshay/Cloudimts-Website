@@ -125,7 +125,7 @@ const Dicom = () => {
     setChatStudyData
   } = useContext(StudyDataContext)
 
-  const { setStudyIdArray, setStudyReferenceIdArray } = useContext(StudyIdContext)
+  const { setStudyIdArray, setStudyReferenceIdArray,seriesIdList, setSeriesIdList} = useContext(StudyIdContext)
   const { isFilterSelected, isAdvanceSearchSelected, setIsAdvanceSearchSelected } = useContext(FilterSelectedContext);
 
   // Modal passing attributes information
@@ -145,7 +145,6 @@ const Dicom = () => {
   const [advanceSearchPayload, setAdvanceSearchPayload] = useState({})
 
   // SeriesId list information 
-  const [seriesIdList, setSeriesIdList] = useState([]);
   const [setPreviousSeriesResponse] = useState(null);
 
   const [notificationValue, setNotificationValue] = useState(0);
@@ -293,7 +292,6 @@ const Dicom = () => {
     setIsLoading(false)
   }
 
-
   // **** Retervice particular study series and instance count information **** // 
   const FetchSeriesCountInformation = async (previousValue) => {
     let requestPayload = {
@@ -348,7 +346,6 @@ const Dicom = () => {
     localStorage.setItem('paginationLimit', currentPageLimit)
   }
 
-
   useEffect(() => {
     setPagi(Pagination)
 
@@ -356,18 +353,18 @@ const Dicom = () => {
       !isFilterSelected && Object.keys(systemFilterPayload).length === 0 && Object.keys(studyDataPayload).length === 0 && !isAdvanceSearchSelected) {
       retrieveStudyData(Pagination)
     }
-  }, [Pagination, isFilterSelected, studyDataPayload, systemFilterPayload])
+  }, [Pagination, isFilterSelected, studyDataPayload, systemFilterPayload]) ; 
 
   useEffect(() => {
     FetchSeriesCountInformation(null);
-  }, [seriesIdList])
+  }, [seriesIdList]) ; 
 
   useEffect(() => {
     if (!isLoading && studyData.length !== 0 && notificationValue === 0) {
       setNotificationValue(1)
       SetupGenralChatNotification()
     }
-  }, [isLoading, studyData, notificationValue])
+  }, [isLoading, studyData, notificationValue]) ; 
 
   useEffect(() => {
 
@@ -672,7 +669,7 @@ const Dicom = () => {
               text === 'New'
                 ? '#000000'
                 : (text === 'Assigned' && record?.top_assign == 0)
-                  ? '#FFA500' 
+                  ? '#3d5a80' 
                 : (text === 'Assigned' && record?.top_assign == 1)
                   ? '#D22B2B' 
                   : text === 'Viewed'
@@ -1240,6 +1237,10 @@ const Dicom = () => {
           style={{ paddingLeft: "0.2rem", marginTop: "-1rem" }}
         >
           <Row gutter={15}>
+
+            <div>
+              <p className='total_page_info_title'>Total Studies <br/>{totalPages}</p>
+            </div>
             
             <Col span={3}>
 
