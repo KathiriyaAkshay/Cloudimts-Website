@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Breadcrumb, Layout, Menu, theme, Divider, Row, Steps, Button } from 'antd';
+import { Breadcrumb, Layout, Menu, theme, Divider, Row, Steps, Button, Image } from 'antd';
 import { Tabs } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
 import logo from '../../assets/images/Imageinet-logo.png'
@@ -127,7 +127,7 @@ const App = () => {
                     }}
                 >
 
-                    <div style={{ width: "35%", display: "flex", flexDirection: "column", justifyContent: "space-evenly" }}>
+                    <div style={{ width: "30%", display: "flex", flexDirection: "column", justifyContent: "space-evenly" }}>
 
                         <div className='download-page-advertise'>
 
@@ -148,11 +148,11 @@ const App = () => {
 
                     </div>
 
-                    <div style={{ width: "65%" }}>
+                    <div style={{ width: "70%", height:"85vh"}}>
 
                         <div style={{ marginTop: "1rem" }}>
 
-                            <Tabs defaultActiveKey='1' onChange={HandleTabChange}>
+                            <Tabs defaultActiveKey='1' onChange={HandleTabChange} className='download-instruction-tab'>
 
                                 {/* === Exe download step instuctions ===  */}
 
@@ -171,78 +171,52 @@ const App = () => {
                                                 className='Download-instruction-steps'
                                                 items={[
                                                     {
-                                                        title: 'Step 1 : Set up Orthanc on your machine by following the necessary installation steps',
+                                                        title: 'Step 1 : Download Cloudimts study uploader from below link',
                                                         description: (
                                                             <p className='particular-steps-instruction'>
-                                                                Installation guide:
                                                                 <a target='_blank'
-                                                                    href='https://imagenet-dicom-image.s3.ap-south-1.amazonaws.com/documentation/Orthanc+download+setup+guide+(1).pdf'
+                                                                    href='https://imagenet-dicom-image.s3.ap-south-1.amazonaws.com/exe/v1.0.0/Cloudimtsv1.0.0.exe'
                                                                     style={{ marginLeft: '0.5rem' }}>
-                                                                    Guide
+                                                                    Download from here
                                                                 </a>
                                                             </p>
                                                         ),
                                                     },
 
                                                     {
-                                                        title: 'Step 2 : Apply network configuration in Orthanc for enable revice study in local machine',
+                                                        title: 'Step 2 : Follow this documentation for Setup Cloudimts Uploader',
                                                         description: (
                                                             <p className='particular-steps-instruction'>
-                                                                Installation guide:
                                                                 <a target='_blank'
-                                                                    href='https://imagenet-dicom-image.s3.ap-south-1.amazonaws.com/documentation/Network+configuration+information.pdf'
+                                                                    href='https://imagenet-dicom-image.s3.ap-south-1.amazonaws.com/exe/v1.0.0/Cloudimts+Uploader+Setup+Guide.pdf'
                                                                     style={{ marginLeft: '0.5rem' }}>
-                                                                    Guide
+                                                                        View documentation
                                                                 </a>
                                                             </p>
                                                         ),
                                                     },
 
-                                                    {
-                                                        title: 'Step 3: Download Cloudimts exe',
-                                                        description: (
-                                                            <p className='particular-steps-instruction'>
-                                                                Installation guide:
-                                                                <a target='_blank'
-                                                                    href='https://imagenet-dicom-image.s3.ap-south-1.amazonaws.com/documentation/Cloudimts+installation+guide.pdf'
-                                                                    style={{ marginLeft: '0.5rem' }}>
-                                                                    Guide
-                                                                </a>
-                                                            </p>
-                                                        ),
-                                                    },
                                                 ]}
+                                                
                                             />
 
                                             {/* ==== Download exe option button ====  */}
 
-                                            <Button
-                                                type='primary'
-                                                htmlType='submit'
-                                                style={{ width: "max-content" }}
-                                            >
-                                                <a target='_blank'
-                                                    href='https://imagenet-dicom-image.s3.ap-south-1.amazonaws.com/exe/Cloudimts-setup.exe'
-                                                    download="Cloudimts_installation.exe"
-                                                >
-                                                    Download exe
-                                                </a>
-                                            </Button>
+                                            <div className='download-information-title'>
+                                                Important notice for configure Cloudimts Uploader
+                                            </div>
 
-                                            {/* ==== Download DICOM user guide option buton  */}
+                                            <div className='download-instruction-image-text-div'>
+                                                <Image
+                                                    className='download-instruction-image'
+                                                    src='https://imagenet-dicom-image.s3.ap-south-1.amazonaws.com/exe/Screenshot+2024-04-07+183244.png'
+                                                />
 
-                                            <Button
-                                                type='primary'
-                                                htmlType='submit'
-                                                style={{ width: "max-content", marginLeft: "1rem" }}
-                                            >
-                                                <a target='_blank'
-                                                    href='https://imagenet-dicom-image.s3.ap-south-1.amazonaws.com/documentation/Cloudimts+exe+documentation.pdf'
-                                                    download="Cloudimts_installation.exe"
-                                                >
-                                                    Download DICOM user guide
-                                                </a>
-                                            </Button>
+                                                <div className='download-instruction-text'>
+                                                    When you run Cloudimts uploader for the first time, we set up a DICOM receiver on your local machine. During this setup, you need to configure the server path to "<span style={{fontWeight: 600, color: "red"}}>C:\Orthanc Server</span>."<br/> 
+                                                    You can modify the path by clicking on the Browse button.
+                                                </div>
+                                            </div>
 
                                         </div>
 
@@ -276,7 +250,8 @@ const App = () => {
                                     </Row>
 
                                 </Tabs.TabPane>
-
+                                
+                                {/* Android application download option  */}
 
                                 <Tabs.TabPane key={'3'} tab='Android application'>
 
@@ -305,6 +280,8 @@ const App = () => {
                                     </Row>
 
                                 </Tabs.TabPane>
+
+                                {/* IOS application download option  */}
 
                                 <Tabs.TabPane key={'4'} tab='IOS application'>
 
@@ -337,9 +314,6 @@ const App = () => {
                         </div>
 
                     </div>
-
-
-
 
                 </div>
             </Content>

@@ -3133,3 +3133,37 @@ form.ant-form .ant-form-item .ant-form-item-label label{
   margin-top: 2px;
   margin-right: 10px;
 }
+
+.download-information-title{
+  font-size: 0.90rem;
+  font-weight: 600;
+  color: red;
+}
+
+.download-instruction-tab{
+  .ant-tabs-content-holder{
+    height: 70vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-left: 1rem;
+  }
+
+  .download-instruction-image-text-div{
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: row;
+  } 
+
+  .download-instruction-image{
+    height: 30rem !important;
+    width: 30rem !important;
+  }
+
+  .download-instruction-text{
+    font-family: 1rem;
+    padding-left: 0.6rem;
+    padding-right: 1rem;
+    padding-top: 1rem;
+    text-align: left;
+  }
+}
