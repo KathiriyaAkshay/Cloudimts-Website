@@ -4,11 +4,18 @@ export const StudyIdContext = createContext();
 
 const StudyIdProvider = ({ children }) => {
   const [studyIdArray, setStudyIdArray] = useState([]);
-  const [studyReferenceIdArray, setStudyReferenceIdArray] = useState([]) ; 
+  const [studyReferenceIdArray, setStudyReferenceIdArray] = useState([]);
+  const [seriesIdList, setSeriesIdList] = useState([]);
 
   return (
-    <StudyIdContext.Provider 
-      value={{ studyIdArray, setStudyIdArray, studyReferenceIdArray, setStudyReferenceIdArray }}>
+    <StudyIdContext.Provider
+      value={{ studyIdArray, 
+        setStudyIdArray, 
+        studyReferenceIdArray, 
+        setStudyReferenceIdArray,  
+        seriesIdList, 
+        setSeriesIdList
+      }}>
       {children}
     </StudyIdContext.Provider>
   );

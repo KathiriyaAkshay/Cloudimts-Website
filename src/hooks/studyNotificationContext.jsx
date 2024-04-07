@@ -2,12 +2,14 @@
 import { StudyDataContext } from "./studyDataContext";
 import NotificationMessage from "../components/NotificationMessage";
 const BASE_URL = import.meta.env.VITE_APP_SOCKET_BASE_URL;
+import { StudyIdContext } from "./studyIdContext";
 
 export const StudyNotificationContext = createContext();
 
 const StudyNotificationProvider = ({ children }) => {
   const [notification, setNotification] = useState("");
   const { studyData, setStudyData } = useContext(StudyDataContext);
+  const {seriesIdList, setSeriesIdList} = useContext(StudyIdContext) ; 
 
   useEffect(() => {
 
@@ -38,7 +40,6 @@ const StudyNotificationProvider = ({ children }) => {
                       patient_id: study?.patient_id,
                       study_id: study?.id,
                       key: id,
-                      count: 0,
                       institution_id: institution?.id
                     }
                   : data
@@ -96,7 +97,8 @@ const StudyNotificationProvider = ({ children }) => {
                   updated_at: eventData.payload.data.updated_at, 
                   study_description: eventData.payload.data.study_description, 
                   assign_user: eventData.payload.data.assign_user, 
-                  top_assign: eventData.payload.data.top_assign
+                  top_assign: eventData.payload.data.top_assign, 
+                  urgent_case: eventData?.payload?.data?.urgent_case
                 } ;
                  
               } else{
@@ -104,6 +106,13 @@ const StudyNotificationProvider = ({ children }) => {
               }
             })
           })
+
+          const temp = studyData
+            .map(data => data?.study?.study_original_id)
+            .filter(Boolean); temp ; 
+
+            const uniqueItem = [...new Set(temp)] ; 
+            setSeriesIdList([...uniqueItem]) ; 
   
           let AllPermissionId = JSON.parse(localStorage.getItem("all_permission_id")) ; 
           let AllAssignId = JSON.parse(localStorage.getItem("all_assign_id")) ; 
@@ -113,7 +122,17 @@ const StudyNotificationProvider = ({ children }) => {
               name: eventData.payload.data.study.patient_name,
               institution: eventData.payload.data.institution.name, 
               patient_id: eventData.payload.data.study.patient_id, 
-              study_id: eventData.payload.data.study.id} , ...prev]) ; 
+              study_id: eventData.payload.data.study.id, 
+              urgent_case: eventData?.payload?.data?.urgent_case} , ...prev]) ; 
+
+            // Update SeriesID
+
+            const temp = studyData
+            .map(data => data?.study?.study_original_id)
+            .filter(Boolean); temp ; 
+
+            const uniqueItem = [...new Set(temp)] ; 
+            setSeriesIdList([...uniqueItem]) ; 
           } else {
   
             if (AllAssignId.includes(InstitutionId) && updateStudyStatus === 0){
@@ -121,7 +140,18 @@ const StudyNotificationProvider = ({ children }) => {
                 name: eventData.payload.data.study.patient_name,
                 institution: eventData.payload.data.institution.name, 
                 patient_id: eventData.payload.data.study.patient_id, 
-                study_id: eventData.payload.data.study.id} , ...prev]) ; 
+                study_id: eventData.payload.data.study.id, 
+                urgent_case: eventData?.payload?.data?.urgent_case  
+              } , ...prev]) ; 
+
+              // Update SeriesID
+
+              const temp = studyData
+              .map(data => data?.study?.study_original_id)
+              .filter(Boolean); temp ; 
+
+              const uniqueItem = [...new Set(temp)] ; 
+              setSeriesIdList([...uniqueItem]) ; 
             }
           }
   
@@ -279,6 +309,16 @@ const StudyNotificationProvider = ({ children }) => {
               institution: eventData.payload.data.institution.name, 
               patient_id: eventData.payload.data.study.patient_id, 
               study_id: eventData.payload.data.study.id} , ...prev]) ; 
+
+            // Update SeriesID
+
+            const temp = studyData
+            .map(data => data?.study?.study_original_id)
+            .filter(Boolean); temp ; 
+
+            const uniqueItem = [...new Set(temp)] ; 
+            setSeriesIdList([...uniqueItem]) ; 
+
           }
         }
         
