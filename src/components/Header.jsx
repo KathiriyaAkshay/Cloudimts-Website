@@ -235,6 +235,7 @@ const BasicLayout = ({ children }) => {
     },
 
     // Support option
+    checkPermissionStatus('Show Upload image option') &&
     {
       label: <NavLink to={'/upload'}>Upload image</NavLink>,
       key: 'Upload image',
@@ -242,7 +243,8 @@ const BasicLayout = ({ children }) => {
     },
 
     // Upload history related option
-    {
+
+    checkPermissionStatus('Show Upload history option') && {
       label: <NavLink to={'/uploadhistory'}>Upload history</NavLink>,
       key: 'Upload history',
       icon: <HistoryOutlined />
