@@ -3096,7 +3096,7 @@ form.ant-form .ant-form-item .ant-form-item-label label{
   }
 
   .ant-upload-list{
-    height: 62vh !important;
+    height: 78vh !important;
     overflow-y: auto;
   }
 
@@ -3166,4 +3166,12 @@ form.ant-form .ant-form-item .ant-form-item-label label{
     padding-top: 1rem;
     text-align: left;
   }
+}
+
+.clear-all-image-option-button{
+  background-color: #ff6f6f !important;
+}
+
+.clear-all-image-option-button:hover{
+  background-color: rgb(255, 62, 62) !important;
 }

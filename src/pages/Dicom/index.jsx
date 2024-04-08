@@ -70,7 +70,8 @@ let timeOut = null ;
 const Dicom = () => {
 
   const [isLoading, setIsLoading] = useState(false)
-
+  const { setStudyIdArray, setStudyReferenceIdArray,seriesIdList, setSeriesIdList, totalPages, setTotalPages} = useContext(StudyIdContext)
+  const { isFilterSelected, isAdvanceSearchSelected, setIsAdvanceSearchSelected } = useContext(FilterSelectedContext);
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [isStudyModalOpen, setIsStudyModalOpen] = useState(false)
@@ -88,7 +89,7 @@ const Dicom = () => {
 
   // Pagination related useState information
   const [pagi, setPagi] = useState({ page: 1, limit: 10 })
-  const [totalPages, setTotalPages] = useState(0)
+  // const [totalPages, setTotalPages] = useState(0)
   const [limit, setLimit] = useState(localStorage.getItem("pageSize") || 10)
   const [Pagination, setPagination] = useState({
     page: 1,
@@ -125,8 +126,6 @@ const Dicom = () => {
     setChatStudyData
   } = useContext(StudyDataContext)
 
-  const { setStudyIdArray, setStudyReferenceIdArray,seriesIdList, setSeriesIdList} = useContext(StudyIdContext)
-  const { isFilterSelected, isAdvanceSearchSelected, setIsAdvanceSearchSelected } = useContext(FilterSelectedContext);
 
   // Modal passing attributes information
   const [studyID, setStudyID] = useState(null);
@@ -376,8 +375,7 @@ const Dicom = () => {
 
     setStudyIdArray([])
 
-  }, [])
-
+  }, []); 
 
   // **** Study quick filter option handler **** // 
   const quickFilterStudyData = (pagination, values = {}) => {

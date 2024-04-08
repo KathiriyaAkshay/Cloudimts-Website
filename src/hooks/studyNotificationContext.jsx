@@ -9,7 +9,7 @@ export const StudyNotificationContext = createContext();
 const StudyNotificationProvider = ({ children }) => {
   const [notification, setNotification] = useState("");
   const { studyData, setStudyData } = useContext(StudyDataContext);
-  const {seriesIdList, setSeriesIdList} = useContext(StudyIdContext) ; 
+  const {setSeriesIdList, setTotalPages} = useContext(StudyIdContext) ; 
 
   useEffect(() => {
 
@@ -106,6 +106,8 @@ const StudyNotificationProvider = ({ children }) => {
               }
             })
           })
+
+          setTotalPages((prev) => prev + 1) ; 
 
           const temp = studyData
             .map(data => data?.study?.study_original_id)
@@ -311,6 +313,7 @@ const StudyNotificationProvider = ({ children }) => {
               study_id: eventData.payload.data.study.id} , ...prev]) ; 
 
             // Update SeriesID
+            setTotalPages((prev) => prev + 1) ; 
 
             const temp = studyData
             .map(data => data?.study?.study_original_id)
