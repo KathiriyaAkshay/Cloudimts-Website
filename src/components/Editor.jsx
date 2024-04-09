@@ -23,7 +23,7 @@ const Editor = ({ id }) => {
   const [cardDetails, setCardDetails] = useState({})
   const [isLoading, setIsLoading] = useState(false)
   const { selectedItem, setSelectedItem, docFiledata } = useContext(ReportDataContext)
-  const {setTemplateOption, setTemplateInstitutionOption } = useContext(filterDataContext)
+  const {setTemplateOption, setTemplateInstitutionOption, setGenderoption } = useContext(filterDataContext)
   const [studyImageID, setStudyImageID] = useState(0)
   const [signatureImage, setSignatureImage] = useState(null)
   const [username, setUsername] = useState('')
@@ -90,7 +90,8 @@ const Editor = ({ id }) => {
 
     } else if (responseData['status'] === true) {
       localStorage.setItem("report-modality", responseData?.data?.Modality) ;
-      setTemplateOption(responseData?.data?.Modality) ;  
+      setTemplateOption(responseData?.data?.Modality) ; 
+      setGenderoption(responseData?.data?.Gender) 
 
       let Institution_id = responseData['data']['institution_id']
       let SeriesIdValue = responseData['data']['series_id']

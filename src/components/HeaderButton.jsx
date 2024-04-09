@@ -22,9 +22,8 @@ import {
   EyeOutlined, 
   HistoryOutlined
 } from '@ant-design/icons'
-import { handleDownloadPDF, handleExport, handlePdfExport } from '../helpers/billingTemplate'
+import { handleExport, handlePdfExport } from '../helpers/billingTemplate'
 import { BillingDataContext } from '../hooks/billingDataContext'
-import NotificationMessage from './NotificationMessage'
 import { FilterSelectedContext } from '../hooks/filterSelectedContext'
 import StudyFilterModal from './StudyFilterModal'
 import {
@@ -60,6 +59,7 @@ const HeaderButton = ({
     setPhoneSupportOption,
     templateInstitutionOption,
     setBillingInformationModal,
+    genderOption
   } = useContext(filterDataContext);
 
 
@@ -84,6 +84,9 @@ const HeaderButton = ({
       "radiologist": parseInt(localStorage.getItem("userID"))
     };
 
+    if (genderOption !== null && genderOption !== undefined){
+      requestPayload['gender'] = genderOption ; 
+    }
     let responseData = await APIHandler("POST", requestPayload, "report/v1/submitReportlist")
 
     if (responseData === false) {
@@ -114,11 +117,11 @@ const HeaderButton = ({
 
   useEffect(() => {
 
-    if (window.location.pathname === `/reports/${id}`) {
+    if (window.location.pathname === `/reports/${id}` && templateOption !== null) {
       retrieveTemplateOptions();
     }
 
-  }, [window.location.pathname, templateOption])
+  }, [window.location.pathname, templateOption, genderOption])
 
   // **** Reterive system filter list for Study page **** // 
   const fetchSystemFilter = async () => {
