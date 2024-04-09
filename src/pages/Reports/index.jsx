@@ -18,7 +18,6 @@ const index = () => {
   const [totalPages, setTotalPages] = useState(0)
   const { changeBreadcrumbs } = useBreadcrumbs()
   const navigate = useNavigate()
-  const { permissionData } = useContext(UserPermissionContext)
 
   // **** Retervie all added templated information **** // 
   const retrieveReportsData = pagination => {
@@ -86,13 +85,6 @@ const index = () => {
     }
   }
 
-  const checkPermissionStatus = name => {
-    const permission = permissionData['TemplateTable view'].find(
-      data => data.permission === name
-    )?.permission_value
-    return permission
-  }
-
   const columns = [
     {
       title: 'Template Name',
@@ -127,22 +119,22 @@ const index = () => {
       dataIndex : "radiologist_name"
     }, 
 
-    checkPermissionStatus('View created at') && {
+    {
       title: 'Created At',
       dataIndex: 'created_at',
-      className: `${
-        checkPermissionStatus('View created at') ? '' : 'column-display-none'
-      }`
+      // className: `${
+      //   checkPermissionStatus('View created at') ? '' : 'column-display-none'
+      // }`
     },
 
-    checkPermissionStatus('View last updated at') && {
+    {
       title: 'Updated At',
       dataIndex: 'updated_at',
-      className: `${
-        checkPermissionStatus('View last updated at')
-          ? ''
-          : 'column-display-none'
-      }`
+      // className: `${
+      //   checkPermissionStatus('View last updated at')
+      //     ? ''
+      //     : 'column-display-none'
+      // }`
     },
 
     {
@@ -152,19 +144,27 @@ const index = () => {
       width: window.innerWidth < 650 ? '1%' : '10%',
       render: (_, record) => (
         <Space style={{ display: 'flex', justifyContent: 'space-evenly' }}>
-          {checkPermissionStatus('Edit template option') && (
+          {/* {checkPermissionStatus('Edit template option') && (
             <EditActionIcon
               editActionHandler={() => editActionHandler(record.id)}
             />
-          )}
+          )} */}
+          <EditActionIcon
+            editActionHandler={() => editActionHandler(record.id)}
+          />
 
-          {checkPermissionStatus('Delete template option') && (
+          {/* {checkPermissionStatus('Delete template option') && (
                 <DeleteActionIcon 
                   title = "Delete template"
                   description = "Are you sure you want to delete this template?"
                   deleteActionHandler={() => DeleteTemplateOptionHandler(record.id)}
                 />
-          )}
+              )} */}
+            <DeleteActionIcon 
+              title = "Delete template"
+              description = "Are you sure you want to delete this template?"
+              deleteActionHandler={() => DeleteTemplateOptionHandler(record.id)}
+            />
         </Space>
       )
     }
