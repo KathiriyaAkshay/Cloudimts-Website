@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { InboxOutlined, UploadOutlined, SelectOutlined } from '@ant-design/icons';
+import { UploadOutlined, SelectOutlined, ClearOutlined } from '@ant-design/icons';
 import { message, Upload, Button, Spin } from 'antd';
 import { useEffect } from 'react';
 import { useBreadcrumbs } from '../../hooks/useBreadcrumbs';
@@ -63,7 +63,7 @@ const UploadStudyImages = () => {
                     const result = await response.json();
 
                     if (response?.status == 200){
-                        message.success("Image uploaded successfully")
+                        // message.success("Image uploaded successfully")
                     }   else {
                         message.warning(result?.message) ; 
                     }
@@ -86,6 +86,12 @@ const UploadStudyImages = () => {
             <Spin spinning = {loading}>
                 <div className='w-100'>
                     <Button onClick={UploadStudyHandler} type='primary' style={{float: "right"}} icon={<UploadOutlined />}>Upload Study</Button>
+
+                    {allSelectImages?.length !== 0 && (
+                        <Button className='clear-all-image-option-button' onClick={() => {setAllSelectImages([])}} type='primary' style={{float: "right", marginRight: "1rem"}} icon={<ClearOutlined />}>
+                            Clear all images
+                        </Button>
+                    )}
                 </div>
 
                 <div className='w-100'>

@@ -22,9 +22,8 @@ import {
   EyeOutlined, 
   HistoryOutlined
 } from '@ant-design/icons'
-import { handleDownloadPDF, handleExport, handlePdfExport } from '../helpers/billingTemplate'
+import { handleExport, handlePdfExport } from '../helpers/billingTemplate'
 import { BillingDataContext } from '../hooks/billingDataContext'
-import NotificationMessage from './NotificationMessage'
 import { FilterSelectedContext } from '../hooks/filterSelectedContext'
 import StudyFilterModal from './StudyFilterModal'
 import {
@@ -60,6 +59,7 @@ const HeaderButton = ({
     setPhoneSupportOption,
     templateInstitutionOption,
     setBillingInformationModal,
+    genderOption
   } = useContext(filterDataContext);
 
 
@@ -75,21 +75,25 @@ const HeaderButton = ({
   // **** Reterive templates list for Study report page **** //
   const retrieveTemplateOptions = async () => {
 
+    let report_modality = localStorage.getItem("report-modality") ;
     let requestPayload = {
       "page_number": 1,
       "page_limit": 200,
-      "modality": templateOption,
+      "modality": report_modality,
       "institution": templateInstitutionOption,
       "radiologist": parseInt(localStorage.getItem("userID"))
     };
 
+    if (genderOption !== null && genderOption !== undefined){
+      requestPayload['gender'] = genderOption ; 
+    }
     let responseData = await APIHandler("POST", requestPayload, "report/v1/submitReportlist")
 
     if (responseData === false) {
-      NotificationMessage(
-        "warning",
-        "Network request failed"
-      )
+      // NotificationMessage(
+      //   "warning",
+      //   "Network request failed"
+      // )
 
     } else if (responseData?.status === true) {
 
@@ -102,22 +106,22 @@ const HeaderButton = ({
 
     } else {
 
-      NotificationMessage(
-        "warning",
-        responseData?.message,
-        "Network request failed"
-      )
+      // NotificationMessage(
+      //   "warning",
+      //   responseData?.message,
+      //   "Network request failed"
+      // )
     }
 
   }
 
   useEffect(() => {
 
-    if (window.location.pathname === `/reports/${id}`) {
+    if (window.location.pathname === `/reports/${id}` && templateOption !== null) {
       retrieveTemplateOptions();
     }
 
-  }, [window.location.pathname, templateOption])
+  }, [window.location.pathname, templateOption, genderOption])
 
   // **** Reterive system filter list for Study page **** // 
   const fetchSystemFilter = async () => {

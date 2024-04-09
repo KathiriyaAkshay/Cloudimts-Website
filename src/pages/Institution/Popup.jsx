@@ -494,14 +494,17 @@ const CustomReportHeaderGenerator = ({institutionId, isModalOpen}) => {
             let patientReport = [] ; 
             let patientReportIndex = 0 ; 
 
+            let patientExcludeColumn = ["Patient id", "Patient name"] ; 
             Object.keys(responseData['data']?.patient_report_details).forEach(key => {
                 const value = responseData['data']?.patient_report_details[key];
-                patientReport.push({
-                    'key': patientReportIndex, 
-                    'columnName': key, 
-                    'customColumnName': value
-                })
-                patientReportIndex += 1; 
+                if (!patientExcludeColumn.includes(value)){
+                    patientReport.push({
+                        'key': patientReportIndex, 
+                        'columnName': key, 
+                        'customColumnName': value
+                    })
+                    patientReportIndex += 1; 
+                }
             });
 
             setDataSource([...patientReport]) ; 

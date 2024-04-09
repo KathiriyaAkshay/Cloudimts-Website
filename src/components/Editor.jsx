@@ -22,8 +22,8 @@ const Editor = ({ id }) => {
   const [editorData, setEditorData] = useState('')
   const [cardDetails, setCardDetails] = useState({})
   const [isLoading, setIsLoading] = useState(false)
-  const {selectedItem, setSelectedItem, docFiledata } = useContext(ReportDataContext)
-  const { templateOption, setTemplateOption, setTemplateInstitutionOption } = useContext(filterDataContext)
+  const { selectedItem, setSelectedItem, docFiledata } = useContext(ReportDataContext)
+  const {setTemplateOption, setTemplateInstitutionOption, setGenderoption } = useContext(filterDataContext)
   const [studyImageID, setStudyImageID] = useState(0)
   const [signatureImage, setSignatureImage] = useState(null)
   const [username, setUsername] = useState('')
@@ -89,8 +89,9 @@ const Editor = ({ id }) => {
       NotificationMessage('warning', 'Network request failed');
 
     } else if (responseData['status'] === true) {
-
-      setTemplateOption(responseData['data']['Modality']);
+      localStorage.setItem("report-modality", responseData?.data?.Modality) ;
+      setTemplateOption(responseData?.data?.Modality) ; 
+      setGenderoption(responseData?.data?.Gender) 
 
       let Institution_id = responseData['data']['institution_id']
       let SeriesIdValue = responseData['data']['series_id']
@@ -113,8 +114,15 @@ const Editor = ({ id }) => {
         'institute/v1/institution-report-details'
       )
       if (reportResponseData['status'] === true) {
+        let tempData = reportResponseData?.data ;
+        let tempPatientId = tempData?.patient_details['Patient id'] ;
+        let tempPatientName = tempData?.patient_details['Patient name'] ; 
+        
+        delete tempData?.patient_details['Patient id']
+        delete tempData?.patient_details['Patient name'] ; 
+        
         setInstitutionReport({ ...reportResponseData['data'] })
-        convertedPatientTableInitially({...reportResponseData['data']})
+        convertedPatientTableInitially({"patient_details": {...{"Patient id": tempPatientId, "Patient name": tempPatientName}, ...tempData?.patient_details}, "institution_details": {...tempData?.institution_details}})
       }
     }
   }
@@ -192,81 +200,44 @@ const Editor = ({ id }) => {
     convertPatientDataToTable();
   }, [selectedItem])
 
-  const convertedPatientTable = () => {
-
-    const keys = Object.keys(institutionReport?.institution_details);
-    var temp = ``;
-    const data = `<div>
-    <h2 style = "text-align: center;">Patient Information</h2>
-
-    <table style="width: 100%; border-collapse: collapse;">
-      <tbody>
-        ${institutionReport.hasOwnProperty('patient_details') && selectedItem.isPatientSelected ?
-        Object.entries(institutionReport?.patient_details)
-          .map(([key, value], index) => {
-            temp = `
-            <tr>
-              <td style="text-align: left; padding: 8px;font-weight:600">${key}</td>
-              <td style="padding: 8px;">${value}</td>`;
-
-            if (index < keys.length) {
-              temp +=
-                `<td style="text-align: left; padding: 8px;font-weight:600  ">${keys[index]}</td>
-              <td style="padding: 8px;">${institutionReport.institution_details[keys[index]]}</td></tr>`;
-            } else {
-              temp += `</tr>`
-            }
-
-            return temp;
-
-          })
-          .join('')
-        : ''}
-
-
-      </tbody>
-    </table>
-  </div>`
-    return data;
-  }
 
   const convertPatientDataToTable = (insertImage) => {
     const data =
-        selectedItem.isInstitutionSelected
-          ? `<div>
+      selectedItem.isInstitutionSelected
+        ? `<div>
           
-              <h2 style = "text-align: center;">Institution Information</h2>
-              <table>
-                <tbody>
-                  ${institutionReport.hasOwnProperty('institution_details') &&
-          Object.entries(institutionReport?.institution_details)
-            .map(([key, value]) => {
-              return `
+        <h2 style = "text-align: center;">Institution Information</h2>
+        <table>
+          <tbody>
+            ${institutionReport.hasOwnProperty('institution_details') &&
+        Object.entries(institutionReport?.institution_details)
+          .map(([key, value]) => {
+            return `
                   <tr>
                     <th>${key}</th>
                     <td>${value}</td>
                   </tr>
                 `
-            })
-            .join('')
-          }
+          })
+          .join('')
+        }
                 </tbody>
         </table>
       </div>`
-          : selectedItem.isImagesSelected && insertImage
-            ? `
+        : selectedItem.isImagesSelected && insertImage
+          ? `
           <h3 style = "text-align:center;">Reference image ${referenceImageCount}</h3>
           <figure class="image">
           <img src="${imageSlider[studyImageID]?.url}" alt="study image" style="width: 256px; height: 200px;" class="Reference-image">
           </figure>`
-            : selectedItem.isStudyDescriptionSelected
-              ? `<div>
+          : selectedItem.isStudyDescriptionSelected
+            ? `<div>
         <h3 style = "text-align:center;">Study Description</h3>
         <p style = "text-align: center ; ">${cardDetails?.Study_description}</p>
         </div>`
-              : selectedItem.isOhifViewerSelected
-                ? `<div></div>`
-                : ``
+            : selectedItem.isOhifViewerSelected
+              ? `<div></div>`
+              : ``
 
     setEditorData(prev =>
       selectedItem.isPatientSelected || selectedItem.isInstitutionSelected
@@ -280,11 +251,10 @@ const Editor = ({ id }) => {
   const [imageSlider, setImageSlider] = useState([])
 
   const convertedPatientTableInitially = (institutionReport) => {
-    institutionReport.patient_details=Object.assign(institutionReport.patient_details)
+    institutionReport.patient_details = Object.assign(institutionReport.patient_details)
     const keys = Object.keys(institutionReport?.institution_details);
     var temp = ``;
     const data = `<div>
-    <h2 style = "text-align: center;">Patient Information</h2>
 
     <table style="width: 100%; border-collapse: collapse;">
       <tbody>
@@ -314,9 +284,9 @@ const Editor = ({ id }) => {
       </tbody>
     </table>
   </div>`
-  setEditorData(prev =>
-   `${prev}${data}`
-  )
+    setEditorData(prev =>
+      `${prev}${data}`
+    )
   }
 
   // **** Submit report handler **** // 
@@ -474,7 +444,7 @@ const Editor = ({ id }) => {
                     />
                   </Form.Item>
                 </Form>
-                
+
                 <div className='advance-report-file-option-editor'>
                   <CKEditor
                     editor={ClassicEditor}

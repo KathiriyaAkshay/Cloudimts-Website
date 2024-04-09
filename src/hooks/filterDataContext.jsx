@@ -38,6 +38,7 @@ const FilterDataProvider = ({ children }) => {
   const [isQuickAssignStudyModalOpen, setIsQuickAssignStudyModalOpen ] = useState(false) ;  
 
   const [templateOption, setTemplateOption] = useState(null); 
+  const [genderOption, setGenderoption] = useState(null) ; 
 
   const [templateInstitutionOption, setTemplateInstitutionOption] = useState(null) ; 
 
@@ -101,7 +102,9 @@ const FilterDataProvider = ({ children }) => {
         totalBillingCommunicationCharge, 
         setTotalCommunicationCharge, 
         totalBillingMidnightCharge, 
-        setTotalMidnightCharge
+        setTotalMidnightCharge, 
+        genderOption, 
+        setGenderoption
       }}
     >
       {children}
