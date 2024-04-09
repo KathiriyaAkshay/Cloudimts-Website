@@ -25,12 +25,12 @@ const index = () => {
     retrieveFilterOptions()
   }, []) ; 
 
-  const checkPermissionStatus = name => {
-    const permission = permissionData['FilterTable View'].find(
-      data => data.permission === name
-    )?.permission_value
-    return permission
-  }
+  // const checkPermissionStatus = name => {
+  //   const permission = permissionData['FilterTable View'].find(
+  //     data => data.permission === name
+  //   )?.permission_value
+  //   return permission
+  // }
 
   const retrieveFilterOptions = () => {
     getFilterList()
@@ -97,13 +97,16 @@ const index = () => {
       render: (_, record) => (
         <Space style={{ display: 'flex', justifyContent: 'space-evenly' }}>
 
-          {checkPermissionStatus("Edit Filter") && (
+          {/* {checkPermissionStatus("Edit Filter") && (
             <EditActionIcon
               editActionHandler={() => editActionHandler(record.id)}
             />
-          )}
+          )} */}
+          <EditActionIcon
+            editActionHandler={() => editActionHandler(record.id)}
+          />
     
-          {checkPermissionStatus("Delete Filter") && (
+          {/* {checkPermissionStatus("Delete Filter") && (
             <Popconfirm 
               title  = "Delete Filter"
               description = "Are you sure you want delete this filter ?"
@@ -122,7 +125,25 @@ const index = () => {
               />
 
             </Popconfirm>
-          )}
+          )} */}
+          <Popconfirm 
+            title  = "Delete Filter"
+            description = "Are you sure you want delete this filter ?"
+            icon={
+              <QuestionCircleOutlined
+                style={{
+                  color: 'red',
+                }}
+              />
+            }
+            onConfirm={() => DeleteFilterOptionHandler(record.id)}>
+            <DeleteActionIcon
+              title = "Delete Filter"
+              description = "Are you sure you want to delete this filter?"
+              deleteActionHandler={() => deleteParticularStudy(record?.id)}
+            />
+
+          </Popconfirm>
         </Space>
       )
     }
