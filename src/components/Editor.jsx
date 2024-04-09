@@ -23,7 +23,7 @@ const Editor = ({ id }) => {
   const [cardDetails, setCardDetails] = useState({})
   const [isLoading, setIsLoading] = useState(false)
   const { selectedItem, setSelectedItem, docFiledata } = useContext(ReportDataContext)
-  const { templateOption, setTemplateOption, setTemplateInstitutionOption } = useContext(filterDataContext)
+  const {setTemplateOption, setTemplateInstitutionOption } = useContext(filterDataContext)
   const [studyImageID, setStudyImageID] = useState(0)
   const [signatureImage, setSignatureImage] = useState(null)
   const [username, setUsername] = useState('')
@@ -89,8 +89,8 @@ const Editor = ({ id }) => {
       NotificationMessage('warning', 'Network request failed');
 
     } else if (responseData['status'] === true) {
-
-      setTemplateOption(responseData['data']['Modality']);
+      localStorage.setItem("report-modality", responseData?.data?.Modality) ;
+      setTemplateOption(responseData?.data?.Modality) ;  
 
       let Institution_id = responseData['data']['institution_id']
       let SeriesIdValue = responseData['data']['series_id']

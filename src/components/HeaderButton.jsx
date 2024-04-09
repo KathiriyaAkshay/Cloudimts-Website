@@ -75,10 +75,11 @@ const HeaderButton = ({
   // **** Reterive templates list for Study report page **** //
   const retrieveTemplateOptions = async () => {
 
+    let report_modality = localStorage.getItem("report-modality") ;
     let requestPayload = {
       "page_number": 1,
       "page_limit": 200,
-      "modality": templateOption,
+      "modality": report_modality,
       "institution": templateInstitutionOption,
       "radiologist": parseInt(localStorage.getItem("userID"))
     };
@@ -86,10 +87,10 @@ const HeaderButton = ({
     let responseData = await APIHandler("POST", requestPayload, "report/v1/submitReportlist")
 
     if (responseData === false) {
-      NotificationMessage(
-        "warning",
-        "Network request failed"
-      )
+      // NotificationMessage(
+      //   "warning",
+      //   "Network request failed"
+      // )
 
     } else if (responseData?.status === true) {
 
@@ -102,11 +103,11 @@ const HeaderButton = ({
 
     } else {
 
-      NotificationMessage(
-        "warning",
-        responseData?.message,
-        "Network request failed"
-      )
+      // NotificationMessage(
+      //   "warning",
+      //   responseData?.message,
+      //   "Network request failed"
+      // )
     }
 
   }
