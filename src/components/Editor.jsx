@@ -165,7 +165,9 @@ const Editor = ({ id }) => {
     await fetchTemplate({ id: selectedItem?.templateId })
       .then(res => {
         if (res.data.status) {
-          setEditorData(res.data.data.report_data)
+          let tempData = editorData ; 
+          tempData = tempData + res?.data?.data?.report_data ; 
+          setEditorData(tempData)
         } else {
           NotificationMessage(
             'warning',
@@ -283,6 +285,9 @@ const Editor = ({ id }) => {
 
       </tbody>
     </table>
+  </div>
+  <div>
+      Report
   </div>`
     setEditorData(prev =>
       `${prev}${data}`

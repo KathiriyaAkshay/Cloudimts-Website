@@ -951,7 +951,10 @@ const Dicom = () => {
                   style={{ cursor: "pointer" }}
                   onClick={() => {
                     handleCellDoubleClick(record);
-                    window.open("weasis://%24dicom%3Ars+--url+%22https%3A%2F%2Fdemo.orthanc-server.com%2Fdicom-web%22+-r+%22patientID%3Dozp00SjY2xG%22")
+                    let url = `$dicom:rs --url "http://localhost:8042/dicom-web" -r "patientID=PHP 65360"`
+                    let encodedUrl = 'weasis://' + encodeURIComponent(url.substring(9));
+                    console.log(encodedUrl);
+                    // window.open("weasis://%24dicom%3Ars+--url+%22https%3A%2F%2Fdemo.orthanc-server.com%2Fdicom-web%22+-r+%22patientID%3Dozp00SjY2xG%22")
                   }}
                 />
               </Tooltip>

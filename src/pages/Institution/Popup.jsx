@@ -208,9 +208,7 @@ const CustomReportHeaderGenerator = ({institutionId, isModalOpen}) => {
             dataIndex: 'operation',
             render: (_, record) =>
                 dataSource.length >= 1 ? (
-                    <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.key)}>
-                        <a>Delete</a>
-                    </Popconfirm>
+                    <a onClick={() => {handleDelete(record.key)}}>Delete</a>
                 ) : null,
         },
     ];
@@ -293,9 +291,7 @@ const CustomReportHeaderGenerator = ({institutionId, isModalOpen}) => {
             dataIndex: 'operation',
             render: (_, record) =>
                 dataSourceSec.length >= 1 ? (
-                    <Popconfirm title="Sure to delete?" onConfirm={() => handleDeleteSec(record.key)}>
-                        <a>Delete</a>
-                    </Popconfirm>
+                    <a onClick={() => {handleDeleteSec(record.key)}}>Delete</a>
                 ) : null,
         },
     ];
