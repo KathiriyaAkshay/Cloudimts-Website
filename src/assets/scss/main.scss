@@ -2416,8 +2416,10 @@ margin-top: 8px !important;
 }
 
 .Advance-view-report-layout .ant-card-body{
-  height: 80vh ;  
+  height: calc(100vh - 140px);  
   overflow-y: auto;
+  padding-left: 0.40rem;
+  padding-right: 0.40rem;
 
 } 
 
@@ -3191,5 +3193,11 @@ form.ant-form .ant-form-item .ant-form-item-label label{
 .ck-table-bogus-paragraph{
   span{
     font-size: 0.80rem !important;
+  }
+}
+
+.template-selection-option-division{
+  .ant-select-selection-item{
+    margin-top: 2px !important;
   }
 }

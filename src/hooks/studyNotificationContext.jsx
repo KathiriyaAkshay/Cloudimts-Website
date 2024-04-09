@@ -77,7 +77,11 @@ const StudyNotificationProvider = ({ children }) => {
                 data => data.id !== eventData.payload.data.id
             );
             return updatedData;
-        });
+        
+          });
+
+          setTotalPages((prev) => prev - 1) ;
+
         
         } else if (eventData.payload.status === "Assigned") {
   

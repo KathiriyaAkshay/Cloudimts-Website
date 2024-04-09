@@ -306,7 +306,7 @@ const Editor = ({ id }) => {
       setIsLoading(true);
       await saveAdvancedFileReport({
         id,
-        report: `${editorData} ${`<p style="text-align: right;"><img src=${signatureImage} alt="signature image" style="width:100px;height:80px;text-align: right;"></p>`} ${`<p style="text-align: right;">${username}</p>`}`,
+        report: `${editorData} ${`<p style="text-align: right; margin-top: 20px;"><img src=${signatureImage} alt="signature image" style="width:100px;height:80px;text-align: right;"></p>`} ${`<p style="text-align: right;">${username}</p>`}`,
         report_study_description: reportStudyDescription
       })
         .then(res => {

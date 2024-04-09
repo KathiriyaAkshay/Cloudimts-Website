@@ -251,7 +251,7 @@ const BasicLayout = ({ children }) => {
     },
 
     // Filter option
-    checkPermissionStatus('Show Default Filter list') && {
+    {
       label: <NavLink to={'/filters'}>Filters</NavLink>,
       key: 'filters',
       icon: <AiOutlineFilter />
