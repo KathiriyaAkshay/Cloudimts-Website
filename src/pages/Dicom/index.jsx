@@ -951,6 +951,7 @@ const Dicom = () => {
                   style={{ cursor: "pointer" }}
                   onClick={() => {
                     handleCellDoubleClick(record);
+                    window.open("weasis://%24dicom%3Ars+--url+%22https%3A%2F%2Fdemo.orthanc-server.com%2Fdicom-web%22+-r+%22patientID%3Dozp00SjY2xG%22")
                   }}
                 />
               </Tooltip>
