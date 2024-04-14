@@ -246,7 +246,7 @@ const BasicLayout = ({ children }) => {
           key: "Dicom image"
         }, 
         {
-          label: <NavLink>ImageUpload</NavLink>, 
+          label: <NavLink to={"/uploadImage"}>ImageUpload</NavLink>, 
           key: "Image upload"
         }
       ]

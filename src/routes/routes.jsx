@@ -31,7 +31,8 @@ const Support = React.lazy(() => import("../pages/Support"));
 const DeletedStudies = React.lazy(() =>
   import("../pages/Dicom/DeletedStudies")
 );
-const UploadStudyImages = React.lazy(() => import("../pages/uploadstudy"))
+const UploadStudyImages = React.lazy(() => import("../pages/uploadstudy")); 
+const UploadNormalImages = React.lazy(() => import("../pages/uploadstudy/uploadImage")) ; 
 const UploadHistory = React.lazy(() => import("../pages/uploadhistory")) ; 
 
 export const routes = [
@@ -73,6 +74,7 @@ export const routes = [
   { path: "/billing", component: <Loader component={Billing} /> },
   { path: "/support", component: <Loader component={Support} /> },
   { path: "/upload", component: <Loader component={UploadStudyImages} /> },
+  { path: "/uploadImage", component: <Loader component={UploadNormalImages} /> },
   { path: "/uploadhistory", component: <Loader component={UploadHistory} /> },
   {
     path: "/deleted-studies",

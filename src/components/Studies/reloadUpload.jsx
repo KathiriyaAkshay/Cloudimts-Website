@@ -8,8 +8,6 @@ export default function ReUploadStudyModel({isModalOpen, setIsModalOpen, studyDa
     const [loading, setLoading] = useState(false) ; 
     const [form] = Form.useForm(); 
 
-    console.log(studyData);
-
     useEffect(() => {
         form.setFieldsValue({
             "patient_id": studyData?.patient_id, 
