@@ -58,12 +58,14 @@ import { saveAs } from 'file-saver'
 import * as XLSX from 'xlsx'
 import AssignStudyModified from '../../components/Studies/AssignStudyModified'
 import ImageDrawer from './ImageDrawer'
-import { convertToDDMMYYYY } from '../../helpers/utils'
+import { convertToDDMMYYYY, modifyDate } from '../../helpers/utils'
 import OHIFViewer from "../../assets/images/menu.png";
 import WeasisViewer from "../../assets/images/Weasis.png";
 import API from '../../apis/getApi' 
 import StudyReportIcon from "../../assets/images/study-report.png"
-import { RoomDataContext } from '../../hooks/roomDataContext'
+import { RoomDataContext } from '../../hooks/roomDataContext'; 
+import ReUploadStudyModel from '../../components/Studies/reloadUpload'; 
+import ReUploadIcon from "../../assets/images/reupload.png" ; 
 
 const BASE_URL = import.meta.env.VITE_APP_SOCKET_BASE_URL
 let timeOut = null ; 
@@ -147,6 +149,9 @@ const Dicom = () => {
   const [setPreviousSeriesResponse] = useState(null);
 
   const [notificationValue, setNotificationValue] = useState(0);
+
+  const [reUploadOptionModel, setReUploadOptionModel] = useState(false) ; 
+  const [reuploadStudyData, setReuploadStudyData] = useState({}) ; 
 
   const checkPermissionStatus = name => {
     const permission = permissionData['StudyTable view']?.find(
@@ -263,6 +268,7 @@ const Dicom = () => {
               institution_id: data.institution.id
             }
           })
+          console.log(modifiedData);
 
           const temp = res.data.data
             .map(data => data?.study?.study_original_id)
@@ -715,7 +721,6 @@ const Dicom = () => {
         text
       ),
     },
-
     checkPermissionStatus('View Patient name') && {
       title: "Patient's Name",
       dataIndex: 'name',
@@ -731,7 +736,6 @@ const Dicom = () => {
       ),
 
     },
-
     {
       title: 'Mod',
       dataIndex: 'modality',
@@ -741,7 +745,6 @@ const Dicom = () => {
         text
       ),
     },
-
     checkPermissionStatus('View Study description') && {
       title: 'Description',
       dataIndex: 'study_description',
@@ -754,15 +757,12 @@ const Dicom = () => {
         text
       ),
     },
-
-
     {
       title: 'Study date',
       dataIndex: 'created_at',
       width: "12%",
       render: (text, record) => convertToDDMMYYYY(record?.created_at)
     },
-
     checkPermissionStatus('View Institution name') && {
       title: 'Institution',
       dataIndex: 'institution',
@@ -779,7 +779,6 @@ const Dicom = () => {
         </>
       )
     },
-
     {
       title: 'Count',
       dataIndex: 'count',
@@ -789,7 +788,6 @@ const Dicom = () => {
         <Statistic value={record?.count} style={{ fontSize: "1.4rem" }} />
       ),
     },
-
     {
       title: "Report",
       dataIndex: "chat",
@@ -855,17 +853,14 @@ const Dicom = () => {
         </>
       )
     },
-
-
     {
       title: "Others",
       dataIndex: "chat",
-      width: "7%",
+      width: "8%",
       render: (text, record) => (
         <>
           <div>
             <div>
-
               <Tooltip title={`Study series`}>
                 <PictureOutlined
                   className='action-icon'
@@ -876,7 +871,7 @@ const Dicom = () => {
                   }}
                 />
               </Tooltip>
-
+              
               {checkPermissionStatus('Study share option') && (
                 <Tooltip title={`Share Study`}>
                   <IoIosShareAlt
@@ -892,7 +887,7 @@ const Dicom = () => {
                   />
                 </Tooltip>
               )}
-
+              
               <Tooltip title={`Chat`}>
                 <BsChat
                   className='action-icon action-icon-primary study-table-chat-option'
@@ -916,6 +911,12 @@ const Dicom = () => {
                   assign_user={record?.assign_user}
                   deleteActionHandler={() => deleteParticularStudy(record?.id)}
                 />
+              )}
+              
+              {checkPermissionStatus("Reupload Option") && (
+                <Tooltip title={`ReUpload study`}>
+                  <img onClick={() => {setReUploadOptionModel(true); setReuploadStudyData({...record})}} src = {ReUploadIcon} className='reupload-option-icon' />
+                </Tooltip>
               )}
 
             </div>
@@ -1782,6 +1783,13 @@ const Dicom = () => {
           </Form>
         </Spin>
       </Modal>
+
+      {/* ==== ReUpload Study option module ====  */}
+      <ReUploadStudyModel
+        isModalOpen = {reUploadOptionModel}
+        setIsModalOpen = {setReUploadOptionModel}
+        studyData = {reuploadStudyData}
+      />
 
     </>
   )
