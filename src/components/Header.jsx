@@ -239,7 +239,17 @@ const BasicLayout = ({ children }) => {
     {
       label: <NavLink to={'/upload'}>Upload image</NavLink>,
       key: 'Upload image',
-      icon: <CloudUploadOutlined />
+      icon: <CloudUploadOutlined />, 
+      children : [
+        {
+          label: <NavLink to={"/upload"}>Upload dicom images</NavLink>, 
+          key: "Dicom image"
+        }, 
+        {
+          label: <NavLink to={"/uploadImage"}>ImageUpload</NavLink>, 
+          key: "Image upload"
+        }
+      ]
     },
 
     // Upload history related option
