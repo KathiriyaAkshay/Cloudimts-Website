@@ -16,6 +16,7 @@ const UploadImage = ({
   multipleImageFile,
   setMultipleImageFile,
   isClinicalHistory,
+  isAddImageSeries,
 }) => {
 
   const [file, setFile] = useState(imageURL);
@@ -260,7 +261,7 @@ const UploadImage = ({
             name="url"
             style={{ height: "100%" }}
             multiple={multipleImage ? true : false}
-            accept={isClinicalHistory?".png,.jpeg,.jpg,.pdf":".png,.jpeg,.jpg,.pdf,.docx"}
+            accept={isClinicalHistory?".png,.jpeg,.jpg,.pdf":isAddImageSeries?".png,.jpeg,.jpg":".png,.jpeg,.jpg,.pdf,.docx"}
             listType="picture-card"
             maxCount={multipleImage ? 10 : 1}
             customRequest={dummyRequest}
@@ -299,7 +300,7 @@ const UploadImage = ({
             <p className="ant-upload-text">Drag & drop files or Browse</p>
             <p className="ant-upload-hint">
               {
-                isClinicalHistory?<>Supported formates: JPG, JPEG, PNG, PDF</>:<>Supported formates: JPG, JPEG, PNG, PDF, DOCX</>
+                isClinicalHistory?<>Supported formates: JPG, JPEG, PNG, PDF</>:isAddImageSeries?<></>:<>Supported formates: JPG, JPEG, PNG, PDF, DOCX</>
               }
               
             </p>
