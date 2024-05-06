@@ -58,7 +58,6 @@ const Roles = () => {
 
   useEffect(() => {
     changeBreadcrumbs([{ name: 'Roles' }])
-    retrieveRoleData()
   }, [])
 
   const editActionHandler = record => {
@@ -193,6 +192,7 @@ const Roles = () => {
         tableData={tableData}
         tableColumns={columns}
         loadingTableData={isLoading}
+        onPaginationChange = {retrieveRoleData}
       />
 
       {/* === Add new role option modal ===  */}

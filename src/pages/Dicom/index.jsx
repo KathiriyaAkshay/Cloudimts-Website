@@ -165,6 +165,7 @@ const Dicom = () => {
   // **** Setup Chat notification socket connection **** // 
   const SetupGenralChatNotification = () => {
 
+    console.log("Again chat socket connection established ------------>");
     const ws = new WebSocket(`${BASE_URL}genralChat/`)
 
     ws.onopen = () => {
@@ -302,7 +303,6 @@ const Dicom = () => {
     let requestPayload = {
       series_list: seriesIdList
     }
-
     let responseData = await APIHandler(
       'POST',
       requestPayload,
@@ -310,28 +310,28 @@ const Dicom = () => {
     )
 
     if (responseData === false) {
-
     } else if (responseData['status'] === true) {
-
       // Update Study data
       setStudyData(prev => {
         return prev.map(element => {
           let study_id = element.study?.study_original_id;
 
           if (Object.keys(responseData?.data).includes(study_id)) {
-            return { ...element, count: `${responseData?.data[study_id]?.series_count}/${responseData?.data[study_id]?.instance_count}` }
+            if (element?.count !== `${responseData?.data[study_id]?.series_count}/${responseData?.data[study_id]?.instance_count}`){
+              return { ...element, count: `${responseData?.data[study_id]?.series_count}/${responseData?.data[study_id]?.instance_count}` }
+            } else {
+              return {...element}
+            }
           } else {
             return { ...element, count: `0/0` }
           }
 
         })
       });
-
-      if (previousValue !== JSON.stringify(responseData['data'])) {
-        setPreviousSeriesResponse(JSON.stringify(responseData['data']));
-        await FetchSeriesCountInformation(JSON.stringify(responseData?.data));
-      } else {
-      }
+        
+      setTimeout(() => {
+        FetchSeriesCountInformation() ;
+      }, 2000);
     }
   }
 
@@ -351,14 +351,22 @@ const Dicom = () => {
     localStorage.setItem('paginationLimit', currentPageLimit)
   }
 
+  const [reloadValue, setReloadValue] = useState(0) ; 
+  const visibilityChangeHandler = async () => {
+    if (document.visibilityState == "visible"){
+      setReloadValue((prev) => prev + 1) ; 
+    }
+  }
+  useEffect(() => {
+    document.addEventListener("visibilitychange", visibilityChangeHandler)
+  },[]) ; 
+
   useEffect(() => {
     setPagi(Pagination)
-
-    if (
-      !isFilterSelected && Object.keys(systemFilterPayload).length === 0 && Object.keys(studyDataPayload).length === 0 && !isAdvanceSearchSelected) {
+    if ( !isFilterSelected && Object.keys(systemFilterPayload).length === 0 && Object.keys(studyDataPayload).length === 0 && !isAdvanceSearchSelected) {
       retrieveStudyData(Pagination)
     }
-  }, [Pagination, isFilterSelected, studyDataPayload, systemFilterPayload]) ; 
+  }, [Pagination, isFilterSelected, studyDataPayload, systemFilterPayload, reloadValue]) ; 
 
   useEffect(() => {
     FetchSeriesCountInformation(null);
@@ -369,18 +377,13 @@ const Dicom = () => {
       setNotificationValue(1)
       SetupGenralChatNotification()
     }
-  }, [isLoading, studyData, notificationValue]) ; 
+  }, [isLoading, studyData, notificationValue, reloadValue]) ; 
 
   useEffect(() => {
-
     changeBreadcrumbs([{ name: `Study` }])
-
     setSystemFilterPayload({})
-
     setStudyDataPayload({})
-
     setStudyIdArray([])
-
   }, []); 
 
   // **** Study quick filter option handler **** // 
@@ -1082,7 +1085,7 @@ const Dicom = () => {
 
   useEffect(() => {
     retrieveInstitutionData();
-  }, []);
+  }, [reloadValue]);
 
 
   const [quickForm] = Form.useForm();
@@ -1114,7 +1117,7 @@ const Dicom = () => {
 
   useEffect(() => {
     AllPatientNameFetch() ; 
-  }, []) ; 
+  }, [reloadValue]) ; 
 
 
   // **** Apply quick filter option handler **** // 
@@ -1298,26 +1301,23 @@ const Dicom = () => {
 
             <Col span={3}>
 
-              {patientNameOptions?.length !== 0 && (
-
-                <Form.Item
-                  name="study__patient_name__icontains"
-                  rules={[
-                    {
-                      required: false,
-                      whitespace: true,
-                      message: "Patient Name",
-                    },
-                  ]}
-                >
-                  <Select
-                    placeholder = "Patient name"
-                    options={[...patientNameOptions]}
-                    showSearch
-                    onChange={() => {quickForm.submit()}}
-                  />
-                </Form.Item>
-              )}
+              <Form.Item
+                name="study__patient_name__icontains"
+                rules={[
+                  {
+                    required: false,
+                    whitespace: true,
+                    message: "Patient Name",
+                  },
+                ]}
+              >
+                <Select
+                  placeholder = "Patient name"
+                  options={[...patientNameOptions]}
+                  showSearch
+                  onChange={() => {quickForm.submit()}}
+                />
+              </Form.Item>
 
             </Col>
 

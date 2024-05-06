@@ -129,41 +129,29 @@ const Email = () => {
     setIsLoading(false)
   }
 
-  const checkPermissionStatus = name => {
-    const permission = permissionData['EmailTable view'].find(
-      data => data.permission === name
-    )?.permission_value
-    return permission
-  }
 
   // Email column 
   const columns = [
+    {
 
-    checkPermissionStatus('View Full name') && {
       title: 'Full Name',
       dataIndex: 'full_name',
-      className: `${checkPermissionStatus('View Full name') ? '' : 'column-display-none'
-        }`
-    },
+    }, 
 
     {
       title: 'Email',
       dataIndex: 'email'
     },
 
-    checkPermissionStatus('Active status') && {
+    {
       title: 'Status',
       dataIndex: 'active_status',
-      className: `${checkPermissionStatus('Active status') ? '' : 'column-display-none'
-        }`,
       render: (text, record) => `${text ? 'Active' : 'Inactive'}`
     },
 
-    checkPermissionStatus('View User Role') && {
+    {
       title: 'Role',
       dataIndex: 'role',
-      className: `${checkPermissionStatus('View User Role') ? '' : 'column-display-none'
-        }`,
       render: (text, record) => `${record?.role?.role_name}`
     },
 
@@ -190,20 +178,16 @@ const Email = () => {
       render: (_, record) => (
         <Space style={{ display: 'flex', justifyContent: 'space-evenly' }}>
 
-          {checkPermissionStatus('Edit option') && (
-            <EditActionIcon
-              editActionHandler={() => editActionHandler(record.id)}
-            />
-          )}
+          <EditActionIcon
+            editActionHandler={() => editActionHandler(record.id)}
+          />
 
-          {checkPermissionStatus('Delete option') && (
-            <DeleteActionIcon
-              title = {"Delete email"}
-              description={"Are you sure you want to delete this email?"}
-              deleteActionHandler={() => deleteActionHandler(record.id)}
-            />
-          )}
-
+          <DeleteActionIcon
+            title = {"Delete email"}
+            description={"Are you sure you want to delete this email?"}
+            deleteActionHandler={() => deleteActionHandler(record.id)}
+          />
+          
         </Space>
       )
     }

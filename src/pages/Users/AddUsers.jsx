@@ -14,7 +14,7 @@ import {
   Modal,
   Spin,
   Upload,
-  message, 
+  message,
   Image,
   Popconfirm
 } from "antd";
@@ -52,7 +52,7 @@ const beforeUpload = (file) => {
 
 
 const AddUsers = () => {
-  const navigate = useNavigate()  ; 
+  const navigate = useNavigate();
 
   const [currentStep, setCurrentStep] = useState(0)
   const [tableData, setTableData] = useState([])
@@ -142,7 +142,7 @@ const AddUsers = () => {
       })
     setIsLoading(false)
   }
-  
+
   // **** Retervide all available role list for User creation **** // 
   const retrieveRolesData = async () => {
     setIsLoading(true)
@@ -272,12 +272,12 @@ const AddUsers = () => {
   }
 
   useEffect(() => {
-    if (currentStep == 3){
-      setValues([]) ; 
+    if (currentStep == 3) {
+      setValues([]);
     }
-  }, [currentStep]); 
+  }, [currentStep]);
 
-  const [isUpdateOptionActivate, setIsUpdateOptionActivate] = useState(false) ;
+  const [isUpdateOptionActivate, setIsUpdateOptionActivate] = useState(false);
   const handleSubmit = async (values) => {
     setIsLoading(true)
 
@@ -348,8 +348,8 @@ const AddUsers = () => {
         setIsLoading(false)
       }
 
-      if (updateOptionActivate){
-        setUpdateOptionActivate(false) ; 
+      if (updateOptionActivate) {
+        setUpdateOptionActivate(false);
       } else {
         handleNextStep()
       }
@@ -383,22 +383,22 @@ const AddUsers = () => {
         setIsLoading(false)
       }
 
-      if (updateOptionActivate){
-        setUpdateOptionActivate(false) ; 
-      } else{
+      if (updateOptionActivate) {
+        setUpdateOptionActivate(false);
+      } else {
         handleNextStep()
       }
 
     } else if (currentStep === 3) {
 
-      setIsLoading(true) ; 
+      setIsLoading(true);
       let signature_image = '';
 
       if (value?.length > 0) {
 
         try {
           const formData = {
-            image: value[value?.length-1]?.url
+            image: value[value?.length - 1]?.url
           }
           const res = await uploadImage(formData)
           signature_image = res.data.image_url
@@ -444,11 +444,11 @@ const AddUsers = () => {
             NotificationMessage('warning', "Network request failed", err.response.data.message)
           )
       }
-      setIsLoading(false) ; 
+      setIsLoading(false);
 
-      if (updateOptionActivate){
-        setUpdateOptionActivate(false) ; 
-      } else{
+      if (updateOptionActivate) {
+        setUpdateOptionActivate(false);
+      } else {
         handleNextStep();
       }
 
@@ -559,7 +559,7 @@ const AddUsers = () => {
 
   const [profileLoading, setProfileLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState();
-  const [updateOptionActivate, setUpdateOptionActivate] = useState(false) ; 
+  const [updateOptionActivate, setUpdateOptionActivate] = useState(false);
 
   const handleProfileChange = (info) => {
     if (info.file.status === 'uploading') {
@@ -648,7 +648,7 @@ const AddUsers = () => {
 
                   <Form.Item
                     name="user_profile_image"
-                  > 
+                  >
                     <Upload
                       name="avatar"
                       listType="picture-card"
@@ -664,7 +664,7 @@ const AddUsers = () => {
                     >
                       {imageUrl ? (
                         <Image
-                          src={imageUrl} 
+                          src={imageUrl}
                           className='selected-profile-image'
                           alt="avatar"
                           style={{
@@ -810,7 +810,7 @@ const AddUsers = () => {
                       }
                     ]}
                   >
-                     <Select
+                    <Select
                       placeholder="City"
                       options={[...cities]}
                       showSearch
@@ -818,7 +818,7 @@ const AddUsers = () => {
                     />
                   </Form.Item>
                 </Col>
-               
+
                 <Col xs={24} sm={12} md={12} lg={8}>
                   <Form.Item
                     name="address"
@@ -997,7 +997,7 @@ const AddUsers = () => {
                       }
                     ]}
                   >
-                    <TimePicker.RangePicker/>
+                    <TimePicker.RangePicker />
                   </Form.Item>
                 </Col>
 
@@ -1010,7 +1010,7 @@ const AddUsers = () => {
                     display: "flex",
                     flexDirection: "row",
                     justifyContent: "flex-end",
-                    alignItems: "center", 
+                    alignItems: "center",
                     marginTop: "auto"
                   }}
                 >
@@ -1222,9 +1222,9 @@ const AddUsers = () => {
                     Previous
                   </Button>
                   <Popconfirm
-                    title = "Create user"
-                    description = "Are you sure you want to create user ?"
-                    onConfirm={(e) => {e.preventDefault() ; form.submit()}}
+                    title="Create user"
+                    description="Are you sure you want to create user ?"
+                    onConfirm={(e) => { e.preventDefault(); form.submit() }}
                   >
                     <Button type='primary' className='user-update-option-button'>
                       {id ? 'Update' : 'Submit'}

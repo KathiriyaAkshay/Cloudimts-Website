@@ -37,7 +37,6 @@ const TableWithFilter = ({
   isAuditModal,
 }) => {
   const [limit, setLimit] = useState(localStorage.getItem("pageSize")||10);
-  const [userRole, setUserRole] = useState(null);
   const [Pagination, setPagination] = useState({
     page: 1,
     limit:limit,
@@ -46,12 +45,21 @@ const TableWithFilter = ({
     order: "desc",
   });
 
-  console.log(window.location);
+  const [reloadValue, setReloadValue] = useState(0) ; 
+  const visibilityChangeHandler = async () => {
+    if (document.visibilityState == "visible"){
+      setReloadValue((prev) => prev + 1) ; 
+    }
+  }
+
+  useEffect(() => {
+    document.addEventListener("visibilitychange", visibilityChangeHandler)
+  },[])
 
   useEffect(() => {
     setPagi(Pagination);
     onPaginationChange(Pagination);
-  }, [Pagination]);
+  }, [Pagination, reloadValue]);
 
   const onShowSizeChange = (current, pageSize) => {
     setLimit(pageSize);

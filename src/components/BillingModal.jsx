@@ -15,7 +15,8 @@ const BillingModal = ({ setBillingData, setIsLoading, setCharges }) => {
     setTotalCommunicationCharge, setTotalMidnightCharge, setBillingDataLength} =useContext(filterDataContext);
 
   const {setBillingFilterData } = useContext(BillingDataContext);
-  
+    
+  const [reloadValue, setReloadValue] = useState(0) ; 
   const [institutionOptions, setInstitutionOptions] = useState([]);
   const [radiologistOptions, setRadiologistOptions] = useState([]);
   const [statusOptions, setStatusOptions] = useState([
@@ -110,7 +111,17 @@ const BillingModal = ({ setBillingData, setIsLoading, setCharges }) => {
       retrieveInstitutionData();
       retrieveRadiologistData();
     }
-  }, [isBillingFilterModalOpen]);
+  }, [isBillingFilterModalOpen, reloadValue]);
+
+  const visibilityChangeHandler = async () => {
+    if (document.visibilityState == "visible"){
+      setReloadValue((prev) => prev + 1) ; 
+    }
+  }
+
+  useEffect(() => { 
+      document.addEventListener("visibilitychange", visibilityChangeHandler)
+    },[])
 
 
   // **** Handle institution select change **** // 
