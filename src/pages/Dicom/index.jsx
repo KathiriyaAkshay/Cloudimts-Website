@@ -166,7 +166,6 @@ const Dicom = () => {
   // **** Setup Chat notification socket connection **** // 
   const SetupGenralChatNotification = () => {
 
-    console.log("Again chat socket connection established ------------>");
     const ws = new WebSocket(`${BASE_URL}genralChat/`)
 
     ws.onopen = () => {
@@ -270,7 +269,6 @@ const Dicom = () => {
               institution_id: data.institution.id
             }
           })
-          console.log(modifiedData);
 
           const temp = res.data.data
             .map(data => data?.study?.study_original_id)
@@ -333,9 +331,11 @@ const Dicom = () => {
       }
     }
 
-    seriesCountTimeOut = setTimeout(() => {
-      FetchSeriesCountInformation();
-    }, 3000);
+    if (window.location.pathname == "/studies"){
+      seriesCountTimeOut = setTimeout(() => {
+        FetchSeriesCountInformation();
+      }, 3000);
+    }
   };
 
 
@@ -377,7 +377,7 @@ const Dicom = () => {
     return () => {
       clearInterval(seriesCountTimeOut) ; 
     }
-  }, []) ; 
+  }, [seriesIdList]) ; 
 
   useEffect(() => {
     if (!isLoading && studyData.length !== 0 && notificationValue === 0) {
