@@ -36,9 +36,9 @@ const AssignStudy = ({
   const [isLoading, setIsLoading] = useState(false);
   const [options, setOptions] = useState([]);
   const [institutionRadiologist, setInstitutionRadiologist] = useState([]);
-`  const [multipleImageFile, setMultipleImageFile] = useState([]);
+  const [multipleImageFile, setMultipleImageFile] = useState([]);
   const [value, setValues] = useState([]);
-  const [imageFile, setImageFile] = useState(null);`
+  const [imageFile, setImageFile] = useState(null);
   const [assignUserId, setAssignUserId] = useState(null);
 
   // **** Reterive particular assign study details **** // 
