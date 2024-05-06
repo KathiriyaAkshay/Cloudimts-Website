@@ -334,7 +334,7 @@ const Dicom = () => {
 
     let interval = setTimeout(() => {
         FetchSeriesCountInformation();
-    }, 5000);
+    }, 3000);
 
     return(() => {
       clearInterval(interval) ; 
