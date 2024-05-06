@@ -69,6 +69,7 @@ import ReUploadIcon from "../../assets/images/reupload.png" ;
 
 const BASE_URL = import.meta.env.VITE_APP_SOCKET_BASE_URL
 let timeOut = null ; 
+let seriesCountTimeOut = null ; 
 const Dicom = () => {
 
   const [isLoading, setIsLoading] = useState(false)
@@ -332,13 +333,9 @@ const Dicom = () => {
       }
     }
 
-    let interval = setTimeout(() => {
-        FetchSeriesCountInformation();
+    seriesCountTimeOut = setTimeout(() => {
+      FetchSeriesCountInformation();
     }, 3000);
-
-    return(() => {
-      clearInterval(interval) ; 
-    })
   };
 
 
@@ -377,7 +374,10 @@ const Dicom = () => {
 
   useEffect(() => {
     FetchSeriesCountInformation(null);
-  }, [seriesIdList]) ; 
+    return () => {
+      clearInterval(seriesCountTimeOut) ; 
+    }
+  }, []) ; 
 
   useEffect(() => {
     if (!isLoading && studyData.length !== 0 && notificationValue === 0) {
@@ -669,7 +669,6 @@ const Dicom = () => {
       saveAs(blob, fileName)
     }
   }
-  
 
   const columns = [
     {
@@ -987,9 +986,7 @@ const Dicom = () => {
     })
   }
 
-
   // **** Email share option handler **** // 
-
   const [form] = Form.useForm()
 
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false)
