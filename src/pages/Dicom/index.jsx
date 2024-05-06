@@ -299,41 +299,48 @@ const Dicom = () => {
   }
 
   // **** Retervice particular study series and instance count information **** // 
-  const FetchSeriesCountInformation = async (previousValue) => {
-    let requestPayload = {
-      series_list: seriesIdList
+  const FetchSeriesCountInformation = async () => {
+
+    if (seriesIdList?.length !== 0){
+      let requestPayload = {
+        series_list: seriesIdList
+      };
+
+      try {
+        let responseData = await APIHandler(
+          'POST',
+          requestPayload,
+          'studies/v1/series_instance_count'
+        );
+
+        if (responseData && responseData['status'] === true) {
+          setStudyData(prev => {
+            return prev.map(element => {
+              let study_id = element.study?.study_original_id;
+              if (responseData?.data && Object.keys(responseData.data).includes(study_id)) {
+                let newCount = `${responseData.data[study_id].series_count}/${responseData.data[study_id].instance_count}`;
+                if (element.count !== newCount) {
+                  return { ...element, count: newCount };
+                }
+              }
+              return { ...element };
+            });
+          });
+        }
+      } catch (error) {
+          console.error('Error fetching series count information:', error);
+      }
     }
-    let responseData = await APIHandler(
-      'POST',
-      requestPayload,
-      'studies/v1/series_instance_count'
-    )
 
-    if (responseData === false) {
-    } else if (responseData['status'] === true) {
-      // Update Study data
-      setStudyData(prev => {
-        return prev.map(element => {
-          let study_id = element.study?.study_original_id;
+    let interval = setTimeout(() => {
+        FetchSeriesCountInformation();
+    }, 5000);
 
-          if (Object.keys(responseData?.data).includes(study_id)) {
-            if (element?.count !== `${responseData?.data[study_id]?.series_count}/${responseData?.data[study_id]?.instance_count}`){
-              return { ...element, count: `${responseData?.data[study_id]?.series_count}/${responseData?.data[study_id]?.instance_count}` }
-            } else {
-              return {...element}
-            }
-          } else {
-            return { ...element, count: `0/0` }
-          }
+    return(() => {
+      clearInterval(interval) ; 
+    })
+  };
 
-        })
-      });
-        
-      setTimeout(() => {
-        FetchSeriesCountInformation() ;
-      }, 2000);
-    }
-  }
 
   const onShowSizeChange = (current, pageSize) => {
     setLimit(pageSize)
