@@ -66,10 +66,21 @@ const DeletedStudies = () => {
     setPagination(prev => ({ ...prev, page: current, limit: pageSize }))
   }
 
+  const [reloadValue, setReloadValue] = useState(0) ; 
+  const visibilityChangeHandler = async () => {
+    if (document.visibilityState == "visible"){
+      setReloadValue((prev) => prev + 1) ; 
+    }
+  }
+
+  useEffect(() => {
+    document.addEventListener("visibilitychange", visibilityChangeHandler)
+  },[])
+
   useEffect(() => {
     setPagi(Pagination)
     retrieveStudyData(Pagination)
-  }, [Pagination])
+  }, [Pagination, reloadValue])
 
 
   useEffect(() => {

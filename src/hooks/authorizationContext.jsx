@@ -23,11 +23,7 @@ const AuthorizationProvider = ({ children }) => {
           }
         })
         .catch(err =>
-          NotificationMessage(
-            'warning',
-            'Network request failed',
-            err.response.data.message
-          )
+          console.log("User details fetch")
         )
     } else if (!token) {
       navigate('/login')
