@@ -1079,9 +1079,9 @@
 .ant-modal-header {
   padding-top: 10px;
   background-color: #33b3e9 !important;
-  padding-left: 10px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #33b3e9;
+  padding-left: 10px !important;
+  padding-bottom: 10px !important;
+  border-bottom: 1px solid #33b3e9 !important;
 }
 
 .ant-modal-close {
@@ -2813,10 +2813,6 @@ form.ant-form .ant-form-item .ant-form-item-label label{
 //   display: none !important;
 // }
 
-.ant-select-selection-item{
-  margin-top: 10px !important;
-}
-
 .chat-message-notification-layout{
   .chat-notification{
     cursor: pointer;
@@ -3209,4 +3205,8 @@ form.ant-form .ant-form-item .ant-form-item-label label{
   margin-top: 2px;
   margin-left: 5px;
   margin-bottom: auto;
+}
+
+.ant-select-arrow{
+  margin-top: 0px !important;
 }
