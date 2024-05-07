@@ -226,48 +226,74 @@ const ChatMessanger = props => {
     }
   }, [forwardMessage?.chatSearchValue])
 
-  useEffect(() => {
-
-    if (orderId) {
-    
-      const ws = new WebSocket(`${WEBSOCKET_URL}personal/${roomName}/`)
-
-      ws.onopen = () => {
-        console.log('WebSocket connection opened')
-      }
-
-      ws.onmessage = event => {
-        ;(JSON.parse(event.data).id != null ||
-          JSON.parse(event.data).id != undefined) &&
-          localStorage.setItem('roomID', JSON.parse(event.data).id)
-        setRoomID(prev =>
-          JSON.parse(event.data).id != null ||
-          JSON.parse(event.data).id != undefined
-            ? JSON.parse(event.data).id
-            : prev
-        )
-
-        handleAllChatHistory(
-          true,
-          JSON.parse(event.data).id != null ||
-            JSON.parse(event.data).id != undefined
-            ? true
-            : false,
-          JSON.parse(event.data)
-        )
-      }
-
-      ws.onclose = () => {
-        console.log('WebSocket connection closed')
-      }
-
-      setWs(ws)
-
-      return () => {
-        ws.close()
-      }
+  const [connection, setConnection] = useState(null) ; 
+  const UserChatSocketConnection = async () => {
+    if (connection && connection.readyState === WebSocket.OPEN) {
+      console.log('WebSocket connection is already open');
+      return; // Exit the function if the connection is already open
     }
-  }, [orderId])
+    
+    const ws = new WebSocket(`${WEBSOCKET_URL}personal/${roomName}/`)
+    setConnection(ws) ; 
+  
+    ws.onopen = () => {
+      console.log('WebSocket connection opened')
+    }
+  
+    ws.onmessage = event => {
+      ;(JSON.parse(event.data).id != null ||
+        JSON.parse(event.data).id != undefined) &&
+        localStorage.setItem('roomID', JSON.parse(event.data).id)
+      setRoomID(prev =>
+        JSON.parse(event.data).id != null ||
+        JSON.parse(event.data).id != undefined
+          ? JSON.parse(event.data).id
+          : prev
+      )
+  
+      handleAllChatHistory(
+        true,
+        JSON.parse(event.data).id != null ||
+          JSON.parse(event.data).id != undefined
+          ? true
+          : false,
+        JSON.parse(event.data)
+      )
+    }
+  
+    ws.onclose = () => {
+      console.log('WebSocket connection closed')
+    }
+  
+    setWs(ws)
+  
+    return () => {
+      ws.close()
+    }
+
+  }
+  
+  // Handle window visibility event for again connect socket connection  
+  const [reloadValue, setReloadValue] = useState(0);
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        setReloadValue(prev => prev + 1);
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (orderId) {
+      UserChatSocketConnection() ; 
+    }
+  }, [orderId, reloadValue]) ; 
 
 
   function groupMessagesByDate (data) {

@@ -164,9 +164,16 @@ const Dicom = () => {
 
 
   // **** Setup Chat notification socket connection **** // 
+  const [chatConnection, setChatConnection] = useState(null) ; 
   const SetupGenralChatNotification = () => {
 
-    const ws = new WebSocket(`${BASE_URL}genralChat/`)
+    if (chatConnection && chatConnection.readyState === WebSocket.OPEN) {
+      console.log('WebSocket connection is already open');
+      return; // Exit the function if the connection is already open
+    }
+
+    const ws = new WebSocket(`${BASE_URL}genralChat/`); 
+    setChatConnection(ws) ; 
 
     ws.onopen = () => {
       console.log('Chat Websocket connected')
@@ -297,56 +304,6 @@ const Dicom = () => {
     setIsLoading(false)
   }
 
-  // **** Retervice particular study series and instance count information **** // 
-  // const FetchSeriesCountInformation = async () => {
-
-  //   if (seriesIdList?.length !== 0){
-
-  //     // console.log("TOtal passing seriesid ---------->", seriesIdList?.length); 
-  //     let requestPayload = {
-  //       series_list: seriesIdList
-  //     };
-
-  //     try {
-  //       let responseData = await APIHandler(
-  //         'POST',
-  //         requestPayload,
-  //         'studies/v1/series_instance_count'
-  //       );
-
-  //       if (responseData && responseData['status'] === true) {
-  //         setStudyData(prev => {
-  //           return prev.map(element => {
-  //             let study_id = element.study?.study_original_id;
-  //             if (responseData?.data && Object.keys(responseData.data).includes(study_id)) {
-  //               let newCount = `${responseData.data[study_id].series_count}/${responseData.data[study_id].instance_count}`;
-  //               if (element.count !== newCount) {
-  //                 return { ...element, count: newCount };
-  //               }
-  //             }
-  //             return { ...element };
-  //           });
-  //         });
-  //       }
-  //     } catch (error) {
-  //         console.error('Error fetching series count information:', error);
-  //     }
-  //   }
-
-  //   if (window.location.pathname == "/studies"){
-  //     // Clear the previous timeout if it exists
-  //     if (seriesCountTimeOut) {
-  //       clearTimeout(seriesCountTimeOut);
-  //     }
-
-  //     // Set a new timeout to call the function after 3 seconds
-  //     seriesCountTimeOut = setTimeout(() => {
-  //       FetchSeriesCountInformation(); 
-  //     }, 3000);;
-  //   }
-  // };
-
-
   const onShowSizeChange = (current, pageSize) => {
     setLimit(pageSize)
 
@@ -403,29 +360,25 @@ const Dicom = () => {
     }
   
     // Clear previous timeout and establish a new one
-    clearTimeout(seriesCountTimeOut);
     seriesCountTimeOut = setTimeout(async () => {
-      const temp = studyData
-        .map(data => data?.study?.study_original_id)
-        .filter(Boolean);
-      await fetchSeriesCountInformation(temp); // Use await to ensure studyData is updated before the recursive call
+      await fetchSeriesCountInformation(series_list); // Use await to ensure studyData is updated before the recursive call
     }, 3000);
+  }
+  
+  const LoadData = async () => {
+  
+    const temp = studyData
+    .map(data => data?.study?.study_original_id)
+    .filter(Boolean);    
+    await fetchSeriesCountInformation(temp) ; 
   }
   
   
   useEffect(() => {
-    console.log("Update studydata functionality =========>");
-    console.log(studyData?.length);
-
-    const temp = studyData
-    .map(data => data?.study?.study_original_id)
-    .filter(Boolean);
-
-    console.log("Series id list information ------------>");
-    console.log(temp);
-
-    fetchSeriesCountInformation(temp) ; 
-
+    LoadData() ; 
+    return () => {
+      clearTimeout(seriesCountTimeOut);
+    };
   }, [studyData]);
 
   useEffect(() => {
@@ -1012,7 +965,6 @@ const Dicom = () => {
                     handleCellDoubleClick(record);
                     let url = `$dicom:rs --url "http://localhost:8042/dicom-web" -r "patientID=PHP 65360"`
                     let encodedUrl = 'weasis://' + encodeURIComponent(url.substring(9));
-                    console.log(encodedUrl);
                     // window.open("weasis://%24dicom%3Ars+--url+%22https%3A%2F%2Fdemo.orthanc-server.com%2Fdicom-web%22+-r+%22patientID%3Dozp00SjY2xG%22")
                   }}
                 />

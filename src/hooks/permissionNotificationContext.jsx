@@ -11,13 +11,38 @@ const PermissionNotificationProvider = ({ children }) => {
   const user_id = localStorage.getItem("userID");
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const ws = new WebSocket(`${BASE_URL}genralUserPermission/`);
 
+  // Handle window visibility event for again connect socket connection  
+  const [reloadValue, setReloadValue] = useState(0);
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        setReloadValue(prev => prev + 1);
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, []);
+
+  // Setup socket connection
+  const [connection, setConnection] = useState(null) ; 
+  const SetupSocketConnection = async () => {
+    if (connection && connection.readyState === WebSocket.OPEN) {
+      console.log('WebSocket connection is already open');
+      return; // Exit the function if the connection is already open
+    }
+
+    const ws = new WebSocket(`${BASE_URL}genralUserPermission/`);
+    setConnection(ws) ; 
+  
     ws.onopen = () => {
       console.log("WebSocket connection opened");
     };
-
+  
     ws.onmessage = (event) => {
       const eventData = JSON.parse(event.data);
       if (eventData?.payload?.status === "update-role-permission") {
@@ -26,7 +51,7 @@ const PermissionNotificationProvider = ({ children }) => {
             "success",
             "Role Permission was updated by management. So you have to login again"
           );
-
+  
           setTimeout(() => {
             localStorage.clear();
             navigate("/login");
@@ -38,7 +63,7 @@ const PermissionNotificationProvider = ({ children }) => {
             "success",
             "Your Institution access permission updated by management. So you have to login again"
           );
-
+  
           setTimeout(() => {
             localStorage.clear();
             navigate("/login");
@@ -57,7 +82,7 @@ const PermissionNotificationProvider = ({ children }) => {
             "success",
             "Your account is disabled by management. Please contact to management for active account"
           );
-
+  
           setTimeout(() => {
             localStorage.clear();
             navigate("/login");
@@ -69,7 +94,7 @@ const PermissionNotificationProvider = ({ children }) => {
             "success",
             "Your Password is updated by management. So you have to login again"
           );
-
+  
           setTimeout(() => {
             localStorage.clear();
             navigate("/login");
@@ -77,15 +102,20 @@ const PermissionNotificationProvider = ({ children }) => {
         }
       }
     };
-
+  
     ws.onclose = () => {
       console.log("WebSocket connection closed");
     };
-
+  
     return () => {
       ws.close();
     };
-  }, [role_id]);
+
+  }
+
+  useEffect(() => {
+    SetupSocketConnection() ; 
+  }, [role_id, reloadValue]);
 
   return (
     <PermissionNotificationContext.Provider value={{ notification }}>

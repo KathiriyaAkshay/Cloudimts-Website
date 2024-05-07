@@ -10,9 +10,16 @@ const StudyNotificationProvider = ({ children }) => {
   const [notification, setNotification] = useState("");
   const { studyData, setStudyData } = useContext(StudyDataContext);
   const {setSeriesIdList, setTotalPages, seriesIdList} = useContext(StudyIdContext) ; 
+  const [connection, setConnection] = useState(null) ; 
 
   const SetupSocketConnection = () => {
+    if (connection && connection.readyState === WebSocket.OPEN) {
+      console.log('WebSocket connection is already open');
+      return; // Exit the function if the connection is already open
+    }
+
     const ws = new WebSocket(`${BASE_URL}studies/`);
+    setConnection(ws) ; 
     
     ws.onopen = () => {
       console.log("WebSocket connection opened");
@@ -305,36 +312,55 @@ const StudyNotificationProvider = ({ children }) => {
           } 
         } else if (eventData.payload.status === "NewStudy"){ 
 
-          console.log("New study information fetch ------------>");
+          // console.log("New study information fetch ------------>");
 
-          // Handle newstudies information 
-          let InstitutionId = eventData?.payload?.data?.institution?.id ;   
-          let AllPermissionId = JSON.parse(localStorage.getItem("all_permission_id")) ; 
+          // // Handle newstudies information 
+          // let InstitutionId = eventData?.payload?.data?.institution?.id ;   
+          // let AllPermissionId = JSON.parse(localStorage.getItem("all_permission_id")) ; 
           
-          if (AllPermissionId.includes(InstitutionId)){
-            console.log("Match institution id ---------------->");
-            setStudyData((prev) => [{...eventData.payload.data, 
-              name: eventData.payload.data.study.patient_name,
-              institution: eventData.payload.data.institution.name, 
-              patient_id: eventData.payload.data.study.patient_id, 
-              study_id: eventData.payload.data.study.id} , 
-            ...prev]) ; 
+          // if (AllPermissionId.includes(InstitutionId)){
+          //   console.log("Match institution id ---------------->");
+          //   setStudyData((prev) => [
+          //     {...eventData.payload.data, 
+          //     name: eventData.payload.data.study.patient_name,
+          //     institution: eventData.payload.data.institution.name, 
+          //     patient_id: eventData.payload.data.study.patient_id, 
+          //     study_id: eventData.payload.data.study.id} , 
+          //   ...prev]) ; 
 
+          //   // Update SeriesID
+          //   setTotalPages((prev) => prev + 1) ; 
+
+          //   console.log("Previous study id list information ----------->");
+          //   console.log(seriesIdList);
+
+          //   const temp = studyData
+          //   .map(data => data?.study?.study_original_id)
+          //   .filter(Boolean);
+
+          //   const uniqueItem = [...new Set(temp)] ; 
+          //   console.log("Total updated studyid information ------------>");
+          //   console.log(uniqueItem);
+          //   setSeriesIdList([...uniqueItem]) ; 
+
+          // }
+
+          let newStudy = {
+            ...eventData.payload.data,
+            name: eventData.payload.data.study.patient_name,
+            institution: eventData.payload.data.institution.name,
+            patient_id: eventData.payload.data.study.patient_id,
+            study_id: eventData.payload.data.study.id,
+          };
+        
+          // Check if the new study already exists in studyData
+          if (!studyData.some((data) => data.study_id === newStudy.study_id)) {
+            setStudyData((prev) => [newStudy, ...prev]);
+            setTotalPages((prev) => prev + 1);
+        
             // Update SeriesID
-            setTotalPages((prev) => prev + 1) ; 
-
-            console.log("Previous study id list information ----------->");
-            console.log(seriesIdList);
-
-            const temp = studyData
-            .map(data => data?.study?.study_original_id)
-            .filter(Boolean);
-
-            const uniqueItem = [...new Set(temp)] ; 
-            console.log("Total updated studyid information ------------>");
-            console.log(uniqueItem);
-            setSeriesIdList([...uniqueItem]) ; 
-
+            const uniqueItem = [...new Set([...seriesIdList, newStudy.study.study_original_id])];
+            setSeriesIdList(uniqueItem);
           }
         }
         
