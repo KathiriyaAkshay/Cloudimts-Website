@@ -381,9 +381,7 @@ const Dicom = () => {
   }, [Pagination, isFilterSelected, studyDataPayload, systemFilterPayload, reloadValue]) ; 
 
   useEffect(() => {
-    // FetchSeriesCountInformation(null);
-    // console.log("Series id usecontext update ------->");
-  
+    FetchSeriesCountInformation(null);
     return () => {
       clearInterval(seriesCountTimeOut) ; 
     }
