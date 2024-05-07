@@ -372,14 +372,13 @@ const Dicom = () => {
     const temp = studyData
     .map(data => data?.study?.study_original_id)
     .filter(Boolean);    
-    console.log(temp);
     await fetchSeriesCountInformation(temp) ; 
   }
   
   
   useEffect(() => {
+    clearTimeout(seriesCountTimeOut) ; 
     LoadData() ; 
-    console.log("Run this function");
     return () => {
       clearTimeout(seriesCountTimeOut);
     };
