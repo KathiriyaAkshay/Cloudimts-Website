@@ -361,7 +361,9 @@ const Dicom = () => {
   
     // Clear previous timeout and establish a new one
     seriesCountTimeOut = setTimeout(async () => {
-      await fetchSeriesCountInformation(series_list); // Use await to ensure studyData is updated before the recursive call
+      if (window.location.pathname == "/studies"){
+        await fetchSeriesCountInformation(series_list); // Use await to ensure studyData is updated before the recursive call
+      }
     }, 3000);
   }
   
@@ -370,12 +372,14 @@ const Dicom = () => {
     const temp = studyData
     .map(data => data?.study?.study_original_id)
     .filter(Boolean);    
+    console.log(temp);
     await fetchSeriesCountInformation(temp) ; 
   }
   
   
   useEffect(() => {
     LoadData() ; 
+    console.log("Run this function");
     return () => {
       clearTimeout(seriesCountTimeOut);
     };
