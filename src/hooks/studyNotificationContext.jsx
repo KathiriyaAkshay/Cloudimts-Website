@@ -9,10 +9,9 @@ export const StudyNotificationContext = createContext();
 const StudyNotificationProvider = ({ children }) => {
   const [notification, setNotification] = useState("");
   const { studyData, setStudyData } = useContext(StudyDataContext);
-  const {setSeriesIdList, setTotalPages} = useContext(StudyIdContext) ; 
+  const {setSeriesIdList, setTotalPages, seriesIdList} = useContext(StudyIdContext) ; 
 
-  useEffect(() => {
-
+  const SetupSocketConnection = () => {
     const ws = new WebSocket(`${BASE_URL}studies/`);
     
     ws.onopen = () => {
@@ -73,14 +72,15 @@ const StudyNotificationProvider = ({ children }) => {
         } else if (eventData.payload.status === "Delete") {
 
           setStudyData(prevStudyData => {
-            const updatedData = prevStudyData.filter(
-                data => data.id !== eventData.payload.data.id
-            );
-            return updatedData;
-        
+            const studyToRemove = prevStudyData.find(data => data.id === eventData.payload.data.id);
+            if (studyToRemove) {
+              // If the study is found, remove it from the array
+              const updatedData = prevStudyData.filter(data => data.id !== eventData.payload.data.id);
+              setTotalPages(prev => prev - 1); // Decrement totalPages
+              return updatedData;
+            }
+            return prevStudyData; // If the study is not found, return the original array
           });
-
-          setTotalPages((prev) => prev - 1) ;
 
         
         } else if (eventData.payload.status === "Assigned") {
@@ -305,25 +305,34 @@ const StudyNotificationProvider = ({ children }) => {
           } 
         } else if (eventData.payload.status === "NewStudy"){ 
 
+          console.log("New study information fetch ------------>");
+
           // Handle newstudies information 
           let InstitutionId = eventData?.payload?.data?.institution?.id ;   
           let AllPermissionId = JSON.parse(localStorage.getItem("all_permission_id")) ; 
           
           if (AllPermissionId.includes(InstitutionId)){
+            console.log("Match institution id ---------------->");
             setStudyData((prev) => [{...eventData.payload.data, 
               name: eventData.payload.data.study.patient_name,
               institution: eventData.payload.data.institution.name, 
               patient_id: eventData.payload.data.study.patient_id, 
-              study_id: eventData.payload.data.study.id} , ...prev]) ; 
+              study_id: eventData.payload.data.study.id} , 
+            ...prev]) ; 
 
             // Update SeriesID
             setTotalPages((prev) => prev + 1) ; 
 
+            console.log("Previous study id list information ----------->");
+            console.log(seriesIdList);
+
             const temp = studyData
             .map(data => data?.study?.study_original_id)
-            .filter(Boolean); temp ; 
+            .filter(Boolean);
 
             const uniqueItem = [...new Set(temp)] ; 
+            console.log("Total updated studyid information ------------>");
+            console.log(uniqueItem);
             setSeriesIdList([...uniqueItem]) ; 
 
           }
@@ -338,14 +347,32 @@ const StudyNotificationProvider = ({ children }) => {
     // Socket Connection closed handling 
     
     ws.onclose = () => {
-      console.log("WebSocket connection closed");
+      console.log("Studies socket connection closed");
     };
 
     return () => {
       ws.close();
     };
+  }
 
-  }, [studyData]);
+  const [reloadValue, setReloadValue] = useState(0);
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        setReloadValue(prev => prev + 1);
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, []);
+
+  useEffect(() => {
+    SetupSocketConnection() ; 
+  }, [reloadValue]);
 
   return (
     <StudyNotificationContext.Provider value={{ notification }}>

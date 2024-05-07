@@ -301,6 +301,8 @@ const Dicom = () => {
   const FetchSeriesCountInformation = async () => {
 
     if (seriesIdList?.length !== 0){
+
+      // console.log("TOtal passing seriesid ---------->", seriesIdList?.length); 
       let requestPayload = {
         series_list: seriesIdList
       };
@@ -332,9 +334,15 @@ const Dicom = () => {
     }
 
     if (window.location.pathname == "/studies"){
+      // Clear the previous timeout if it exists
+      if (seriesCountTimeOut) {
+        clearTimeout(seriesCountTimeOut);
+      }
+
+      // Set a new timeout to call the function after 3 seconds
       seriesCountTimeOut = setTimeout(() => {
-        FetchSeriesCountInformation();
-      }, 3000);
+        FetchSeriesCountInformation(); 
+      }, 3000);;
     }
   };
 
@@ -373,7 +381,9 @@ const Dicom = () => {
   }, [Pagination, isFilterSelected, studyDataPayload, systemFilterPayload, reloadValue]) ; 
 
   useEffect(() => {
-    FetchSeriesCountInformation(null);
+    // FetchSeriesCountInformation(null);
+    // console.log("Series id usecontext update ------->");
+  
     return () => {
       clearInterval(seriesCountTimeOut) ; 
     }
