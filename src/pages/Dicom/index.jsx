@@ -164,9 +164,16 @@ const Dicom = () => {
 
 
   // **** Setup Chat notification socket connection **** // 
+  const [chatConnection, setChatConnection] = useState(null) ; 
   const SetupGenralChatNotification = () => {
 
-    const ws = new WebSocket(`${BASE_URL}genralChat/`)
+    if (chatConnection && chatConnection.readyState === WebSocket.OPEN) {
+      console.log('WebSocket connection is already open');
+      return; // Exit the function if the connection is already open
+    }
+
+    const ws = new WebSocket(`${BASE_URL}genralChat/`); 
+    setChatConnection(ws) ; 
 
     ws.onopen = () => {
       console.log('Chat Websocket connected')
@@ -382,6 +389,7 @@ const Dicom = () => {
 
   async function fetchSeriesCountInformation(series_list) {
     if (series_list?.length !== 0){
+      console.log("Call function", series_list?.length);
       const requestPayload = {
         series_list: series_list,
       };
@@ -403,30 +411,36 @@ const Dicom = () => {
     }
   
     // Clear previous timeout and establish a new one
-    clearTimeout(seriesCountTimeOut);
+    // clearTimeout(seriesCountTimeOut) ; 
     seriesCountTimeOut = setTimeout(async () => {
-      const temp = studyData
-        .map(data => data?.study?.study_original_id)
-        .filter(Boolean);
-      await fetchSeriesCountInformation(temp); // Use await to ensure studyData is updated before the recursive call
+      // const temp = studyData
+      //   .map(data => data?.study?.study_original_id)
+      //   .filter(Boolean);
+      await fetchSeriesCountInformation(series_list); // Use await to ensure studyData is updated before the recursive call
     }, 3000);
+  }
+  
+  const LoadData = async () => {
+    
+    const temp = studyData
+    .map(data => data?.study?.study_original_id)
+    .filter(Boolean);
+    
+    console.log("Series id list information ------------>");
+    console.log(temp?.length);
+    
+    await fetchSeriesCountInformation(temp) ; 
+    clearTimeout(seriesCountTimeOut);
   }
   
   
   useEffect(() => {
     console.log("Update studydata functionality =========>");
     console.log(studyData?.length);
+    console.log(seriesIdList);
 
-    const temp = studyData
-    .map(data => data?.study?.study_original_id)
-    .filter(Boolean);
-
-    console.log("Series id list information ------------>");
-    console.log(temp);
-
-    fetchSeriesCountInformation(temp) ; 
-
-  }, [studyData]);
+    // LoadData() ; 
+  }, [seriesIdList]);
 
   useEffect(() => {
     if (!isLoading && studyData.length !== 0 && notificationValue === 0) {
