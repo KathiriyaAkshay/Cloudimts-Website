@@ -6,7 +6,8 @@ const StudyIdProvider = ({ children }) => {
   const [studyIdArray, setStudyIdArray] = useState([]);
   const [studyReferenceIdArray, setStudyReferenceIdArray] = useState([]);
   const [seriesIdList, setSeriesIdList] = useState([]);
-  const [totalPages, setTotalPages] = useState(0)
+  const [totalPages, setTotalPages] = useState(0) ; 
+  const [studyCountInforamtion, setStudyCountInformation] = useState({}) ; 
 
   return (
     <StudyIdContext.Provider
@@ -17,7 +18,9 @@ const StudyIdProvider = ({ children }) => {
         seriesIdList, 
         setSeriesIdList, 
         totalPages, 
-        setTotalPages
+        setTotalPages, 
+        studyCountInforamtion, 
+        setStudyCountInformation
       }}>
       {children}
     </StudyIdContext.Provider>
