@@ -339,6 +339,7 @@ const Dicom = () => {
   }, [Pagination, isFilterSelected, studyDataPayload, systemFilterPayload, reloadValue]) ; 
 
   async function fetchSeriesCountInformation(series_list) {
+    let remove_series_id = [] ; 
     if (series_list?.length !== 0){
       const requestPayload = {
         series_list: series_list,
@@ -354,6 +355,7 @@ const Dicom = () => {
         if (responseData?.status) {
           if (Object.keys(responseData?.data).length != 0){
             setStudyCountInformation({...responseData?.data}); 
+            remove_series_id = responseData?.remove_id ; 
           }
         }
       } catch (error) {
@@ -363,15 +365,32 @@ const Dicom = () => {
     }
   
     // Clear previous timeout and establish a new one
+    clearTimeout(seriesCountTimeOut) ; 
     seriesCountTimeOut = setTimeout(async () => {
       if (window.location.pathname == "/studies"){
-        await fetchSeriesCountInformation(series_list); // Use await to ensure studyData is updated before the recursive call
+        const temp = [] ; 
+        studyData.map((data) => {
+          if (!remove_series_id.includes(data?.id)){
+            temp.push({
+              "series_id": data?.study?.study_original_id, 
+              "id": data?.id, 
+              "manual_series": data?.manual_upload
+            })
+          }
+        });
+        await fetchSeriesCountInformation(temp); // Use await to ensure studyData is updated before the recursive call
       }
     }, 3000);
   }
   
   const LoadData = async () => {
   
+  }
+  
+  
+  useEffect(() => {
+    clearTimeout(seriesCountTimeOut) ; 
+    LoadData() ; 
     const temp = [] ; 
     studyData.map((data) => {
       temp.push({
@@ -379,14 +398,8 @@ const Dicom = () => {
         "id": data?.id, 
         "manual_series": data?.manual_upload
       })
-    })
-    await fetchSeriesCountInformation(temp) ; 
-  }
-  
-  
-  useEffect(() => {
-    clearTimeout(seriesCountTimeOut) ; 
-    LoadData() ; 
+    }); 
+    seriesCountTimeOut = setTimeout(fetchSeriesCountInformation(temp), 2000) ; 
     return () => {
       clearTimeout(seriesCountTimeOut);
     };
