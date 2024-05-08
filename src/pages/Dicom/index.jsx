@@ -352,7 +352,9 @@ const Dicom = () => {
         );
   
         if (responseData?.status) {
-          setStudyCountInformation({...responseData?.data}); 
+          if (Object.keys(responseData?.data).length != 0){
+            setStudyCountInformation({...responseData?.data}); 
+          }
         }
       } catch (error) {
         console.error('Error fetching series count information:', error);
