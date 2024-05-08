@@ -338,9 +338,27 @@ const Dicom = () => {
     }
   }, [Pagination, isFilterSelected, studyDataPayload, systemFilterPayload, reloadValue]) ; 
 
+
+  const [series_remove_id, set_series_remove_id] = useState([]) ; 
+  useEffect(() => {
+    clearTimeout(seriesCountTimeOut) ;
+    let temp = [] ;  
+    studyData.map((data) => {
+      if (!series_remove_id.includes(data?.id)){
+        temp.push({
+          "series_id": data?.study?.study_original_id, 
+          "id": data?.id, 
+          "manual_series": data?.manual_upload
+        })
+      }
+    });
+    fetchSeriesCountInformation(temp);
+  }, [series_remove_id]) ; 
+
   async function fetchSeriesCountInformation(series_list) {
-    let remove_series_id = [] ; 
     if (series_list?.length !== 0){
+      let remove_series_id = [...series_remove_id]  ; 
+
       const requestPayload = {
         series_list: series_list,
       };
@@ -354,43 +372,42 @@ const Dicom = () => {
   
         if (responseData?.status) {
           if (Object.keys(responseData?.data).length != 0){
-            setStudyCountInformation({...responseData?.data}); 
+            setStudyCountInformation({...studyCountInforamtion, ...responseData?.data}); 
             remove_series_id = responseData?.remove_id ; 
+            set_series_remove_id([...series_remove_id, ...remove_series_id]) ; 
           }
         }
       } catch (error) {
         console.error('Error fetching series count information:', error);
       } finally {
       }
+
+      clearTimeout(seriesCountTimeOut) ; 
+      console.log("Iteration remove series id list ============>");
+      console.log(remove_series_id);
+      seriesCountTimeOut = setTimeout(async () => {
+        if (window.location.pathname == "/studies"){
+          const temp = [] ; 
+  
+          studyData.map((data) => {
+            if (!remove_series_id.includes(data?.id)){
+              temp.push({
+                "series_id": data?.study?.study_original_id, 
+                "id": data?.id, 
+                "manual_series": data?.manual_upload
+              })
+            }
+          });
+          await fetchSeriesCountInformation(temp); // Use await to ensure studyData is updated before the recursive call
+        }
+      // Clear previous timeout and establish a new one
+      }, 3000);
     }
   
-    // Clear previous timeout and establish a new one
-    clearTimeout(seriesCountTimeOut) ; 
-    seriesCountTimeOut = setTimeout(async () => {
-      if (window.location.pathname == "/studies"){
-        const temp = [] ; 
-        studyData.map((data) => {
-          if (!remove_series_id.includes(data?.id)){
-            temp.push({
-              "series_id": data?.study?.study_original_id, 
-              "id": data?.id, 
-              "manual_series": data?.manual_upload
-            })
-          }
-        });
-        await fetchSeriesCountInformation(temp); // Use await to ensure studyData is updated before the recursive call
-      }
-    }, 3000);
   }
-  
-  const LoadData = async () => {
-  
-  }
-  
   
   useEffect(() => {
     clearTimeout(seriesCountTimeOut) ; 
-    LoadData() ; 
     const temp = [] ; 
     studyData.map((data) => {
       temp.push({
