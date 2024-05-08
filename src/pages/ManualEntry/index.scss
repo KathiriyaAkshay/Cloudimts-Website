@@ -1,0 +1,35 @@
+.manul-entry-form{
+    .ant-input{
+        background-color: white !important;
+        min-height: 44px !important;
+    }
+
+    .ant-select{
+        background-color: white !important;
+    }
+
+    label{
+        
+        margin-top: auto !important;
+        margin-bottom: auto !important;
+    }
+    
+    .ant-form-item-required{
+        margin-top: auto !important;
+        margin-bottom: auto !important;
+    }
+
+    .ant-row {
+        margin-top: 0.60rem !important;
+    }
+}
+
+.add-image-series{
+    .ant-input{
+        padding-top: 0.7rem;
+        padding-bottom: 0.7rem;
+    }
+    .ant-row {
+        margin-top: 0.60rem !important;
+    }
+}

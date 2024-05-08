@@ -66,6 +66,7 @@ import StudyReportIcon from "../../assets/images/study-report.png"
 import { RoomDataContext } from '../../hooks/roomDataContext'; 
 import ReUploadStudyModel from '../../components/Studies/reloadUpload'; 
 import ReUploadIcon from "../../assets/images/reupload.png" ; 
+import ManulImageDrawer from './manulImageDrawer'
 
 const BASE_URL = import.meta.env.VITE_APP_SOCKET_BASE_URL
 let timeOut = null ; 
@@ -369,9 +370,14 @@ const Dicom = () => {
   
   const LoadData = async () => {
   
-    const temp = studyData
-    .map(data => data?.study?.study_original_id)
-    .filter(Boolean);    
+    const temp = [] ; 
+    studyData.map((data) => {
+      temp.push({
+        "series_id": data?.study?.study_original_id, 
+        "id": data?.id, 
+        "manual_series": data?.manual_upload
+      })
+    })
     await fetchSeriesCountInformation(temp) ; 
   }
   
@@ -880,8 +886,13 @@ const Dicom = () => {
                   className='action-icon'
                   style={{ width: "max-content" }}
                   onClick={() => {
-                    setStudyUId(record.study?.study_original_id)
-                    ImageDrawerHandler(record)
+                    setStudyUId(record.study?.study_original_id); 
+
+                    if (record?.manual_upload){
+                      SeriesImagesFetchHandler(record?.id)
+                    } else {
+                      ImageDrawerHandler(record)
+                    }
                   }}
                 />
               </Tooltip>
@@ -1055,6 +1066,21 @@ const Dicom = () => {
         )
       )
 
+  }
+
+  // *** Get series images inforamtion **** // 
+  const [manulDrawerOpen, setManulDrawerOpen] = useState(false) ; 
+  const SeriesImagesFetchHandler = async (id) => {
+    let responseData = await APIHandler("POST", {id:id}, "studies/v1/fetch_series_image") ; 
+    if (responseData === false){
+      NotificationMessage("warning", "Network request failed") ; 
+    } else if (responseData?.status){
+      setStudyImagesList([...responseData?.data]);
+      setManulDrawerOpen(true);
+    } else {
+      NotificationMessage("warning", responseData?.message) ; 
+    }
+    
   }
 
   // **** Retervie institution list for quick filter **** // 
@@ -1626,6 +1652,14 @@ const Dicom = () => {
       <ImageDrawer
         isDrawerOpen={isImageModalOpen}
         setImageDrawerOpen={setImageDrawerOpen}
+        imageList={studyImagesList}
+        studyUID={studyUID}
+      />
+
+      {/* ==== Manual study image drawer information ====  */}
+      <ManulImageDrawer
+        isDrawerOpen={manulDrawerOpen}
+        setImageDrawerOpen={setManulDrawerOpen}
         imageList={studyImagesList}
         studyUID={studyUID}
       />
