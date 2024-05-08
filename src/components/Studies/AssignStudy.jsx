@@ -34,7 +34,6 @@ const AssignStudy = ({
 
   const [modalData, setModalData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [options, setOptions] = useState([]);
   const [institutionRadiologist, setInstitutionRadiologist] = useState([]);
   const [multipleImageFile, setMultipleImageFile] = useState([]);
   const [value, setValues] = useState([]);

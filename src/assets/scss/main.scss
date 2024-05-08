@@ -3218,10 +3218,13 @@ form.ant-form .ant-form-item .ant-form-item-label label{
   overflow-x: auto;
   justify-content: center;
   align-items: center;
+  overflow-y: hidden;
 }
 
 .manual-entry{
-  width: 70%;
+  width: 85%;
+  height: calc(100vh - 110px);
+  overflow-y: auto;
   border: 2px dotted gray;
   border-radius: 1rem;
 }

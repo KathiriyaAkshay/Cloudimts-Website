@@ -1,12 +1,57 @@
-import React, { useState } from 'react'
-import { Button, Checkbox, Form, Input, Col, Row, Space, Table, Tag, Modal, Upload } from 'antd';
+import React, { useEffect, useState } from 'react'
+import { Button, Checkbox, Form, Input, Col, Row, Space, Table, Spin, Modal, Select } from 'antd';
 import { DeleteOutlined, EditOutlined, EyeOutlined, UploadOutlined } from '@ant-design/icons';
 import UploadImage from '../../components/UploadImage';
+import "./index.scss" ; 
+import APIHandler from '../../apis/apiHandler';
+import { render } from 'react-dom';
+import NotificationMessage from '../../components/NotificationMessage';
+import { FaPage4 } from 'react-icons/fa';
+import { uploadImage } from '../../apis/studiesApi';
+import { useNavigate } from 'react-router-dom';
+
 
 const ManualEntry = () => {
+    const navigation = useNavigate() ; 
     const [multipleImageFile, setMultipleImageFile] = useState([]);
     const [value, setValues] = useState([]);
     const [imageFile, setImageFile] = useState(null);
+    const [userInformation, setUserInformation] = useState({}) ;
+    const [uploadingStudy, setUploadingStudy] = useState(false) ; 
+
+    // Manual entry related form 
+    const [form] = Form.useForm();
+    const [patientSeriesForm] = Form.useForm() ; 
+
+    const LoadUserInformation = async () => {
+        let responseData = await APIHandler("POST", {}, "owner/v1/user_details_fetch") ;
+        if (responseData?.status){
+            setUserInformation({...responseData?.data}) ; 
+            form.setFieldsValue({
+                institution_name: responseData?.data?.institution_name
+            });
+        }
+    }
+
+    function generateRandomString() {
+        function generateSegment() {
+            return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+        }
+    
+        return `${generateSegment()}${generateSegment()}-${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}-${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}-${generateSegment()}${generateSegment()}-${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}d`;
+    }
+
+    function generateRandomIdentifier() {
+        function generateSegment() {
+            return Math.floor(Math.random() * 1000000000000000000000).toString();
+        }
+    
+        return `1.${generateSegment()}.${generateSegment()}.${generateSegment()}.${generateSegment()}.${generateSegment()}.${generateSegment()}.${generateSegment()}.${generateSegment()}.${generateSegment()}`;
+    }
+
+    useEffect(() => {
+        LoadUserInformation() ; 
+    }, []) ; 
 
     const onFinish = (values) => {
         console.log('Success:', values);
@@ -27,11 +72,44 @@ const ManualEntry = () => {
     };
 
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const DeleteSeriesOptionHandler = async (id) => {
+        setPatientSeriesData((prev) =>
+            prev?.map((element) => {
+                if (element?.id !== id) {
+                    return { ...element };
+                } else {
+                    return null; // Return null for elements you want to remove
+                }
+            }).filter(Boolean) // Filter out null or undefined values
+        );
+    }
+
+    const [editId, setEditId] = useState(null) ; 
+    const EditSeriesOptionHandler = async (id) => {
+        const element = patientSeriesData?.find((element) => element?.id === id);
+        console.log(element);
+        patientSeriesForm.resetFields() ; 
+        patientSeriesForm.setFieldsValue({
+            series_description: element?.study_description, 
+            modality: element?.modality
+        }); 
+        setValues([...element?.study_images]) ; 
+        setEditId(id) ; 
+        setIsModalOpen(true) ; 
+    }
 
     const columns = [
         {
+            title: 'Id',
+            dataIndex: 'id',
+            key: 'id',
+            render: (text, record, index) => (
+                `${index + 1}`
+            )
+        },
+        {
             title: 'Session Description',
-            dataIndex: 'session_desc',
+            dataIndex: 'study_description',
             key: 'session_desc',
         },
         {
@@ -44,241 +122,366 @@ const ManualEntry = () => {
             key: 'action',
             render: (_, record) => (
                 <Space size="middle">
-                    <Button><EditOutlined /></Button>
-                    <Button><DeleteOutlined /></Button>
+
+                    <Button onClick={() => {EditSeriesOptionHandler(record?.id)}}>
+                        <EditOutlined />
+                    </Button>
+                    
+                    <Button onClick={() => {DeleteSeriesOptionHandler(record?.id)}}>
+                        <DeleteOutlined/>
+                    </Button>
                 </Space>
             ),
         },
     ];
-    const data = [
-        {
-            key: '1',
-            session_desc: "here",
-            modality: "her1"
-        },
-    ];
+
+    const [patientSeriesData, setPatientSeriesData] = useState([]) ; 
+    const [totalInsertSeies, setTotalInsertSeries] = useState(0) ; 
+
+    const AddSeriesOptionHandler = async (values) => {
+        if (editId == null){
+            setPatientSeriesData([...patientSeriesData, {
+                "study_description": values?.series_description, 
+                "modality": values?.modality, 
+                "study_images": value, 
+                "id": totalInsertSeies, 
+                "series_id": generateRandomString()
+            }]); 
+            setTotalInsertSeries((prev) => prev + 1) ; 
+        }   else {
+            setPatientSeriesData((prev) =>
+                prev?.map((element) => {
+                    if (element?.id === editId) {
+                        return { ...element, "study_description": values?.series_description, "modality": values?.modality,
+                            "study_images": value  
+                        };
+                    } else {
+                        return { ...element };
+                    }
+                })
+            );
+        }
+        setIsModalOpen(false) ; 
+        setEditId(null) ; 
+    }; 
+
+    const UploadStudyOptionHandler = async (values) => {
+        setUploadingStudy(true) ; 
+
+        let studyId = generateRandomString(); 
+        let studyUId = generateRandomIdentifier() ; 
+        let totalSeries = [] ; 
+        patientSeriesData?.map((element) => {
+            totalSeries.push(element?.series_id)
+        }) ; 
+
+        let study_metadata = {
+            "ID": studyId,
+            "IsStable": true,
+            "LastUpdate": "20230923T090010",
+            "MainDicomTags": {
+                "AccessionNumber": values,
+                "StudyInstanceUID": studyUId
+            },
+            "ParentPatient": studyId,
+            "PatientMainDicomTags": {
+                "PatientID": values?.patient_id,
+                "PatientName": values?.patient_name
+            },
+            "Series": totalSeries,
+            "Type": "Study"
+        } ; 
+
+        if (patientSeriesData?.length == 0){
+            NotificationMessage("warning", "Please, Add at least one series") ; 
+     
+        }   else {
+            
+            patientSeriesData?.map(async (element) => {
+                const currentDate = new Date();
+                const formattedDate = currentDate.toISOString().replace(/T/, ' ').replace(/\..+/, '');
+            
+                let series_metdata =  {
+                    "ExpectedNumberOfInstances": null,
+                    "ID": element?.series_id,
+                    "Instances": [],
+                    "IsStable": true,
+                    "LastUpdate": formattedDate, // Update LastUpdate field with formattedDate
+                    "MainDicomTags": {
+                        "ImageOrientationPatient": "-0.04540329\\0.99896874\\0\\-0\\-0\\-1",
+                        "Modality": element?.modality,
+                        "SeriesDescription": "FLAIR",
+                        "SeriesInstanceUID": "1.2.826.0.1.3680043.8.498.11080017939623954520316925248840896201",
+                        "SeriesNumber": "401", 
+                        "SeriesInformation": element?.study_description
+                    },
+                    "ParentStudy": study_metadata?.ID,
+                    "Status": "Unknown",
+                    "Type": "Series"
+                }; 
+            
+                // Upload Series 
+                let uploadSerisRequestPayload = {
+                    "study_metadata": study_metadata, 
+                    "series_metadata": series_metdata, 
+                    "upload_start_time" : formattedDate, 
+                    "manual_upload": true
+                }
+                let uploadSeriesResponse = await APIHandler("POST", uploadSerisRequestPayload, "studies/v1/insert_new_studies");
+                let dbSeriesId = uploadSeriesResponse?.series ; 
+
+                if (uploadSeriesResponse?.status){
+                    element?.study_images?.map(async (series_images) => {
+                        let uploadImageResponse = await uploadImage({image: series_images?.url}) ;
+                        
+                        // Store series image
+                        let storeSeriesImage = await APIHandler("POST", {
+                            "series_id": dbSeriesId, 
+                            "image": uploadImageResponse?.data?.image_url
+                        }, "studies/v1/insert_series_image")
+                    })
+                }
+
+                setUploadingStudy(false)
+                NotificationMessage("success", "Upload Series successfully") ;
+                navigation("/studies") ; 
+            });
+            
+        }
+
+    }
+
     return (
         <div className='manual-entry-wrapper'>
 
             <div className='manual-entry p-2'>
-                <div className='w-100 text-center header'>Manual Entry</div>
-                <Form
-                    name="basic"
-                    labelCol={{
-                        span: 8,
-                    }}
-                    wrapperCol={{
-                        span: 16,
-                    }}
-                    style={{
-                        maxWidth: "100%",
-                    }}
-                    initialValues={{
-                        remember: true,
-                    }}
-                    onFinish={onFinish}
-                    onFinishFailed={onFinishFailed}
-                    autoComplete="off"
-                >
-                    <Row className='w-100'>
-                        <Col span={12}>
-                            <Form.Item
-                                label="Patient's Name"
-                                name="patient_name"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: "Please enter Patient's name!",
-                                    },
-                                ]}
-                            >
-                                <Input />
-                            </Form.Item>
-
-                            <Form.Item
-                                label="Patient's Id   "
-                                name="patient_id"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: "Please enter Patient's id",
-                                    },
-                                ]}
-                            >
-                                <Input />
-                            </Form.Item>
-
-
-                            <Form.Item
-                                label="Description"
-                                name="description"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: "Please enter description",
-                                    },
-                                ]}
-                            >
-                                <Input />
-                            </Form.Item>
-
-
-                            <Form.Item
-                                label="Age"
-                                name="age"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: "Please enter Patient's age",
-                                    },
-                                ]}
-                            >
-                                <Input />
-                            </Form.Item>
-
-                            <Form.Item
-                                label="Modality"
-                                name="modality"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: "Please enter Patient's age",
-                                    },
-                                ]}
-                            >
-                                <Input />
-                            </Form.Item>
-                        </Col>
-
-                        <Col span={12}>
-                            <Form.Item
-                                label="Institution Name"
-                                name="institution_name"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: "Please enter Institution name!",
-                                    },
-                                ]}
-                            >
-                                <Input />
-                            </Form.Item>
-
-                            <Form.Item
-                                label="Accession Number"
-                                name="accession_number"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: "Please enter accession number",
-                                    },
-                                ]}
-                            >
-                                <Input />
-                            </Form.Item>
-
-
-                            <Form.Item
-                                label="Referring Physician"
-                                name="referring_physician"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: "Please enter Referring Physician",
-                                    },
-                                ]}
-                            >
-                                <Input />
-                            </Form.Item>
-
-
-                            <Form.Item
-                                label="Gender"
-                                name="gender"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: "Please enter Patient's gender",
-                                    },
-                                ]}
-                            >
-                                <Input />
-                            </Form.Item>
-
-                            <Form.Item
-                                label="images"
-                                name="images"
-                            >
-                                <Button onClick={() => { setIsModalOpen(true) }}>Add Image Series</Button>
-                            </Form.Item>
-                        </Col>
-                    </Row>
-
-
-                    <Form.Item
-                        wrapperCol={{
-                            offset: 20,
-                            // span: 20,
+                <Spin spinning = {uploadingStudy}>
+                    <div className='w-100 text-center header'>Manual Entry</div>
+                    <Form
+                        form={form}
+                        name="basic"
+                        labelCol={{
+                            span: 8,
                         }}
+                        wrapperCol={{
+                            span: 16,
+                        }}
+                        style={{
+                            maxWidth: "100%",
+                        }}
+                        onFinish={UploadStudyOptionHandler} 
+                        onFinishFailed={onFinishFailed}
+                        autoComplete="off"
+                        className='manul-entry-form'
+                        
                     >
-                        <Button type="primary" htmlType="submit">
-                            Submit
-                        </Button>
-                    </Form.Item>
-                </Form>
+                        <Row className='w-100'>
+                            <Col span={12}>
+                                <Form.Item
+                                    label="Patient's Name"
+                                    name="patient_name"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: "Please enter Patient's name!",
+                                        },
+                                    ]}
+                                >
+                                    <Input />
+                                </Form.Item>
 
-                <Table columns={columns} dataSource={data} pagination={false} />
+                                <Form.Item
+                                    label="Patient's Id   "
+                                    name="patient_id"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: "Please enter Patient's id",
+                                        },
+                                    ]}
+                                >
+                                    <Input />
+                                </Form.Item>
+
+                                <Form.Item
+                                    label="Description"
+                                    name="description"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: "Please enter description",
+                                        },
+                                    ]}
+                                >
+                                    <Input />
+                                </Form.Item>
+
+
+                                <Form.Item
+                                    label="Age"
+                                    name="age"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: "Please enter Patient's age",
+                                        },
+                                    ]}
+                                >
+                                    <Input />
+                                </Form.Item>
+
+                                <Form.Item
+                                    label="Modality"
+                                    name="modality"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: "Please enter Patient's age",
+                                        },
+                                    ]}
+                                >
+                                    <Input />
+                                </Form.Item>
+                            </Col>
+
+                            <Col span={12}>
+                                <Form.Item
+                                    label="Institution Name"
+                                    name="institution_name"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: "Please enter Institution name!",
+                                        },
+                                    ]}
+                                >
+                                    <Input disabled />
+                                </Form.Item>
+
+                                <Form.Item
+                                    label="Accession Number"
+                                    name="accession_number"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: "Please enter accession number",
+                                        },
+                                    ]}
+                                >
+                                    <Input />
+                                </Form.Item>
+
+
+                                <Form.Item
+                                    label="Referring Physician"
+                                    name="referring_physician"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: "Please enter Referring Physician",
+                                        },
+                                    ]}
+                                >
+                                    <Input />
+                                </Form.Item>
+
+
+                                <Form.Item
+                                    label="Gender"
+                                    name="gender"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: "Please select the patient's gender",
+                                        },
+                                    ]}
+                                    >
+                                    <Select>
+                                        <Select.Option value="male">Male</Select.Option>
+                                        <Select.Option value="female">Female</Select.Option>
+                                        <Select.Option value="other">Other</Select.Option>
+                                    </Select>
+                                </Form.Item>
+
+                                <Form.Item
+                                    label="images"
+                                    name="images"
+                                >
+                                    <Button onClick={() => {  
+                                        patientSeriesForm.resetFields(); 
+                                        setValues([]) ; 
+                                        setIsModalOpen(true) 
+                                    }}>Add Image Series</Button>
+                                </Form.Item>
+                            </Col>
+                        </Row>
+
+                        <Form.Item
+                            wrapperCol={{
+                                offset: 20,
+                                // span: 20,
+                            }}
+                        >
+                            <Button type="primary" htmlType="submit"
+                                onClick={(e) => {e.preventDefault(); form.submit()}}>
+                                Submit
+                            </Button>
+                        </Form.Item>
+                    </Form>
+
+                    <Table columns={columns} dataSource={patientSeriesData} pagination={false} />
+                </Spin>
             </div>
 
-            <Modal title="Add Image Series" width={800} open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
-                <Form
-                className='add-image-series'
-                    name="basic"
-                    labelCol={{
-                        span: 8,
-                    }}
-                    wrapperCol={{
-                        span: 16,
-                    }}
-                    style={{
-                        maxWidth: "100%",
-                    }}
-                    initialValues={{
-                        remember: true,
-                    }}
-                    onFinish={onFinish}
-                    onFinishFailed={onFinishFailed}
-                    autoComplete="off"
-                >
-                    <Form.Item
-                        label="Series Description"
-                        name="series_description"
-                        rules={[
-                            {
-                                required: true,
-                                message: 'Please enter series_description!',
-                            },
-                        ]}
+            {/* ==== Upload image related model =====  */}
+            {isModalOpen && (
+                <Modal title="Add Image Series" width={800} open={isModalOpen} onOk={() => {patientSeriesForm.submit()}} onCancel={handleCancel}>
+                    <Form
+                        className='add-image-series'
+                        form={patientSeriesForm}
+                        name="basic"
+                        labelCol={{
+                            span: 8,
+                        }}
+                        wrapperCol={{
+                            span: 16,
+                        }}
+                        style={{
+                            maxWidth: "100%",
+                        }}
+                        initialValues={{
+                            remember: true,
+                        }}
+                        onFinish={AddSeriesOptionHandler}
+                        onFinishFailed={onFinishFailed}
+                        autoComplete="off"
                     >
-                        <Input />
-                    </Form.Item>
-
-                    <Form.Item
-                        label="Modality"
-                        name="modality"
-                        rules={[
-                            {
-                                required: true,
-                                message: 'Please enter modality!',
-                            },
-                        ]}
-                    >
-                        <Input />
+                        <Form.Item
+                            label="Series Description"
+                            name="series_description"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Please enter series_description!',
+                                },
+                            ]}
+                        >
+                            <Input />
                         </Form.Item>
-                        {/* <Form.Item
-                            label="Select Images"
-                            name="images"
-                        > */}
+
+                        <Form.Item
+                            label="Modality"
+                            name="modality"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Please enter modality!',
+                                },
+                            ]}
+                        >
+                            <Input />
+                        </Form.Item>
+
                         <UploadImage 
                             isAddImageSeries={true}
                             multipleImage={true}
@@ -288,10 +491,13 @@ const ManualEntry = () => {
                             imageFile={imageFile}
                             setImageFile={setImageFile}
                             setMultipleImageFile={setMultipleImageFile}
-                             />
+                            
                         
-                </Form>
-            </Modal>
+                        />
+                            
+                    </Form>
+                </Modal>
+            )}
 
         </div>
     )

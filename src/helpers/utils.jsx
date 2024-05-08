@@ -177,144 +177,144 @@ export const descriptionOptions = [
 
 export const states = [
   {
-      "label": "Andaman & Nicobar",
-      "value": "Andaman & Nicobar"
+    "label": "Andaman & Nicobar",
+    "value": "Andaman & Nicobar"
   },
   {
-      "label": "Andhra Pradesh",
-      "value": "Andhra Pradesh"
+    "label": "Andhra Pradesh",
+    "value": "Andhra Pradesh"
   },
   {
-      "label": "Arunachal Pradesh",
-      "value": "Arunachal Pradesh"
+    "label": "Arunachal Pradesh",
+    "value": "Arunachal Pradesh"
   },
   {
-      "label": "Assam",
-      "value": "Assam"
+    "label": "Assam",
+    "value": "Assam"
   },
   {
-      "label": "Bihar",
-      "value": "Bihar"
+    "label": "Bihar",
+    "value": "Bihar"
   },
   {
-      "label": "Chandigarh",
-      "value": "Chandigarh"
+    "label": "Chandigarh",
+    "value": "Chandigarh"
   },
   {
-      "label": "Chhattisgarh",
-      "value": "Chhattisgarh"
+    "label": "Chhattisgarh",
+    "value": "Chhattisgarh"
   },
   {
-      "label": "Dadra & Nagar Haveli",
-      "value": "Dadra & Nagar Haveli"
+    "label": "Dadra & Nagar Haveli",
+    "value": "Dadra & Nagar Haveli"
   },
   {
-      "label": "Daman & Diu",
-      "value": "Daman & Diu"
+    "label": "Daman & Diu",
+    "value": "Daman & Diu"
   },
   {
-      "label": "Delhi",
-      "value": "Delhi"
+    "label": "Delhi",
+    "value": "Delhi"
   },
   {
-      "label": "Goa",
-      "value": "Goa"
+    "label": "Goa",
+    "value": "Goa"
   },
   {
-      "label": "Gujarat",
-      "value": "Gujarat"
+    "label": "Gujarat",
+    "value": "Gujarat"
   },
   {
-      "label": "Haryana",
-      "value": "Haryana"
+    "label": "Haryana",
+    "value": "Haryana"
   },
   {
-      "label": "Himachal Pradesh",
-      "value": "Himachal Pradesh"
+    "label": "Himachal Pradesh",
+    "value": "Himachal Pradesh"
   },
   {
-      "label": "Jammu & Kashmir",
-      "value": "Jammu & Kashmir"
+    "label": "Jammu & Kashmir",
+    "value": "Jammu & Kashmir"
   },
   {
-      "label": "Jharkhand",
-      "value": "Jharkhand"
+    "label": "Jharkhand",
+    "value": "Jharkhand"
   },
   {
-      "label": "Karnataka",
-      "value": "Karnataka"
+    "label": "Karnataka",
+    "value": "Karnataka"
   },
   {
-      "label": "Kerala",
-      "value": "Kerala"
+    "label": "Kerala",
+    "value": "Kerala"
   },
   {
-      "label": "Lakshadweep",
-      "value": "Lakshadweep"
+    "label": "Lakshadweep",
+    "value": "Lakshadweep"
   },
   {
-      "label": "Madhya Pradesh",
-      "value": "Madhya Pradesh"
+    "label": "Madhya Pradesh",
+    "value": "Madhya Pradesh"
   },
   {
-      "label": "Maharashtra",
-      "value": "Maharashtra"
+    "label": "Maharashtra",
+    "value": "Maharashtra"
   },
   {
-      "label": "Manipur",
-      "value": "Manipur"
+    "label": "Manipur",
+    "value": "Manipur"
   },
   {
-      "label": "Meghalaya",
-      "value": "Meghalaya"
+    "label": "Meghalaya",
+    "value": "Meghalaya"
   },
   {
-      "label": "Mizoram",
-      "value": "Mizoram"
+    "label": "Mizoram",
+    "value": "Mizoram"
   },
   {
-      "label": "Nagaland",
-      "value": "Nagaland"
+    "label": "Nagaland",
+    "value": "Nagaland"
   },
   {
-      "label": "Orissa",
-      "value": "Orissa"
+    "label": "Orissa",
+    "value": "Orissa"
   },
   {
-      "label": "Pondicherry",
-      "value": "Pondicherry"
+    "label": "Pondicherry",
+    "value": "Pondicherry"
   },
   {
-      "label": "Punjab",
-      "value": "Punjab"
+    "label": "Punjab",
+    "value": "Punjab"
   },
   {
-      "label": "Rajasthan",
-      "value": "Rajasthan"
+    "label": "Rajasthan",
+    "value": "Rajasthan"
   },
   {
-      "label": "Sikkim",
-      "value": "Sikkim"
+    "label": "Sikkim",
+    "value": "Sikkim"
   },
   {
-      "label": "Tamil Nadu",
-      "value": "Tamil Nadu"
+    "label": "Tamil Nadu",
+    "value": "Tamil Nadu"
   },
   {
-      "label": "Tripura",
-      "value": "Tripura"
+    "label": "Tripura",
+    "value": "Tripura"
   },
   {
-      "label": "Uttar Pradesh",
-      "value": "Uttar Pradesh"
+    "label": "Uttar Pradesh",
+    "value": "Uttar Pradesh"
   },
   {
-      "label": "Uttaranchal",
-      "value": "Uttaranchal"
+    "label": "Uttaranchal",
+    "value": "Uttaranchal"
   },
   {
-      "label": "West Bengal",
-      "value": "West Bengal"
+    "label": "West Bengal",
+    "value": "West Bengal"
   }
 ];
 
