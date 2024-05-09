@@ -263,6 +263,36 @@ const UploadImage = ({
           )}
         </div>
 
+        {showManualEntry && (
+            <div className="all-upload-document-list-div">
+            {values.map((file) => {
+              return(
+                <div className="Report-reference-document">
+
+                <div className="Reference-option-button-layout">
+
+                  <Tooltip title={file.url.name}>
+                    <Button danger className="Reference-download-option-button"
+                      icon={<DeleteOutlined />}
+                      onClick={() => DeleteValues(file.url.name)}>
+                    </Button>
+                  </Tooltip>
+
+                </div>
+
+                <Image
+                  style={{ width: "100px", height: "100px" }}
+                  src={URL.createObjectURL(file.url)}
+                  onLoad={() => setImageLoaded(true)}
+                  alt="file"
+                  className="Reference-image"
+                />
+              </div>
+              )
+            })}
+          </div>
+        )}
+
         {/* ==== File selection drawer ====  */}
         <div style={{ maxHeight: `${drawerHeight}rem`, minHeight: isClinicalHistory ? "6.8rem" : "11rem", overflowX: "auto" }}>
           <Dragger
@@ -315,35 +345,7 @@ const UploadImage = ({
           </Dragger>
         </div>
 
-        {showManualEntry && (
-          <div style={{ marginTop: 16 }}>
-            {values.map((file) => {
-              return(
-                <div className="Report-reference-document">
-
-                <div className="Reference-option-button-layout">
-
-                  <Tooltip title={file.url.name}>
-                    <Button danger className="Reference-download-option-button"
-                      icon={<DeleteOutlined />}
-                      onClick={() => DeleteValues(file.url.name)}>
-                    </Button>
-                  </Tooltip>
-
-                </div>
-
-                <Image
-                  style={{ width: "100px", height: "100px" }}
-                  src={URL.createObjectURL(file.url)}
-                  onLoad={() => setImageLoaded(true)}
-                  alt="file"
-                  className="Reference-image"
-                />
-              </div>
-              )
-            })}
-          </div>
-        )}
+      
 
       </Form.Item>
 
