@@ -18,6 +18,7 @@ const ManualEntry = () => {
     const [imageFile, setImageFile] = useState(null);
     const [imageURL, setImageURL] = useState(null);
     const [userInformation, setUserInformation] = useState({});
+    const [showManualEntry,setShowManualEntry]=useState(false);
     const [uploadingStudy, setUploadingStudy] = useState(false);
 
     const modality=[
@@ -133,6 +134,7 @@ const ManualEntry = () => {
 
     const [editId, setEditId] = useState(null) ; 
     const EditSeriesOptionHandler = async (id) => {
+        setShowManualEntry(true);
         const element = patientSeriesData?.find((element) => element?.id === id);
         console.log(element);
         patientSeriesForm.resetFields() ; 
@@ -441,6 +443,7 @@ const ManualEntry = () => {
                                     style={{ marginTop: "1rem" }}
                                 >
                                     <Button onClick={() => {
+                                        setShowManualEntry(false);
                                         patientSeriesForm.resetFields();
                                         setValues([]);
                                         setIsModalOpen(true)
@@ -517,14 +520,10 @@ const ManualEntry = () => {
 
                         <UploadImage
                             isAddImageSeries={true}
-                            multipleImage={true}
-                            multipleImageFile={multipleImageFile}
                             values={value}
                             setValues={setValues}
-                            imageFile={imageFile}
-                            setImageFile={setImageFile}
-                            setMultipleImageFile={setMultipleImageFile}
                             manualEntry={true}
+                            showManualEntry={showManualEntry}
                         />
 
                     </Form>

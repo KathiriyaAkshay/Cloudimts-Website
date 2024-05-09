@@ -18,6 +18,8 @@ const UploadImage = ({
   setMultipleImageFile,
   isClinicalHistory,
   isAddImageSeries,
+  manualEntry,
+  showManualEntry
 }) => {
 
   const [file, setFile] = useState(imageURL);
@@ -26,7 +28,7 @@ const UploadImage = ({
   const [previewImage, setPreviewImage] = useState("");
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewTitle, setPreviewTitle] = useState("");
-  const [drawerHeight, setDrawerHeight] = useState(11) ; 
+  const [drawerHeight, setDrawerHeight] = useState(11);
 
   useEffect(() => {
     setFile(imageURL);
@@ -110,6 +112,11 @@ const UploadImage = ({
   const DeleteOptionHandler = (data) => {
     const newArray = multipleImageFile.filter(url => url !== data);
     setMultipleImageFile(newArray)
+  }
+
+
+  const DeleteValues=(name)=>{
+    setValues((obj)=>obj.filter(item => item.url.name !== name))
   }
 
 
@@ -251,20 +258,20 @@ const UploadImage = ({
                   </>}
                 </>
               ))}
-              
+
             </div>
           )}
         </div>
 
         {/* ==== File selection drawer ====  */}
-        <div style={{maxHeight:`${drawerHeight}rem`,minHeight:isClinicalHistory?"6.8rem":"11rem",overflowX:"auto"}}>
+        <div style={{ maxHeight: `${drawerHeight}rem`, minHeight: isClinicalHistory ? "6.8rem" : "11rem", overflowX: "auto" }}>
           <Dragger
             name="url"
             style={{ height: "100%" }}
             multiple={multipleImage ? true : false}
-            accept={isClinicalHistory?".png,.jpeg,.jpg,.pdf":isAddImageSeries?".png,.jpeg,.jpg":".png,.jpeg,.jpg,.pdf,.docx"}
+            accept={isClinicalHistory ? ".png,.jpeg,.jpg,.pdf" : isAddImageSeries ? ".png,.jpeg,.jpg" : ".png,.jpeg,.jpg,.pdf,.docx"}
             listType="picture-card"
-            maxCount={multipleImage ? 10 : 1}
+            maxCount={multipleImage ? (manualEntry ? 12 : 10) : 1}
             customRequest={dummyRequest}
             onPreview={handleImagePreview}
             onDrop={(_) => { }}
@@ -291,26 +298,58 @@ const UploadImage = ({
             }}
           >
 
-            {isClinicalHistory?<></>:
-            <>
-            <p className="ant-upload-drag-icon">
-              <InboxOutlined />
-            </p>
-            </>}
-            
+            {isClinicalHistory ? <></> :
+              <>
+                <p className="ant-upload-drag-icon">
+                  <InboxOutlined />
+                </p>
+              </>}
+
             <p className="ant-upload-text">Drag & drop files or Browse</p>
             <p className="ant-upload-hint">
               {
-                isClinicalHistory?<>Supported formates: JPG, JPEG, PNG, PDF</>:isAddImageSeries?<></>:<>Supported formates: JPG, JPEG, PNG, PDF, DOCX</>
+                isClinicalHistory ? <>Supported formates: JPG, JPEG, PNG, PDF</> : isAddImageSeries ? <></> : <>Supported formates: JPG, JPEG, PNG, PDF, DOCX</>
               }
-              
+
             </p>
           </Dragger>
         </div>
 
+        {showManualEntry && (
+          <div style={{ marginTop: 16 }}>
+            {values.map((file) => {
+              return(
+                <div className="Report-reference-document">
+
+                <div className="Reference-option-button-layout">
+
+                  <Tooltip title={file.url.name}>
+                    <Button danger className="Reference-download-option-button"
+                      icon={<DeleteOutlined />}
+                      onClick={() => DeleteValues(file.url.name)}>
+                    </Button>
+                  </Tooltip>
+
+                </div>
+
+                <Image
+                  style={{ width: "100px", height: "100px" }}
+                  src={URL.createObjectURL(file.url)}
+                  onLoad={() => setImageLoaded(true)}
+                  alt="file"
+                  className="Reference-image"
+                />
+              </div>
+              )
+            })}
+          </div>
+        )}
+
       </Form.Item>
 
       {/* Image preview modal  */}
+
+      
 
       <Modal
         open={previewOpen}
