@@ -8,6 +8,7 @@ import PDFFileIcon from "../assets/images/pdf-file.png";
 import DocxFileIcon from "../assets/images/docx-file.png";
 
 const UploadImage = ({
+  values,
   imageFile,
   setImageFile,
   setValues,
