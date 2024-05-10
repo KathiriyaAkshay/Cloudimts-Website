@@ -13,12 +13,57 @@ import { useNavigate } from 'react-router-dom';
 
 const ManualEntry = () => {
     const navigation = useNavigate() ; 
-    const [multipleImageFile, setMultipleImageFile] = useState([]);
     const [value, setValues] = useState([]);
-    const [imageFile, setImageFile] = useState(null);
-    const [userInformation, setUserInformation] = useState({}) ;
-    const [uploadingStudy, setUploadingStudy] = useState(false) ; 
+    const [userInformation, setUserInformation] = useState({});
+    const [showManualEntry,setShowManualEntry]=useState(false);
+    const [uploadingStudy, setUploadingStudy] = useState(false);
 
+    const modality=[
+        { value: 'CT', label: 'CT' },
+        { value: 'CR', label: 'CR' },
+        { value: 'MR', label: 'MR' },
+        { value: 'DX', label: 'DX' },
+        { value: 'DR', label: 'DR' },
+        { value: 'SC', label: 'SC' },
+        { value: 'MG', label: 'MG' },
+        { value: 'US', label: 'US' },
+        { value: 'SEG', label: 'SEG' },
+        { value: 'OT', label: 'OT' },
+        { value: 'ECG', label: 'ECG' },
+        { value: 'EPS', label: 'EPS' },
+        { value: 'TG', label: 'TG' },
+        { value: 'SR', label: 'SR' },
+        { value: 'PR', label: 'PR' },
+        { value: 'XA', label: 'XA' },
+        { value: 'RF', label: 'RF' },
+        { value: 'BI', label: 'BI' },
+        { value: 'CD', label: 'CD' },
+        { value: 'DD', label: 'DD' },
+        { value: 'DG', label: 'DG' },
+        { value: 'ES', label: 'ES' },
+        { value: 'LS', label: 'LS' },
+        { value: 'PT', label: 'PT' },
+        { value: 'RG', label: 'RG' },
+        { value: 'ST', label: 'ST' },
+        { value: 'RTIMAGE', label: 'RTIMAGE' },
+        { value: 'RTDOSE', label: 'RTDOSE' },
+        { value: 'RTSTRUCT', label: 'RTSTRUCT' },
+        { value: 'RTPLAN', label: 'RTPLAN' },
+        { value: 'RTRECORD', label: 'RTRECORD' },
+        { value: 'HC', label: 'HC' },
+        { value: 'NM', label: 'NM' },
+        { value: 'IO', label: 'IO' },
+        { value: 'PX', label: 'PX' },
+        { value: 'GM', label: 'GM' },
+        { value: 'SM', label: 'SM' },
+        { value: 'XC', label: 'XC' },
+        { value: 'AU', label: 'AU' },
+        { value: 'EPS', label: 'EPS' },
+        { value: 'HD', label: 'HD' },
+        { value: 'IVUS', label: 'IVUS' },
+        { value: 'OP', label: 'OP' },
+        { value: 'SMR', label: 'SMR' }
+    ];
     // Manual entry related form 
     const [form] = Form.useForm();
     const [patientSeriesForm] = Form.useForm() ; 
@@ -35,7 +80,7 @@ const ManualEntry = () => {
 
     function generateRandomString() {
         function generateSegment() {
-            return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+            return Math.floor((1 + Math.random()) * 0x10000).toString(8).substring(1);
         }
     
         return `${generateSegment()}${generateSegment()}-${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}-${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}-${generateSegment()}${generateSegment()}-${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}d`;
@@ -43,7 +88,7 @@ const ManualEntry = () => {
 
     function generateRandomIdentifier() {
         function generateSegment() {
-            return Math.floor(Math.random() * 1000000000000000000000).toString();
+            return Math.floor(Math.random() * 100000).toString();
         }
     
         return `1.${generateSegment()}.${generateSegment()}.${generateSegment()}.${generateSegment()}.${generateSegment()}.${generateSegment()}.${generateSegment()}.${generateSegment()}.${generateSegment()}`;
@@ -53,20 +98,10 @@ const ManualEntry = () => {
         LoadUserInformation() ; 
     }, []) ; 
 
-    const onFinish = (values) => {
-        console.log('Success:', values);
-    };
     const onFinishFailed = (errorInfo) => {
         console.log('Failed:', errorInfo);
     };
 
-    const showModal = () => {
-
-        setIsModalOpen(true);
-    };
-    const handleOk = () => {
-        setIsModalOpen(false);
-    };
     const handleCancel = () => {
         setIsModalOpen(false);
     };
@@ -86,6 +121,7 @@ const ManualEntry = () => {
 
     const [editId, setEditId] = useState(null) ; 
     const EditSeriesOptionHandler = async (id) => {
+        setShowManualEntry(true);
         const element = patientSeriesData?.find((element) => element?.id === id);
         console.log(element);
         patientSeriesForm.resetFields() ; 
@@ -152,8 +188,9 @@ const ManualEntry = () => {
             setPatientSeriesData((prev) =>
                 prev?.map((element) => {
                     if (element?.id === editId) {
-                        return { ...element, "study_description": values?.series_description, "modality": values?.modality,
-                            "study_images": value  
+                        return {
+                            ...element, "study_description": values?.series_description, "modality": values?.modality,
+                            "study_images": value
                         };
                     } else {
                         return { ...element };
@@ -180,7 +217,7 @@ const ManualEntry = () => {
             "IsStable": true,
             "LastUpdate": "20230923T090010",
             "MainDicomTags": {
-                "AccessionNumber": values,
+                "AccessionNumber": values?.accession_number,
                 "StudyInstanceUID": studyUId
             },
             "ParentPatient": studyId,
@@ -202,7 +239,7 @@ const ManualEntry = () => {
                 const formattedDate = currentDate.toISOString().replace(/T/, ' ').replace(/\..+/, '');
             
                 let series_metdata =  {
-                    "ExpectedNumberOfInstances": null,
+                    "ExpectedNumberOfInstances": "",
                     "ID": element?.series_id,
                     "Instances": [],
                     "IsStable": true,
@@ -225,7 +262,8 @@ const ManualEntry = () => {
                     "study_metadata": study_metadata, 
                     "series_metadata": series_metdata, 
                     "upload_start_time" : formattedDate, 
-                    "manual_upload": true
+                    "manual_upload": true, 
+                    "total_instance": 0
                 }
                 let uploadSeriesResponse = await APIHandler("POST", uploadSerisRequestPayload, "studies/v1/insert_new_studies");
                 let dbSeriesId = uploadSeriesResponse?.series ; 
@@ -244,9 +282,10 @@ const ManualEntry = () => {
 
                 setUploadingStudy(false)
                 NotificationMessage("success", "Upload Series successfully") ;
-                navigation("/studies") ; 
             });
             
+            navigation("/studies") ; 
+
         }
 
     }
@@ -255,7 +294,7 @@ const ManualEntry = () => {
         <div className='manual-entry-wrapper'>
 
             <div className='manual-entry p-2'>
-                <Spin spinning = {uploadingStudy}>
+                <Spin spinning={uploadingStudy}>
                     <div className='w-100 text-center header'>Manual Entry</div>
                     <Form
                         form={form}
@@ -306,12 +345,6 @@ const ManualEntry = () => {
                                 <Form.Item
                                     label="Description"
                                     name="description"
-                                    rules={[
-                                        {
-                                            required: true,
-                                            message: "Please enter description",
-                                        },
-                                    ]}
                                 >
                                     <Input />
                                 </Form.Item>
@@ -336,11 +369,13 @@ const ManualEntry = () => {
                                     rules={[
                                         {
                                             required: true,
-                                            message: "Please enter Patient's age",
+                                            message: "Please enter Modality",
                                         },
                                     ]}
                                 >
-                                    <Input />
+                                    <Select options={modality}>
+                                     
+                                    </Select>
                                 </Form.Item>
                             </Col>
 
@@ -364,7 +399,7 @@ const ManualEntry = () => {
                                     rules={[
                                         {
                                             required: true,
-                                            message: "Please enter accession number",
+                                            message: "Please enter Accession number",
                                         },
                                     ]}
                                 >
@@ -375,12 +410,6 @@ const ManualEntry = () => {
                                 <Form.Item
                                     label="Referring Physician"
                                     name="referring_physician"
-                                    rules={[
-                                        {
-                                            required: true,
-                                            message: "Please enter Referring Physician",
-                                        },
-                                    ]}
                                 >
                                     <Input />
                                 </Form.Item>
@@ -395,7 +424,7 @@ const ManualEntry = () => {
                                             message: "Please select the patient's gender",
                                         },
                                     ]}
-                                    >
+                                >
                                     <Select>
                                         <Select.Option value="male">Male</Select.Option>
                                         <Select.Option value="female">Female</Select.Option>
@@ -406,11 +435,13 @@ const ManualEntry = () => {
                                 <Form.Item
                                     label="images"
                                     name="images"
+                                    style={{ marginTop: "1rem" }}
                                 >
-                                    <Button onClick={() => {  
-                                        patientSeriesForm.resetFields(); 
-                                        setValues([]) ; 
-                                        setIsModalOpen(true) 
+                                    <Button onClick={() => {
+                                        setShowManualEntry(false);
+                                        patientSeriesForm.resetFields();
+                                        setValues([]);
+                                        setIsModalOpen(true)
                                     }}>Add Image Series</Button>
                                 </Form.Item>
                             </Col>
@@ -423,7 +454,7 @@ const ManualEntry = () => {
                             }}
                         >
                             <Button type="primary" htmlType="submit"
-                                onClick={(e) => {e.preventDefault(); form.submit()}}>
+                                onClick={(e) => { e.preventDefault(); form.submit() }}>
                                 Submit
                             </Button>
                         </Form.Item>
@@ -435,7 +466,7 @@ const ManualEntry = () => {
 
             {/* ==== Upload image related model =====  */}
             {isModalOpen && (
-                <Modal title="Add Image Series" width={800} open={isModalOpen} onOk={() => {patientSeriesForm.submit()}} onCancel={handleCancel}>
+                <Modal title="Add Image Series" width={800} open={isModalOpen} onOk={() => { patientSeriesForm.submit() }} onCancel={handleCancel}>
                     <Form
                         className='add-image-series'
                         form={patientSeriesForm}
@@ -479,22 +510,20 @@ const ManualEntry = () => {
                                 },
                             ]}
                         >
-                            <Input />
+                            <Select options={modality}>
+                            </Select>
                         </Form.Item>
 
-                        <UploadImage 
+                        <UploadImage
                             isAddImageSeries={true}
-                            multipleImage={true}
-                            multipleImageFile={multipleImageFile}
                             values={value}
                             setValues={setValues}
-                            imageFile={imageFile}
-                            setImageFile={setImageFile}
-                            setMultipleImageFile={setMultipleImageFile}
-                            
-                        
+                            manualEntry={true}
+                            showManualEntry={showManualEntry}
+                            multipleImage = {true}
+                            isManualSeriesUpload = {true}
                         />
-                            
+
                     </Form>
                 </Modal>
             )}
