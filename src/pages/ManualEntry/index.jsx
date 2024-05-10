@@ -98,9 +98,6 @@ const ManualEntry = () => {
         LoadUserInformation() ; 
     }, []) ; 
 
-    const onFinish = (values) => {
-        console.log('Success:', values);
-    };
     const onFinishFailed = (errorInfo) => {
         console.log('Failed:', errorInfo);
     };
@@ -286,8 +283,8 @@ const ManualEntry = () => {
                 setUploadingStudy(false)
                 NotificationMessage("success", "Upload Series successfully") ;
             });
-
-            // navigation("/studies") ; 
+            
+            navigation("/studies") ; 
 
         }
 
