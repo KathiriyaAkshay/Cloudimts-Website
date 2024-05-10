@@ -13,10 +13,7 @@ import { useNavigate } from 'react-router-dom';
 
 const ManualEntry = () => {
     const navigation = useNavigate() ; 
-    const [multipleImageFile, setMultipleImageFile] = useState([]);
     const [value, setValues] = useState([]);
-    const [imageFile, setImageFile] = useState(null);
-    const [imageURL, setImageURL] = useState(null);
     const [userInformation, setUserInformation] = useState({});
     const [showManualEntry,setShowManualEntry]=useState(false);
     const [uploadingStudy, setUploadingStudy] = useState(false);
@@ -83,7 +80,7 @@ const ManualEntry = () => {
 
     function generateRandomString() {
         function generateSegment() {
-            return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+            return Math.floor((1 + Math.random()) * 0x10000).toString(8).substring(1);
         }
     
         return `${generateSegment()}${generateSegment()}-${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}-${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}-${generateSegment()}${generateSegment()}-${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}d`;
@@ -91,7 +88,7 @@ const ManualEntry = () => {
 
     function generateRandomIdentifier() {
         function generateSegment() {
-            return Math.floor(Math.random() * 1000000000000000000000).toString();
+            return Math.floor(Math.random() * 100000).toString();
         }
     
         return `1.${generateSegment()}.${generateSegment()}.${generateSegment()}.${generateSegment()}.${generateSegment()}.${generateSegment()}.${generateSegment()}.${generateSegment()}.${generateSegment()}`;
@@ -108,13 +105,6 @@ const ManualEntry = () => {
         console.log('Failed:', errorInfo);
     };
 
-    const showModal = () => {
-
-        setIsModalOpen(true);
-    };
-    const handleOk = () => {
-        setIsModalOpen(false);
-    };
     const handleCancel = () => {
         setIsModalOpen(false);
     };
@@ -230,7 +220,7 @@ const ManualEntry = () => {
             "IsStable": true,
             "LastUpdate": "20230923T090010",
             "MainDicomTags": {
-                "AccessionNumber": values,
+                "AccessionNumber": values?.accession_number,
                 "StudyInstanceUID": studyUId
             },
             "ParentPatient": studyId,
@@ -252,7 +242,7 @@ const ManualEntry = () => {
                 const formattedDate = currentDate.toISOString().replace(/T/, ' ').replace(/\..+/, '');
             
                 let series_metdata =  {
-                    "ExpectedNumberOfInstances": null,
+                    "ExpectedNumberOfInstances": "",
                     "ID": element?.series_id,
                     "Instances": [],
                     "IsStable": true,
@@ -275,7 +265,8 @@ const ManualEntry = () => {
                     "study_metadata": study_metadata, 
                     "series_metadata": series_metdata, 
                     "upload_start_time" : formattedDate, 
-                    "manual_upload": true
+                    "manual_upload": true, 
+                    "total_instance": 0
                 }
                 let uploadSeriesResponse = await APIHandler("POST", uploadSerisRequestPayload, "studies/v1/insert_new_studies");
                 let dbSeriesId = uploadSeriesResponse?.series ; 
@@ -294,8 +285,9 @@ const ManualEntry = () => {
 
                 setUploadingStudy(false)
                 NotificationMessage("success", "Upload Series successfully") ;
-                navigation("/studies") ; 
             });
+
+            // navigation("/studies") ; 
 
         }
 
@@ -407,6 +399,12 @@ const ManualEntry = () => {
                                 <Form.Item
                                     label="Accession Number"
                                     name="accession_number"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: "Please enter Accession number",
+                                        },
+                                    ]}
                                 >
                                     <Input />
                                 </Form.Item>
@@ -515,7 +513,8 @@ const ManualEntry = () => {
                                 },
                             ]}
                         >
-                            <Input />
+                            <Select options={modality}>
+                            </Select>
                         </Form.Item>
 
                         <UploadImage
@@ -524,6 +523,8 @@ const ManualEntry = () => {
                             setValues={setValues}
                             manualEntry={true}
                             showManualEntry={showManualEntry}
+                            multipleImage = {true}
+                            isManualSeriesUpload = {true}
                         />
 
                     </Form>

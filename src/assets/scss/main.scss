@@ -3028,6 +3028,7 @@ form.ant-form .ant-form-item .ant-form-item-label label{
   flex-wrap: wrap;
   justify-content: left;
   text-align: left;
+  gap: 2px;
 
 }
 
@@ -3223,7 +3224,7 @@ form.ant-form .ant-form-item .ant-form-item-label label{
 
 .manual-entry{
   width: 85%;
-  height: calc(100vh - 110px);
+  height: calc(100vh - 100px);
   overflow-y: auto;
   border: 2px dotted gray;
   border-radius: 1rem;

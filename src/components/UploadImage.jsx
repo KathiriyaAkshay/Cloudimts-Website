@@ -19,7 +19,8 @@ const UploadImage = ({
   isClinicalHistory,
   isAddImageSeries,
   manualEntry,
-  showManualEntry
+  showManualEntry, 
+  isManualSeriesUpload
 }) => {
 
   const [file, setFile] = useState(imageURL);
@@ -294,7 +295,7 @@ const UploadImage = ({
         )}
 
         {/* ==== File selection drawer ====  */}
-        <div style={{ maxHeight: `${drawerHeight}rem`, minHeight: isClinicalHistory ? "6.8rem" : "11rem", overflowX: "auto" }}>
+        <div style={{...{ maxHeight: `${drawerHeight}rem`, minHeight: isClinicalHistory ? "6.8rem" : "11rem", overflowX: "auto" , overflowY: isManualSeriesUpload == true?"hidden":null}}}>
           <Dragger
             name="url"
             style={{ height: "100%" }}

@@ -1,7 +1,7 @@
 .manul-entry-form{
     .ant-input{
         background-color: white !important;
-        min-height: 44px !important;
+        min-height: 40px !important;
     }
 
     .ant-select{
@@ -21,6 +21,13 @@
 
     .ant-row {
         margin-top: 0.60rem !important;
+    }
+
+    .ant-select{
+        border-radius: 7px !important;
+        .ant-select-selector{
+            background-color: #FFFFFF !important;
+        }
     }
 }
 
