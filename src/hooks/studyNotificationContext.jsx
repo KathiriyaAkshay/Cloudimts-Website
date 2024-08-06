@@ -109,7 +109,8 @@ const StudyNotificationProvider = ({ children }) => {
                   study_description: eventData.payload.data.study_description, 
                   assign_user: eventData.payload.data.assign_user, 
                   top_assign: eventData.payload.data.top_assign, 
-                  urgent_case: eventData?.payload?.data?.urgent_case
+                  urgent_case: eventData?.payload?.data?.urgent_case, 
+                  modality: eventData?.payload?.data?.modality
                 } ;
                  
               } else{
@@ -136,7 +137,9 @@ const StudyNotificationProvider = ({ children }) => {
               institution: eventData.payload.data.institution.name, 
               patient_id: eventData.payload.data.study.patient_id, 
               study_id: eventData.payload.data.study.id, 
-              urgent_case: eventData?.payload?.data?.urgent_case} , ...prev]) ; 
+              urgent_case: eventData?.payload?.data?.urgent_case, 
+              modality: eventData?.payload?.data?.modality
+            } , ...prev]) ; 
 
             // Update SeriesID
 
@@ -154,7 +157,8 @@ const StudyNotificationProvider = ({ children }) => {
                 institution: eventData.payload.data.institution.name, 
                 patient_id: eventData.payload.data.study.patient_id, 
                 study_id: eventData.payload.data.study.id, 
-                urgent_case: eventData?.payload?.data?.urgent_case  
+                urgent_case: eventData?.payload?.data?.urgent_case  , 
+                modality: eventData?.payload?.data?.modality
               } , ...prev]) ; 
 
               // Update SeriesID
@@ -186,7 +190,8 @@ const StudyNotificationProvider = ({ children }) => {
                   updated_at: eventData.payload.data.updated_at, 
                   study_description: eventData.payload.data.study_description, 
                   assign_user: eventData.payload.data.assign_user, 
-                  top_assign: eventData.payload.data.top_assign
+                  top_assign: eventData.payload.data.top_assign, 
+                  modality: eventData.payload.data?.modality
                 } ;
                  
               } else{

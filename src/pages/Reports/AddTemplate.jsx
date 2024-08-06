@@ -335,7 +335,7 @@ const AddTemplate = () => {
                 ]}
               >
                 <Select
-                  placeholder="Select Study Description"
+                  placeholder="Select Modality Description"
                   options={descriptionOptions}
                   showSearch
                   filterSort={(optionA, optionB) =>
