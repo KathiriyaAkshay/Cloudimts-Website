@@ -280,6 +280,8 @@ const AssignStudy = ({
         modifiedPayload['study_data']['images'] = [...images]
       }
 
+      modifiedPayload["modality"] = values?.modality ; 
+
       await postAssignStudy(modifiedPayload)
         .then((res) => {
           if (res.data.status) {
@@ -308,6 +310,25 @@ const AssignStudy = ({
     setIsLoading(false);
   };
 
+  // **** Reterive institution modality name list options **** // 
+  const [modalityOptions, setModalityOptions] = useState([]);
+  const FetchInstitutionModalityList = async () => {
+    let requestPayload = {};
+    let responseData = await APIHandler(
+      "GET",
+      requestPayload,
+      "institute/v1/modality/fetch"
+    );
+    if (responseData?.status) {
+      const resData = responseData?.data?.map((element) => ({
+        label: element?.name,
+        value: element?.id
+      }))
+      setModalityOptions(resData);
+    }
+
+  }
+
 
   useEffect(() => {
     if (studyID && isAssignModalOpen) {
@@ -315,6 +336,7 @@ const AssignStudy = ({
       retrieveAssignStudyDetails();
       setValues([]);
       FetchRadiologist();
+      FetchInstitutionModalityList() ; 
     }
   }, [studyID]);
 
@@ -422,12 +444,6 @@ const AssignStudy = ({
                         label="Choose Radiologist"
                         name="radiologist"
                         className="category-select"
-                      // rules={[
-                      //   {
-                      //     required: true,
-                      //     message: "Please select radiologist",
-                      //   },
-                      // ]}
                       >
                         <Select
                           placeholder="Select Radiologist"
@@ -473,10 +489,10 @@ const AssignStudy = ({
 
 
                   <Row justify="space-between">
-                    <Col span={11}>
+                    <Col span={5}>
                       <Form.Item
                         name="number_of_report"
-                        label="Number of report"
+                        label="Num of Report"
                         rules={[
                           {
                             required: true,
@@ -486,6 +502,7 @@ const AssignStudy = ({
                       >
                         <Input />
                       </Form.Item>
+
                       {/* Uregent case information  */}
 
                       <Form.Item
@@ -505,6 +522,33 @@ const AssignStudy = ({
                       </Form.Item>
 
                     </Col>
+                    
+                    {modalityOptions?.length > 0 && (
+
+                      <Col span={5}>
+                      <Form.Item
+                          name="modality"
+                          label="Modality"
+                          rules={[
+                            {
+                              required: true,
+                              message: "Please Seelct modality"
+                            }
+                          ]}
+                        >
+                          <Select
+                            className="clinical-history-modality-selection"
+                            placeholder="Select Study Description"
+                            options={modalityOptions}
+                            showSearch
+                            onChange={(values, option) => {
+                              form.setFieldValue("modality", option?.label) ; 
+                            }}
+                          />
+                        </Form.Item>
+                      </Col>
+                    )}
+
                     <Col span={11}>
 
 
