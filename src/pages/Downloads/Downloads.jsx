@@ -171,7 +171,7 @@ const App = () => {
                                                 className='Download-instruction-steps'
                                                 items={[
                                                     {
-                                                        title: 'Step 1 : Download Cloudimts study uploader from below link',
+                                                        title: 'Step 1 : Please download the Cloudimts Study Uploader from the link provided below.',
                                                         description: (
                                                             <p className='particular-steps-instruction'>
                                                                 <a target='_blank'
@@ -181,42 +181,10 @@ const App = () => {
                                                                 </a>
                                                             </p>
                                                         ),
-                                                    },
-
-                                                    {
-                                                        title: 'Step 2 : Follow this documentation for Setup Cloudimts Uploader',
-                                                        description: (
-                                                            <p className='particular-steps-instruction'>
-                                                                <a target='_blank'
-                                                                    href='https://imagenet-dicom-image.s3.ap-south-1.amazonaws.com/exe/v1.0.0/Cloudimts+Uploader+Setup+Guide.pdf'
-                                                                    style={{ marginLeft: '0.5rem' }}>
-                                                                        View documentation
-                                                                </a>
-                                                            </p>
-                                                        ),
-                                                    },
-
+                                                    }
                                                 ]}
                                                 
                                             />
-
-                                            {/* ==== Download exe option button ====  */}
-
-                                            <div className='download-information-title'>
-                                                Important notice for configure Cloudimts Uploader
-                                            </div>
-
-                                            <div className='download-instruction-image-text-div'>
-                                                <Image
-                                                    className='download-instruction-image'
-                                                    src='https://imagenet-dicom-image.s3.ap-south-1.amazonaws.com/exe/Screenshot+2024-04-07+183244.png'
-                                                />
-
-                                                <div className='download-instruction-text'>
-                                                    When you run Cloudimts uploader for the first time, we set up a DICOM receiver on your local machine. During this setup, you need to configure the server path to "<span style={{fontWeight: 600, color: "red"}}>C:\Orthanc Server</span>."<br/> 
-                                                    You can modify the path by clicking on the Browse button.
-                                                </div>
-                                            </div>
 
                                         </div>
 
