@@ -597,20 +597,45 @@ const AddUsers = () => {
     }
   ]
 
+  // Check All Modality related option handler --------------------------
+  const [checkAll, setCheckAll] = useState(false);
+  
+  const onCheckAllChange = (e) => {
+    const checked = e.target.checked;
+    setCheckAll(checked);
+    let temp = {} ; 
+    tableData?.map((element) => {
+      console.log(element);
+      temp[`${element?.id}_isAllowed`] = checked ; 
+    })
+    form.setFieldsValue(temp) ; 
+    setTableData(newData);
+  };
+
   const columns = [
     {
       title: "Modality",
       dataIndex: "name",
     },
     {
-      title: "Allowed",
+      title: (
+        <Checkbox
+          checked={checkAll}
+          onChange={onCheckAllChange}
+        >
+          <div style={{color: "#FFF"}}>Allowed</div>
+        </Checkbox>
+      ),
       dataIndex: "isAllowed",
       render: (text, record) => (
         <Form.Item name={`${record.id}_isAllowed`} valuePropName='checked'>
-          <Checkbox />
+          <Checkbox
+            checked={record.isAllowed}
+            onChange={(e) => onCheckboxChange(e.target.checked, record.id)}
+          />
         </Form.Item>
-      )
-    }
+      ),
+    },
   ];
 
 
