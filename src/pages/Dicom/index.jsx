@@ -1483,7 +1483,9 @@ const Dicom = () => {
               onClick={() => { QuickFilterReset() }}
               className={isStudyQuickFilterModalOpen ? 'quick-filter-selected' : ""}
             >
-              <ClearOutlined/>
+              <Tooltip title = "Clea">
+                <ClearOutlined/>
+              </Tooltip>
             </Button>
 
           </Row>
