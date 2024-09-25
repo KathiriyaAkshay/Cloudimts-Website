@@ -68,6 +68,17 @@ const AddUsers = () => {
   const [imageURL, setImageURL] = useState(null)
   const [value, setValues] = useState([])
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [institutionPremissions, setInsitutionPermissions] = useState([]) ;
+  
+  function transform(jsonObj) {
+    let result = {};
+    for (let key in jsonObj) {
+        for (let property in jsonObj[key]) {
+            result[`${key}_${property}`] = jsonObj[key][property];
+        }
+    }
+    return result;
+}
 
   // **** Retervie particular user information on edit user details time **** // 
   const retrieveUserData = async () => {
@@ -82,6 +93,7 @@ const AddUsers = () => {
           const instituteData = convertToInitialObject(
             res.data.data.institution_details
           )
+          let institution_transform_data = transform(res?.data?.data?.institution_details) ; 
           const modalityData = convertToInitialModalityObject(
             res.data.data.modality_details
           )
@@ -97,7 +109,7 @@ const AddUsers = () => {
             ],
             ...instituteData,
             ...modalityData,
-
+            ...institution_transform_data
           }
           form.setFieldsValue(resData)
           setImageUrl(res?.data?.data?.profile_image);
@@ -359,14 +371,29 @@ const AddUsers = () => {
 
       setPayload(prev => ({ ...prev, ...convertToObject(values) }))
       if (id) {
+        function convertObject(input) {
+          const output = {};
+        
+          for (const key in input) {
+            if (input.hasOwnProperty(key)) {
+              const [mainKey, subKey] = key.split('_');
+              if (!output[mainKey]) {
+                output[mainKey] = {};
+              }
+              output[mainKey][subKey] = input[key];
+            }
+          }
+        
+          return output;
+        }
+
+        let institution_update_data = convertObject(values) ; 
         setIsLoading(true)
         await API.post(
           '/user/v1/user-update-institution-details',
           {
             user_id: id,
-            institution_update: {
-              ...convertToObject(values).institution_details
-            }
+            institution_update: institution_update_data
           },
           { headers: { Authorization: `Bearer ${token}` } }
         )
