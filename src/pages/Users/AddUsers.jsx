@@ -29,6 +29,8 @@ import { states } from '../../helpers/utils';
 import UploadImage from "../../components/UploadImage";
 import { uploadImage } from "../../apis/studiesApi";
 import { LoadingOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
+import ImgCrop from 'antd-img-crop';
+
 
 const { Step } = Steps;
 
@@ -68,17 +70,39 @@ const AddUsers = () => {
   const [imageURL, setImageURL] = useState(null)
   const [value, setValues] = useState([])
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [institutionPremissions, setInsitutionPermissions] = useState([]) ;
-  
+  const [institutionPremissions, setInsitutionPermissions] = useState([]);
+
   function transform(jsonObj) {
     let result = {};
     for (let key in jsonObj) {
-        for (let property in jsonObj[key]) {
-            result[`${key}_${property}`] = jsonObj[key][property];
-        }
+      for (let property in jsonObj[key]) {
+        result[`${key}_${property}`] = jsonObj[key][property];
+      }
     }
     return result;
-}
+  }
+
+  // **** Signature image selection related handler **** // 
+  const [fileList, setFileList] = useState([]);
+  
+  const onChange = ({ fileList: newFileList }) => {
+    setFileList([newFileList[newFileList?.length -1]]);
+  };
+
+  const onPreview = async (file) => {
+    let src = file.url;
+    if (!src) {
+      src = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file.originFileObj);
+        reader.onload = () => resolve(reader.result);
+      });
+    }
+    const image = new Image();
+    image.src = src;
+    const imgWindow = window.open(src);
+    imgWindow?.document.write(image.outerHTML);
+  };
 
   // **** Retervie particular user information on edit user details time **** // 
   const retrieveUserData = async () => {
@@ -93,7 +117,7 @@ const AddUsers = () => {
           const instituteData = convertToInitialObject(
             res.data.data.institution_details
           )
-          let institution_transform_data = transform(res?.data?.data?.institution_details) ; 
+          let institution_transform_data = transform(res?.data?.data?.institution_details);
           const modalityData = convertToInitialModalityObject(
             res.data.data.modality_details
           )
@@ -113,7 +137,17 @@ const AddUsers = () => {
           }
           form.setFieldsValue(resData)
           setImageUrl(res?.data?.data?.profile_image);
-          setImageURL(res.data.data.signature_image)
+          setImageURL(res.data.data.signature_image) 
+
+          // Set Signature image 
+          setFileList([
+            {
+              uid: '-1',
+              name: 'image.png',
+              status: 'done',
+              url: res?.data?.data?.signature_image,
+            },
+          ])
         } else {
           NotificationMessage(
             'warning',
@@ -373,7 +407,6 @@ const AddUsers = () => {
       if (id) {
         function convertObject(input) {
           const output = {};
-        
           for (const key in input) {
             if (input.hasOwnProperty(key)) {
               const [mainKey, subKey] = key.split('_');
@@ -383,11 +416,11 @@ const AddUsers = () => {
               output[mainKey][subKey] = input[key];
             }
           }
-        
+
           return output;
         }
 
-        let institution_update_data = convertObject(values) ; 
+        let institution_update_data = convertObject(values);
         setIsLoading(true)
         await API.post(
           '/user/v1/user-update-institution-details',
@@ -417,15 +450,14 @@ const AddUsers = () => {
       }
 
     } else if (currentStep === 3) {
-
       setIsLoading(true);
-      let signature_image = '';
-
-      if (value?.length > 0) {
+      let signature_image = null;
+      
+      if (fileList?.length > 0 && fileList[0]?.originFileObj !== undefined) {
 
         try {
           const formData = {
-            image: value[value?.length - 1]?.url
+            image: fileList[0]?.originFileObj
           }
           const res = await uploadImage(formData)
           signature_image = res.data.image_url
@@ -439,7 +471,7 @@ const AddUsers = () => {
         }
 
       } else {
-        signature_image = imageURL
+        signature_image = fileList[0]?.url || null; 
       }
 
       setPayload(prev => ({ ...prev, signature_image }))
@@ -1156,13 +1188,25 @@ const AddUsers = () => {
               <Row>
                 <Col lg={12} xs={24}>
                   <div className='user-create-signature'>
-                    <UploadImage
+                    {/* <UploadImage
                       values={value}
                       setValues={setValues}
                       imageFile={imageFile}
                       setImageFile={setImageFile}
                       imageURL={imageURL}
-                    />
+                    /> */}
+
+                    <ImgCrop rotationSlider>
+                      <Upload
+                        action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
+                        listType="picture-card"
+                        fileList={fileList}
+                        onChange={onChange}
+                        onPreview={onPreview}
+                      >
+                        {fileList.length < 5 && '+ Upload'}
+                      </Upload>
+                    </ImgCrop>
                   </div>
                 </Col>
 
