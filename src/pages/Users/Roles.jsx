@@ -102,14 +102,15 @@ const Roles = () => {
       width: window.innerWidth < 650 ? '1%' : '10%',
       render: (_, record) => (
         <Space style={{ display: 'flex', justifyContent: 'space-evenly' }}>
-
           <EditActionIcon editActionHandler={() => editActionHandler(record)} />
-    
           <Tooltip title={'Add Permissions'}>
             <TbLockAccess
               className='action-icon'
               style={{ fontSize: '24px' }}
-              onClick={() => navigate(`/users/roles/${record.id}/permissions`)}
+              onClick={() => {
+                localStorage.setItem("edit_role_name", record?.role_name)
+                navigate(`/users/roles/${record.id}/permissions`)
+              }}
             />
           </Tooltip>
     

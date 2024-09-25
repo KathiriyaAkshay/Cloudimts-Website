@@ -4,6 +4,7 @@ import API from '../../apis/getApi'
 import { useParams } from 'react-router-dom'
 import NotificationMessage from '../../components/NotificationMessage'
 import { useBreadcrumbs } from '../../hooks/useBreadcrumbs'
+import { SUPERADMIN_ROLE_NAME } from '../../helpers/utils'
 
 function EditPermission() {
   const [permissionData, setPermissionData] = useState({})
@@ -13,7 +14,6 @@ function EditPermission() {
   const { changeBreadcrumbs } = useBreadcrumbs()
 
   // **** Retervie particular role permission information **** // 
-
   const retrievePermissionData = async () => {
     setIsLoading(true)
     await API.post(
@@ -23,7 +23,30 @@ function EditPermission() {
     )
       .then(res => {
         if (res.data.status) {
-          setPermissionData(res.data.data)
+
+          let user_edit_role = localStorage.getItem("edit_role_name")
+          let temp_permission_data = {} ; 
+
+          Object.entries(res?.data?.data).forEach(([key, value]) => {
+          
+            if (key == "UserTable view"){
+              if (user_edit_role == SUPERADMIN_ROLE_NAME){
+                temp_permission_data[key] = value ; 
+              }
+            } else if (key == "InstitutionTable view"){
+              if (user_edit_role == SUPERADMIN_ROLE_NAME){
+                temp_permission_data[key] = value ; 
+              }
+            } else if (key == "Other option permission"){
+              if (user_edit_role == SUPERADMIN_ROLE_NAME){
+                temp_permission_data[key] = value ; 
+              }
+            } else{
+              temp_permission_data[key] = value ; 
+            }
+          });
+          setPermissionData(temp_permission_data)
+        
         } else {
           NotificationMessage(
             'warning',
@@ -85,6 +108,7 @@ function EditPermission() {
     }
   ]
 
+  // Permission data update related handler --------------------------------------------
   const permissionSubmitHandler = async data => {
     setIsLoading(true)
     const resData = {
@@ -130,8 +154,8 @@ function EditPermission() {
           {Object.keys(permissionData).map(key => (
             <Collapse.Panel header={key} key={key} className='setting-panel'>
               <Table
-                dataSource={permissionData[key]}
                 columns={columns}
+                dataSource={permissionData[key]}
                 pagination={false}
                 bordered
               />
