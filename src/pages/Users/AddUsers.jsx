@@ -86,7 +86,8 @@ const AddUsers = () => {
   const [fileList, setFileList] = useState([]);
   
   const onChange = ({ fileList: newFileList }) => {
-    setFileList([newFileList[newFileList?.length -1]]);
+    // Only allow one file
+    setFileList(newFileList.slice(-1)); // This ensures only the last file uploaded is kept
   };
 
   const onPreview = async (file) => {
@@ -101,7 +102,12 @@ const AddUsers = () => {
     const image = new Image();
     image.src = src;
     const imgWindow = window.open(src);
-    imgWindow?.document.write(image.outerHTML);
+    imgWindow.document.write(image.outerHTML);
+  };
+
+  const onRemove = (file) => {
+    setFileList((prevList) => prevList.filter((item) => item.uid !== file.uid));
+    message.success(`${file.name} removed successfully!`);
   };
 
   // **** Retervie particular user information on edit user details time **** // 
@@ -323,7 +329,6 @@ const AddUsers = () => {
     }
   }, [currentStep]);
 
-  const [isUpdateOptionActivate, setIsUpdateOptionActivate] = useState(false);
   const handleSubmit = async (values) => {
     setIsLoading(true)
 
@@ -738,7 +743,7 @@ const AddUsers = () => {
                       listType="picture-card"
                       className="avatar-uploader"
                       showUploadList={false}
-                      action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
+                      action="https://file.io"
                       beforeUpload={beforeUpload}
                       onChange={handleProfileChange}
                       style={{
@@ -800,7 +805,7 @@ const AddUsers = () => {
                     rules={[
                       {
                         type: 'email',
-                        required: true,
+                        required: false,
                         message: 'Please enter valid email'
                       }
                     ]}
@@ -1223,13 +1228,15 @@ const AddUsers = () => {
 
                     <ImgCrop rotationSlider>
                       <Upload
-                        action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
+                        action="https://file.io"
                         listType="picture-card"
                         fileList={fileList}
                         onChange={onChange}
                         onPreview={onPreview}
+                        onRemove={onRemove}
+                        maxCount={1}
                       >
-                        {fileList.length < 5 && '+ Upload'}
+                        {fileList.length === 0 && '+ Upload'}
                       </Upload>
                     </ImgCrop>
                   </div>
