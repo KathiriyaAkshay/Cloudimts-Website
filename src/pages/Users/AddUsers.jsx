@@ -86,7 +86,8 @@ const AddUsers = () => {
   const [fileList, setFileList] = useState([]);
   
   const onChange = ({ fileList: newFileList }) => {
-    setFileList([newFileList[newFileList?.length -1]]);
+    // Only allow one file
+    setFileList(newFileList.slice(-1)); // This ensures only the last file uploaded is kept
   };
 
   const onPreview = async (file) => {
@@ -101,7 +102,12 @@ const AddUsers = () => {
     const image = new Image();
     image.src = src;
     const imgWindow = window.open(src);
-    imgWindow?.document.write(image.outerHTML);
+    imgWindow.document.write(image.outerHTML);
+  };
+
+  const onRemove = (file) => {
+    setFileList((prevList) => prevList.filter((item) => item.uid !== file.uid));
+    message.success(`${file.name} removed successfully!`);
   };
 
   // **** Retervie particular user information on edit user details time **** // 
@@ -257,21 +263,21 @@ const AddUsers = () => {
 
 
   const handleNextStep = () => {
-    if (currentStep === 3) {
+    setCurrentStep(prevStep => prevStep + 1)
+    // if (currentStep === 3) {
 
-      if (imageURL === null) {
-        if (value?.length === 0) {
-          NotificationMessage("warning", "Please, Select signature image")
-        } else {
-          setCurrentStep(prevStep => prevStep + 1)
-        }
-      } else {
-        setCurrentStep(prevStep => prevStep + 1)
-      }
-    } else {
-      setCurrentStep(prevStep => prevStep + 1)
+    //   if (imageURL === null) {
+    //     if (value?.length === 0) {
+    //       NotificationMessage("warning", "Please, Select signature image")
+    //     } else {
+    //       setCurrentStep(prevStep => prevStep + 1)
+    //     }
+    //   } else {
+    //     setCurrentStep(prevStep => prevStep + 1)
+    //   }
+    // } else {
 
-    }
+    // }
 
   }
 
@@ -323,7 +329,6 @@ const AddUsers = () => {
     }
   }, [currentStep]);
 
-  const [isUpdateOptionActivate, setIsUpdateOptionActivate] = useState(false);
   const handleSubmit = async (values) => {
     setIsLoading(true)
 
@@ -350,14 +355,24 @@ const AddUsers = () => {
 
       setIsLoading(false);
 
-      setPayload({
+      let requestPayload = {
         ...values,
         allow_offline_download: values.allow_offline_download
           ? values.allow_offline_download
           : false,
         allow: values.allow ? values.allow : false,
         user_profile_image: user_profile_image
-      })
+      } ; 
+
+      if (requestPayload?.email == undefined  ){
+        requestPayload["email"] = null ; 
+      } 
+
+      if (requestPayload?.remote_address == undefined){
+        requestPayload["remote_address"] = null ; 
+      }
+
+      setPayload(requestPayload)
 
       handleNextStep();
 
@@ -450,7 +465,9 @@ const AddUsers = () => {
       }
 
     } else if (currentStep === 3) {
+
       setIsLoading(true);
+      
       let signature_image = null;
       
       if (fileList?.length > 0 && fileList[0]?.originFileObj !== undefined) {
@@ -738,7 +755,7 @@ const AddUsers = () => {
                       listType="picture-card"
                       className="avatar-uploader"
                       showUploadList={false}
-                      action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
+                      action="https://file.io"
                       beforeUpload={beforeUpload}
                       onChange={handleProfileChange}
                       style={{
@@ -960,11 +977,11 @@ const AddUsers = () => {
                 <Col xs={24} sm={12} md={12} lg={8}>
                   <Form.Item
                     name='remote_address'
-                    label='remote_address'
+                    label='Remote address'
                     rules={[
                       {
                         whitespace: true,
-                        required: true,
+                        required: false,
                         message: 'Please enter Remote Address'
                       }
                     ]}
@@ -1223,13 +1240,15 @@ const AddUsers = () => {
 
                     <ImgCrop rotationSlider>
                       <Upload
-                        action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
+                        action="https://file.io"
                         listType="picture-card"
                         fileList={fileList}
                         onChange={onChange}
                         onPreview={onPreview}
+                        onRemove={onRemove}
+                        maxCount={1}
                       >
-                        {fileList.length < 5 && '+ Upload'}
+                        {fileList.length === 0 && '+ Upload'}
                       </Upload>
                     </ImgCrop>
                   </div>
