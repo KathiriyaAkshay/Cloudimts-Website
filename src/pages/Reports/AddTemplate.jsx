@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useBreadcrumbs } from '../../hooks/useBreadcrumbs'
-import { Button, Card, Col, Form, Input, Row, Select, Radio, Upload,message } from 'antd'
+import { Button, Card, Col, Form, Input, Row, Select, Radio, Upload, message } from 'antd'
 import '../../../ckeditor5/build/ckeditor'
 import { CKEditor } from '@ckeditor/ckeditor5-react'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -33,7 +33,7 @@ const AddTemplate = () => {
             study_description: res?.data?.data?.report_description,
             modality: res?.data?.data?.modality,
             institution_select: res?.data?.data?.institution,
-            study_radiologist: res?.data?.data?.radiologist_id, 
+            study_radiologist: res?.data?.data?.radiologist_id,
             gender: res?.data?.data?.gender
           })
           setEditorData(res.data.data.report_data)
@@ -148,7 +148,7 @@ const AddTemplate = () => {
           name: values?.name,
           data: editorData,
           description: values?.study_description,
-          modality: values?.modality, 
+          modality: values?.modality,
           gender: values?.gender
         };
         if (values?.institution_select !== undefined) {
@@ -179,7 +179,7 @@ const AddTemplate = () => {
           update_data: editorData,
           update_report_name: values?.name,
           update_report_description: values?.study_description,
-          update_modality: values?.modality, 
+          update_modality: values?.modality,
           update_gender: values?.gender
         };
         let institutionMatch = 0;
@@ -246,7 +246,7 @@ const AddTemplate = () => {
   const props = {
     name: 'file',
     action: 'https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188',
-    accept:".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    accept: ".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     headers: {
       authorization: 'authorization-text',
     },
@@ -278,7 +278,7 @@ const AddTemplate = () => {
         >
           <Row gutter={30} style={{ height: "70vh" }}>
 
-            <Col lg={8} md={8} sm={8}>
+            <Col lg={6} md={8} sm={8}>
 
               {/* Template name input  */}
               <Form.Item
@@ -353,14 +353,30 @@ const AddTemplate = () => {
                 className="category-select"
                 rules={[
                   {
-                    required: false
+                    required: false,
                   },
                 ]}
               >
                 <Select
-                  placeholder="Select Study Description"
-                  options={institutionOptions}
+                  mode="multiple"
+                  placeholder="Select Institutions"
+                  options={[
+                    { label: 'Select All', value: 'selectAll' },
+                    { label: 'Unselect All', value: 'unselectAll' },
+                    ...institutionOptions,
+                  ]}
                   showSearch
+                  onChange={(values) => {
+                    const allOptionValues = institutionOptions.map(option => option.value);
+
+                    if (values.includes('selectAll')) {
+                      form.setFieldsValue({ institution_select: allOptionValues }); // Select all institutions
+                    } else if (values.includes('unselectAll')) {
+                      form.setFieldsValue({ institution_select: [] }); // Deselect all institutions
+                    } else {
+                      form.setFieldsValue({ institution_select: values }); // Set the selected values as usual
+                    }
+                  }}
                   filterSort={(optionA, optionB) =>
                     (optionA?.label ?? "")
                       .toLowerCase()
@@ -374,17 +390,35 @@ const AddTemplate = () => {
                 name="study_radiologist"
                 label="Radiologist"
                 className="category-select"
-
                 rules={[
                   {
-                    required: false
+                    required: false,
                   },
                 ]}
               >
                 <Select
-                  placeholder="Select Study Description"
-                  options={allRadiologistOption}
+                  mode="multiple"  // Enable multiple selection
+                  placeholder="Select Study Radiologist"
+                  options={[
+                    { label: 'Select All', value: 'selectAll' },  // Add Select All option
+                    { label: 'Unselect All', value: 'unselectAll' },  // Add Unselect All option
+                    ...allRadiologistOption  // Spread other radiologist options
+                  ]}
                   showSearch
+                  onChange={(values) => {
+                    const allRadiologistValues = allRadiologistOption.map(option => option.value); // Get all radiologist values
+
+                    if (values.includes('selectAll')) {
+                      // If Select All is chosen, select all radiologists
+                      form.setFieldsValue({ study_radiologist: allRadiologistValues });
+                    } else if (values.includes('unselectAll')) {
+                      // If Unselect All is chosen, deselect all radiologists
+                      form.setFieldsValue({ study_radiologist: [] });
+                    } else {
+                      // Otherwise, update the selected values as usual
+                      form.setFieldsValue({ study_radiologist: values });
+                    }
+                  }}
                   filterSort={(optionA, optionB) =>
                     (optionA?.label ?? "")
                       .toLowerCase()
@@ -415,7 +449,7 @@ const AddTemplate = () => {
             </Col>
 
             <Col
-              lg={16}
+              lg={18}
               md={16}
               sm={16}
               className='add-template-option-editor'
