@@ -27,7 +27,9 @@ const index = () => {
   // ** Permission handler ** // 
 
   const checkPermissionStatus = name => {
-    const permission = permissionData['Support permission']?.find(
+    console.log(permissionData);
+    
+    const permission = permissionData['Support premission']?.find(
       data => data.permission === name
     )?.permission_value
     return permission
@@ -115,8 +117,7 @@ const index = () => {
       dataIndex: 'option_description'
     },
 
-    (checkPermissionStatus('Edit Support details') ||
-      checkPermissionStatus('Delete Support details')) && {
+    (checkPermissionStatus('Support details')) && {
       title: 'Actions',
       dataIndex: 'actions',
       fixed: 'right',
@@ -125,13 +126,13 @@ const index = () => {
 
         <Space style={{ display: 'flex', justifyContent: 'space-evenly' }}>
         
-          {checkPermissionStatus('Edit Support details') && (
+          {checkPermissionStatus('Support details') && (
             <EditActionIcon
               editActionHandler={() => editActionHandler(record.id)}
             />
           )}
         
-          {checkPermissionStatus('Delete Support details') && (
+          {checkPermissionStatus('Support details') && (
             <DeleteActionIcon
               title = "Delete support"
               description = "Are you sure you want to delete this Support details?"
@@ -155,8 +156,7 @@ const index = () => {
       dataIndex: 'option_description'
     },
 
-    (checkPermissionStatus('Edit Support details') ||
-      checkPermissionStatus('Delete Support details')) && {
+    (checkPermissionStatus('Support details') && {
       title: 'Actions',
       dataIndex: 'actions',
       fixed: 'right',
@@ -165,13 +165,13 @@ const index = () => {
 
         <Space style={{ display: 'flex', justifyContent: 'space-evenly' }}>
         
-          {checkPermissionStatus('Edit Support details') && (
+          {checkPermissionStatus('Support details') && (
             <EditActionIcon
               editActionHandler={() => editActionHandler(record.id)}
             />
           )}
         
-          {checkPermissionStatus('Delete Support details') && (
+          {checkPermissionStatus('Support details') && (
             <DeleteActionIcon
               title = "Are you sure you want to delete this Support details?"
               deleteActionHandler={() => deleteActionHandler(record.id)}
@@ -180,7 +180,7 @@ const index = () => {
         
         </Space>
       )
-    }
+    })
   ].filter(Boolean) ; 
 
   useEffect(() => {
