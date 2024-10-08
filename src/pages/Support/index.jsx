@@ -27,8 +27,6 @@ const index = () => {
   // ** Permission handler ** // 
 
   const checkPermissionStatus = name => {
-    console.log(permissionData);
-    
     const permission = permissionData['Support premission']?.find(
       data => data.permission === name
     )?.permission_value
