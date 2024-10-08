@@ -147,6 +147,30 @@ const Dicom = () => {
   const [quickFilterPayload, setQuickFilterPayload] = useState({})
   const [advanceSearchPayload, setAdvanceSearchPayload] = useState({})
 
+  // Load User Inoformation 
+  const LoadUserInformation = async () => {
+    let responseData = await APIHandler("POST", {}, "owner/v1/user_details_fetch") ;
+    if (responseData?.status){
+      // Setup user all permission id information 
+      localStorage.setItem(
+        'all_permission_id',
+        JSON.stringify(responseData?.data?.all_permission_institution_id)
+      )
+
+      // Setup user all assign id information 
+      localStorage.setItem(
+        'all_assign_id',
+        JSON.stringify(
+          responseData?.data?.all_assign_study_permission_institution_id
+        )
+      )
+    }
+  }
+
+  useEffect(() => {
+    LoadUserInformation()
+  }, [])
+
   // SeriesId list information 
   const [setPreviousSeriesResponse] = useState(null);
 
