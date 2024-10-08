@@ -10,10 +10,13 @@ const PermissionNotificationProvider = ({ children }) => {
   const role_id = localStorage.getItem("role_id");
   const user_id = localStorage.getItem("userID");
   const navigate = useNavigate();
-
-
-  // Handle window visibility event for again connect socket connection  
   const [reloadValue, setReloadValue] = useState(0);
+
+  // Total user related permission module 
+  // 1. Password update - When user password that time user need to login again 
+  // 2. When particular role permission update - that time particular page will reload 
+  // 3. When user intitution related permission update - that time particular page will reload 
+
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (document.visibilityState === "visible") {
@@ -32,7 +35,6 @@ const PermissionNotificationProvider = ({ children }) => {
   const [connection, setConnection] = useState(null) ; 
   const SetupSocketConnection = async () => {
     if (connection && connection.readyState === WebSocket.OPEN) {
-      console.log('WebSocket connection is already open');
       return; // Exit the function if the connection is already open
     }
 
@@ -63,11 +65,11 @@ const PermissionNotificationProvider = ({ children }) => {
             "success",
             "Your Institution access permission updated by management. So you have to login again"
           );
-  
-          setTimeout(() => {
-            localStorage.clear();
-            navigate("/login");
-          }, 3000);
+          window.location.reload();  
+          // setTimeout(() => {
+          //   localStorage.clear();
+          //   navigate("/login");
+          // }, 3000);
         }
       } else if (eventData?.payload?.status === "Basic-details-udpate") {
         if (eventData?.payload?.data?.user_id == user_id) {
