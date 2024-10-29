@@ -66,11 +66,9 @@ const AddUsers = () => {
   const token = localStorage.getItem('token')
   const [payload, setPayload] = useState({})
   const { id } = useParams()
-  const [imageFile, setImageFile] = useState(null)
   const [imageURL, setImageURL] = useState(null)
   const [value, setValues] = useState([])
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [institutionPremissions, setInsitutionPermissions] = useState([]);
 
   function transform(jsonObj) {
     let result = {};
@@ -418,22 +416,26 @@ const AddUsers = () => {
 
     } else if (currentStep === 2) {
 
-      setPayload(prev => ({ ...prev, ...convertToObject(values) }))
-      if (id) {
-        function convertObject(input) {
-          const output = {};
-          for (const key in input) {
-            if (input.hasOwnProperty(key)) {
-              const [mainKey, subKey] = key.split('_');
-              if (!output[mainKey]) {
-                output[mainKey] = {};
-              }
-              output[mainKey][subKey] = input[key];
+      function convertObject(input) {
+        const output = {};
+        for (const key in input) {
+          if (input.hasOwnProperty(key)) {
+            const [mainKey, subKey] = key.split('_');
+            if (!output[mainKey]) {
+              output[mainKey] = {};
             }
+            output[mainKey][subKey] = input[key];
           }
-
-          return output;
         }
+
+        return {
+          "institution_details": output
+        };
+      }
+
+      setPayload(prev => ({ ...prev, ...convertObject(values) }))
+
+      if (id) {
 
         let institution_update_data = convertObject(values);
         setIsLoading(true)
@@ -1056,7 +1058,7 @@ const AddUsers = () => {
                   </>
                 )}
 
-                <Col xs={24} sm={24} md={24} lg={24} className="justify-end">
+                <Col xs={24} sm={24} md={24} lg={24} className="justify-end" style={{marginBottom: 10}}>
 
                   <Button
                     type='primary'

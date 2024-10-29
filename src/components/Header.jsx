@@ -38,6 +38,7 @@ import { deleteStudy } from '../apis/studiesApi'
 import { FilterSelectedContext } from '../hooks/filterSelectedContext'
 import { retrieveSystemFilters } from '../helpers/studyDataFilter'
 import { StudyDataContext } from '../hooks/studyDataContext'
+import APIHandler from '../apis/apiHandler'
 
 const { Header, Sider, Content } = Layout
 
