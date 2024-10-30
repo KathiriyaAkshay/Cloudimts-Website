@@ -2,6 +2,7 @@ import { createContext, useEffect, useState } from "react";
 import NotificationMessage from "../components/NotificationMessage";
 const BASE_URL = import.meta.env.VITE_APP_SOCKET_BASE_URL;
 import { Navigate, useNavigate } from "react-router-dom";
+import APIHandler from "../apis/apiHandler";
 
 export const PermissionNotificationContext = createContext();
 
@@ -45,15 +46,16 @@ const PermissionNotificationProvider = ({ children }) => {
       console.log("WebSocket connection opened");
     };
   
-    ws.onmessage = (event) => {
+    ws.onmessage = async (event) => {  // Make the onmessage handler async
       const eventData = JSON.parse(event.data);
+    
       if (eventData?.payload?.status === "update-role-permission") {
         if (eventData?.payload?.data?.role_id == role_id) {
           NotificationMessage(
             "success",
             "Role Permission was updated by management. So you have to login again"
           );
-  
+    
           setTimeout(() => {
             localStorage.clear();
             navigate("/login");
@@ -65,6 +67,23 @@ const PermissionNotificationProvider = ({ children }) => {
             "success",
             "Your Institution access permission updated by management. So you have to login again"
           );
+    
+          // Fetch user permissions
+          const responseData = await APIHandler("POST", {}, "owner/v1/user_details_fetch");
+          
+          if (responseData?.status) {
+            // Store user's permissions in localStorage
+            localStorage.setItem(
+              'all_permission_id',
+              JSON.stringify(responseData?.data?.all_permission_institution_id)
+            );
+    
+            localStorage.setItem(
+              'all_assign_id',
+              JSON.stringify(responseData?.data?.all_assign_study_permission_institution_id)
+            );
+          }
+    
           window.location.reload();  
           // setTimeout(() => {
           //   localStorage.clear();
@@ -82,9 +101,9 @@ const PermissionNotificationProvider = ({ children }) => {
         if (eventData?.payload?.data?.user_id == user_id) {
           NotificationMessage(
             "success",
-            "Your account is disabled by management. Please contact to management for active account"
+            "Your account is disabled by management. Please contact management for account reactivation"
           );
-  
+    
           setTimeout(() => {
             localStorage.clear();
             navigate("/login");
@@ -96,7 +115,7 @@ const PermissionNotificationProvider = ({ children }) => {
             "success",
             "Your Password is updated by management. So you have to login again"
           );
-  
+    
           setTimeout(() => {
             localStorage.clear();
             navigate("/login");
@@ -104,6 +123,7 @@ const PermissionNotificationProvider = ({ children }) => {
         }
       }
     };
+    
   
     ws.onclose = () => {
       console.log("WebSocket connection closed");
