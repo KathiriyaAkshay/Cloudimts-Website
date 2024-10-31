@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState, useRef } from 'react'
 import {
   Drawer,
   Modal,
@@ -355,15 +355,19 @@ const Dicom = () => {
     fetchSeriesCountInformation(temp);
   }, [series_remove_id]) ; 
 
+  // ******** Fetch series information count related api ********** // 4
+  const startTime = useRef(new Date().getTime());
   async function fetchSeriesCountInformation(series_list) {
-    if (series_list?.length !== 0){
-      let remove_series_id = [...series_remove_id]  ; 
-
+    if (series_list?.length !== 0) {
+      let remove_series_id = [...series_remove_id];
       const requestPayload = {
         series_list: series_list,
       };
   
       try {
+        
+        console.log("Run this functionality -----------------");
+        
         const responseData = await APIHandler(
           'POST',
           requestPayload,
@@ -371,54 +375,60 @@ const Dicom = () => {
         );
   
         if (responseData?.status) {
-          if (Object.keys(responseData?.data).length != 0){
-            setStudyCountInformation({...studyCountInforamtion, ...responseData?.data}); 
-            remove_series_id = responseData?.remove_id ; 
-            set_series_remove_id([...series_remove_id, ...remove_series_id]) ; 
+          if (Object.keys(responseData?.data).length !== 0) {
+            setStudyCountInformation({ ...studyCountInforamtion, ...responseData?.data });
+            remove_series_id = responseData?.remove_id;
+            set_series_remove_id([...series_remove_id, ...remove_series_id]);
           }
         }
       } catch (error) {
         console.error('Error fetching series count information:', error);
-      } finally {
       }
-
-      clearTimeout(seriesCountTimeOut) ; 
-      seriesCountTimeOut = setTimeout(async () => {
-        if (window.location.pathname == "/studies"){
-          const temp = [] ; 
   
-          studyData.map((data) => {
-            if (!remove_series_id.includes(data?.id)){
-              temp.push({
-                "series_id": data?.study?.study_original_id, 
-                "id": data?.id, 
-                "manual_series": data?.manual_upload
-              })
-            }
-          });
+      // Start recursive API calls with a delay
+      // clearTimeout(seriesCountTimeOut);
+
+      seriesCountTimeOut = setTimeout(async () => {
+        const currentTime = new Date().getTime();
+        
+        if (currentTime - startTime.current > 1 * 60 * 1000){
+          const temp = studyData
+            .filter((data) => !remove_series_id.includes(data?.id))
+            .map((data) => ({
+              series_id: data?.study?.study_original_id,
+              id: data?.id,
+              manual_series: data?.manual_upload,
+            }));
+
           await fetchSeriesCountInformation(temp); // Use await to ensure studyData is updated before the recursive call
         }
-      // Clear previous timeout and establish a new one
+        
       }, 3000);
     }
+  }
+
+  const CallStudyDataFetch = async () => {
+
+    const temp = studyData.map((data) => ({
+      series_id: data?.study?.study_original_id,
+      id: data?.id,
+      manual_series: data?.manual_upload,
+    }));
   
+    // Reset startTime if studyData changes
+    startTime.current = new Date().getTime();
+
+    await fetchSeriesCountInformation(temp) ; 
   }
   
   useEffect(() => {
-    clearTimeout(seriesCountTimeOut) ; 
-    const temp = [] ; 
-    studyData.map((data) => {
-      temp.push({
-        "series_id": data?.study?.study_original_id, 
-        "id": data?.id, 
-        "manual_series": data?.manual_upload
-      })
-    }); 
-    seriesCountTimeOut = setTimeout(fetchSeriesCountInformation(temp), 2000) ; 
+    clearTimeout(seriesCountTimeOut);
+    CallStudyDataFetch() ; 
+    // Cleanup on component unmount
     return () => {
       clearTimeout(seriesCountTimeOut);
     };
-  }, [studyData]);
+  }, [studyData]); // Reset time and API calls if studyData changes
 
   useEffect(() => {
     if (!isLoading && studyData.length !== 0 && notificationValue === 0) {
