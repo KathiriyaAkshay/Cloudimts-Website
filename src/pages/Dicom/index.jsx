@@ -419,7 +419,6 @@ const Dicom = () => {
   useEffect(() => {
     clearTimeout(seriesCountTimeOut.current);
     initiatePolling();
-    console.log("Run this useEFect ------------------------------");
     return () => {
       clearTimeout(seriesCountTimeOut.current); // Cleanup timeout on component unmount
     };
@@ -1030,7 +1029,7 @@ const Dicom = () => {
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
       setStudyIdArray(prev => selectedRows?.map(data => data.id));
-      setStudyReferenceIdArray(prev => selectedRows?.map(data => data?.refernce_id));
+      setStudyReferenceIdArray(prev => selectedRows?.map(data => data));
     },
     getCheckboxProps: record => ({
       id: record.id
