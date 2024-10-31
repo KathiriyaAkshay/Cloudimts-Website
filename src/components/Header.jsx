@@ -38,6 +38,7 @@ import { deleteStudy } from '../apis/studiesApi'
 import { FilterSelectedContext } from '../hooks/filterSelectedContext'
 import { retrieveSystemFilters } from '../helpers/studyDataFilter'
 import { StudyDataContext } from '../hooks/studyDataContext'
+import APIHandler from '../apis/apiHandler'
 
 const { Header, Sider, Content } = Layout
 
@@ -125,30 +126,6 @@ const BasicLayout = ({ children }) => {
         )
       )
   }
-
-  // Load User Inoformation 
-  const LoadUserInformation = async () => {
-    let responseData = await APIHandler("POST", {}, "owner/v1/user_details_fetch") ;
-    if (responseData?.status){
-      // Setup user all permission id information 
-      localStorage.setItem(
-        'all_permission_id',
-        JSON.stringify(responseData?.data?.all_permission_institution_id)
-      )
-
-      // Setup user all assign id information 
-      localStorage.setItem(
-        'all_assign_id',
-        JSON.stringify(
-          responseData?.data?.all_assign_study_permission_institution_id
-        )
-      )
-    }
-  }
-
-  useEffect(() => {
-    LoadUserInformation() ; 
-  }, []) ; 
 
   const menuLabel = title => (
     <div className='display-flex-between' style={{ gap: '4px' }}>
