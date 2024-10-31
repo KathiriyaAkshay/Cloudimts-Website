@@ -16,7 +16,7 @@ import {
   Statistic,
   Button,
   Select
-} from 'antd'
+} from 'antd'; 
 import { CheckCircleOutlined, ClearOutlined, CloseCircleOutlined, CloseOutlined, PictureOutlined } from '@ant-design/icons'
 import { useBreadcrumbs } from '../../hooks/useBreadcrumbs'
 import ChatMain from '../../components/Chat/ChatMain'
@@ -70,7 +70,6 @@ import ManulImageDrawer from './manulImageDrawer'
 
 const BASE_URL = import.meta.env.VITE_APP_SOCKET_BASE_URL
 let timeOut = null ; 
-let seriesCountTimeOut = null ; 
 const Dicom = () => {
 
   const [isLoading, setIsLoading] = useState(false)
@@ -340,6 +339,9 @@ const Dicom = () => {
 
 
   const [series_remove_id, set_series_remove_id] = useState([]) ; 
+  const startTime = useRef(new Date().getTime());
+  const seriesCountTimeOut = useRef(null);
+
   useEffect(() => {
     clearTimeout(seriesCountTimeOut) ;
     let temp = [] ;  
@@ -352,31 +354,25 @@ const Dicom = () => {
         })
       }
     });
-    fetchSeriesCountInformation(temp);
+    // fetchSeriesCountInformation(temp);
   }, [series_remove_id]) ; 
 
   // ******** Fetch series information count related api ********** // 4
-  const startTime = useRef(new Date().getTime());
+
   async function fetchSeriesCountInformation(series_list) {
     if (series_list?.length !== 0) {
       let remove_series_id = [...series_remove_id];
-      const requestPayload = {
-        series_list: series_list,
-      };
-  
+      const requestPayload = { series_list };
       try {
-        
-        console.log("Run this functionality -----------------");
-        
         const responseData = await APIHandler(
           'POST',
           requestPayload,
           'studies/v1/series_instance_count'
         );
-  
+
         if (responseData?.status) {
           if (Object.keys(responseData?.data).length !== 0) {
-            setStudyCountInformation({ ...studyCountInforamtion, ...responseData?.data });
+            setStudyCountInformation(prev => ({ ...prev, ...responseData?.data }));
             remove_series_id = responseData?.remove_id;
             set_series_remove_id([...series_remove_id, ...remove_series_id]);
           }
@@ -384,14 +380,14 @@ const Dicom = () => {
       } catch (error) {
         console.error('Error fetching series count information:', error);
       }
-  
-      // Start recursive API calls with a delay
-      // clearTimeout(seriesCountTimeOut);
 
-      seriesCountTimeOut = setTimeout(async () => {
+      clearTimeout(seriesCountTimeOut.current); // Cleartime out value 
+
+      seriesCountTimeOut.current = setTimeout(async () => {
         const currentTime = new Date().getTime();
-        
-        if (currentTime - startTime.current > 1 * 60 * 1000){
+
+        // Check if 5 minutes have passed
+        if (currentTime - startTime.current < 0.2 * 60 * 1000) {
           const temp = studyData
             .filter((data) => !remove_series_id.includes(data?.id))
             .map((data) => ({
@@ -400,35 +396,34 @@ const Dicom = () => {
               manual_series: data?.manual_upload,
             }));
 
-          await fetchSeriesCountInformation(temp); // Use await to ensure studyData is updated before the recursive call
+          await fetchSeriesCountInformation(temp); // Ensure studyData is updated before recursive call
+        } else {
+          clearTimeout(seriesCountTimeOut.current);
         }
-        
       }, 3000);
+
     }
   }
 
-  const CallStudyDataFetch = async () => {
-
+  const initiatePolling = async () => {
     const temp = studyData.map((data) => ({
       series_id: data?.study?.study_original_id,
       id: data?.id,
       manual_series: data?.manual_upload,
     }));
-  
-    // Reset startTime if studyData changes
-    startTime.current = new Date().getTime();
 
-    await fetchSeriesCountInformation(temp) ; 
-  }
+    startTime.current = new Date().getTime(); // Reset startTime if studyData changes
+    await fetchSeriesCountInformation(temp);
+  };
   
   useEffect(() => {
-    clearTimeout(seriesCountTimeOut);
-    CallStudyDataFetch() ; 
-    // Cleanup on component unmount
+    clearTimeout(seriesCountTimeOut.current);
+    initiatePolling();
     return () => {
-      clearTimeout(seriesCountTimeOut);
+      clearTimeout(seriesCountTimeOut.current); // Cleanup timeout on component unmount
     };
-  }, [studyData]); // Reset time and API calls if studyData changes
+    
+  }, [studyData]);
 
   useEffect(() => {
     if (!isLoading && studyData.length !== 0 && notificationValue === 0) {
@@ -1034,7 +1029,7 @@ const Dicom = () => {
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
       setStudyIdArray(prev => selectedRows?.map(data => data.id));
-      setStudyReferenceIdArray(prev => selectedRows?.map(data => data?.refernce_id));
+      setStudyReferenceIdArray(prev => selectedRows?.map(data => data));
     },
     getCheckboxProps: record => ({
       id: record.id

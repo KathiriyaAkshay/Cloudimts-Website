@@ -13,6 +13,16 @@ const AssignStudyModified = ({
   const [options, setOptions] = useState([]);
   const [form] = Form.useForm();
   const { studyIdArray, setStudyIdArray, studyReferenceIdArray } = useContext(StudyIdContext);
+  const [seriesIdList, setSeriesIdList] = useState([]) ; 
+
+  useEffect(() => {
+    let temp = [] ; 
+    studyReferenceIdArray?.map((element) => {
+      temp.push(element?.refernce_id)
+    })
+    setSeriesIdList(temp) ;
+  }, []) ; 
+  
 
   // **** Retervie all radiologist name for assign study **** // 
   const FetchRadiologist = async () => {
@@ -43,23 +53,37 @@ const AssignStudyModified = ({
   }, []);
 
   const handleSubmit = async (values) => {
-    setIsLoading(true);
 
-    let requestPayload = { "studyId": studyIdArray, "assign_user": values?.radiologist };
+    let is_assign = true;  
 
-    let responseData = await APIHandler("POST", requestPayload, "studies/v1/quick-assign-study");
+    studyReferenceIdArray?.map((element) => {
+      if (element?.study_description == null || element?.study_description == ""){
+        NotificationMessage("warning", `Please provide a study description for the study with reference ID: ${element?.refernce_id}`);
+        is_assign = false ; 
+        return ; 
+      }
+    })
 
-    setIsLoading(false);
-
-    if (responseData === false) {
-      NotificationMessage("warning", "Network request failed");
-    } else if (responseData['status'] === true) {
-      setIsAssignModifiedModalOpen(false);
-      setStudyIdArray([]);
-      NotificationMessage("success", "Study assigned successfully");
-    } else {
-      NotificationMessage("warning", "Network request failed", responseData['message']);
+    if (is_assign){
+      setIsLoading(true);
+  
+      let requestPayload = { "studyId": studyIdArray, "assign_user": values?.radiologist };
+  
+      let responseData = await APIHandler("POST", requestPayload, "studies/v1/quick-assign-study");
+  
+      setIsLoading(false);
+  
+      if (responseData === false) {
+        NotificationMessage("warning", "Network request failed");
+      } else if (responseData['status'] === true) {
+        setIsAssignModifiedModalOpen(false);
+        setStudyIdArray([]);
+        NotificationMessage("success", "Study assigned successfully");
+      } else {
+        NotificationMessage("warning", "Network request failed", responseData['message']);
+      }
     }
+
   };
 
   return (
@@ -98,7 +122,7 @@ const AssignStudyModified = ({
         <div style={{ marginTop: "1rem" }}>
 
           <div className="assign_studies_all_id_list">
-            {studyReferenceIdArray.map((element) => {
+            {seriesIdList.map((element) => {
               return (
                 <div className="particular_assign_study_id_information">
                   {element}
