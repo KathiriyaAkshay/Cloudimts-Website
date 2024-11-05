@@ -160,6 +160,14 @@ const Dicom = () => {
     )?.permission_value
     return permission
   }
+
+  const otherPremissionStatus = (title, permission_name) => {
+    const permission = permissionData[title]?.find(
+      data => data.permission === permission_name
+    )?.permission_value
+    return permission
+  }
+
   const { setRoomID } = useContext(RoomDataContext)
 
 
@@ -1504,7 +1512,8 @@ const Dicom = () => {
         columns={columns}
         scroll={{ y: "calc(100vh - 275px)", x: "100%" }}
         key={studyData.map(o => o.key)}
-        rowSelection={rowSelection}
+        rowSelection={(otherPremissionStatus("Studies permission", "Delete Study") == false &&
+          otherPremissionStatus("Studies permission", "Assign study") == false)?false:true}
         loading={isLoading}
         
         // Pagination handle

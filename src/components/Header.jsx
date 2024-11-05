@@ -140,6 +140,13 @@ const BasicLayout = ({ children }) => {
     return permission
   }
 
+  const otherPremissionStatus = (title, permission_name) => {
+    const permission = userPermissionData[title]?.find(
+      data => data.permission === permission_name
+    )?.permission_value
+    return permission
+  }
+
   const menuItems = [
 
     // Studies option
@@ -701,20 +708,23 @@ const BasicLayout = ({ children }) => {
 
                   {/* ==== Delete Study option ====  */}
 
-                  <Popconfirm
-                    title="Delete study"
-                    description="Are you sure you want to delete this studies ?"
-                    onConfirm={deleteStudyData}
-                    okText="Yes"
-                    cancelText="No"
-                  >
-                    <Button
-                      type='primary'
-                      className='error-btn-primary'
+                  {otherPremissionStatus("Studies permission", "Delete Study") && (
+                    <Popconfirm
+                      title="Delete study"
+                      description="Are you sure you want to delete this studies ?"
+                      onConfirm={deleteStudyData}
+                      okText="Yes"
+                      cancelText="No"
                     >
-                      <DeleteOutlined />
-                    </Button>
-                  </Popconfirm>
+                      <Button
+                        type='primary'
+                        className='error-btn-primary'
+                      >
+                        <DeleteOutlined />
+                      </Button>
+                    </Popconfirm> 
+                  )}
+
 
                   {/* ==== Reload option ====  */}
 
@@ -741,13 +751,15 @@ const BasicLayout = ({ children }) => {
 
                   {/* ==== Assign study option handler ====  */}
 
-                  <Button
-                    type='primary'
-                    onClick={() => QuickAssignStudyModalHandler()}
-                    className='header-secondary-option-button'
-                  >
-                    Assign study
-                  </Button>
+                  {otherPremissionStatus("Studies permission", "Assign study") && (
+                    <Button
+                      type='primary'
+                      onClick={() => QuickAssignStudyModalHandler()}
+                      className='header-secondary-option-button'
+                    >
+                      Assign study
+                    </Button>
+                  )}
 
                   {/* ==== Study logs option ====  */}
 

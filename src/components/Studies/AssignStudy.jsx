@@ -9,9 +9,10 @@ import {
   Tag,
   Typography,
   Row,
-  Col
+  Col,
+  Button
 } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import {
   fetchAssignStudy,
   getStudyData,
@@ -23,6 +24,7 @@ import { omit } from "lodash";
 import NotificationMessage from "../NotificationMessage";
 import { descriptionOptions } from "../../helpers/utils";
 import APIHandler from "../../apis/apiHandler";
+import { UserPermissionContext } from "../../hooks/userPermissionContext";
 
 const AssignStudy = ({
   isAssignModalOpen,
@@ -39,6 +41,16 @@ const AssignStudy = ({
   const [value, setValues] = useState([]);
   const [imageFile, setImageFile] = useState(null);
   const [assignUserId, setAssignUserId] = useState(null);
+
+  // Permission information context
+  const { permissionData } = useContext(UserPermissionContext) ; 
+
+  const otherPremissionStatus = (title, permission_name) => {
+    const permission = permissionData[title]?.find(
+      data => data.permission === permission_name
+    )?.permission_value
+    return permission
+  }
 
   // **** Reterive particular assign study details **** // 
   const retrieveAssignStudyDetails = async () => {
@@ -344,6 +356,17 @@ const AssignStudy = ({
     <Modal
       title="Clinical History"
       open={isAssignModalOpen}
+      footer={
+        otherPremissionStatus("Studies permission", "Assign study") 
+          ? <>
+            <Button type="primary" onClick={() => {
+              form.submit()
+            }}>
+              Ok
+            </Button>
+          </>   // Empty footer if permission exists
+          : null // Hide footer if no permission
+      }
       onOk={() => {
         form.submit();
       }}
@@ -505,7 +528,8 @@ const AssignStudy = ({
 
                       {/* Uregent case information  */}
 
-                      <Form.Item
+
+                      {/* <Form.Item
                         name="urgent_case"
                         label="Report Required"
                         rules={[
@@ -519,7 +543,7 @@ const AssignStudy = ({
                           <Radio value={false}>Regular</Radio>
                           <Radio value={true}>Urgent</Radio>
                         </Radio.Group>
-                      </Form.Item>
+                      </Form.Item> */}
 
                     </Col>
                     
@@ -552,8 +576,28 @@ const AssignStudy = ({
                     <Col span={11}>
 
 
-                      {/* Clinical history information  */}
+                      <Form.Item
+                        name="urgent_case"
+                        label="Report Required"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Please select Report Required",
+                          },
+                        ]}
+                      >
+                        <Radio.Group>
+                          <Radio value={false}>Regular</Radio>
+                          <Radio value={true}>Urgent</Radio>
+                        </Radio.Group>
+                      </Form.Item>
 
+                    </Col>
+                  </Row>
+
+                  <Row>
+                    {/* Clinical history information  */}
+                    <Col span={24}>
                       <Form.Item
                         name="study_history"
                         label="Clinical History"
@@ -567,8 +611,6 @@ const AssignStudy = ({
                       >
                         <Input.TextArea placeholder="Enter Clinical History" rows={5} />
                       </Form.Item>
-
-
                     </Col>
                   </Row>
 
