@@ -718,21 +718,15 @@ const BasicLayout = ({ children }) => {
 
                   {/* ==== Reload option ====  */}
 
-                  <Popconfirm
-                    title="Reload page"
-                    description="Are you sure you want to reload page"
-                    onConfirm={ReloadOptionHandler}
-                    okText="Yes"
-                    cancelText="No"
+                  <Button
+                    type='primary'
+                    className='header-secondary-option-button'
+                    onClick={() => {
+                      window.location.reload() ; 
+                    }}
                   >
-                    <Button
-                      type='primary'
-                      className='header-secondary-option-button'
-                    >
-                      <ReloadOutlined />
-                    </Button>
-
-                  </Popconfirm>
+                    <ReloadOutlined />
+                  </Button>
 
                   {/* ==== Study export option handler ====  */}
 

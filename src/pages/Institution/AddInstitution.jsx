@@ -47,6 +47,17 @@ const AddInstitution = () => {
   const [currentStep, setCurrentStep] = useState(0)
   const [tableData, setTableData] = useState([])
 
+  useEffect(() => {
+    if (id == undefined){
+      let temp = [{
+        id: "MT", 
+        reporting_charge: 0, 
+        communication_charge: 0
+      }]
+      setTableData(temp) ; 
+    }
+  }, [id])
+
   const [chargesName, setChargesName] = useState("");
   const [chargesId, setChargesId] = useState(0);
 
@@ -239,6 +250,10 @@ const AddInstitution = () => {
           ? values.allow_offline_download
           : false
       };
+
+      if (resData?.website == undefined){
+        resData["website"] = "-"
+      }
 
       setPayload(resData)
 
@@ -806,12 +821,13 @@ const AddInstitution = () => {
                       }
                     ]}
                   >
-                     <Select
+                      <Input placeholder='Enter City' />
+                     {/* <Select
                       placeholder="City"
                       options={[...cities]}
                       showSearch
                     // onChange={() => { form.submit() }}
-                    />
+                    /> */}
                   </Form.Item>
                 </Col>
                 <Col xs={24} sm={12} md={12} lg={6}>
@@ -826,12 +842,13 @@ const AddInstitution = () => {
                       }
                     ]}
                   >
-                    <Select
+                    <Input placeholder='Enter State' />
+                    {/* <Select
                       placeholder="states"
                       options={[...states]}
                       showSearch
                     // onChange={() => { form.submit() }}
-                    />
+                    /> */}
                   </Form.Item>
                 </Col>
                 <Col xs={24} sm={12} md={12} lg={6}>
@@ -855,7 +872,7 @@ const AddInstitution = () => {
                     label='Website'
                     rules={[
                       {
-                        required: true,
+                        required: false,
                         message: 'Please enter website name'
                       }
                     ]}

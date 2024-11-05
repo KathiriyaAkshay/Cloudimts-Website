@@ -543,7 +543,7 @@ const Dicom = () => {
   }
 
   // **** Edit study details option handler **** // 
-  const editActionHandler = (id, referenceId) => {
+  const editActionHandler = (id, erenceId) => {
     setStudyID(id)
     setStudyReferenceId(referenceId);
     setIsEditModalOpen(true)

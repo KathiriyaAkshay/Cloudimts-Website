@@ -3244,3 +3244,14 @@ form.ant-form .ant-form-item .ant-form-item-label label{
   min-height: 20rem !important;
   
 }
+
+
+
+.institution-checkbox .ant-checkbox-inner{
+  background-color: #dcdcdc !important;
+  border-color: transparent !important;
+}
+
+.institution-checkbox .ant-checkbox-checked .ant-checkbox-inner::after {
+  border-color: #1677ff !important; /* Custom checkmark color */
+}
