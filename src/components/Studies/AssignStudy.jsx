@@ -10,9 +10,11 @@ import {
   Typography,
   Row,
   Col,
-  Button
+  Button, 
+  Divider, 
+  Space
 } from "antd";
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, useRef } from "react";
 import {
   fetchAssignStudy,
   getStudyData,
@@ -25,6 +27,7 @@ import NotificationMessage from "../NotificationMessage";
 import { descriptionOptions } from "../../helpers/utils";
 import APIHandler from "../../apis/apiHandler";
 import { UserPermissionContext } from "../../hooks/userPermissionContext";
+import { PlusOutlined } from "@ant-design/icons";
 
 const AssignStudy = ({
   isAssignModalOpen,
@@ -41,6 +44,22 @@ const AssignStudy = ({
   const [value, setValues] = useState([]);
   const [imageFile, setImageFile] = useState(null);
   const [assignUserId, setAssignUserId] = useState(null);
+  const [items, setItems] = useState(descriptionOptions);
+  const [name, setName] = useState('');
+  const inputRef = useRef(null);
+
+  const onNameChange = (event) => {
+    setName(event.target.value);
+  };
+  
+  const addItem = (e) => {
+    e.preventDefault();
+    setItems([{label: name, value: name}, ...items]);
+    setName('');
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 0);
+  };
 
   // Permission information context
   const { permissionData } = useContext(UserPermissionContext) ; 
@@ -352,6 +371,7 @@ const AssignStudy = ({
     }
   }, [studyID]);
 
+
   return (
     <Modal
       title="Clinical History"
@@ -497,13 +517,43 @@ const AssignStudy = ({
                       >
                         <Select
                           placeholder="Select Study Description"
-                          options={descriptionOptions}
                           showSearch
                           filterSort={(optionA, optionB) =>
                             (optionA?.label ?? "")
                               .toLowerCase()
                               .localeCompare((optionB?.label ?? "").toLowerCase())
                           }
+                          dropdownRender={(menu) => (
+                            <>
+                              {menu}
+                              <Divider
+                                style={{
+                                  margin: '8px 0',
+                                }}
+                              />
+                              <Space
+                                style={{
+                                  padding: '0 8px 4px',
+                                }}
+                              >
+                                <Input
+                                  placeholder="Please enter item"
+                                  ref={inputRef}
+                                  value={name}
+                                  onChange={onNameChange}
+                                  onKeyDown={(e) => e.stopPropagation()}
+                                />
+                                <Button type="text" icon={<PlusOutlined />} onClick={addItem}>
+                                  Add item
+                                </Button>
+                              </Space>
+                            </>
+                          )}
+                          options={items.map((item) => ({
+                            label: item?.label,
+                            value: item?.value,
+                          }))}
+                    
                         />
                       </Form.Item>
 
