@@ -48,13 +48,94 @@ const AddInstitution = () => {
   const [tableData, setTableData] = useState([])
 
   useEffect(() => {
-    if (id == undefined){
-      let temp = [{
-        id: "MT", 
-        reporting_charge: 0, 
-        communication_charge: 0
-      }]
-      setTableData(temp) ; 
+    if (id == undefined) {
+      let temp = [
+        { id: "CT BRAIN", reporting_charge: 0, communication_charge: 0 },
+        { id: "CT PNS", reporting_charge: 0, communication_charge: 0 },
+        { id: "CT TEMPORAL BONE", reporting_charge: 0, communication_charge: 0 },
+        { id: "CT FACIAL BONE", reporting_charge: 0, communication_charge: 0 },
+        { id: "CT CERVICAL SPINE", reporting_charge: 0, communication_charge: 0 },
+        { id: "CT DORSOL SPINE", reporting_charge: 0, communication_charge: 0 },
+        { id: "CT LUMBAR SPINE", reporting_charge: 0, communication_charge: 0 },
+        { id: "CT NECK", reporting_charge: 0, communication_charge: 0 },
+        { id: "CT CHEST", reporting_charge: 0, communication_charge: 0 },
+        { id: "CT ABDOMEN", reporting_charge: 0, communication_charge: 0 },
+        { id: "CT KUB", reporting_charge: 0, communication_charge: 0 },
+        { id: "CT UROGRAM", reporting_charge: 0, communication_charge: 0 },
+        { id: "CT PELVIS", reporting_charge: 0, communication_charge: 0 },
+        { id: "CT HIP JOINT", reporting_charge: 0, communication_charge: 0 },
+        { id: "CT FEMUR", reporting_charge: 0, communication_charge: 0 },
+        { id: "CT KNEE", reporting_charge: 0, communication_charge: 0 },
+        { id: "CT LEG", reporting_charge: 0, communication_charge: 0 },
+        { id: "CT ANKLE", reporting_charge: 0, communication_charge: 0 },
+        { id: "CT FOOT", reporting_charge: 0, communication_charge: 0 },
+        { id: "CT SHOULDER", reporting_charge: 0, communication_charge: 0 },
+        { id: "CT HUMERUS", reporting_charge: 0, communication_charge: 0 },
+        { id: "CT ELBOW", reporting_charge: 0, communication_charge: 0 },
+        { id: "CT FOREARM", reporting_charge: 0, communication_charge: 0 },
+        { id: "CT WRIST", reporting_charge: 0, communication_charge: 0 },
+        { id: "CT HAND", reporting_charge: 0, communication_charge: 0 },
+        { id: "CT CEREBRAL ANGIO", reporting_charge: 0, communication_charge: 0 },
+        { id: "CT NECK AND CEREBRAL ANGIO", reporting_charge: 0, communication_charge: 0 },
+        { id: "CT PULMONARY ANGIO", reporting_charge: 0, communication_charge: 0 },
+        { id: "CT CORONARY ANGIO", reporting_charge: 0, communication_charge: 0 },
+        { id: "CT RENAL ANGIO", reporting_charge: 0, communication_charge: 0 },
+        { id: "CT ABDOMINAL ANGIO", reporting_charge: 0, communication_charge: 0 },
+        { id: "CT PERIPHERAL ANGIO", reporting_charge: 0, communication_charge: 0 },
+        { id: "CT AORTOGRAM", reporting_charge: 0, communication_charge: 0 },
+        { id: "CT VENOGRAM", reporting_charge: 0, communication_charge: 0 },
+        { id: "CT CYSTOGRAM", reporting_charge: 0, communication_charge: 0 },
+        { id: "CT MYELOGRAM", reporting_charge: 0, communication_charge: 0 },
+        { id: "CT ENTEROGRAPHY", reporting_charge: 0, communication_charge: 0 },
+        { id: "CT SIALOGRAM", reporting_charge: 0, communication_charge: 0 },
+        { id: "CT SINOGRAM", reporting_charge: 0, communication_charge: 0 },
+        { id: "MRI BRAIN", reporting_charge: 0, communication_charge: 0 },
+        { id: "MRI BRAIN ANGIOGRAM", reporting_charge: 0, communication_charge: 0 },
+        { id: "MRI BRAIN VENOGRAM", reporting_charge: 0, communication_charge: 0 },
+        { id: "MRI BRAIN SEIZURE", reporting_charge: 0, communication_charge: 0 },
+        { id: "MRI INNER EAR", reporting_charge: 0, communication_charge: 0 },
+        { id: "MRI SELLA", reporting_charge: 0, communication_charge: 0 },
+        { id: "MRI ORBIT", reporting_charge: 0, communication_charge: 0 },
+        { id: "MRI FACE", reporting_charge: 0, communication_charge: 0 },
+        { id: "MRI PNS", reporting_charge: 0, communication_charge: 0 },
+        { id: "MRI NECK", reporting_charge: 0, communication_charge: 0 },
+        { id: "MRI THORACIC", reporting_charge: 0, communication_charge: 0 },
+        { id: "MRI STERNO CLAVICULAR JOINT", reporting_charge: 0, communication_charge: 0 },
+        { id: "MRI CERVICAL SPINE", reporting_charge: 0, communication_charge: 0 },
+        { id: "MRI DORSOL SPINE", reporting_charge: 0, communication_charge: 0 },
+        { id: "MRI WHOLE SPINE", reporting_charge: 0, communication_charge: 0 },
+        { id: "MRI BRACHIAL PLEXUX", reporting_charge: 0, communication_charge: 0 },
+        { id: "MRI LUMBAR PLEXUX", reporting_charge: 0, communication_charge: 0 },
+        { id: "MRI SHOULDER", reporting_charge: 0, communication_charge: 0 },
+        { id: "MRI HUMEROUS", reporting_charge: 0, communication_charge: 0 },
+        { id: "MRI ELBOW", reporting_charge: 0, communication_charge: 0 },
+        { id: "MRI FOREARM", reporting_charge: 0, communication_charge: 0 },
+        { id: "MRI WRIST", reporting_charge: 0, communication_charge: 0 },
+        { id: "MRI HAND", reporting_charge: 0, communication_charge: 0 },
+        { id: "MRI FINGER", reporting_charge: 0, communication_charge: 0 },
+        { id: "MRI UPPER ABDOMEN", reporting_charge: 0, communication_charge: 0 },
+        { id: "MRI MRCP", reporting_charge: 0, communication_charge: 0 },
+        { id: "MRI PELVIS", reporting_charge: 0, communication_charge: 0 },
+        { id: "MRI PROSTATE", reporting_charge: 0, communication_charge: 0 },
+        { id: "MRI PERINEUM", reporting_charge: 0, communication_charge: 0 },
+        { id: "MRI HIP JOINT", reporting_charge: 0, communication_charge: 0 },
+        { id: "MRI THIGH", reporting_charge: 0, communication_charge: 0 },
+        { id: "MRI KNEE JOINT", reporting_charge: 0, communication_charge: 0 },
+        { id: "MRI LEG", reporting_charge: 0, communication_charge: 0 },
+        { id: "MRI ANKLE", reporting_charge: 0, communication_charge: 0 },
+        { id: "MRI FOOT", reporting_charge: 0, communication_charge: 0 },
+        { id: "MRI CSF FLOW STUDY", reporting_charge: 0, communication_charge: 0 },
+        { id: "MRI CISTERNOGRAM", reporting_charge: 0, communication_charge: 0 },
+        { id: "MRI SAILOGRAM", reporting_charge: 0, communication_charge: 0 },
+        { id: "MRI SPECTROSCOPY", reporting_charge: 0, communication_charge: 0 },
+        { id: "MRI PERFUSION", reporting_charge: 0, communication_charge: 0 },
+        { id: "MRI ENTEROGRAPHY", reporting_charge: 0, communication_charge: 0 },
+        { id: "MRI FISTULOGRAM", reporting_charge: 0, communication_charge: 0 },
+        { id: "MRI SLEEP STUDY", reporting_charge: 0, communication_charge: 0 },
+        { id: "MRI CARDIAC", reporting_charge: 0, communication_charge: 0 }, 
+        { id: "CR", reporting_charge: 0, communication_charge: 0}
+      ]
+      setTableData(temp);
     }
   }, [id])
 
@@ -251,7 +332,7 @@ const AddInstitution = () => {
           : false
       };
 
-      if (resData?.website == undefined){
+      if (resData?.website == undefined) {
         resData["website"] = "-"
       }
 
@@ -821,8 +902,8 @@ const AddInstitution = () => {
                       }
                     ]}
                   >
-                      <Input placeholder='Enter City' />
-                     {/* <Select
+                    <Input placeholder='Enter City' />
+                    {/* <Select
                       placeholder="City"
                       options={[...cities]}
                       showSearch
