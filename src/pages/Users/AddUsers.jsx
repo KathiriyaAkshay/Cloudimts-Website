@@ -24,7 +24,7 @@ import TableWithFilter from "../../components/TableWithFilter";
 import API from "../../apis/getApi";
 import NotificationMessage from "../../components/NotificationMessage";
 import dayjs from "dayjs";
-import { cities } from '../../helpers/utils';
+import { cities, generateRandomEmail } from '../../helpers/utils';
 import { states } from '../../helpers/utils';
 import UploadImage from "../../components/UploadImage";
 import { uploadImage } from "../../apis/studiesApi";
@@ -363,7 +363,7 @@ const AddUsers = () => {
       } ; 
 
       if (requestPayload?.email == undefined  ){
-        requestPayload["email"] = null ; 
+        requestPayload["email"] = generateRandomEmail() ; 
       } 
 
       if (requestPayload?.remote_address == undefined){
@@ -376,11 +376,20 @@ const AddUsers = () => {
 
     } else if (currentStep === 1) {
 
-      setPayload(prev => ({
-        ...prev,
-        start_time: values.availability[0].format('HH:mm:ss'),
-        end_time: values.availability[1].format('HH:mm:ss')
-      }))
+      if (values?.availability == undefined){
+        setPayload(prev => ({
+          ...prev,
+          start_time: "00:00:00",
+          end_time: "00:00:00"
+        }))
+
+      } else {
+        setPayload(prev => ({
+          ...prev,
+          start_time: values.availability[0].format('HH:mm:ss'),
+          end_time: values.availability[1].format('HH:mm:ss')
+        }))
+      }
 
       if (id) {
         setIsLoading(true)
@@ -601,7 +610,7 @@ const AddUsers = () => {
       dataIndex: 'viewAssign',
       render: (text, record) => (
         <Form.Item name={`${record.id}_viewAssign`} valuePropName='checked'>
-          <Checkbox />
+          <Checkbox className='institution-checkbox' />
         </Form.Item>
       )
     },
@@ -610,7 +619,7 @@ const AddUsers = () => {
       dataIndex: 'viewAll',
       render: (text, record) => (
         <Form.Item name={`${record.id}_viewAll`} valuePropName='checked'>
-          <Checkbox />
+          <Checkbox className='institution-checkbox' />
         </Form.Item>
       )
     }
@@ -641,6 +650,7 @@ const AddUsers = () => {
         <Checkbox
           checked={checkAll}
           onChange={onCheckAllChange}
+          className='institution-checkbox'
         >
           <div style={{color: "#FFF"}}>Allowed</div>
         </Checkbox>
@@ -649,6 +659,7 @@ const AddUsers = () => {
       render: (text, record) => (
         <Form.Item name={`${record.id}_isAllowed`} valuePropName='checked'>
           <Checkbox
+            className='institution-checkbox'
             checked={record.isAllowed}
             onChange={(e) => onCheckboxChange(e.target.checked, record.id)}
           />
@@ -819,7 +830,7 @@ const AddUsers = () => {
                     rules={[
                       {
                         type: 'email',
-                        required: true,
+                        required: false,
                         message: 'Please enter valid email'
                       }
                     ]}
@@ -913,12 +924,13 @@ const AddUsers = () => {
                       }
                     ]}
                   >
-                    <Select
+                    {/* <Select
                       placeholder="City"
                       options={[...cities]}
                       showSearch
                     // onChange={() => { form.submit() }}
-                    />
+                    /> */}
+                    <Input placeholder='Enter City'/>
                   </Form.Item>
                 </Col>
 
@@ -950,12 +962,13 @@ const AddUsers = () => {
                       }
                     ]}
                   >
-                    <Select
+                    <Input placeholder='Enter State'/>
+                    {/* <Select
                       placeholder="states"
                       options={[...states]}
                       showSearch
                     // onChange={() => { form.submit() }}
-                    />
+                    /> */}
                   </Form.Item>
                 </Col>
 
@@ -1095,7 +1108,7 @@ const AddUsers = () => {
                     name='availability'
                     rules={[
                       {
-                        required: true,
+                        required: false,
                         message: 'Please enter availability'
                       }
                     ]}
@@ -1240,7 +1253,12 @@ const AddUsers = () => {
                       imageURL={imageURL}
                     /> */}
 
-                    <ImgCrop rotationSlider>
+                    <ImgCrop 
+                      // rotationSlider
+                      aspect={1}
+                      minZoom={0.3}
+                      zoom={1.5}            // Adjust initial zoom level if supported by ImgCrop
+                    >
                       <Upload
                         action="https://file.io"
                         listType="picture-card"

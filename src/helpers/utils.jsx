@@ -83,6 +83,22 @@ export const modifyDate = data => {
   })
 }
 
+export function generateRandomEmail() {
+  const domains = ["example.com", "test.com", "random.com", "mail.com"];
+  const characters = "abcdefghijklmnopqrstuvwxyz0123456789";
+  
+  // Generate random username
+  let username = "";
+  for (let i = 0; i < 10; i++) {
+      username += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+  
+  // Pick a random domain
+  const domain = domains[Math.floor(Math.random() * domains.length)];
+  
+  return `${username}@${domain}`;
+}
+
 
 export const descriptionOptions = [
   { label: "Abdomen", value: "Abdomen" },

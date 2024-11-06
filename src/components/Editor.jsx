@@ -1,7 +1,7 @@
 import { CKEditor } from '@ckeditor/ckeditor5-react'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState, useRef } from 'react'
 import '../../ckeditor5/build/ckeditor'
-import { Button, Card, Col, Divider, Row, Spin, Typography, Input, Select, Form } from 'antd'
+import { Button, Card, Col, Row, Spin, Typography, Input, Select, Form, Divider, Space } from 'antd'
 import {
   fetchTemplate,
   fetchUserSignature,
@@ -16,6 +16,7 @@ import NotificationMessage from './NotificationMessage'
 import { useNavigate } from 'react-router-dom'
 import APIHandler from '../apis/apiHandler'
 import { descriptionOptions } from '../helpers/utils'
+import { PlusOutlined } from '@ant-design/icons'
 
 const Editor = ({ id }) => {
 
@@ -36,6 +37,22 @@ const Editor = ({ id }) => {
 
   const [form] = Form.useForm();
   const [reportStudyDescription, setReportStudyDescription] = useState(null);
+  const [items, setItems] = useState(descriptionOptions);
+  const [name, setName] = useState('');
+  const inputRef = useRef(null);
+
+  const onNameChange = (event) => {
+    setName(event.target.value);
+  };
+  
+  const addItem = (e) => {
+    e.preventDefault();
+    setItems([{label: name, value: name}, ...items]);
+    setName('');
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 0);
+  };
 
   // **** StudyUID information **** // 
   const studyUIDInformation = `https://viewer.cloudimts.com/ohif/viewer?url=../studies/` + localStorage.getItem("studyUIDValue") + "/ohif-dicom-json";
@@ -298,15 +315,13 @@ const Editor = ({ id }) => {
   const handleReportSave = async () => {
 
     if (reportStudyDescription == null) {
-
       NotificationMessage("warning", "Please, Select report study description")
-
     } else {
 
       setIsLoading(true);
       await saveAdvancedFileReport({
         id,
-        report: `${editorData} ${`<p style="text-align: right; margin-top: 20px;"><img src=${signatureImage} alt="signature image" style="width:100px;height:80px;text-align: right;"></p>`} ${`<p style="text-align: right;">${username}</p>`}`,
+        report: `${editorData} ${`<p style="text-align: left; margin-top: 20px;"><img src=${signatureImage} alt="signature image" style="width:512px;height:160px;text-align: right;"></p>`} ${`<p style="text-align: right;">${username}</p>`}`,
         report_study_description: reportStudyDescription
       })
         .then(res => {
@@ -437,16 +452,45 @@ const Editor = ({ id }) => {
                     ]}
                   >
                     <Select
-                      placeholder="Select Study Description"
-                      options={descriptionOptions}
-                      showSearch
-                      filterSort={(optionA, optionB) =>
-                        (optionA?.label ?? "")
-                          .toLowerCase()
-                          .localeCompare((optionB?.label ?? "").toLowerCase())
-                      }
-                      onChange={StudyDescriptionChangeHandler}
-                    />
+                          placeholder="Select Study Description"
+                          showSearch
+                          filterSort={(optionA, optionB) =>
+                            (optionA?.label ?? "")
+                              .toLowerCase()
+                              .localeCompare((optionB?.label ?? "").toLowerCase())
+                          }
+                          dropdownRender={(menu) => (
+                            <>
+                              {menu}
+                              <Divider
+                                style={{
+                                  margin: '8px 0',
+                                }}
+                              />
+                              <Space
+                                style={{
+                                  padding: '0 8px 4px',
+                                }}
+                              >
+                                <Input
+                                  placeholder="Please enter item"
+                                  ref={inputRef}
+                                  value={name}
+                                  onChange={onNameChange}
+                                  onKeyDown={(e) => e.stopPropagation()}
+                                />
+                                <Button type="text" icon={<PlusOutlined />} onClick={addItem}>
+                                  Add item
+                                </Button>
+                              </Space>
+                            </>
+                          )}
+                          options={items.map((item) => ({
+                            label: item?.label,
+                            value: item?.value,
+                          }))}
+                    
+                        />
                   </Form.Item>
                 </Form>
 
