@@ -216,7 +216,7 @@ const AssignStudy = ({
                 label: element?.user__username, 
                 value: element?.user__id
               })) 
-              setInstitutionRadiologist([...superadminData,...resData]);
+              setInstitutionRadiologist([...superadminData || [],...resData]);
             }
           };
 
