@@ -48,6 +48,9 @@ const StudyReports = ({
 }) => {
 
   const navigate = useNavigate();
+  console.log("Stuyd id infomration", studyID);
+  localStorage.setItem("studyId", studyID)
+  
 
   const { permissionData } = useContext(UserPermissionContext)
 

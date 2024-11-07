@@ -14,7 +14,9 @@ import {
   Spin,
   InputNumber,
   Modal,
-  Empty
+  Empty,
+  Table,
+  Divider
 } from 'antd';
 
 import { useNavigate, useParams } from 'react-router-dom'
@@ -46,102 +48,106 @@ const AddInstitution = () => {
 
   const [currentStep, setCurrentStep] = useState(0)
   const [tableData, setTableData] = useState([])
+  
+  const [ctModalistyList, setCtModalityList] = useState([
+    { id: "BRAIN", reporting_charge: 0, communication_charge: 0 },
+    { id: "PNS", reporting_charge: 150, communication_charge: 50 },
+    { id: "TEMPORAL BONE", reporting_charge: 150, communication_charge: 50 },
+    { id: "FACIAL BONE", reporting_charge: 150, communication_charge: 50 },
+    { id: "CERVICAL SPINE", reporting_charge: 150, communication_charge: 50 },
+    { id: "DORSOL SPINE", reporting_charge: 150, communication_charge: 50 },
+    { id: "LUMBAR SPINE", reporting_charge: 150, communication_charge: 50 },
+    { id: "NECK", reporting_charge: 150, communication_charge: 50 },
+    { id: "CHEST", reporting_charge: 150, communication_charge: 50 },
+    { id: "ABDOMEN", reporting_charge: 150, communication_charge: 50 },
+    { id: "KUB", reporting_charge: 150, communication_charge: 50 },
+    { id: "UROGRAM", reporting_charge: 150, communication_charge: 50 },
+    { id: "PELVIS", reporting_charge: 150, communication_charge: 50 },
+    { id: "HIP JOINT", reporting_charge: 150, communication_charge: 50 },
+    { id: "FEMUR", reporting_charge: 150, communication_charge: 50 },
+    { id: "KNEE", reporting_charge: 150, communication_charge: 50 },
+    { id: "LEG", reporting_charge: 150, communication_charge: 50 },
+    { id: "ANKLE", reporting_charge: 150, communication_charge: 50 },
+    { id: "FOOT", reporting_charge: 150, communication_charge: 50 },
+    { id: "SHOULDER", reporting_charge: 150, communication_charge: 50 },
+    { id: "HUMERUS", reporting_charge: 150, communication_charge: 50 },
+    { id: "ELBOW", reporting_charge: 150, communication_charge: 50 },
+    { id: "FOREARM", reporting_charge: 150, communication_charge: 50 },
+    { id: "WRIST", reporting_charge: 150, communication_charge: 50 },
+    { id: "HAND", reporting_charge: 150, communication_charge: 50 },
+    { id: "CEREBRAL ANGIO", reporting_charge: 150, communication_charge: 50 },
+    { id: "NECK AND CEREBRAL ANGIO", reporting_charge: 150, communication_charge: 50 },
+    { id: "PULMONARY ANGIO", reporting_charge: 150, communication_charge: 50 },
+    { id: "CORONARY ANGIO", reporting_charge: 150, communication_charge: 50 },
+    { id: "RENAL ANGIO", reporting_charge: 150, communication_charge: 50 },
+    { id: "ABDOMINAL ANGIO", reporting_charge: 150, communication_charge: 50 },
+    { id: "PERIPHERAL ANGIO", reporting_charge: 150, communication_charge: 50 },
+    { id: "AORTOGRAM", reporting_charge: 150, communication_charge: 50 },
+    { id: "VENOGRAM", reporting_charge: 150, communication_charge: 50 },
+    { id: "CYSTOGRAM", reporting_charge: 150, communication_charge: 50 },
+    { id: "MYELOGRAM", reporting_charge: 150, communication_charge: 50 },
+    { id: "ENTEROGRAPHY", reporting_charge: 150, communication_charge: 50 },
+    { id: "SIALOGRAM", reporting_charge: 150, communication_charge: 50 },
+    { id: "SINOGRAM", reporting_charge: 150, communication_charge: 50 }]
+  ) ; 
 
-  useEffect(() => {
-    if (id == undefined) {
-      let temp = [
-        { id: "CT BRAIN", reporting_charge: 0, communication_charge: 0 },
-        { id: "CT PNS", reporting_charge: 0, communication_charge: 0 },
-        { id: "CT TEMPORAL BONE", reporting_charge: 0, communication_charge: 0 },
-        { id: "CT FACIAL BONE", reporting_charge: 0, communication_charge: 0 },
-        { id: "CT CERVICAL SPINE", reporting_charge: 0, communication_charge: 0 },
-        { id: "CT DORSOL SPINE", reporting_charge: 0, communication_charge: 0 },
-        { id: "CT LUMBAR SPINE", reporting_charge: 0, communication_charge: 0 },
-        { id: "CT NECK", reporting_charge: 0, communication_charge: 0 },
-        { id: "CT CHEST", reporting_charge: 0, communication_charge: 0 },
-        { id: "CT ABDOMEN", reporting_charge: 0, communication_charge: 0 },
-        { id: "CT KUB", reporting_charge: 0, communication_charge: 0 },
-        { id: "CT UROGRAM", reporting_charge: 0, communication_charge: 0 },
-        { id: "CT PELVIS", reporting_charge: 0, communication_charge: 0 },
-        { id: "CT HIP JOINT", reporting_charge: 0, communication_charge: 0 },
-        { id: "CT FEMUR", reporting_charge: 0, communication_charge: 0 },
-        { id: "CT KNEE", reporting_charge: 0, communication_charge: 0 },
-        { id: "CT LEG", reporting_charge: 0, communication_charge: 0 },
-        { id: "CT ANKLE", reporting_charge: 0, communication_charge: 0 },
-        { id: "CT FOOT", reporting_charge: 0, communication_charge: 0 },
-        { id: "CT SHOULDER", reporting_charge: 0, communication_charge: 0 },
-        { id: "CT HUMERUS", reporting_charge: 0, communication_charge: 0 },
-        { id: "CT ELBOW", reporting_charge: 0, communication_charge: 0 },
-        { id: "CT FOREARM", reporting_charge: 0, communication_charge: 0 },
-        { id: "CT WRIST", reporting_charge: 0, communication_charge: 0 },
-        { id: "CT HAND", reporting_charge: 0, communication_charge: 0 },
-        { id: "CT CEREBRAL ANGIO", reporting_charge: 0, communication_charge: 0 },
-        { id: "CT NECK AND CEREBRAL ANGIO", reporting_charge: 0, communication_charge: 0 },
-        { id: "CT PULMONARY ANGIO", reporting_charge: 0, communication_charge: 0 },
-        { id: "CT CORONARY ANGIO", reporting_charge: 0, communication_charge: 0 },
-        { id: "CT RENAL ANGIO", reporting_charge: 0, communication_charge: 0 },
-        { id: "CT ABDOMINAL ANGIO", reporting_charge: 0, communication_charge: 0 },
-        { id: "CT PERIPHERAL ANGIO", reporting_charge: 0, communication_charge: 0 },
-        { id: "CT AORTOGRAM", reporting_charge: 0, communication_charge: 0 },
-        { id: "CT VENOGRAM", reporting_charge: 0, communication_charge: 0 },
-        { id: "CT CYSTOGRAM", reporting_charge: 0, communication_charge: 0 },
-        { id: "CT MYELOGRAM", reporting_charge: 0, communication_charge: 0 },
-        { id: "CT ENTEROGRAPHY", reporting_charge: 0, communication_charge: 0 },
-        { id: "CT SIALOGRAM", reporting_charge: 0, communication_charge: 0 },
-        { id: "CT SINOGRAM", reporting_charge: 0, communication_charge: 0 },
-        { id: "MRI BRAIN", reporting_charge: 0, communication_charge: 0 },
-        { id: "MRI BRAIN ANGIOGRAM", reporting_charge: 0, communication_charge: 0 },
-        { id: "MRI BRAIN VENOGRAM", reporting_charge: 0, communication_charge: 0 },
-        { id: "MRI BRAIN SEIZURE", reporting_charge: 0, communication_charge: 0 },
-        { id: "MRI INNER EAR", reporting_charge: 0, communication_charge: 0 },
-        { id: "MRI SELLA", reporting_charge: 0, communication_charge: 0 },
-        { id: "MRI ORBIT", reporting_charge: 0, communication_charge: 0 },
-        { id: "MRI FACE", reporting_charge: 0, communication_charge: 0 },
-        { id: "MRI PNS", reporting_charge: 0, communication_charge: 0 },
-        { id: "MRI NECK", reporting_charge: 0, communication_charge: 0 },
-        { id: "MRI THORACIC", reporting_charge: 0, communication_charge: 0 },
-        { id: "MRI STERNO CLAVICULAR JOINT", reporting_charge: 0, communication_charge: 0 },
-        { id: "MRI CERVICAL SPINE", reporting_charge: 0, communication_charge: 0 },
-        { id: "MRI DORSOL SPINE", reporting_charge: 0, communication_charge: 0 },
-        { id: "MRI WHOLE SPINE", reporting_charge: 0, communication_charge: 0 },
-        { id: "MRI BRACHIAL PLEXUX", reporting_charge: 0, communication_charge: 0 },
-        { id: "MRI LUMBAR PLEXUX", reporting_charge: 0, communication_charge: 0 },
-        { id: "MRI SHOULDER", reporting_charge: 0, communication_charge: 0 },
-        { id: "MRI HUMEROUS", reporting_charge: 0, communication_charge: 0 },
-        { id: "MRI ELBOW", reporting_charge: 0, communication_charge: 0 },
-        { id: "MRI FOREARM", reporting_charge: 0, communication_charge: 0 },
-        { id: "MRI WRIST", reporting_charge: 0, communication_charge: 0 },
-        { id: "MRI HAND", reporting_charge: 0, communication_charge: 0 },
-        { id: "MRI FINGER", reporting_charge: 0, communication_charge: 0 },
-        { id: "MRI UPPER ABDOMEN", reporting_charge: 0, communication_charge: 0 },
-        { id: "MRI MRCP", reporting_charge: 0, communication_charge: 0 },
-        { id: "MRI PELVIS", reporting_charge: 0, communication_charge: 0 },
-        { id: "MRI PROSTATE", reporting_charge: 0, communication_charge: 0 },
-        { id: "MRI PERINEUM", reporting_charge: 0, communication_charge: 0 },
-        { id: "MRI HIP JOINT", reporting_charge: 0, communication_charge: 0 },
-        { id: "MRI THIGH", reporting_charge: 0, communication_charge: 0 },
-        { id: "MRI KNEE JOINT", reporting_charge: 0, communication_charge: 0 },
-        { id: "MRI LEG", reporting_charge: 0, communication_charge: 0 },
-        { id: "MRI ANKLE", reporting_charge: 0, communication_charge: 0 },
-        { id: "MRI FOOT", reporting_charge: 0, communication_charge: 0 },
-        { id: "MRI CSF FLOW STUDY", reporting_charge: 0, communication_charge: 0 },
-        { id: "MRI CISTERNOGRAM", reporting_charge: 0, communication_charge: 0 },
-        { id: "MRI SAILOGRAM", reporting_charge: 0, communication_charge: 0 },
-        { id: "MRI SPECTROSCOPY", reporting_charge: 0, communication_charge: 0 },
-        { id: "MRI PERFUSION", reporting_charge: 0, communication_charge: 0 },
-        { id: "MRI ENTEROGRAPHY", reporting_charge: 0, communication_charge: 0 },
-        { id: "MRI FISTULOGRAM", reporting_charge: 0, communication_charge: 0 },
-        { id: "MRI SLEEP STUDY", reporting_charge: 0, communication_charge: 0 },
-        { id: "MRI CARDIAC", reporting_charge: 0, communication_charge: 0 }, 
-        { id: "CR", reporting_charge: 0, communication_charge: 0}
-      ]
-      setTableData(temp);
-    }
-  }, [id])
+  const [mrModalityList, setMrModalityList] = useState([
+    { id: "BRAIN", reporting_charge: 200, communication_charge: 50 },
+    { id: "BRAIN", reporting_charge: 200, communication_charge: 50 },
+    { id: "BRAIN ANGIOGRAM", reporting_charge: 200, communication_charge: 50 },
+    { id: "BRAIN VENOGRAM", reporting_charge: 200, communication_charge: 50 },
+    { id: "BRAIN SEIZURE", reporting_charge: 200, communication_charge: 50 },
+    { id: "INNER EAR", reporting_charge: 200, communication_charge: 50 },
+    { id: "SELLA", reporting_charge: 200, communication_charge: 50 },
+    { id: "ORBIT", reporting_charge: 200, communication_charge: 50 },
+    { id: "FACE", reporting_charge: 200, communication_charge: 50 },
+    { id: "PNS", reporting_charge: 200, communication_charge: 50 },
+    { id: "NECK", reporting_charge: 200, communication_charge: 50 },
+    { id: "THORACIC", reporting_charge: 200, communication_charge: 50 },
+    { id: "STERNO CLAVICULAR JOINT", reporting_charge: 200, communication_charge: 50 },
+    { id: "CERVICAL SPINE", reporting_charge: 200, communication_charge: 50 },
+    { id: "DORSOL SPINE", reporting_charge: 200, communication_charge: 50 },
+    { id: "WHOLE SPINE", reporting_charge: 200, communication_charge: 50 },
+    { id: "BRACHIAL PLEXUX", reporting_charge: 200, communication_charge: 50 },
+    { id: "LUMBAR PLEXUX", reporting_charge: 200, communication_charge: 50 },
+    { id: "SHOULDER", reporting_charge: 200, communication_charge: 50 },
+    { id: "HUMEROUS", reporting_charge: 200, communication_charge: 50 },
+    { id: "ELBOW", reporting_charge: 200, communication_charge: 50 },
+    { id: "FOREARM", reporting_charge: 200, communication_charge: 50 },
+    { id: "WRIST", reporting_charge: 200, communication_charge: 50 },
+    { id: "HAND", reporting_charge: 200, communication_charge: 50 },
+    { id: "FINGER", reporting_charge: 200, communication_charge: 50 },
+    { id: "UPPER ABDOMEN", reporting_charge: 200, communication_charge: 50 },
+    { id: "MRCP", reporting_charge: 200, communication_charge: 50 },
+    { id: "PELVIS", reporting_charge: 200, communication_charge: 50 },
+    { id: "PROSTATE", reporting_charge: 200, communication_charge: 50 },
+    { id: "PERINEUM", reporting_charge: 200, communication_charge: 50 },
+    { id: "HIP JOINT", reporting_charge: 200, communication_charge: 50 },
+    { id: "THIGH", reporting_charge: 200, communication_charge: 50 },
+    { id: "KNEE JOINT", reporting_charge: 200, communication_charge: 50 },
+    { id: "LEG", reporting_charge: 200, communication_charge: 50 },
+    { id: "ANKLE", reporting_charge: 200, communication_charge: 50 },
+    { id: "FOOT", reporting_charge: 200, communication_charge: 50 },
+    { id: "CSF FLOW STUDY", reporting_charge: 200, communication_charge: 50 },
+    { id: "CISTERNOGRAM", reporting_charge: 200, communication_charge: 50 },
+    { id: "SAILOGRAM", reporting_charge: 200, communication_charge: 50 },
+    { id: "SPECTROSCOPY", reporting_charge: 200, communication_charge: 50 },
+    { id: "PERFUSION", reporting_charge: 200, communication_charge: 50 },
+    { id: "ENTEROGRAPHY", reporting_charge: 200, communication_charge: 50 },
+    { id: "FISTULOGRAM", reporting_charge: 200, communication_charge: 50 },
+    { id: "SLEEP STUDY", reporting_charge: 200, communication_charge: 50 },
+    { id: "CARDIAC", reporting_charge: 200, communication_charge: 50 }
+  ]) ; 
+
+  const [crModalityList, setCrModalityList] = useState([
+    { id: "CR", reporting_charge: 20, communication_charge: 10 }
+  ]);
+
+  const [otherModalityList, setOtherModalityList] = useState([
+    {id: "Other", reporting_charge: 100, communication_charge: 100}
+  ]) ; 
 
   const [chargesName, setChargesName] = useState("");
-  const [chargesId, setChargesId] = useState(0);
-
   const [payload, setPayload] = useState({})
   const [isLoading, setIsLoading] = useState(false)
   const [radiologistOptions, setRadiologistOptions] = useState([])
@@ -171,15 +177,42 @@ const AddInstitution = () => {
         if (res.data.status) {
 
           // Set Moality charges information
-          let tempData = [];
+          let ctTempData = [];
+          let mriTempData = []; 
+          let crTempData = [];
+          let otherTempData = [] ;
+
           for (let key in res?.data?.data?.modality) {
-            tempData.push({
-              id: key,
-              reporting_charge: res?.data?.data?.modality[key]?.reporting_charge,
-              communication_charge: res?.data?.data?.modality[key]?.communication_charge
-            })
+            if (key?.includes("CT")){
+              ctTempData.push({
+                id: key,
+                reporting_charge: res?.data?.data?.modality[key]?.reporting_charge,
+                communication_charge: res?.data?.data?.modality[key]?.communication_charge
+              })
+            } else if (key?.includes("MRI")){
+              mriTempData.push({
+                id: key,
+                reporting_charge: res?.data?.data?.modality[key]?.reporting_charge,
+                communication_charge: res?.data?.data?.modality[key]?.communication_charge
+              })
+            } else if (key == "CR"){
+              crTempData.push({
+                id: key,
+                reporting_charge: res?.data?.data?.modality[key]?.reporting_charge,
+                communication_charge: res?.data?.data?.modality[key]?.communication_charge
+              })
+            } else{
+              otherTempData.push({
+                id: key,
+                reporting_charge: res?.data?.data?.modality[key]?.reporting_charge,
+                communication_charge: res?.data?.data?.modality[key]?.communication_charge
+              })
+            }
           }
-          setTableData([...tempData]);
+          setCtModalityList([...ctTempData]) ;
+          setMrModalityList([...mriTempData]);
+          setCrModalityList([...crTempData]) ; 
+          setOtherModalityList([...otherTempData]) ;
 
           const formData = {
             ...res.data.data,
@@ -249,30 +282,11 @@ const AddInstitution = () => {
   }, [])
 
   const handleNextStep = () => {
-    if (currentStep === 1) {
-      if (tableData?.length === 0) {
-
-        NotificationMessage("warning", "Please, Include modality charges details");
-      } else {
-
-        setCurrentStep(prevStep => prevStep + 1)
-      }
-    } else {
-
-      setCurrentStep(prevStep => prevStep + 1)
-    }
+    setCurrentStep(prevStep => prevStep + 1)
   }
 
   const handlePrevStep = () => {
     setCurrentStep(prevStep => prevStep - 1)
-  }
-
-  const validateInput = (rule, value, callback) => {
-    if (value !== undefined && value !== null && isNaN(value)) {
-      callback('Please enter a valid number')
-    } else {
-      callback()
-    }
   }
 
   const OpenInstitutionReportSettingModal = () => {
@@ -283,29 +297,26 @@ const AddInstitution = () => {
   const AddModalityDataHandler = () => {
 
     if (chargesName != "") {
-
       let alreadInsert = 0;
-
-      tableData.map((element) => {
+      otherModalityList .map((element) => {
         if (element?.id === chargesName) {
           NotificationMessage(
             "warning",
             "Already insert this modality charge"
           );
-
           alreadInsert = 1;
         }
       })
 
       if (alreadInsert == 0) {
-        setTableData([...tableData,
+        setOtherModalityList([
+          ...otherModalityList,
         {
           id: chargesName,
           reporting_charge: 0,
           communication_charge: 0
         }])
 
-        setChargesId((prev) => prev + 1);
       }
 
     } else {
@@ -317,6 +328,7 @@ const AddInstitution = () => {
   }
 
   const [updateOptionActivate, setUpdateOptionActivate] = useState(false);
+
   const handleSubmit = async values => {
     if (currentStep === 0) {
 
@@ -374,67 +386,72 @@ const AddInstitution = () => {
     } else if (currentStep === 1) {
 
       let modality_details = {};
-      tableData.map((element) => {
-        modality_details[element?.id] = {
+
+      ctModalistyList.map((element) => {
+        modality_details[`CT ${element?.id}`] = {
+          'reporting_charge': values[`ct_${element?.id}_reporting_charge`],
+          "communication_charge": values[`ct_${element?.id}_communication_charge`]
+        }
+      });
+
+      mrModalityList.map((element) => {
+        modality_details[`MRI ${element?.id}`] = {
+          'reporting_charge': values[`mri_${element?.id}_reporting_charge`],
+          "communication_charge": values[`mri_${element?.id}_communication_charge`]
+        }
+      })
+      
+      crModalityList.map((element) => {
+        modality_details[`${element?.id}`] = {
           'reporting_charge': values[`${element?.id}_reporting_charge`],
           "communication_charge": values[`${element?.id}_communication_charge`]
         }
-      });
+      })
+
+      otherModalityList.map((element) => {
+        modality_details[`${element?.id}`] = {
+          'reporting_charge': values[`${element?.id}_reporting_charge`],
+          "communication_charge": values[`${element?.id}_communication_charge`]
+        }
+      })
 
       setPayload(prev => ({ ...prev, modality: modality_details }))
 
       if (id) {
 
-        if (tableData?.length === 0) {
-          NotificationMessage("warning", "Please, Include modality charge details");
-        } else {
-
-          setIsLoading(true)
-
-          let modality_details = {};
-          tableData.map((element) => {
-            modality_details[element?.id] = {
-              'reporting_charge': values[`${element?.id}_reporting_charge`],
-              "communication_charge": values[`${element?.id}_communication_charge`]
+        setIsLoading(true)
+        await API.post(
+          '/institute/v1/institute-modality-update',
+          {
+            id: id,
+            modality_details: modality_details
+          },
+          { headers: { Authorization: `Bearer ${token}` } }
+        )
+          .then(res => {
+            if (res.data.status) {
+              NotificationMessage('success', 'Institution modality charge updated successfully')
+            } else {
+              NotificationMessage(
+                'warning',
+                'Network request failed',
+                res.data.message
+              )
             }
-          });
-
-          await API.post(
-            '/institute/v1/institute-modality-update',
-            {
-              id: id,
-              modality_details: modality_details
-            },
-            { headers: { Authorization: `Bearer ${token}` } }
+          })
+          .catch(err =>
+            NotificationMessage('warning', 'Network request failed', err?.response?.data?.message)
           )
-            .then(res => {
-              if (res.data.status) {
-                NotificationMessage('success', 'Institution modality charge updated successfully')
-              } else {
-                NotificationMessage(
-                  'warning',
-                  'Network request failed',
-                  res.data.message
-                )
-              }
-            })
-            .catch(err =>
-              NotificationMessage('warning', 'Network request failed', err?.response?.data?.message)
-            )
-          setIsLoading(false)
+        setIsLoading(false)
 
 
-          if (updateOptionActivate) {
-            setUpdateOptionActivate(false);
-          } else {
-            handleNextStep();
-          }
-
+        if (updateOptionActivate) {
+          setUpdateOptionActivate(false);
+        } else {
+          handleNextStep();
         }
 
       } else {
-
-
         if (updateOptionActivate) {
           setUpdateOptionActivate(false);
         } else {
@@ -755,9 +772,135 @@ const AddInstitution = () => {
     }
   ]
 
-  const ModalityDelete = (modalityname) => {
+  // Institution modality related table column
+  const ctModalityColumns = [
+    {
+      title: 'ID',
+      dataIndex: 'id',
+      key: 'id',
+      render: (text) => (
+        <div style={{textAlign: "left", paddingLeft: 4}}>{text}</div>
+      )
+    },
+    {
+      title: 'Reporting Charge',
+      dataIndex: 'reporting_charge',
+      key: 'reporting_charge',
+      render: (text, record) => (
+        <Form.Item
+          name={`ct_${record.id}_reporting_charge`}
+          initialValue={text}
+        >
+          <Input type="number" />
+        </Form.Item>
+      )
+    },
+    {
+      title: 'Communication Charge',
+      dataIndex: 'communication_charge',
+      key: 'communication_charge',
+      render: (text, record) => (
+        <Form.Item
+          name={`ct_${record.id}_communication_charge`}
+          initialValue={text}
+        >
+          <Input type="number" />
+        </Form.Item>
+      )
+    } 
+  ];
+  
+  const mriModalityColumns = [
+    {
+      title: 'ID',
+      dataIndex: 'id',
+      key: 'id',
+      render: (text) => (
+        <div style={{textAlign: "left", paddingLeft: 4}}>{text}</div>
+      )
+    },
+    {
+      title: 'Reporting Charge',
+      dataIndex: 'reporting_charge',
+      key: 'reporting_charge',
+      render: (text, record) => (
+        <Form.Item
+          name={`mri_${record.id}_reporting_charge`}
+          initialValue={text}
+        >
+          <Input type="number" />
+        </Form.Item>
+      )
+    },
+    {
+      title: 'Communication Charge',
+      dataIndex: 'communication_charge',
+      key: 'communication_charge',
+      render: (text, record) => (
+        <Form.Item
+          name={`mri_${record.id}_communication_charge`}
+          initialValue={text}
+        >
+          <Input type="number" />
+        </Form.Item>
+      )
+    } 
+  ];
 
-    setTableData(tableData.filter(element => element?.id !== modalityname));
+  const otherModalityColumns = [
+    {
+      title: 'ID',
+      dataIndex: 'id',
+      key: 'id',
+      render: (text) => (
+        <div>
+          {text}
+        </div>
+      )
+    },
+    {
+      title: 'Reporting Charge',
+      dataIndex: 'reporting_charge',
+      key: 'reporting_charge',
+      render: (text, record) => (
+        <Form.Item
+          name={`${record.id}_reporting_charge`}
+          initialValue={text}
+        >
+          <Input type="number" />
+        </Form.Item>
+      )
+    },
+    {
+      title: 'Communication Charge',
+      dataIndex: 'communication_charge',
+      key: 'communication_charge',
+      render: (text, record) => (
+        <Form.Item
+          name={`${record.id}_communication_charge`}
+          initialValue={text}
+        >
+          <Input type="number" />
+        </Form.Item>
+      )
+    },
+    {
+      title: 'Actions',
+      key: 'actions',
+      render: (_, record) => (
+        <Button
+          style={{ width: "100%" }}
+          danger
+          onClick={() => { ModalityDelete(record.id) }}
+        >
+          Delete
+        </Button>
+      )
+    }
+  ];
+
+  const ModalityDelete = (modalityname) => {
+    setOtherModalityList(otherModalityList.filter(element => element?.id !== modalityname));
   }
 
 
@@ -1043,13 +1186,12 @@ const AddInstitution = () => {
             >
               <Row>
 
+                {/* Customize modality related option  */}
                 <div className='Add_institution_charge_input_layout'>
-
                   <Col span={16}>
                     <Input placeholder='Enter Charges Name'
                       value={chargesName} onChange={(e) => { setChargesName(e.target.value) }} />
                   </Col>
-
                   <Button style={{ marginLeft: "0.80rem" }} onClick={() => AddModalityDataHandler()}>+ Add Charge</Button>
 
                 </div>
@@ -1058,45 +1200,123 @@ const AddInstitution = () => {
 
                   <div className='modality-card-wrapper'>
 
-                    {tableData?.length === 0 ? <>
+                    {ctModalistyList?.length === 0 ? <>
                       <Empty
                         description="Not found any modality charges"
                       />
                     </> : <>
 
-                      {tableData.map((element, index) => {
-                        return (
-                          <Card className='particular-modality-info-division'
-                            title={element.id} style={{ width: "fit-content", marginTop: "0.3rem" }}
-                            headerBg="#00ff00"
-                            key={index}>
+                      {/* ============ CT Modality and MRI Modality ============ */}
+                      
+                      <div style={{
+                        display: "flex", 
+                        flexDirection: "row", 
+                        gap: 15, 
+                        padding: 5, 
+                        paddingBottom: 20
+                      }}>
 
-                            <div className='particular-modality-charges-title'>Reporting charge</div>
+                        <div style={{
+                          width: "50%"
+                        }}>
+                          <div style={{ 
+                            fontWeight: 600, 
+                            marginTop: 10,
+                            paddingLeft: 10,
+                            paddingBottom: 5 
+                          }}>CT Modality</div>
+                          <Divider style={{ marginTop: 5 }} />
 
-                            <Form.Item name={`${element.id}_reporting_charge`} initialValue={element.reporting_charge}>
-                              <Input type='number' />
-                            </Form.Item>
+                          <Table
+                            columns={ctModalityColumns}
+                            dataSource={ctModalistyList}
+                            rowKey={"id"}
+                            pagination={false}
+                            className='institution-modality-table'
+                          />
+                        </div>
 
-                            <div className='particular-modality-charges-title'>Communication charge</div>
+                        <div style={{
+                          width: "50%"
+                        }}>
+                          <div style={{ 
+                            fontWeight: 600, 
+                            marginTop: 10,
+                            paddingLeft: 10,
+                            paddingBottom: 5 
+                          }}>MRI Modality</div>
+                          <Divider style={{ marginTop: 5 }} />
 
-                            <Form.Item name={`${element.id}_communication_charge`} initialValue={element.communication_charge}>
-                              <Input type='number' />
-                            </Form.Item>
+                          <Table
+                            columns={mriModalityColumns}
+                            dataSource={mrModalityList}
+                            rowKey={"id"}
+                            pagination={false}
+                            className='institution-modality-table'
+                          />
+                        </div>
 
-                            <Button style={{ width: "100%" }} danger
-                              onClick={() => { ModalityDelete(element?.id) }}>
-                              Delete
-                            </Button>
+                      </div>
+                        
+                      {/* ========== CR Modality and Other Modality  ==========  */}
 
-                          </Card>
-                        )
-                      })}
+                      <div style={{
+                        display: "flex", 
+                        flexDirection: "row", 
+                        gap: 15, 
+                        padding: 5, 
+                        paddingBottom: 20, 
+                        borderTop: "1px solid rgb(157, 157, 157)"
+                      }}>
+
+                        <div style={{
+                          width: "50%"
+                        }}>
+                          <div style={{ 
+                            fontWeight: 600, 
+                            marginTop: 10,
+                            paddingLeft: 10,
+                            paddingBottom: 5 
+                          }}>CR Modality</div>
+                          <Divider style={{ marginTop: 5 }} />
+
+                          <Table
+                            columns={otherModalityColumns}
+                            dataSource={crModalityList}
+                            rowKey={"id"}
+                            pagination={false}
+                            className='institution-modality-table'
+                          />
+                        </div>
+
+                        <div style={{
+                          width: "50%"
+                        }}>
+                          <div style={{ 
+                            fontWeight: 600, 
+                            marginTop: 10,
+                            paddingLeft: 10,
+                            paddingBottom: 5 
+                          }}>Others</div>
+                          <Divider style={{ marginTop: 5 }} />
+
+                          <Table
+                            columns={otherModalityColumns}
+                            dataSource={otherModalityList}
+                            rowKey={"id"}
+                            pagination={false}
+                            className='institution-modality-table'
+                          />
+                        </div>
+                        
+                      </div>
 
                     </>}
 
                   </div>
                 </Col>
 
+                {/* Previous, Update and Next Button  */}
                 <Col xs={24} sm={24} md={24} lg={24} className='justify-end mt'>
 
                   <Button type='primary' onClick={handlePrevStep}
@@ -1128,6 +1348,7 @@ const AddInstitution = () => {
                     </Button>
                   )}
                 </Col>
+
               </Row>
             </Form>
           )}

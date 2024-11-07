@@ -1512,8 +1512,7 @@ const Dicom = () => {
         columns={columns}
         scroll={{ y: "calc(100vh - 275px)", x: "100%" }}
         key={studyData.map(o => o.key)}
-        rowSelection={(otherPremissionStatus("Studies permission", "Delete Study") == false &&
-          otherPremissionStatus("Studies permission", "Assign study") == false)?false:true}
+        rowSelection={otherPremissionStatus("Studies permission", "Study Checkbo") == false?false:true}
         loading={isLoading}
         
         // Pagination handle

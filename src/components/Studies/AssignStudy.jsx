@@ -10,8 +10,8 @@ import {
   Typography,
   Row,
   Col,
-  Button, 
-  Divider, 
+  Button,
+  Divider,
   Space
 } from "antd";
 import React, { useEffect, useState, useContext, useRef } from "react";
@@ -51,10 +51,10 @@ const AssignStudy = ({
   const onNameChange = (event) => {
     setName(event.target.value);
   };
-  
+
   const addItem = (e) => {
     e.preventDefault();
-    setItems([{label: name, value: name}, ...items]);
+    setItems([{ label: name, value: name }, ...items]);
     setName('');
     setTimeout(() => {
       inputRef.current?.focus();
@@ -62,7 +62,7 @@ const AssignStudy = ({
   };
 
   // Permission information context
-  const { permissionData } = useContext(UserPermissionContext) ; 
+  const { permissionData } = useContext(UserPermissionContext);
 
   const otherPremissionStatus = (title, permission_name) => {
     const permission = permissionData[title]?.find(
@@ -113,80 +113,75 @@ const AssignStudy = ({
           const modifiedData = [
             {
               name: "Patient id",
-              value: resData?.Patient_id,
+              value: resData?.Patient_id ?? "-",
             },
             {
               name: "Patient Name",
-              value: resData?.Patient_name,
+              value: resData?.Patient_name ?? "-",
             },
             {
               name: "Institution Name",
-              value: resData?.institution?.Institution_name,
+              value: resData?.institution?.Institution_name ?? "-",
             },
             {
               name: "Study UID",
-              value: resData?.Study_UID,
+              value: resData?.Study_UID ?? "-",
             },
             {
               name: "Series UID",
-              value: resData?.Series_UID,
+              value: resData?.Series_UID ?? "-",
             },
             {
               name: "Assign time",
-              value: resData?.study_assign_time
+              value: resData?.study_assign_time ?? "-",
             },
-
             {
               name: "Assign Radiologist",
-              value: resData?.study_assign_username
+              value: resData?.study_assign_username ?? "-",
             },
-
             {
               name: "Reporting Time",
-              value: resData?.reporting_time,
+              value: resData?.reporting_time ?? "-",
             },
-
             {
               name: "Accession Number",
-              value: resData?.Accession_number,
+              value: resData?.Accession_number ?? "-",
             },
             {
               name: "Modality",
-              value: resData?.Modality,
+              value: resData?.Modality ?? "-",
             },
             {
               name: "Gender",
-              value: resData?.Gender,
+              value: resData?.Gender ?? "-",
             },
-
             {
               name: "Date of birth",
-              value: resData?.DOB,
+              value: resData?.DOB ?? "-",
             },
             {
               name: "Study Description",
-              value: resData?.Study_description,
+              value: resData?.Study_description ?? "-",
             },
-
             {
               name: "Study history",
-              value: resData?.Patient_comments,
+              value: resData?.Patient_comments ?? "-",
             },
             {
               name: "Study date",
-              value: resData?.Created_at,
+              value: resData?.Created_at ?? "-",
             },
             {
               name: "Urgent Case",
-              value: resData?.urgent_case,
+              value: resData?.urgent_case ?? "-",
             },
             {
               name: "Performing Physician Name",
-              value: resData?.Performing_physician_name,
+              value: resData?.Performing_physician_name ?? "-",
             },
             {
               name: "Referring Physician Name",
-              value: resData?.Referring_physician_name,
+              value: resData?.Referring_physician_name ?? "-",
             },
           ];
 
@@ -211,7 +206,12 @@ const AssignStudy = ({
                 value: data.id,
               }));
 
-              setInstitutionRadiologist(institutionRadiologist => [...resData]);
+              // Add Superadmin related radiologist related information
+              const superadminData = responseData?.superadmin?.map((element) => ({
+                label: element?.user__username,
+                value: element?.user__id
+              }))
+              setInstitutionRadiologist([...superadminData || [], ...resData]);
             }
           };
 
@@ -311,7 +311,7 @@ const AssignStudy = ({
         modifiedPayload['study_data']['images'] = [...images]
       }
 
-      modifiedPayload["modality"] = values?.modality ; 
+      modifiedPayload["modality"] = values?.modality;
 
       await postAssignStudy(modifiedPayload)
         .then((res) => {
@@ -351,11 +351,14 @@ const AssignStudy = ({
       "institute/v1/modality/fetch"
     );
     if (responseData?.status) {
+
+      // Add Institution radiologist related information
       const resData = responseData?.data?.map((element) => ({
         label: element?.name,
         value: element?.id
       }))
-      setModalityOptions(resData);
+
+      setModalityOptions([...resData]);
     }
 
   }
@@ -367,7 +370,7 @@ const AssignStudy = ({
       retrieveAssignStudyDetails();
       setValues([]);
       FetchRadiologist();
-      FetchInstitutionModalityList() ; 
+      FetchInstitutionModalityList();
     }
   }, [studyID]);
 
@@ -377,7 +380,7 @@ const AssignStudy = ({
       title="Clinical History"
       open={isAssignModalOpen}
       footer={
-        otherPremissionStatus("Studies permission", "Assign study") 
+        otherPremissionStatus("Studies permission", "Clinical Assign")
           ? <>
             <Button type="primary" onClick={() => {
               form.submit()
@@ -553,7 +556,7 @@ const AssignStudy = ({
                             label: item?.label,
                             value: item?.value,
                           }))}
-                    
+
                         />
                       </Form.Item>
 
@@ -596,11 +599,11 @@ const AssignStudy = ({
                       </Form.Item> */}
 
                     </Col>
-                    
+
                     {modalityOptions?.length > 0 && (
 
                       <Col span={5}>
-                      <Form.Item
+                        <Form.Item
                           name="modality"
                           label="Modality"
                           rules={[
@@ -616,7 +619,7 @@ const AssignStudy = ({
                             options={modalityOptions}
                             showSearch
                             onChange={(values, option) => {
-                              form.setFieldValue("modality", option?.label) ; 
+                              form.setFieldValue("modality", option?.label);
                             }}
                           />
                         </Form.Item>
