@@ -751,7 +751,7 @@ const BasicLayout = ({ children }) => {
 
                   {/* ==== Assign study option handler ====  */}
 
-                  {otherPremissionStatus("Studies permission", "Assign study") && (
+                  {otherPremissionStatus("Studies permission", "Top Assign") && (
                     <Button
                       type='primary'
                       onClick={() => QuickAssignStudyModalHandler()}

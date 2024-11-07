@@ -211,7 +211,12 @@ const AssignStudy = ({
                 value: data.id,
               }));
 
-              setInstitutionRadiologist(institutionRadiologist => [...resData]);
+              // Add Superadmin related radiologist related information
+              const superadminData = responseData?.superadmin?.map((element) => ({
+                label: element?.user__username, 
+                value: element?.user__id
+              })) 
+              setInstitutionRadiologist([...superadminData,...resData]);
             }
           };
 
@@ -351,11 +356,14 @@ const AssignStudy = ({
       "institute/v1/modality/fetch"
     );
     if (responseData?.status) {
+      
+      // Add Institution radiologist related information
       const resData = responseData?.data?.map((element) => ({
         label: element?.name,
         value: element?.id
       }))
-      setModalityOptions(resData);
+
+      setModalityOptions([...resData]);
     }
 
   }
@@ -377,7 +385,7 @@ const AssignStudy = ({
       title="Clinical History"
       open={isAssignModalOpen}
       footer={
-        otherPremissionStatus("Studies permission", "Assign study") 
+        otherPremissionStatus("Studies permission", "Clinical Assign") 
           ? <>
             <Button type="primary" onClick={() => {
               form.submit()

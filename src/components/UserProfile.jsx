@@ -185,17 +185,18 @@ const UserProfile = () => {
             <BiSupport />
           </Button>
 
-
           {/* ==== download option ==== */}
-          <Tooltip title="Download App">
-            <Button
-              onClick={() => { navigate("/downloads") }}
-              type="primary"
-              style={{ display: "flex", gap: "8px", alignItems: "center" }}
-            >
-              <DownloadOutlined />
-            </Button>
-          </Tooltip>
+          {window.location.pathname != "/studies" && (
+            <Tooltip title="Download App">
+              <Button
+                onClick={() => { navigate("/downloads") }}
+                type="primary"
+                style={{ display: "flex", gap: "8px", alignItems: "center" }}
+              >
+                <DownloadOutlined />
+              </Button>
+            </Tooltip>
+          ) }
 
 
           {/* ==== User option icon ====  */}

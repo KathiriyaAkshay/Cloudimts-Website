@@ -1,16 +1,25 @@
 import { CKEditor } from '@ckeditor/ckeditor5-react'
 import { Button, Card } from 'antd'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { downloadAdvancedFileReport } from '../apis/studiesApi'
 import NotificationMessage from './NotificationMessage'
 import APIHandler from '../apis/apiHandler';
 import { useNavigate } from 'react-router-dom';
-import { Spin } from 'antd'
+import { Spin } from 'antd'; 
+import { UserPermissionContext } from '../hooks/userPermissionContext'
 
 const ViewReport = ({ id }) => {
   const [editorData, setEditorData] = useState('')
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const {permissionData} = useContext(UserPermissionContext) ; 
+
+  const otherPremissionStatus = (title, permission_name) => {
+    const permission = permissionData[title]?.find(
+      data => data.permission === permission_name
+    )?.permission_value
+    return permission
+  }
 
   useEffect(() => {
     retrieveReportData()
@@ -40,19 +49,12 @@ const ViewReport = ({ id }) => {
       id: id,
       report: editorData
     };
-
     let responseData = await APIHandler("POST", requestPayload, "studies/v1/update-report");
-
     if (responseData === false) {
-
       NotificationMessage("warning", "Network request failed");
-
     } else if (responseData['status'] === true) {
-
       NotificationMessage("success", "Update report successfully");
-
     } else {
-
       NotificationMessage("warning", responseData['message']);
     }
 
@@ -71,7 +73,10 @@ const ViewReport = ({ id }) => {
           marginTop: "-15px"
         }}
       >
-        <Button type="primary" onClick={() => UpdateReportHandler()}>Update report</Button>
+
+        {otherPremissionStatus("Studies permission", "Update Report") && (
+          <Button type="primary" onClick={() => UpdateReportHandler()}>Update report</Button>
+        )}
         <Button onClick={() => navigate(-1)}>Back</Button>
 
       </div>

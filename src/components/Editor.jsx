@@ -342,10 +342,6 @@ const Editor = ({ id }) => {
 
   }
 
-  const StudyDescriptionChangeHandler = (selectionOption) => {
-    setReportStudyDescription(selectionOption);
-  }
-
   useEffect(() => {
     setEditorData(prev => prev + docFiledata)
   }, [docFiledata])
