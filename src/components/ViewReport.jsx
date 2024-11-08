@@ -75,7 +75,7 @@ const ViewReport = ({ id }) => {
       >
 
         {otherPremissionStatus("Studies permission", "Update Report") && (
-          <Button type="primary" onClick={() => UpdateReportHandler()}>Update report</Button>
+          <Button type="ghost" onClick={() => UpdateReportHandler()}>Update report</Button>
         )}
         <Button onClick={() => navigate(-1)}>Back</Button>
 

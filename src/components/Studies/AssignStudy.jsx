@@ -205,13 +205,10 @@ const AssignStudy = ({
                 label: data.name,
                 value: data.id,
               }));
-
-              // Add Superadmin related radiologist related information
-              const superadminData = responseData?.superadmin?.map((element) => ({
-                label: element?.user__username,
-                value: element?.user__id
-              }))
-              setInstitutionRadiologist([...superadminData || [], ...resData]);
+              setInstitutionRadiologist([{
+                label: "Cloudimts Panel",
+                value: 6
+              }, ...resData]);
             }
           };
 
