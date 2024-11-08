@@ -67,6 +67,7 @@ import { RoomDataContext } from '../../hooks/roomDataContext';
 import ReUploadStudyModel from '../../components/Studies/reloadUpload'; 
 import ReUploadIcon from "../../assets/images/reupload.png" ; 
 import ManulImageDrawer from './manulImageDrawer'
+import moment from 'moment';
 
 const BASE_URL = import.meta.env.VITE_APP_SOCKET_BASE_URL
 let timeOut = null ; 
@@ -746,8 +747,9 @@ const Dicom = () => {
                       : text === 'InReporting'
                         ? '#795695'
                         : text === 'ClosedStudy'
-                          ? '#097969  '
-                          : 'blue'
+                          ? '#097969'
+                          : text == "Draft"
+                            ?"#D3D3D3":'blue'
             }
             style={{ textAlign: 'center', fontWeight: '600' }}
 
@@ -1255,21 +1257,25 @@ const Dicom = () => {
       label: "Un-Assigned",
       value: "Un-Assigned"
     },
-    {
-      label: "InReporting",
-      value: "InReporting"
-    },
+    // {
+    //   label: "InReporting",
+    //   value: "InReporting"
+    // },
     {
       label: "Reported",
       value: "Reported"
     },
-    {
-      label: "ViewReport",
-      value: "ViewReport"
-    },
+    // {
+    //   label: "ViewReport",
+    //   value: "ViewReport"
+    // },
     {
       label: "ClosedStudy",
       value: "ClosedStudy"
+    },
+    {
+      label: "Draft",
+      value: "Draft"
     }
   ]
 
@@ -1393,6 +1399,7 @@ const Dicom = () => {
                   options={[...patientNameOptions]}
                   showSearch
                   onChange={() => {quickForm.submit()}}
+                  allowClear
                 />
               </Form.Item>
 
@@ -1439,6 +1446,7 @@ const Dicom = () => {
                 options={SelectStatusOption}
                 style={{ width: "9rem" }}
                 onChange={() => {quickForm.submit()}}
+                allowClear
               />
 
             </Form.Item>
@@ -1461,6 +1469,7 @@ const Dicom = () => {
                 options={institutionOptions}
                 style={{ width: "10rem" }}
                 onChange={() => {quickForm.submit()}}
+                allowClear
               />
 
             </Form.Item>
@@ -1481,6 +1490,8 @@ const Dicom = () => {
                 <DatePicker 
                   onChange={() => {quickForm.submit()}}
                   format={"DD-MM-YYYY"} 
+                  allowClear
+                  disabledDate={(current) => current && current > moment().endOf('day')}
                 />
 
               </Form.Item>
