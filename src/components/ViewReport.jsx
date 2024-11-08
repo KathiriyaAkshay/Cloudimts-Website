@@ -1,5 +1,5 @@
 import { CKEditor } from '@ckeditor/ckeditor5-react'
-import { Button, Card } from 'antd'
+import { Button, Card, Popconfirm } from 'antd'
 import React, { useContext, useEffect, useState } from 'react'
 import { downloadAdvancedFileReport } from '../apis/studiesApi'
 import NotificationMessage from './NotificationMessage'
@@ -41,24 +41,53 @@ const ViewReport = ({ id }) => {
       .catch(err => NotificationMessage('warning', err.response.data.message))
   }
 
+  // ******* Update report related option handler *********** // 
   const UpdateReportHandler = async () => {
-
-    setLoading(true);
-
-    let requestPayload = {
-      id: id,
-      report: editorData
-    };
-    let responseData = await APIHandler("POST", requestPayload, "studies/v1/update-report");
-    if (responseData === false) {
-      NotificationMessage("warning", "Network request failed");
-    } else if (responseData['status'] === true) {
-      NotificationMessage("success", "Update report successfully");
+    if (localStorage.getItem('studyId') == null){
+      NotificationMessage("Have some internal error try again") ; 
     } else {
-      NotificationMessage("warning", responseData['message']);
+      setLoading(true) ; 
+      let requestPayload = {
+        id: id,
+        report: editorData, 
+        studyId: localStorage.getItem("studyId")
+      };
+      let responseData = await APIHandler("POST", requestPayload, "studies/v1/update-report");
+      if (responseData === false) {
+        NotificationMessage("warning", "Network request failed");
+      } else if (responseData['status'] === true) {
+        NotificationMessage("success", "Update report successfully");
+      } else {
+        NotificationMessage("warning", responseData['message']);
+      }
+  
+      setLoading(false);
     }
 
-    setLoading(false);
+  }
+
+  // ******* save report as draft related option handler *********** // 
+  const saveDraftReportOptionHandler = async () => {
+    if (localStorage.getItem('studyId') == null){
+      NotificationMessage("Have some internal error try again") ; 
+    } else {
+      setLoading(true) ; 
+      let requestPayload = {
+        id: id,
+        report: editorData, 
+        studyId: localStorage.getItem("studyId")
+      };
+      let responseData = await APIHandler("POST", requestPayload, "studies/v1/draft-reoprt");
+      if (responseData === false) {
+        NotificationMessage("warning", "Network request failed");
+      } else if (responseData['status'] === true) {
+        NotificationMessage("success", "Report save as draft");
+      } else {
+        NotificationMessage("warning", responseData['message']);
+      }
+  
+      setLoading(false);
+    }
   }
 
   return (
@@ -73,11 +102,35 @@ const ViewReport = ({ id }) => {
           marginTop: "-15px"
         }}
       >
+        {otherPremissionStatus("Studies permission", "Update Report") && (
+          <>
+            <Button type="primary"
+              onClick={() => UpdateReportHandler()}>
+                Update report
+            </Button>
+            <Button  onClick={() => {saveDraftReportOptionHandler()}}>
+              Save as Draft
+            </Button>
+          </>
+        )}
 
         {otherPremissionStatus("Studies permission", "Update Report") && (
-          <Button type="primary" onClick={() => UpdateReportHandler()}>Update report</Button>
+          <>
+            <Popconfirm
+              title = "Are you sure you want to go back?"
+              onConfirm={() => {navigate(-1)}}
+            >
+              <Button>Back</Button>
+            </Popconfirm>
+          </>
         )}
-        <Button onClick={() => navigate(-1)}>Back</Button>
+        
+        {!otherPremissionStatus("Studies permission", "Update Report") && (
+          <>
+            <Button onClick={() => {navigate(-1)}}>Back</Button>
+          </>
+        )}
+
 
       </div>
 

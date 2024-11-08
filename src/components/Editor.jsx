@@ -314,6 +314,9 @@ const Editor = ({ id }) => {
   // **** Submit report handler **** // 
   const handleReportSave = async () => {
 
+    console.log(reportStudyDescription);
+    
+
     if (reportStudyDescription == null) {
       NotificationMessage("warning", "Please, Select report study description")
     } else {
@@ -448,45 +451,48 @@ const Editor = ({ id }) => {
                     ]}
                   >
                     <Select
-                          placeholder="Select Study Description"
-                          showSearch
-                          filterSort={(optionA, optionB) =>
-                            (optionA?.label ?? "")
-                              .toLowerCase()
-                              .localeCompare((optionB?.label ?? "").toLowerCase())
-                          }
-                          dropdownRender={(menu) => (
-                            <>
-                              {menu}
-                              <Divider
-                                style={{
-                                  margin: '8px 0',
-                                }}
-                              />
-                              <Space
-                                style={{
-                                  padding: '0 8px 4px',
-                                }}
-                              >
-                                <Input
-                                  placeholder="Please enter item"
-                                  ref={inputRef}
-                                  value={name}
-                                  onChange={onNameChange}
-                                  onKeyDown={(e) => e.stopPropagation()}
-                                />
-                                <Button type="text" icon={<PlusOutlined />} onClick={addItem}>
-                                  Add item
-                                </Button>
-                              </Space>
-                            </>
-                          )}
-                          options={items.map((item) => ({
-                            label: item?.label,
-                            value: item?.value,
-                          }))}
-                    
-                        />
+                      placeholder="Select Study Description"
+                      showSearch
+                      filterSort={(optionA, optionB) =>
+                        (optionA?.label ?? "")
+                          .toLowerCase()
+                          .localeCompare((optionB?.label ?? "").toLowerCase())
+                      }
+                      dropdownRender={(menu) => (
+                        <>
+                          {menu}
+                          <Divider
+                            style={{
+                              margin: '8px 0',
+                            }}
+                          />
+                          <Space
+                            style={{
+                              padding: '0 8px 4px',
+                            }}
+                          >
+                            <Input
+                              placeholder="Please enter item"
+                              ref={inputRef}
+                              value={name}
+                              onChange={onNameChange}
+                              onKeyDown={(e) => e.stopPropagation()}
+                            />
+                            <Button type="text" icon={<PlusOutlined />} onClick={addItem}>
+                              Add item
+                            </Button>
+                          </Space>
+                        </>
+                      )}
+                      options={items.map((item) => ({
+                        label: item?.label,
+                        value: item?.value,
+                      }))}
+                      value={reportStudyDescription}
+                      onChange={(value) => {
+                        setReportStudyDescription(value)
+                      }}
+                    />
                   </Form.Item>
                 </Form>
 

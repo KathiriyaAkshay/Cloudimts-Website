@@ -48,9 +48,7 @@ const StudyReports = ({
 }) => {
 
   const navigate = useNavigate();
-  console.log("Stuyd id infomration", studyID);
   localStorage.setItem("studyId", studyID)
-  
 
   const { permissionData } = useContext(UserPermissionContext)
 
@@ -246,7 +244,6 @@ const StudyReports = ({
 
   // *** OHIF viewer handler **** // 
   const OHIFViewerHandler = () => {
-
     let url = `https://viewer.cloudimts.com/ohif/viewer?url=../studies/${studyUIDInformation}/ohif-dicom-json`;
     window.open(url, "_blank");
   }
@@ -298,7 +295,9 @@ const StudyReports = ({
             <BsEyeFill
               className='action-icon'
               onClick={async () => {
-                await handleStudyStatus()
+                
+                await handleStudyStatus(); // Draft reated status update
+                
                 record.report_type === 'Advanced report' &&
                   navigate(`/reports/${record.id}/view`)
                 if (record.report_type === 'Normal report') {
