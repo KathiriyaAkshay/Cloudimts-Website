@@ -396,7 +396,7 @@ const Dicom = () => {
         const currentTime = new Date().getTime();
 
         // Check if 5 minutes have passed
-        if (currentTime - startTime.current < 0.2 * 60 * 1000) {
+        if (currentTime - startTime.current < 4 * 60 * 1000) {
           const temp = studyData
             .filter((data) => !remove_series_id.includes(data?.id))
             .map((data) => ({
