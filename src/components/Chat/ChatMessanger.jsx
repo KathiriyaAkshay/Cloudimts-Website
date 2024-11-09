@@ -110,11 +110,8 @@ const ChatMessanger = props => {
   // **** Reterive particular chat room history **** // 
 
   const handleAllChatHistory = async (webSocketConnect, roomData, chatData) => {
-
     const room_id = localStorage.getItem('roomID') ; 
-
     if (roomData) {
-
       webSocketConnect && setLoading(true)
 
       getInitialChatMessages({
@@ -227,75 +224,72 @@ const ChatMessanger = props => {
   }, [forwardMessage?.chatSearchValue])
 
   const [connection, setConnection] = useState(null) ; 
+
+  // ========= Setup User socket connection ============== // 
   const UserChatSocketConnection = async () => {
+    // Close existing connection if it's open
     if (connection && connection.readyState === WebSocket.OPEN) {
-      console.log('WebSocket connection is already open');
-      return; // Exit the function if the connection is already open
+      connection.close(); // Close the existing connection
+      console.log('Closed existing WebSocket connection');
     }
-    
-    const ws = new WebSocket(`${WEBSOCKET_URL}personal/${roomName}/`)
-    setConnection(ws) ; 
+  
+    // Create a new WebSocket connection
+    const ws = new WebSocket(`${WEBSOCKET_URL}personal/${roomName}/`);
+    setConnection(ws);
   
     ws.onopen = () => {
-      console.log('WebSocket connection opened')
-    }
+      console.log('WebSocket connection opened');
+    };
   
-    ws.onmessage = event => {
-      ;(JSON.parse(event.data).id != null ||
-        JSON.parse(event.data).id != undefined) &&
-        localStorage.setItem('roomID', JSON.parse(event.data).id)
-      setRoomID(prev =>
-        JSON.parse(event.data).id != null ||
-        JSON.parse(event.data).id != undefined
-          ? JSON.parse(event.data).id
-          : prev
-      )
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+  
+      if (data.id != null || data.id !== undefined) {
+        localStorage.setItem('roomID', data.id);
+        setRoomID((prev) => (data.id != null || data.id !== undefined ? data.id : prev));
+      }
   
       handleAllChatHistory(
         true,
-        JSON.parse(event.data).id != null ||
-          JSON.parse(event.data).id != undefined
-          ? true
-          : false,
-        JSON.parse(event.data)
-      )
-    }
+        data.id != null || data.id !== undefined ? true : false,
+        data
+      );
+    };
   
     ws.onclose = () => {
-      console.log('WebSocket connection closed')
-    }
+      console.log('WebSocket connection closed');
+    };
   
-    setWs(ws)
+    setWs(ws);
   
     return () => {
-      ws.close()
-    }
-
-  }
+      ws.close();
+    };
+  };
   
-  // Handle window visibility event for again connect socket connection  
+  // Handle window visibility event to reconnect the socket
   const [reloadValue, setReloadValue] = useState(0);
+  
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (document.visibilityState === "visible") {
-        setReloadValue(prev => prev + 1);
+        setReloadValue((prev) => prev + 1);
       }
     };
-
+    
     document.addEventListener("visibilitychange", handleVisibilityChange);
-
+  
     return () => {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, []);
-
+  
   useEffect(() => {
     if (orderId) {
-      UserChatSocketConnection() ; 
+      UserChatSocketConnection();
     }
-  }, [orderId, reloadValue]) ; 
-
-
+  }, [orderId, reloadValue]);
+  
   function groupMessagesByDate (data) {
    
     const groupedMessages = data?.reduce((acc, message) => {
