@@ -749,7 +749,7 @@ const Dicom = () => {
                         : text === 'ClosedStudy'
                           ? '#097969'
                           : text == "Draft"
-                            ?"#D3D3D3":'blue'
+                            ?"#B8860B":'blue'
             }
             style={{ textAlign: 'center', fontWeight: '600' }}
 
