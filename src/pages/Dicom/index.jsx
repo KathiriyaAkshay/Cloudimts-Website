@@ -175,9 +175,7 @@ const Dicom = () => {
   // **** Setup Chat notification socket connection **** // 
   const [chatConnection, setChatConnection] = useState(null) ; 
   const SetupGenralChatNotification = () => {
-
     if (chatConnection && chatConnection.readyState === WebSocket.OPEN) {
-      console.log('WebSocket connection is already open');
       return; // Exit the function if the connection is already open
     }
 
@@ -335,6 +333,7 @@ const Dicom = () => {
       setReloadValue((prev) => prev + 1) ; 
     }
   }
+
   useEffect(() => {
     document.addEventListener("visibilitychange", visibilityChangeHandler)
   },[]) ; 
@@ -435,11 +434,27 @@ const Dicom = () => {
   }, [studyData]);
 
   useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        setReloadValue(prev => prev + 1);
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [document.visibilityState]);
+
+  useEffect(() => {
     if (!isLoading && studyData.length !== 0 && notificationValue === 0) {
       setNotificationValue(1)
       SetupGenralChatNotification()
     }
-  }, [isLoading, studyData, notificationValue, reloadValue]) ; 
+  }, [isLoading, 
+    studyData, 
+    notificationValue, 
+    reloadValue
+  ]) ; 
 
   useEffect(() => {
     changeBreadcrumbs([{ name: `Study` }])

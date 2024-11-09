@@ -148,6 +148,9 @@ const ShareStudy = ({
 
   // **** Email share option handler **** // 
   const handleSubmitEmail = async values => {
+    console.log("Run this function");
+    console.log(values);
+  
     setIsEmailSending(true)
 
     let requestPayload = {
