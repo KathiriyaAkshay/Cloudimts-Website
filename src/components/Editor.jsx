@@ -1,7 +1,7 @@
 import { CKEditor } from '@ckeditor/ckeditor5-react'
 import React, { useContext, useEffect, useState, useRef } from 'react'
 import '../../ckeditor5/build/ckeditor'
-import { Button, Card, Col, Row, Spin, Typography, Input, Select, Form, Divider, Space } from 'antd'
+import { Button, Card, Col, Row, Spin, Typography, Input, Select, Form, Divider, Space, Tooltip, Modal } from 'antd'
 import {
   fetchTemplate,
   fetchUserSignature,
@@ -15,8 +15,10 @@ import Slider from 'react-slick'
 import NotificationMessage from './NotificationMessage'
 import { useNavigate } from 'react-router-dom'
 import APIHandler from '../apis/apiHandler'
-import { descriptionOptions } from '../helpers/utils'
+import { descriptionOptions, EmailHeaderContent } from '../helpers/utils'
 import { PlusOutlined } from '@ant-design/icons'
+import OHIF from "../assets/images/menu.png";
+import KitWareViewer from "../assets/images/viewers.png";
 
 const Editor = ({ id }) => {
 
@@ -24,7 +26,7 @@ const Editor = ({ id }) => {
   const [cardDetails, setCardDetails] = useState({})
   const [isLoading, setIsLoading] = useState(false)
   const { selectedItem, setSelectedItem, docFiledata } = useContext(ReportDataContext)
-  const {setTemplateOption, setTemplateInstitutionOption, setGenderoption } = useContext(filterDataContext)
+  const { setTemplateOption, setTemplateInstitutionOption, setGenderoption, templateInstitutionOption } = useContext(filterDataContext)
   const [studyImageID, setStudyImageID] = useState(0)
   const [signatureImage, setSignatureImage] = useState(null)
   const [username, setUsername] = useState('')
@@ -34,6 +36,7 @@ const Editor = ({ id }) => {
   const [institutionReport, setInstitutionReport] = useState({});
   const [referenceImageCount, setReferenceImageCount] = useState(1);
   const [seriesId, setSeriesId] = useState(null);
+  const [isReportPreviewOpen, setIsReportPreviewOpen] = useState(false) ; 
 
   const [form] = Form.useForm();
   const [reportStudyDescription, setReportStudyDescription] = useState(null);
@@ -44,10 +47,10 @@ const Editor = ({ id }) => {
   const onNameChange = (event) => {
     setName(event.target.value);
   };
-  
+
   const addItem = (e) => {
     e.preventDefault();
-    setItems([{label: name, value: name}, ...items]);
+    setItems([{ label: name, value: name }, ...items]);
     setName('');
     setTimeout(() => {
       inputRef.current?.focus();
@@ -91,6 +94,8 @@ const Editor = ({ id }) => {
   }
 
   // **** Reterive patient details related information **** // 
+  const [institutionId, setInstitutionId] = useState(undefined);
+  const [genderId, setGenderId] = useState(undefined);
   const retrievePatientDetails = async () => {
     setIsLoading(true)
 
@@ -106,15 +111,15 @@ const Editor = ({ id }) => {
       NotificationMessage('warning', 'Network request failed');
 
     } else if (responseData['status'] === true) {
-      localStorage.setItem("report-modality", responseData?.data?.Modality) ;
-      setTemplateOption(responseData?.data?.Modality) ; 
-      setGenderoption(responseData?.data?.Gender) 
+      localStorage.setItem("report-modality", responseData?.data?.Modality);
+      setTemplateOption(responseData?.data?.Modality);
 
       let Institution_id = responseData['data']['institution_id']
       let SeriesIdValue = responseData['data']['series_id']
 
       setSeriesId(SeriesIdValue);
-      setTemplateInstitutionOption(responseData?.data?.institution_id);
+      setInstitutionId(responseData?.data?.institution_id);
+      setGenderId(responseData?.data?.Gender);
 
       setCardDetails({ "Study_description": responseData['data']?.Study_description })
 
@@ -131,15 +136,15 @@ const Editor = ({ id }) => {
         'institute/v1/institution-report-details'
       )
       if (reportResponseData['status'] === true) {
-        let tempData = reportResponseData?.data ;
-        let tempPatientId = tempData?.patient_details['Patient id'] ;
-        let tempPatientName = tempData?.patient_details['Patient name'] ; 
-        
+        let tempData = reportResponseData?.data;
+        let tempPatientId = tempData?.patient_details['Patient id'];
+        let tempPatientName = tempData?.patient_details['Patient name'];
+
         delete tempData?.patient_details['Patient id']
-        delete tempData?.patient_details['Patient name'] ; 
-        
+        delete tempData?.patient_details['Patient name'];
+
         setInstitutionReport({ ...reportResponseData['data'] })
-        convertedPatientTableInitially({"patient_details": {...{"Patient id": tempPatientId, "Patient name": tempPatientName}, ...tempData?.patient_details}, "institution_details": {...tempData?.institution_details}})
+        convertedPatientTableInitially({ "patient_details": { ...{ "Patient id": tempPatientId, "Patient name": tempPatientName }, ...tempData?.patient_details }, "institution_details": { ...tempData?.institution_details } })
       }
     }
   }
@@ -182,8 +187,8 @@ const Editor = ({ id }) => {
     await fetchTemplate({ id: selectedItem?.templateId })
       .then(res => {
         if (res.data.status) {
-          let tempData = editorData ; 
-          tempData = tempData + res?.data?.data?.report_data ; 
+          let tempData = editorData;
+          tempData = tempData + res?.data?.data?.report_data;
           setEditorData(tempData)
         } else {
           NotificationMessage(
@@ -218,6 +223,13 @@ const Editor = ({ id }) => {
   useEffect(() => {
     convertPatientDataToTable();
   }, [selectedItem])
+
+  useEffect(() => {
+    if (selectedItem?.showPreview == true){
+      setIsReportPreviewOpen(true) ; 
+    }
+    
+  }, [selectedItem?.showPreview]) ; 
 
 
   const convertPatientDataToTable = (insertImage) => {
@@ -315,7 +327,7 @@ const Editor = ({ id }) => {
   const handleReportSave = async () => {
 
     console.log(reportStudyDescription);
-    
+
 
     if (reportStudyDescription == null) {
       NotificationMessage("warning", "Please, Select report study description")
@@ -355,16 +367,97 @@ const Editor = ({ id }) => {
     scrollingDiv.scrollTop = scrollingDiv.scrollHeight;
   }
 
+  // **** Reterive templates list for Study report page **** //
+  const [templateOption, setTemplateOptions] = useState([]);
+  const retrieveTemplateOptions = async () => {
+
+    let report_modality = localStorage.getItem("report-modality");
+    let requestPayload = {
+      "page_number": 1,
+      "page_limit": 200,
+      "modality": report_modality,
+      "institution": institutionId,
+      "radiologist": parseInt(localStorage.getItem("userID"))
+    };
+
+    if (genderId !== null && genderId !== undefined) {
+      requestPayload['gender'] = genderId;
+    }
+    let responseData = await APIHandler("POST", requestPayload, "report/v1/submitReportlist")
+
+    if (responseData === false) {
+    } else if (responseData?.status === true) {
+
+      const resData = responseData?.data.map((data) => ({
+        label: data?.name,
+        value: data?.id
+      }))
+
+      setTemplateOptions([...resData]);
+      let temp = selectedItem ;
+      setSelectedItem({...temp, templateId: resData[0]?.value})
+
+    } else {
+    }
+
+  }
+
+  useEffect(() => {
+    if (institutionId !== undefined) {
+      retrieveTemplateOptions();
+    }
+  }, [institutionId, genderId]);
+
+  // =========== Adjust width related functionality ============= // 
+
+  const [leftColWidth, setLeftColWidth] = useState(selectedItem.isOhifViewerSelected ? 9 : selectedItem.isImagesSelected ? 7 : 0);
+  const [isDragging, setIsDragging] = useState(false);
+
+  const handleMouseDown = () => setIsDragging(true);
+
+  // Handle mouse move to adjust widths
+  const handleMouseMove = (e) => {
+    if (isDragging) {
+      const newLeftWidth = Math.min(Math.max(e.clientX / window.innerWidth * 24, 2), 22); // keep widths between 2 and 22 grid units
+      setLeftColWidth(newLeftWidth);
+    }
+  };
+
+  const handleMouseUp = () => setIsDragging(false);
+
+  React.useEffect(() => {
+    if (isDragging) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+    } else {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    }
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isDragging]);
+
   return (
     <>
+
+      {/* Editor and Study description related information  */}
       <div>
         <Card
-          style={{ minHeight: 'calc(100vh - 200px)' }}
+          style={{ minHeight: 'calc(100vh - 140px)' }}
           className='report-card'
         >
           <Spin spinning={isLoading}>
             <Row gutter={30}>
-              <Col xs={24} sm={12} md={selectedItem.isOhifViewerSelected ? 9 : selectedItem.isImagesSelected ? 7 : 0}>
+
+              {/* OHIF viewer and Study Images related option  */}
+              <Col
+                xs={24}
+                sm={12}
+                md={leftColWidth}
+                style={{ transition: "width 0.3s" }}
+              >
                 <div className='report-details-div'>
 
                   {selectedItem?.isImagesSelected && imageSlider.length > 0 && (
@@ -423,78 +516,146 @@ const Editor = ({ id }) => {
                 </div>
               </Col>
 
-              <Col xs={24} sm={12} md={selectedItem.isOhifViewerSelected ? 15 : selectedItem.isImagesSelected ? 17 : 24}
-                className='report-editor-div'>
+              <div
+                className='divider'
+                onMouseDown={handleMouseDown}
+                style={{
+                  width: '5px',
+                  cursor: 'col-resize',
+                  backgroundColor: '#d9d9d9',
+                  height: '100%',
+                }}
+              >
+              </div>
 
-                <Form
-                  labelCol={{
-                    span: 4,
-                    // offset:3,
-                  }}
-                  wrapperCol={{
-                    span: 20,
-                  }}
-                  labelAlign="left"
-                  form={form}
-                  className='Advance-report-study-description-selection'
-                >
-                  <Form.Item
-                    name="study_description"
-                    label="Modality Study Description"
-                    className="category-select"
+              {/* Study description selection and Editor related option  */}
 
-                    rules={[
-                      {
-                        required: true,
-                        message: "Please select Modality Study Description",
-                      },
-                    ]}
-                  >
+              <Col
+                xs={24}
+                sm={12}
+                md={24 - leftColWidth}
+                className='report-editor-div'
+              >
+                <div style={{
+                  display: "flex",
+                  gap: 10
+                }}>
+
+                  <div style={{
+                    marginBottom: "auto",
+                    marginTop: 15,
+                    fontWeight: 600
+                  }}>
+                    Study Description
+                  </div>
+
+                  {/* Study description selection  */}
+                  <div style={{ width: "50%" }}>
+                    <Form
+                      labelAlign="left"
+                      form={form}
+                    >
+                      <Form.Item
+                        name="study_description"
+                        className="report-description-selection"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Please select Modality Study Description",
+                          },
+                        ]}
+                      >
+                        <Select
+                          placeholder="Select Study Description"
+                          showSearch
+                          filterSort={(optionA, optionB) =>
+                            (optionA?.label ?? "")
+                              .toLowerCase()
+                              .localeCompare((optionB?.label ?? "").toLowerCase())
+                          }
+                          dropdownRender={(menu) => (
+                            <>
+                              {menu}
+                              <Divider
+                                style={{
+                                  margin: '8px 0',
+                                }}
+                              />
+                              <Space
+                                style={{
+                                  padding: '0 8px 4px',
+                                }}
+                              >
+                                <Input
+                                  placeholder="Please enter item"
+                                  ref={inputRef}
+                                  value={name}
+                                  onChange={onNameChange}
+                                  onKeyDown={(e) => e.stopPropagation()}
+                                />
+                                <Button type="text" icon={<PlusOutlined />} onClick={addItem}>
+                                  Add item
+                                </Button>
+                              </Space>
+                            </>
+                          )}
+                          options={items.map((item) => ({
+                            label: item?.label,
+                            value: item?.value,
+                          }))}
+                          value={reportStudyDescription}
+                          onChange={(value) => {
+                            setReportStudyDescription(value)
+                          }}
+                        />
+                      </Form.Item>
+                    </Form>
+                  </div>
+
+                  <div style={{
+                    marginBottom: "auto",
+                    marginTop: 15,
+                    fontWeight: 600,
+                    marginLeft: 10,
+                    marginRight: 10
+                  }}>
+                    Template
+                  </div>
+
+                  {/* Study template related selection  */}
+                  <div style={{
+                    marginTop: 10
+                  }}>
                     <Select
-                      placeholder="Select Study Description"
+                      style={{ width: "12rem" }}
+                      className='template-selection-option-division'
+                      placeholder='choose template'
+                      options={templateOption}
                       showSearch
-                      filterSort={(optionA, optionB) =>
-                        (optionA?.label ?? "")
-                          .toLowerCase()
-                          .localeCompare((optionB?.label ?? "").toLowerCase())
+                      value={selectedItem?.templateId}
+                      onChange={e =>
+                        setSelectedItem(prev => ({
+                          isPatientSelected: prev?.isPatientSelected,
+                          isInstitutionSelected: prev?.isInstitutionSelected,
+                          isImagesSelected: prev?.isImagesSelected,
+                          templateId: e,
+                          isStudyDescriptionSelected: prev?.isStudyDescriptionSelected
+                        }))
                       }
-                      dropdownRender={(menu) => (
-                        <>
-                          {menu}
-                          <Divider
-                            style={{
-                              margin: '8px 0',
-                            }}
-                          />
-                          <Space
-                            style={{
-                              padding: '0 8px 4px',
-                            }}
-                          >
-                            <Input
-                              placeholder="Please enter item"
-                              ref={inputRef}
-                              value={name}
-                              onChange={onNameChange}
-                              onKeyDown={(e) => e.stopPropagation()}
-                            />
-                            <Button type="text" icon={<PlusOutlined />} onClick={addItem}>
-                              Add item
-                            </Button>
-                          </Space>
-                        </>
-                      )}
-                      options={items.map((item) => ({
-                        label: item?.label,
-                        value: item?.value,
-                      }))}
-                      value={reportStudyDescription}
-                      onChange={(value) => {
-                        setReportStudyDescription(value)
-                      }}
                     />
-                  </Form.Item>
-                </Form>
+                  </div>
+
+                  <div style={{
+                    marginTop: 10, 
+                    marginLeft: "auto"
+                  }}>
+                    <Button type='primary' onClick={() => handleReportSave()}>
+                      File Report
+                    </Button>
+                  </div>
+                </div>
+
+                <Divider style={{ marginTop: -8, marginBottom: 8 }} />
 
                 <div className='advance-report-file-option-editor'>
                   <CKEditor
@@ -515,20 +676,44 @@ const Editor = ({ id }) => {
 
         </Card>
 
-        <div
+      </div>
+      
+      {isReportPreviewOpen && (
+        <Modal
+          title = "Report Preview"
+          className='report-preview-model'
+          open = {isReportPreviewOpen}
+          onCancel={() => {setIsReportPreviewOpen(false)}}
+          centered
+          width={"70%"}
+          footer = {null}
           style={{
-            display: 'flex',
-            marginTop: '10px',
-            justifyContent: 'flex-end',
-            gap: '10px'
+            content:{ 
+              overflowY: "auto", 
+              maxHeight: "85vh", 
+              overflowY: "auto"
+            },
           }}
         >
-          <Button onClick={() => navigate(-1)}>Cancel</Button>
-          <Button type='primary' onClick={() => handleReportSave()}>
-            File Report
-          </Button>
-        </div>
-      </div>
+          <div style={{
+            backgroundColor: "#efefef", 
+            padding: "10px"
+          }}>
+            {editorData !== null && (
+              
+              <div
+                className='html_preview'
+                dangerouslySetInnerHTML={{__html: `${EmailHeaderContent} ${editorData}
+                  </body>
+                  </html> `}}
+              >
+
+              </div>
+            )}
+          </div>
+        </Modal>
+      )}
+
     </>
   )
 }

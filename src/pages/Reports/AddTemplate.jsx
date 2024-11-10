@@ -365,6 +365,14 @@ const AddTemplate = () => {
                     { label: 'Unselect All', value: 'unselectAll' },
                     ...institutionOptions,
                   ]}
+                  style={{
+                    width: '100%',
+                    padding: '4px',
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    gap: '4px',
+                    overflowY: "auto"
+                  }}
                   showSearch
                   onChange={(values) => {
                     const allOptionValues = institutionOptions.map(option => option.value);
@@ -404,6 +412,14 @@ const AddTemplate = () => {
                     { label: 'Unselect All', value: 'unselectAll' },  // Add Unselect All option
                     ...allRadiologistOption  // Spread other radiologist options
                   ]}
+                  style={{
+                    width: '100%',
+                    padding: '4px',
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    gap: '4px',
+                    overflowY: "auto"
+                  }}
                   showSearch
                   onChange={(values) => {
                     const allRadiologistValues = allRadiologistOption.map(option => option.value); // Get all radiologist values
@@ -457,7 +473,7 @@ const AddTemplate = () => {
             >
               <Form.Item style={{ position: "relative" }}>
 
-                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "3px" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "10px" }}>
                   {/* Template Doc input  */}
                   <div style={{ fontWeight: "700" }}>Create Template</div>
                   <Upload {...props} className='m'>
