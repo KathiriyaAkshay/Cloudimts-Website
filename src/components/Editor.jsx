@@ -658,7 +658,6 @@ const Editor = ({ id }) => {
                 <Divider style={{ marginTop: -8, marginBottom: 8 }} />
 
                 <div className='advance-report-file-option-editor'>
-
                   <CKEditor
                     editor={ClassicEditor}
                     data={editorData}
@@ -667,7 +666,6 @@ const Editor = ({ id }) => {
                       setEditorData(data)
                     }}
                   />
-
                 </div>
 
               </Col>
