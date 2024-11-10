@@ -98,7 +98,7 @@ const index = () => {
     
     {
       title: 'Modality description',
-      dataIndex: 'description   '
+      dataIndex: 'description'
     },
 
     {
@@ -109,15 +109,15 @@ const index = () => {
       )
     },
 
-    {
-      title: "Institution", 
-      dataIndex: "institution_information"
-    }, 
+    // {
+    //   title: "Institution", 
+    //   dataIndex: "institution_information"
+    // }, 
 
-    {
-      title: "Radiologist", 
-      dataIndex : "radiologist_name"
-    }, 
+    // {
+    //   title: "Radiologist", 
+    //   dataIndex : "radiologist_name"
+    // }, 
 
     {
       title: 'Created At',

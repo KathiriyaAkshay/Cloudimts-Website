@@ -411,7 +411,8 @@ const StudyReports = ({
                   onClick={async () => {
                     await studyStatusHandler()
                     pageNumberHandler()
-                    navigate(`/reports/${studyID}`)
+                    setIsReportModalOpen(false)
+                    window.open(`/reports/${studyID}`, '_blank');
                   }}
                 >
                   Advanced File Report

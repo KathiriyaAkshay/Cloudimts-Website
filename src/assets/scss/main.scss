@@ -140,6 +140,7 @@
   // box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.25);
   display: flex;
   justify-content: flex-end;
+  padding-top: 5px;
 }
 
 .ant-menu-submenu-popup .ant-menu-vertical .ant-menu-item {
@@ -939,6 +940,7 @@
 
 .report-card {
   position: relative;
+  margin-top: -10px;
   .ant-card-body{
     padding-top: 0.60rem;
     padding-bottom: 0px;
@@ -2431,6 +2433,21 @@ label[for="study_description"]{
   line-height:33px !important;
 }
 
+.report-option-div{
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1000; /* Ensures it stays on top */
+  background-color: #2F2F2F90; /* Background color to distinguish from the page */
+  padding: 1rem; /* Optional padding */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional shadow */
+  padding-top: 0.80rem;
+  padding-right: 0.8rem;
+  padding-left: 0.8rem;
+  cursor: move;
+  border-radius: 5px;
+}
+
 .modality-card-wrapper{
   // display:flex;
   // flex-direction:row;
@@ -2928,13 +2945,14 @@ form.ant-form .ant-form-item .ant-form-item-label label{
 
 .advance-report-file-option-editor{
   .ck-editor__main{
-    height: 56vh;
+    height:100vh;
     overflow-y: auto;
     width: calc(100%) ;
+    max-height: 72vh !important;
   }
 
   .ck-editor__editable{
-    height: 53vh;
+    height: 70vh;
   }
 }
 
@@ -3265,5 +3283,28 @@ form.ant-form .ant-form-item .ant-form-item-label label{
     .ant-table-row{
       border-left: 1px solid red;
     }
+  }
+}
+
+.divider {
+  cursor: col-resize;
+  background-color: #d9d9d9;
+  width: 5px;
+  height: 100%;
+  position: relative;
+}
+
+.report-description-selection{
+  margin-bottom: 0px !important;
+}
+
+.report-preview-model{
+  .ant-modal-body{
+    padding: 0 !important;
+  }
+
+  .html_preview{
+    background-color: #fff;
+    padding: 15px;
   }
 }

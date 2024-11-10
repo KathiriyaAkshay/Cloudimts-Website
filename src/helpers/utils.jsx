@@ -99,6 +99,51 @@ export function generateRandomEmail() {
   return `${username}@${domain}`;
 }
 
+export const EmailHeaderContent = `
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <style>
+        body {
+            font-family: "Montserrat", sans-serif;
+            margin: 0;
+            padding: 0;
+            margin-top: 40px;
+            margin-left: 20px; 
+            margin-right: 20px; 
+        }
+
+        .table {
+            margin-block-start: 0rem !important;
+            margin-inline-start: 0px !important;
+            margin-left: 0px !important;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 20px;
+            margin-left: auto; 
+            margin-right: auto;
+        }
+
+        th,
+        td {
+            width: 25%;
+            border: 1px solid #7b7b7f;
+            font-size: 12px;
+            text-align: center;
+            padding-top: 4px;
+            padding-bottom: 4px;
+        }
+    </style>
+</head>
+<body>
+`
+
 
 export const descriptionOptions = [
   { label: "Abdomen", value: "Abdomen" },
