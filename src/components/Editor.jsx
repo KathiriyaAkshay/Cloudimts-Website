@@ -204,7 +204,6 @@ const Editor = ({ id }) => {
       // NotificationMessage('warning', 'Network request failed')
     } else if (responseData['status'] === true) {
       let temp = []
-
       responseData['data'].map(element => {
         temp.push({
           url: `${ServerURL}studies/v1/fetch_instance_image/${element}`
