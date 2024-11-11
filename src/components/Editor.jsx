@@ -1,7 +1,7 @@
 import { CKEditor } from '@ckeditor/ckeditor5-react'
-import React, { useContext, useEffect, useState, useRef } from 'react'
+import React, { useContext, useEffect, useState, useRef, useCallback } from 'react'
 import '../../ckeditor5/build/ckeditor'
-import { Button, Card, Col, Row, Spin, Typography, Input, Select, Form, Divider, Space, Tooltip, Modal } from 'antd'
+import { Button, Card, Col, Row, Spin, Typography, Input, Select, Form, Divider, Space, Tooltip, Modal, Drawer } from 'antd'
 import {
   fetchTemplate,
   fetchUserSignature,
@@ -19,6 +19,8 @@ import { descriptionOptions, EmailHeaderContent } from '../helpers/utils'
 import { PlusOutlined } from '@ant-design/icons'
 import OHIF from "../assets/images/menu.png";
 import KitWareViewer from "../assets/images/viewers.png";
+import TableWithFilter from './TableWithFilter'
+import { convertToDDMMYYYY } from '../helpers/utils'
 
 const Editor = ({ id }) => {
 
@@ -26,7 +28,7 @@ const Editor = ({ id }) => {
   const [cardDetails, setCardDetails] = useState({})
   const [isLoading, setIsLoading] = useState(false)
   const { selectedItem, setSelectedItem, docFiledata } = useContext(ReportDataContext)
-  const { setTemplateOption, setTemplateInstitutionOption, setGenderoption, templateInstitutionOption } = useContext(filterDataContext)
+  const { setTemplateOption, patientInforamtionDrawer, setPatientInformationDrawer  } = useContext(filterDataContext)
   const [studyImageID, setStudyImageID] = useState(0)
   const [signatureImage, setSignatureImage] = useState(null)
   const [username, setUsername] = useState('')
@@ -43,6 +45,33 @@ const Editor = ({ id }) => {
   const [items, setItems] = useState(descriptionOptions);
   const [name, setName] = useState('');
   const inputRef = useRef(null);
+
+  const [partientInfoDrawerOption, setPatientInfoDrawerOption] = useState("info") ; 
+
+  const columns = [
+    {
+      title: 'Report Time',
+      dataIndex: 'reporting_time',
+      render: (text, record) => convertToDDMMYYYY(record?.reporting_time)
+    },
+
+    {
+      title: 'Report By',
+      dataIndex: 'report_by',
+      render: (text, record) => record?.report_by?.username
+    },
+
+    {
+      title: 'Study Description',
+      dataIndex: 'study_description'
+    },
+
+    {
+      title: 'Report Type',
+      dataIndex: 'report_type'
+    },
+
+  ]
 
   const onNameChange = (event) => {
     setName(event.target.value);
@@ -96,6 +125,9 @@ const Editor = ({ id }) => {
   // **** Reterive patient details related information **** // 
   const [institutionId, setInstitutionId] = useState(undefined);
   const [genderId, setGenderId] = useState(undefined);
+  const [patientInformation, setPatientInformation] = useState(undefined) ;
+  const [patientReportList, setPatientReportList] = useState([]) ; 
+
   const retrievePatientDetails = async () => {
     setIsLoading(true)
 
@@ -111,6 +143,11 @@ const Editor = ({ id }) => {
       NotificationMessage('warning', 'Network request failed');
 
     } else if (responseData['status'] === true) {
+
+      // Set Patient information 
+      setPatientInformation(responseData?.data) ; 
+      setPatientReportList(responseData?.report || []) ; 
+
       localStorage.setItem("report-modality", responseData?.data?.Modality);
       setTemplateOption(responseData?.data?.Modality);
 
@@ -325,10 +362,6 @@ const Editor = ({ id }) => {
 
   // **** Submit report handler **** // 
   const handleReportSave = async () => {
-
-    console.log(reportStudyDescription);
-
-
     if (reportStudyDescription == null) {
       NotificationMessage("warning", "Please, Select report study description")
     } else {
@@ -408,37 +441,6 @@ const Editor = ({ id }) => {
     }
   }, [institutionId, genderId]);
 
-  // =========== Adjust width related functionality ============= // 
-
-  const [leftColWidth, setLeftColWidth] = useState(selectedItem.isOhifViewerSelected ? 9 : selectedItem.isImagesSelected ? 7 : 0);
-  const [isDragging, setIsDragging] = useState(false);
-
-  const handleMouseDown = () => setIsDragging(true);
-
-  // Handle mouse move to adjust widths
-  const handleMouseMove = (e) => {
-    if (isDragging) {
-      const newLeftWidth = Math.min(Math.max(e.clientX / window.innerWidth * 24, 2), 22); // keep widths between 2 and 22 grid units
-      setLeftColWidth(newLeftWidth);
-    }
-  };
-
-  const handleMouseUp = () => setIsDragging(false);
-
-  React.useEffect(() => {
-    if (isDragging) {
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
-    } else {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-    }
-    return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-    };
-  }, [isDragging]);
-
   return (
     <>
 
@@ -449,93 +451,69 @@ const Editor = ({ id }) => {
           className='report-card'
         >
           <Spin spinning={isLoading}>
-            <Row gutter={30}>
+            <div style={{ display: 'flex', width: '100%', height: '100%' }}>
 
               {/* OHIF viewer and Study Images related option  */}
-              <Col
-                xs={24}
-                sm={12}
-                md={leftColWidth}
-                style={{ transition: "width 0.3s" }}
-              >
-                <div className='report-details-div'>
+              <div className='report-details-div'>
 
-                  {selectedItem?.isImagesSelected && imageSlider.length > 0 && (
-                    <>
-                      <Typography className='card-heading'>
-                        Study Images
-                      </Typography>
-                      <Divider />
+                {selectedItem?.isImagesSelected && imageSlider.length > 0 && (
+                  <>
+                    <Typography className='card-heading'>
+                      Study Images
+                    </Typography>
+                    <Divider />
 
-                      <div className='menu-image-slider'>
-                        {imageSlider.length > 0 && (
-                          <Slider
-                            dots={false}
-                            className='slider'
-                            slidesToShow={1}
-                            slidesToScroll={1}
-                            infinite={false}
-                            afterChange={prev => setStudyImageID(prev)}
-                          >
-                            {imageSlider.length > 0 &&
-                              imageSlider.map(image => (
-                                <img
-                                  src={image.url}
-                                  alt='image'
-                                  className='slider-image'
-                                  loading='lazy'
-                                />
-                              ))}
-                          </Slider>
-                        )}
-                      </div>
-                    </>
-                  )}
+                    <div className='menu-image-slider'>
+                      {imageSlider.length > 0 && (
+                        <Slider
+                          dots={false}
+                          className='slider'
+                          slidesToShow={1}
+                          slidesToScroll={1}
+                          infinite={false}
+                          afterChange={prev => setStudyImageID(prev)}
+                        >
+                          {imageSlider.length > 0 &&
+                            imageSlider.map(image => (
+                              <img
+                                src={image.url}
+                                alt='image'
+                                className='slider-image'
+                                loading='lazy'
+                              />
+                            ))}
+                        </Slider>
+                      )}
+                    </div>
+                  </>
+                )}
 
-                  {/* ==== Show OHIF Viewer information ====  */}
+                {/* ==== Show OHIF Viewer information ====  */}
 
-                  {selectedItem?.isOhifViewerSelected && (
-                    <>
-                      <div style={{ width: "100%", height: "100%", overflowY: "auto" }} onBeforeInput={scrollToBottom}>
-                        <iframe src={studyUIDInformation} width="100%" height="800px" className='ohif-container'></iframe>
-
-                      </div>
-                    </>
-                  )}
-
-                  {!selectedItem?.isOhifViewerSelected && (
-                    <>
-                      <div className='btn-div insert-report-details-option'>
-                        <Button type='primary' onClick={() => convertPatientDataToTable(true)}>
-                          Insert
-                        </Button>
-                      </div>
-
-                    </>
-                  )}
+                <div style={{ width: "100%", height: "100%", overflowY: "auto" }} onBeforeInput={scrollToBottom}>
+                  <iframe src={studyUIDInformation} width="100%" height="800px" className='ohif-container'></iframe>
                 </div>
-              </Col>
 
-              <div
-                className='divider'
-                onMouseDown={handleMouseDown}
-                style={{
-                  width: '5px',
-                  cursor: 'col-resize',
-                  backgroundColor: '#d9d9d9',
-                  height: '100%',
-                }}
-              >
+                {selectedItem?.isOhifViewerSelected && (
+                  <>
+                  </>
+                )}
+
+                {selectedItem?.isOhifViewerSelected && (
+                  <>
+                    <div className='btn-div insert-report-details-option'>
+                      <Button type='primary' onClick={() => convertPatientDataToTable(true)}>
+                        Insert
+                      </Button>
+                    </div>
+
+                  </>
+                )}
               </div>
 
               {/* Study description selection and Editor related option  */}
 
-              <Col
-                xs={24}
-                sm={12}
-                md={24 - leftColWidth}
-                className='report-editor-div'
-              >
+              <div style={{ flex: 1, overflow: 'auto' }}>
                 <div style={{
                   display: "flex",
                   gap: 10
@@ -668,9 +646,9 @@ const Editor = ({ id }) => {
                   />
                 </div>
 
-              </Col>
+              </div>
 
-            </Row>
+            </div>
 
           </Spin>
 
@@ -713,6 +691,146 @@ const Editor = ({ id }) => {
           </div>
         </Modal>
       )}
+
+      <Drawer
+        title = "Patient Info"
+        placement='left'
+        closable = {true}
+        onClose={() => {setPatientInformationDrawer(false)}}
+        open = {patientInforamtionDrawer}
+        className='patient-info-drawer'
+        width={"50vw"}
+      >
+
+        <div className='drawer-info-div' style={{
+          borderWidth: 0, 
+        }}>
+
+          {/* Patient information option button  */}
+          <Button type='primary' style={{
+            marginTop: 0, 
+            marginRight: 10
+          }} onClick={() => {setPatientInfoDrawerOption("info")}}>
+            <div className='drawer-title' >
+              Patient Information
+            </div>
+          </Button>
+          
+          {/* Report information option button  */}
+          <Button type='primary'
+            onClick={() => {setPatientInfoDrawerOption("report")}}
+          >
+            <div className='drawer-title'>
+              Report
+            </div>
+          </Button>
+        </div>
+
+
+        <Divider style={{marginTop: 10, marginBottom: 15}}/>
+
+        {/* Patient information  */}
+        {(patientInformation !== undefined && partientInfoDrawerOption == "info" )&& (
+          <>
+
+            <div className='drawer-info-main-div'>
+              {/* Patient name information  */}
+              <div className='drawer-info-div'>
+                <div className='drawer-info-title'>Patient Name</div>
+                <div className='drawer-info-data'>{patientInformation?.Patient_name || "-"}</div>
+              </div>
+          
+              <div className='drawer-info-div'>
+                <div className='drawer-info-title'>Patient Id</div>
+                <div className='drawer-info-data'>{patientInformation?.Patient_id || "-"}</div>
+              </div>
+            </div>
+
+            <div className='drawer-info-main-div'>
+              <div className='drawer-info-div'>
+                <div className='drawer-info-title'>Gender</div>
+                <div className='drawer-info-data'>{patientInformation?.Gender || "-"}</div>
+              </div>
+              
+              <div className='drawer-info-div'>
+                <div className='drawer-info-title'>DOB</div>
+                <div className='drawer-info-data'>{patientInformation?.DOB || "-"}</div>
+              </div>
+            </div>
+            
+            <div className='drawer-info-main-div'>
+              <div className='drawer-info-div'>
+                <div className='drawer-info-title'>AGE</div>
+                <div className='drawer-info-data'>{patientInformation?.Age || "-"}</div>
+              </div>
+              
+              <div className='drawer-info-div'>
+                <div className='drawer-info-title'>Referring Physician Name</div>
+                <div className='drawer-info-data'>{patientInformation?.Referring_physician_name || "-"}</div>
+              </div>
+            </div>
+            
+            <div className='drawer-info-main-div'>
+              <div className='drawer-info-div'>
+                <div className='drawer-info-title'>Performing Physician Name</div>
+                <div className='drawer-info-data'>{patientInformation?.Performing_physician_name || "-"}</div>
+              </div>
+            
+              <div className='drawer-info-div'
+                style={{backgroundColor: "#efefef"}}>
+                <div className='drawer-info-title'>Modality</div>
+                <div className='drawer-info-data'>{patientInformation?.Modality || "-"}</div>
+              </div>
+            </div>
+
+            <div className='drawer-info-main-div'>
+              <div className='drawer-info-div' 
+                style={{backgroundColor: "#efefef"}}>
+                <div className='drawer-info-title'>Study Description</div>
+                <div className='drawer-info-data'>{patientInformation?.Study_description || "-"}</div>
+              </div>
+              
+              <div className='drawer-info-div'
+                style={{backgroundColor: "#efefef"}}>
+                <div className='drawer-info-title'>Patient Comments</div>
+                <div className='drawer-info-data'>{patientInformation?.Patient_comments || "-"}</div>
+              </div>
+            </div>
+
+            <div className='drawer-info-main-div'>
+              <div className='drawer-info-div'>
+                <div className='drawer-info-title'>Number Of Report</div>
+                <div className='drawer-info-data'>{patientInformation?.number_of_report || "-"}</div>
+              </div>
+              
+              <div className='drawer-info-div'>
+                <div className='drawer-info-title'>Study Assign time</div>
+                <div className='drawer-info-data'>{patientInformation?.study_assign_time || "-"}</div>
+              </div>
+            </div>
+
+            <div className='drawer-info-main-div'>
+              <div className='drawer-info-div'>
+                <div className='drawer-info-title'>Assing To</div>
+                <div className='drawer-info-data'>{patientInformation?.study_assign_username || "-"}</div>
+              </div>
+            </div>
+
+          </>
+        )}
+
+        {/* Report information  */}
+
+        {partientInfoDrawerOption !== "info" && (
+          <>
+            <TableWithFilter
+              tableColumns = {columns}
+              tableData={patientReportList}
+            />
+          </>
+        )}
+
+      </Drawer>
 
     </>
   )
