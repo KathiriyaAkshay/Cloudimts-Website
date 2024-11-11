@@ -21,6 +21,7 @@ import OHIF from "../assets/images/menu.png";
 import KitWareViewer from "../assets/images/viewers.png";
 import TableWithFilter from './TableWithFilter'
 import { convertToDDMMYYYY } from '../helpers/utils'
+import Draggable from 'react-draggable'
 
 const Editor = ({ id }) => {
 
@@ -28,7 +29,7 @@ const Editor = ({ id }) => {
   const [cardDetails, setCardDetails] = useState({})
   const [isLoading, setIsLoading] = useState(false)
   const { selectedItem, setSelectedItem, docFiledata } = useContext(ReportDataContext)
-  const { setTemplateOption, patientInforamtionDrawer, setPatientInformationDrawer  } = useContext(filterDataContext)
+  const { setTemplateOption, patientInforamtionDrawer, setPatientInformationDrawer } = useContext(filterDataContext)
   const [studyImageID, setStudyImageID] = useState(0)
   const [signatureImage, setSignatureImage] = useState(null)
   const [username, setUsername] = useState('')
@@ -38,7 +39,7 @@ const Editor = ({ id }) => {
   const [institutionReport, setInstitutionReport] = useState({});
   const [referenceImageCount, setReferenceImageCount] = useState(1);
   const [seriesId, setSeriesId] = useState(null);
-  const [isReportPreviewOpen, setIsReportPreviewOpen] = useState(false) ; 
+  const [isReportPreviewOpen, setIsReportPreviewOpen] = useState(false);
 
   const [form] = Form.useForm();
   const [reportStudyDescription, setReportStudyDescription] = useState(null);
@@ -46,7 +47,7 @@ const Editor = ({ id }) => {
   const [name, setName] = useState('');
   const inputRef = useRef(null);
 
-  const [partientInfoDrawerOption, setPatientInfoDrawerOption] = useState("info") ; 
+  const [partientInfoDrawerOption, setPatientInfoDrawerOption] = useState("info");
 
   const columns = [
     {
@@ -125,8 +126,8 @@ const Editor = ({ id }) => {
   // **** Reterive patient details related information **** // 
   const [institutionId, setInstitutionId] = useState(undefined);
   const [genderId, setGenderId] = useState(undefined);
-  const [patientInformation, setPatientInformation] = useState(undefined) ;
-  const [patientReportList, setPatientReportList] = useState([]) ; 
+  const [patientInformation, setPatientInformation] = useState(undefined);
+  const [patientReportList, setPatientReportList] = useState([]);
 
   const retrievePatientDetails = async () => {
     setIsLoading(true)
@@ -145,8 +146,8 @@ const Editor = ({ id }) => {
     } else if (responseData['status'] === true) {
 
       // Set Patient information 
-      setPatientInformation(responseData?.data) ; 
-      setPatientReportList(responseData?.report || []) ; 
+      setPatientInformation(responseData?.data);
+      setPatientReportList(responseData?.report || []);
 
       localStorage.setItem("report-modality", responseData?.data?.Modality);
       setTemplateOption(responseData?.data?.Modality);
@@ -261,11 +262,11 @@ const Editor = ({ id }) => {
   }, [selectedItem])
 
   useEffect(() => {
-    if (selectedItem?.showPreview == true){
-      setIsReportPreviewOpen(true) ; 
+    if (selectedItem?.showPreview == true) {
+      setIsReportPreviewOpen(true);
     }
-    
-  }, [selectedItem?.showPreview]) ; 
+
+  }, [selectedItem?.showPreview]);
 
 
   const convertPatientDataToTable = (insertImage) => {
@@ -426,8 +427,8 @@ const Editor = ({ id }) => {
       }))
 
       setTemplateOptions([...resData]);
-      let temp = selectedItem ;
-      setSelectedItem({...temp, templateId: resData[0]?.value})
+      let temp = selectedItem;
+      setSelectedItem({ ...temp, templateId: resData[0]?.value })
 
     } else {
     }
@@ -439,6 +440,43 @@ const Editor = ({ id }) => {
       retrieveTemplateOptions();
     }
   }, [institutionId, genderId]);
+
+
+  const [width, setWidth] = useState(400); // Initial width of the div
+  const [isResizing, setIsResizing] = useState(false);
+
+  // Start resizing when the left mouse button is pressed
+  const handleMouseDown = (e) => {
+    if (e.button === 0) { // 0 means left mouse button
+      setIsResizing(true);
+    }
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isResizing) return;
+    setWidth(e.clientX); // Set the width based on the mouse position
+  };
+
+  // Stop resizing when the mouse button is released
+  const handleMouseUp = (e) => {
+    if (e.button === 0) { // Only stop resizing if the left button is released
+      setIsResizing(false);
+    }
+  };
+
+
+  React.useEffect(() => {
+    // Attach the mousemove and mouseup events to the document
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+
+    // Cleanup event listeners on component unmount
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isResizing]);
+
 
   return (
     <>
@@ -452,62 +490,87 @@ const Editor = ({ id }) => {
           <Spin spinning={isLoading}>
             <div style={{ display: 'flex', width: '100%', height: '100%' }}>
 
-              {/* OHIF viewer and Study Images related option  */}
-              <div className='report-details-div'>
+              <div
+                className="resizable-div"
+                style={{
+                  width: `${width}px`,
+                  height: '100%',
+                  border: '1px solid #ddd',
+                  position: 'relative',
+                }}
+              >
+                {/* OHIF viewer and Study Images related option  */}
+                <div className='report-details-div'>
 
-                {selectedItem?.isImagesSelected && imageSlider.length > 0 && (
-                  <>
-                    <Typography className='card-heading'>
-                      Study Images
-                    </Typography>
-                    <Divider />
+                  {selectedItem?.isImagesSelected && imageSlider.length > 0 && (
+                    <>
+                      <Typography className='card-heading'>
+                        Study Images
+                      </Typography>
+                      <Divider />
 
-                    <div className='menu-image-slider'>
-                      {imageSlider.length > 0 && (
-                        <Slider
-                          dots={false}
-                          className='slider'
-                          slidesToShow={1}
-                          slidesToScroll={1}
-                          infinite={false}
-                          afterChange={prev => setStudyImageID(prev)}
-                        >
-                          {imageSlider.length > 0 &&
-                            imageSlider.map(image => (
-                              <img
-                                src={image.url}
-                                alt='image'
-                                className='slider-image'
-                                loading='lazy'
-                              />
-                            ))}
-                        </Slider>
-                      )}
-                    </div>
-                  </>
-                )}
+                      <div className='menu-image-slider'>
+                        {imageSlider.length > 0 && (
+                          <Slider
+                            dots={false}
+                            className='slider'
+                            slidesToShow={1}
+                            slidesToScroll={1}
+                            infinite={false}
+                            afterChange={prev => setStudyImageID(prev)}
+                          >
+                            {imageSlider.length > 0 &&
+                              imageSlider.map(image => (
+                                <img
+                                  src={image.url}
+                                  alt='image'
+                                  className='slider-image'
+                                  loading='lazy'
+                                />
+                              ))}
+                          </Slider>
+                        )}
+                      </div>
+                    </>
+                  )}
 
-                {/* ==== Show OHIF Viewer information ====  */}
+                  {/* ==== Show OHIF Viewer information ====  */}
 
-                <div style={{ width: "100%", height: "100%", overflowY: "auto" }} onBeforeInput={scrollToBottom}>
-                  <iframe src={studyUIDInformation} width="100%" height="800px" className='ohif-container'></iframe>
+                  <div style={{ width: "100%", height: "100%", overflowY: "auto" }} onBeforeInput={scrollToBottom}>
+                    <iframe src={studyUIDInformation} width="100%" height="800px" className='ohif-container'></iframe>
+                  </div>
+
+                  {selectedItem?.isOhifViewerSelected && (
+                    <>
+                    </>
+                  )}
+
+                  {selectedItem?.isOhifViewerSelected && (
+                    <>
+                      <div className='btn-div insert-report-details-option'>
+                        <Button type='primary' onClick={() => convertPatientDataToTable(true)}>
+                          Insert
+                        </Button>
+                      </div>
+
+                    </>
+                  )}
                 </div>
 
-                {selectedItem?.isOhifViewerSelected && (
-                  <>
-                  </>
-                )}
+                <div
+                  className="resize-handle"
+                  style={{
+                    width: '10px',
+                    height: '100%',
+                    position: 'absolute',
+                    right: 0,
+                    top: 0,
+                    cursor: 'ew-resize',
+                    backgroundColor: '#ccc',
+                  }}
+                  onMouseDown={handleMouseDown}
+                />
 
-                {selectedItem?.isOhifViewerSelected && (
-                  <>
-                    <div className='btn-div insert-report-details-option'>
-                      <Button type='primary' onClick={() => convertPatientDataToTable(true)}>
-                        Insert
-                      </Button>
-                    </div>
-
-                  </>
-                )}
               </div>
 
               {/* Study description selection and Editor related option  */}
@@ -623,7 +686,7 @@ const Editor = ({ id }) => {
                   </div>
 
                   <div style={{
-                    marginTop: 10, 
+                    marginTop: 10,
                     marginLeft: "auto"
                   }}>
                     <Button type='primary' onClick={() => handleReportSave()}>
@@ -654,33 +717,34 @@ const Editor = ({ id }) => {
         </Card>
 
       </div>
-      
+
       {isReportPreviewOpen && (
         <Modal
-          title = "Report Preview"
+          title="Report Preview"
           className='report-preview-model'
-          open = {isReportPreviewOpen}
-          onCancel={() => {setIsReportPreviewOpen(false)}}
+          open={isReportPreviewOpen}
+          onCancel={() => { setIsReportPreviewOpen(false) }}
           centered
           width={"70%"}
-          footer = {null}
+          footer={null}
           style={{
-            content:{ 
-              overflowY: "auto", 
-              maxHeight: "85vh", 
+            content: {
+              overflowY: "auto",
+              maxHeight: "85vh",
               overflowY: "auto"
             },
           }}
         >
           <div style={{
-            backgroundColor: "#efefef", 
+            backgroundColor: "#efefef",
             padding: "10px"
           }}>
             {editorData !== null && (
-              
+
               <div
                 className='html_preview'
-                dangerouslySetInnerHTML={{__html: `${EmailHeaderContent} ${editorData}
+                dangerouslySetInnerHTML={{
+                  __html: `${EmailHeaderContent} ${editorData}
                   </body>
                   </html> `}}
               >
@@ -692,32 +756,32 @@ const Editor = ({ id }) => {
       )}
 
       <Drawer
-        title = "Patient Info"
+        title="Patient Info"
         placement='left'
-        closable = {true}
-        onClose={() => {setPatientInformationDrawer(false)}}
-        open = {patientInforamtionDrawer}
+        closable={true}
+        onClose={() => { setPatientInformationDrawer(false) }}
+        open={patientInforamtionDrawer}
         className='patient-info-drawer'
         width={"50vw"}
       >
 
         <div className='drawer-info-div' style={{
-          borderWidth: 0, 
+          borderWidth: 0,
         }}>
 
           {/* Patient information option button  */}
           <Button type='primary' style={{
-            marginTop: 0, 
+            marginTop: 0,
             marginRight: 10
-          }} onClick={() => {setPatientInfoDrawerOption("info")}}>
+          }} onClick={() => { setPatientInfoDrawerOption("info") }}>
             <div className='drawer-title' >
               Patient Information
             </div>
           </Button>
-          
+
           {/* Report information option button  */}
           <Button type='primary'
-            onClick={() => {setPatientInfoDrawerOption("report")}}
+            onClick={() => { setPatientInfoDrawerOption("report") }}
           >
             <div className='drawer-title'>
               Report
@@ -726,10 +790,10 @@ const Editor = ({ id }) => {
         </div>
 
 
-        <Divider style={{marginTop: 10, marginBottom: 15}}/>
+        <Divider style={{ marginTop: 10, marginBottom: 15 }} />
 
         {/* Patient information  */}
-        {(patientInformation !== undefined && partientInfoDrawerOption == "info" )&& (
+        {(patientInformation !== undefined && partientInfoDrawerOption == "info") && (
           <>
 
             <div className='drawer-info-main-div'>
@@ -738,7 +802,7 @@ const Editor = ({ id }) => {
                 <div className='drawer-info-title'>Patient Name</div>
                 <div className='drawer-info-data'>{patientInformation?.Patient_name || "-"}</div>
               </div>
-          
+
               <div className='drawer-info-div'>
                 <div className='drawer-info-title'>Patient Id</div>
                 <div className='drawer-info-data'>{patientInformation?.Patient_id || "-"}</div>
@@ -750,47 +814,47 @@ const Editor = ({ id }) => {
                 <div className='drawer-info-title'>Gender</div>
                 <div className='drawer-info-data'>{patientInformation?.Gender || "-"}</div>
               </div>
-              
+
               <div className='drawer-info-div'>
                 <div className='drawer-info-title'>DOB</div>
                 <div className='drawer-info-data'>{patientInformation?.DOB || "-"}</div>
               </div>
             </div>
-            
+
             <div className='drawer-info-main-div'>
               <div className='drawer-info-div'>
                 <div className='drawer-info-title'>AGE</div>
                 <div className='drawer-info-data'>{patientInformation?.Age || "-"}</div>
               </div>
-              
+
               <div className='drawer-info-div'>
                 <div className='drawer-info-title'>Referring Physician Name</div>
                 <div className='drawer-info-data'>{patientInformation?.Referring_physician_name || "-"}</div>
               </div>
             </div>
-            
+
             <div className='drawer-info-main-div'>
               <div className='drawer-info-div'>
                 <div className='drawer-info-title'>Performing Physician Name</div>
                 <div className='drawer-info-data'>{patientInformation?.Performing_physician_name || "-"}</div>
               </div>
-            
+
               <div className='drawer-info-div'
-                style={{backgroundColor: "#efefef"}}>
+                style={{ backgroundColor: "#efefef" }}>
                 <div className='drawer-info-title'>Modality</div>
                 <div className='drawer-info-data'>{patientInformation?.Modality || "-"}</div>
               </div>
             </div>
 
             <div className='drawer-info-main-div'>
-              <div className='drawer-info-div' 
-                style={{backgroundColor: "#efefef"}}>
+              <div className='drawer-info-div'
+                style={{ backgroundColor: "#efefef" }}>
                 <div className='drawer-info-title'>Study Description</div>
                 <div className='drawer-info-data'>{patientInformation?.Study_description || "-"}</div>
               </div>
-              
+
               <div className='drawer-info-div'
-                style={{backgroundColor: "#efefef"}}>
+                style={{ backgroundColor: "#efefef" }}>
                 <div className='drawer-info-title'>Patient Comments</div>
                 <div className='drawer-info-data'>{patientInformation?.Patient_comments || "-"}</div>
               </div>
@@ -801,7 +865,7 @@ const Editor = ({ id }) => {
                 <div className='drawer-info-title'>Number Of Report</div>
                 <div className='drawer-info-data'>{patientInformation?.number_of_report || "-"}</div>
               </div>
-              
+
               <div className='drawer-info-div'>
                 <div className='drawer-info-title'>Study Assign time</div>
                 <div className='drawer-info-data'>{patientInformation?.study_assign_time || "-"}</div>
@@ -823,7 +887,7 @@ const Editor = ({ id }) => {
         {partientInfoDrawerOption !== "info" && (
           <>
             <TableWithFilter
-              tableColumns = {columns}
+              tableColumns={columns}
               tableData={patientReportList}
             />
           </>
