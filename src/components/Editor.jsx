@@ -1,7 +1,7 @@
 import { CKEditor } from '@ckeditor/ckeditor5-react'
 import React, { useContext, useEffect, useState, useRef, useCallback } from 'react'
 import '../../ckeditor5/build/ckeditor'
-import { Button, Card, Col, Row, Spin, Typography, Input, Select, Form, Divider, Space, Tooltip, Modal, Drawer } from 'antd'
+import { Button, Card, Col, Row, Spin, Typography, Input, Select, Form, Divider, Space, Tooltip, Modal, Drawer, Table } from 'antd'
 import {
   fetchTemplate,
   fetchUserSignature,
@@ -16,12 +16,14 @@ import NotificationMessage from './NotificationMessage'
 import { useNavigate } from 'react-router-dom'
 import APIHandler from '../apis/apiHandler'
 import { descriptionOptions, EmailHeaderContent } from '../helpers/utils'
-import { PlusOutlined } from '@ant-design/icons'
+import { CloseCircleOutlined, PlusOutlined } from '@ant-design/icons'
 import OHIF from "../assets/images/menu.png";
 import KitWareViewer from "../assets/images/viewers.png";
 import TableWithFilter from './TableWithFilter'
 import { convertToDDMMYYYY } from '../helpers/utils'
-import {Splitter} from 'antd'
+import { Splitter } from 'antd'
+import OHIFViewer from "../assets/images/menu.png";
+import WeasisViewer from "../assets/images/Weasis.png";
 
 const Editor = ({ id }) => {
 
@@ -55,23 +57,10 @@ const Editor = ({ id }) => {
       dataIndex: 'reporting_time',
       render: (text, record) => convertToDDMMYYYY(record?.reporting_time)
     },
-
-    {
-      title: 'Report By',
-      dataIndex: 'report_by',
-      render: (text, record) => record?.report_by?.username
-    },
-
     {
       title: 'Study Description',
       dataIndex: 'study_description'
     },
-
-    {
-      title: 'Report Type',
-      dataIndex: 'report_type'
-    },
-
   ]
 
   const onNameChange = (event) => {
@@ -145,7 +134,7 @@ const Editor = ({ id }) => {
 
     } else if (responseData['status'] === true) {
 
-      // Set Patient information 
+      setReportStudyDescription(responseData?.data?.Study_description || undefined);
       setPatientInformation(responseData?.data);
       setPatientReportList(responseData?.report || []);
 
@@ -314,6 +303,7 @@ const Editor = ({ id }) => {
     )
 
     selectedItem.isImagesSelected && setReferenceImageCount(prev => prev + 1)
+
   }
 
   const [imageSlider, setImageSlider] = useState([])
@@ -351,9 +341,6 @@ const Editor = ({ id }) => {
 
       </tbody>
     </table>
-  </div>
-  <div>
-      Report
   </div>`
     setEditorData(prev =>
       `${prev}${data}`
@@ -441,8 +428,6 @@ const Editor = ({ id }) => {
     }
   }, [institutionId, genderId]);
 
-
-
   return (
     <>
 
@@ -455,67 +440,116 @@ const Editor = ({ id }) => {
           <Spin spinning={isLoading}>
             <Splitter style={{ display: 'flex', width: '100%', height: '100%' }}>
 
-              <Splitter.Panel min="20%" max="70%" defaultSize="20%" 
-              >
-                {/* OHIF viewer and Study Images related option  */}
-                <div className='report-details-div'>
+              {(selectedItem?.isImagesSelected || selectedItem?.isOhifViewerSelected) && (
+                <Splitter.Panel min="20%" max="70%" defaultSize="50%"
+                >
+                  {/* OHIF viewer and Study Images related option  */}
+                  <div className='report-details-div'>
 
-                  {selectedItem?.isImagesSelected && imageSlider.length > 0 && (
-                    <>
-                      <Typography className='card-heading'>
-                        Study Images
-                      </Typography>
-                      <Divider />
+                    {/* Study Images related slider */}
+                    {selectedItem?.isImagesSelected && imageSlider.length > 0 && (
+                      <>
+                        <div style={{display: "flex"}}>
+                          <div>
+                            <Typography.Title style={{
+                              fontSize: "22px",
+                              marginTop: 10
+                            }}>
+                              {String("Study Images")}
+                            </Typography.Title>
+                            <div style={{ display: "flex" }}>
+                              <div>
+                                {patientInformation?.Patient_name} |
+                              </div>
+                              <div style={{ marginLeft: 5, color: "red", fontWeight: 600 }}>
+                                {patientInformation?.Modality || "-"}
+                              </div>
+                            </div>
+                          </div>
 
-                      <div className='menu-image-slider'>
-                        {imageSlider.length > 0 && (
-                          <Slider
-                            dots={false}
-                            className='slider'
-                            slidesToShow={1}
-                            slidesToScroll={1}
-                            infinite={false}
-                            afterChange={prev => setStudyImageID(prev)}
-                          >
-                            {imageSlider.length > 0 &&
-                              imageSlider.map(image => (
-                                <img
-                                  src={image.url}
-                                  alt='image'
-                                  className='slider-image'
-                                  loading='lazy'
-                                />
-                              ))}
-                          </Slider>
-                        )}
-                      </div>
-                    </>
-                  )}
+                          <div style={{marginLeft: "auto", marginTop: "auto", marginBottom: "auto", marginRight: "10px"}}>
+                            <Button
+                              type='primary'
+                              icon = {<CloseCircleOutlined/>}
+                              onClick={() => {
+                                setSelectedItem(prev => ({
+                                  isPatientSelected: false,
+                                  isInstitutionSelected: false,
+                                  isImagesSelected: !prev?.isImagesSelected,
+                                  isOhifViewerSelected: false,
+                                  templateId: prev?.templateId,
+                                  isStudyDescriptionSelected: false
+                                }))
+                              }}
+                            />
+                          </div>
 
-                  {/* ==== Show OHIF Viewer information ====  */}
+                        </div>
 
-                  <div style={{ width: "100%", height: "100%", overflowY: "auto" }} onBeforeInput={scrollToBottom}>
-                    <iframe src={studyUIDInformation} width="100%" height="800px" className='ohif-container'></iframe>
+                        <Divider style={{ marginTop: 5 }} />
+
+                        <div className='menu-image-slider'>
+                          {imageSlider.length > 0 && (
+                            <Slider
+                              dots={false}
+                              className='slider'
+                              slidesToShow={1}
+                              slidesToScroll={1}
+                              infinite={false}
+                              afterChange={prev => setStudyImageID(prev)}
+                            >
+                              {imageSlider.length > 0 &&
+                                imageSlider.map(image => (
+                                  <img
+                                    src={image.url}
+                                    alt='image'
+                                    className='slider-image'
+                                    loading='lazy'
+                                  />
+                                ))}
+                            </Slider>
+                          )}
+                        </div>
+
+                        <div style={{ width: "100%", textAlign: "right", paddingRight: 10 }}>
+                          <Button
+                            style={{ marginLeft: "auto" }}
+                            type='primary'
+                            onClick={() => {
+                              convertPatientDataToTable(true);
+                              NotificationMessage("success", "Images added successfully")
+                            }}>
+                            Insert
+                          </Button>
+                        </div>
+                      </>
+                    )}
+
+                    {/* ==== Show OHIF Viewer information ====  */}
+
+                    {selectedItem?.isOhifViewerSelected && (
+                      <>
+                        <div style={{ width: "100%", height: "100%", overflowY: "auto" }} onBeforeInput={scrollToBottom}>
+                          <iframe src={studyUIDInformation} width="100%" height="800px" className='ohif-container'></iframe>
+                        </div>
+                      </>
+                    )}
+
+                    {selectedItem?.isOhifViewerSelected && (
+                      <>
+                        <div className='btn-div insert-report-details-option'>
+                          <Button type='primary' onClick={() => convertPatientDataToTable(true)}>
+                            Insert
+                          </Button>
+                        </div>
+
+                      </>
+                    )}
                   </div>
 
-                  {selectedItem?.isOhifViewerSelected && (
-                    <>
-                    </>
-                  )}
+                </Splitter.Panel>
+              )}
 
-                  {selectedItem?.isOhifViewerSelected && (
-                    <>
-                      <div className='btn-div insert-report-details-option'>
-                        <Button type='primary' onClick={() => convertPatientDataToTable(true)}>
-                          Insert
-                        </Button>
-                      </div>
-
-                    </>
-                  )}
-                </div>
-
-              </Splitter.Panel>
 
               {/* Study description selection and Editor related option  */}
 
@@ -634,12 +668,12 @@ const Editor = ({ id }) => {
                     marginLeft: "auto"
                   }}>
                     <Button type='primary' onClick={() => handleReportSave()}>
-                      File Report
+                      Report
                     </Button>
                   </div>
                 </div>
 
-                <Divider style={{ marginTop: -8, marginBottom: 8 }} />
+                <Divider style={{ marginTop: 5, marginBottom: 8 }} />
 
                 <div className='advance-report-file-option-editor'>
                   <CKEditor
@@ -662,6 +696,7 @@ const Editor = ({ id }) => {
 
       </div>
 
+      {/* ======= Report preview related information model =======  */}
       {isReportPreviewOpen && (
         <Modal
           title="Report Preview"
@@ -699,6 +734,7 @@ const Editor = ({ id }) => {
         </Modal>
       )}
 
+      {/* ======== Patient information related drawer information =========  */}
       <Drawer
         title="Patient Info"
         placement='left'
@@ -714,21 +750,21 @@ const Editor = ({ id }) => {
         }}>
 
           {/* Patient information option button  */}
-          <Button type='primary' style={{
+          <Button type={partientInfoDrawerOption == "info" ? "primary" : "default"} style={{
             marginTop: 0,
             marginRight: 10
           }} onClick={() => { setPatientInfoDrawerOption("info") }}>
             <div className='drawer-title' >
-              Patient Information
+              Patient Data
             </div>
           </Button>
 
           {/* Report information option button  */}
-          <Button type='primary'
+          <Button type={partientInfoDrawerOption == "report" ? "primary" : "default"}
             onClick={() => { setPatientInfoDrawerOption("report") }}
           >
             <div className='drawer-title'>
-              Report
+              Previous Report
             </div>
           </Button>
         </div>
@@ -790,11 +826,30 @@ const Editor = ({ id }) => {
               </div>
             </div>
 
-            <div className='drawer-info-main-div'>
+            <div className='drawer-info-main-div' style={{
+            }}>
               <div className='drawer-info-div'
                 style={{ backgroundColor: "#efefef" }}>
-                <div className='drawer-info-title'>Study Description</div>
-                <div className='drawer-info-data'>{patientInformation?.Study_description || "-"}</div>
+                <div style={{ display: "flex" }}>
+                  <Button
+                    icon={<PlusOutlined />}
+                    style={{ marginTop: "auto", marginBottom: "auto", marginLeft: 10 }}
+                    onClick={() => {
+                      setSelectedItem(prev => ({
+                        isPatientSelected: false,
+                        isInstitutionSelected: false,
+                        isImagesSelected: false,
+                        isOhifViewerSelected: false,
+                        templateId: prev?.templateId,
+                        isStudyDescriptionSelected: true
+                      }))
+                    }}
+                  />
+                  <div>
+                    <div className='drawer-info-title'>Study Description</div>
+                    <div className='drawer-info-data'>{patientInformation?.Study_description || "-"}</div>
+                  </div>
+                </div>
               </div>
 
               <div className='drawer-info-div'
@@ -830,9 +885,10 @@ const Editor = ({ id }) => {
 
         {partientInfoDrawerOption !== "info" && (
           <>
-            <TableWithFilter
-              tableColumns={columns}
-              tableData={patientReportList}
+            <Table
+              columns={columns}
+              dataSource={patientReportList}
+              pagination={false}
             />
           </>
         )}

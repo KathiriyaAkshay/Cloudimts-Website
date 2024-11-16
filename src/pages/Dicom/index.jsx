@@ -59,7 +59,7 @@ import * as XLSX from 'xlsx'
 import AssignStudyModified from '../../components/Studies/AssignStudyModified'
 import ImageDrawer from './ImageDrawer'
 import { convertToDDMMYYYY, modifyDate } from '../../helpers/utils'
-import OHIFViewer from "../../assets/images/menu.png";
+import  OHIFViewer from "../../assets/images/menu.png";
 import WeasisViewer from "../../assets/images/Weasis.png";
 import API from '../../apis/getApi' 
 import StudyReportIcon from "../../assets/images/study-report.png"

@@ -31,9 +31,9 @@ import {
 } from '../helpers/studyDataFilter'
 import APIHandler from '../apis/apiHandler'
 import OHIF from "../assets/images/menu.png" ; 
-import KitWareViewer from "../assets/images/viewers.png";
 import {EyeInvisibleOutlined } from '@ant-design/icons'; 
 import Draggable from 'react-draggable'
+import WeasisViewer from "../assets/images/Weasis.png" ; 
 
 const HeaderButton = ({
   id,
@@ -67,7 +67,7 @@ const HeaderButton = ({
   } = useContext(filterDataContext);
 
 
-  const { setSelectedItem, setDocFileData } = useContext(ReportDataContext)
+  const { setSelectedItem, setDocFileData, selectedItem } = useContext(ReportDataContext)
   const { billingFilterData, setBillingFilterData } =
     useContext(BillingDataContext)
   const [templateOptions, setTemplateOptions] = useState([])
@@ -469,7 +469,7 @@ const HeaderButton = ({
 
                   <div className='viewer-option-layout'>
                     <img className='ohif-option-image' src={OHIF} alt="" srcset="" />
-                    <span className='viewer-option-text'>v3 | Total Metabolic</span>
+                    {/* <span className='viewer-option-text'>v3 | Total Metabolic</span> */}
                   </div>
                 </Button>
 
@@ -480,8 +480,8 @@ const HeaderButton = ({
                 > 
 
                   <div className='viewer-option-layout'>
-                    <img className='ohif-option-image' src={KitWareViewer} alt="" srcset="" />
-                    <span className='viewer-option-text'>Kitware's VolView</span>
+                    <img className='ohif-option-image' src={WeasisViewer} alt="" srcset="" />
+                    {/* <span className='viewer-option-text'>Kitware's VolView</span> */}
                   </div>
                 </Button>
 
@@ -489,18 +489,30 @@ const HeaderButton = ({
                   <Button icon={<UploadOutlined />}>Insert Doc File</Button>
                 </Upload>
 
-                <Button onClick={() => {
+                <Button 
+                  type = {selectedItem?.patientInfo?"primary":"default"}
+                  onClick={() => {
                   setPatientInformationDrawer(true) ; 
+                  setSelectedItem(prev => ({
+                    isPatientSelected: false,
+                    isInstitutionSelected: false,
+                    isImagesSelected: false,
+                    isOhifViewerSelected: false,
+                    templateId: prev?.templateId,
+                    isStudyDescriptionSelected: false, 
+                    patientInfo: true
+                  }))
                 }}>
-                  Patient Info
+                  Patient data
                 </Button>
 
                 <Button
+                  type={selectedItem?.isImagesSelected?"primary":"default"}
                   onClick={() =>
                     setSelectedItem(prev => ({
                       isPatientSelected: false,
                       isInstitutionSelected: false,
-                      isImagesSelected: true,
+                      isImagesSelected: !prev?.isImagesSelected,
                       isOhifViewerSelected: false,
                       templateId: prev?.templateId,
                       isStudyDescriptionSelected: false
@@ -510,7 +522,7 @@ const HeaderButton = ({
                   Study Images
                 </Button>
 
-                <Button
+                {/* <Button
                   icon = {<PlusOutlined/>}
                   onClick={() =>
                     setSelectedItem(prev => ({
@@ -524,7 +536,7 @@ const HeaderButton = ({
                   }
                 >
                   Study Description
-                </Button>
+                </Button> */}
 
               </>
             )}
