@@ -21,7 +21,7 @@ import OHIF from "../assets/images/menu.png";
 import KitWareViewer from "../assets/images/viewers.png";
 import TableWithFilter from './TableWithFilter'
 import { convertToDDMMYYYY } from '../helpers/utils'
-import Draggable from 'react-draggable'
+import {Splitter} from 'antd'
 
 const Editor = ({ id }) => {
 
@@ -442,41 +442,6 @@ const Editor = ({ id }) => {
   }, [institutionId, genderId]);
 
 
-  const [width, setWidth] = useState(400); // Initial width of the div
-  const [isResizing, setIsResizing] = useState(false);
-
-  // Start resizing when the left mouse button is pressed
-  const handleMouseDown = (e) => {
-    if (e.button === 0) { // 0 means left mouse button
-      setIsResizing(true);
-    }
-  };
-
-  const handleMouseMove = (e) => {
-    if (!isResizing) return;
-    setWidth(e.clientX); // Set the width based on the mouse position
-  };
-
-  // Stop resizing when the mouse button is released
-  const handleMouseUp = (e) => {
-    if (e.button === 0) { // Only stop resizing if the left button is released
-      setIsResizing(false);
-    }
-  };
-
-
-  React.useEffect(() => {
-    // Attach the mousemove and mouseup events to the document
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', handleMouseUp);
-
-    // Cleanup event listeners on component unmount
-    return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-    };
-  }, [isResizing]);
-
 
   return (
     <>
@@ -488,16 +453,9 @@ const Editor = ({ id }) => {
           className='report-card'
         >
           <Spin spinning={isLoading}>
-            <div style={{ display: 'flex', width: '100%', height: '100%' }}>
+            <Splitter style={{ display: 'flex', width: '100%', height: '100%' }}>
 
-              <div
-                className="resizable-div"
-                style={{
-                  width: `${width}px`,
-                  height: '100%',
-                  border: '1px solid #ddd',
-                  position: 'relative',
-                }}
+              <Splitter.Panel min="20%" max="70%" defaultSize="20%" 
               >
                 {/* OHIF viewer and Study Images related option  */}
                 <div className='report-details-div'>
@@ -557,25 +515,11 @@ const Editor = ({ id }) => {
                   )}
                 </div>
 
-                <div
-                  className="resize-handle"
-                  style={{
-                    width: '10px',
-                    height: '100%',
-                    position: 'absolute',
-                    right: 0,
-                    top: 0,
-                    cursor: 'ew-resize',
-                    backgroundColor: '#ccc',
-                  }}
-                  onMouseDown={handleMouseDown}
-                />
-
-              </div>
+              </Splitter.Panel>
 
               {/* Study description selection and Editor related option  */}
 
-              <div style={{ flex: 1, overflow: 'auto' }}>
+              <Splitter.Panel>
                 <div style={{
                   display: "flex",
                   gap: 10
@@ -708,9 +652,9 @@ const Editor = ({ id }) => {
                   />
                 </div>
 
-              </div>
+              </Splitter.Panel>
 
-            </div>
+            </Splitter>
 
           </Spin>
 

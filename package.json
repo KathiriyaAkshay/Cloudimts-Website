@@ -15,7 +15,7 @@
     "@ckeditor/ckeditor5-build-classic": "^39.0.1",
     "@ckeditor/ckeditor5-react": "^6.1.0",
     "@ckeditor/ckeditor5-upload": "^39.0.1",
-    "antd": "^5.5.0",
+    "antd": "^5.22.1",
     "antd-img-crop": "^4.23.0",
     "aws-sdk": "^2.1448.0",
     "axios": "^1.4.0",
