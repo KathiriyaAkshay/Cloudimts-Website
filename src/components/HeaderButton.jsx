@@ -464,7 +464,16 @@ const HeaderButton = ({
                 <Button
                   type='primary'
                   className='ohif-basic-viewer-option'
-                  onClick={() => {OHIFViewerOptionHandler("total")}}
+                  onClick={() =>
+                    {setSelectedItem(prev => ({
+                      isPatientSelected: false,
+                      isInstitutionSelected: false,
+                      isImagesSelected: false,
+                      isOhifViewerSelected: true,
+                      templateId: prev?.templateId,
+                      isStudyDescriptionSelected: false
+                    })) ; }
+                  }
                 > 
 
                   <div className='viewer-option-layout'>

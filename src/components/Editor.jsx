@@ -585,7 +585,7 @@ const Editor = ({ id }) => {
                       </>
                     )}
 
-                    {selectedItem?.isOhifViewerSelected && (
+                    {/* {selectedItem?.isOhifViewerSelected && (
                       <>
                         <div className='btn-div insert-report-details-option'>
                           <Button type='primary' onClick={() => convertPatientDataToTable(true)}>
@@ -594,7 +594,7 @@ const Editor = ({ id }) => {
                         </div>
 
                       </>
-                    )}
+                    )} */}
                   </div>
 
                 </Splitter.Panel>
