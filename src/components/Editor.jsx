@@ -16,7 +16,7 @@ import NotificationMessage from './NotificationMessage'
 import { useNavigate } from 'react-router-dom'
 import APIHandler from '../apis/apiHandler'
 import { descriptionOptions, EmailHeaderContent } from '../helpers/utils'
-import { CloseCircleOutlined, PlusOutlined } from '@ant-design/icons'
+import { CloseCircleOutlined, DownloadOutlined, PlusOutlined } from '@ant-design/icons'
 import OHIF from "../assets/images/menu.png";
 import KitWareViewer from "../assets/images/viewers.png";
 import TableWithFilter from './TableWithFilter'
@@ -24,6 +24,7 @@ import { convertToDDMMYYYY } from '../helpers/utils'
 import { Splitter } from 'antd'
 import OHIFViewer from "../assets/images/menu.png";
 import WeasisViewer from "../assets/images/Weasis.png";
+import { BsEyeFill } from 'react-icons/bs'
 
 const Editor = ({ id }) => {
 
@@ -51,6 +52,19 @@ const Editor = ({ id }) => {
 
   const [partientInfoDrawerOption, setPatientInfoDrawerOption] = useState("info");
 
+  function downloadPDF(pdfUrl, pdfName) {
+    var pdfUrl = pdfUrl;
+
+    var link = document.createElement('a');
+    link.style.display = 'none';
+    link.setAttribute('download', pdfName);
+    link.setAttribute('href', pdfUrl);
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
   const columns = [
     {
       title: 'Report Time',
@@ -61,6 +75,43 @@ const Editor = ({ id }) => {
       title: 'Study Description',
       dataIndex: 'study_description'
     },
+    {
+      title: "Action", 
+      render: (text, record) => (
+        <Space>
+          
+          {/* View report option  */}
+          <Tooltip title = "View">
+            <BsEyeFill
+              className='action-icon'
+              onClick={() => {
+                if (record?.report_type === "Advanced report") {
+                  window.open(`/reports/${record?.id}/view`, '_blank');
+                }                
+              }}
+            />
+          </Tooltip>
+          
+          {/* Download report option  */}
+          <Tooltip title = "Download">
+            <DownloadOutlined
+              className='action-icon'
+              onClick={async() => {
+                console.log(record);
+                let responseData = await APIHandler("POST", {id: record?.id}, "studies/v1/report-download") ;
+                if (responseData?.status){
+                  let report_download_url = responseData?.message ; 
+                  let report_patient_name = patientInformation?.Patient_name.replace(/ /g, "-");
+                  let updated_report_name = `${patientInformation?.Patiend_id}-${report_patient_name}-report.pdf`;
+                  downloadPDF(report_download_url, updated_report_name);
+                }
+              }}
+            />
+          </Tooltip>
+        
+        </Space>
+      )
+    }
   ]
 
   const onNameChange = (event) => {
@@ -283,7 +334,6 @@ const Editor = ({ id }) => {
       </div>`
         : selectedItem.isImagesSelected && insertImage
           ? `
-          <h3 style = "text-align:center;">Reference image ${referenceImageCount}</h3>
           <figure class="image">
           <img src="${imageSlider[studyImageID]?.url}" alt="study image" style="width: 256px; height: 200px;" class="Reference-image">
           </figure>`
