@@ -15,7 +15,8 @@ import {
   Switch,
   Statistic,
   Button,
-  Select
+  Select, 
+  Image
 } from 'antd'; 
 import { CheckCircleOutlined, ClearOutlined, CloseCircleOutlined, CloseOutlined, PictureOutlined } from '@ant-design/icons'
 import { useBreadcrumbs } from '../../hooks/useBreadcrumbs'
@@ -74,7 +75,7 @@ let timeOut = null ;
 const Dicom = () => {
 
   const [isLoading, setIsLoading] = useState(false)
-  const { setStudyIdArray, setStudyReferenceIdArray,seriesIdList, setSeriesIdList, totalPages, setTotalPages, studyCountInforamtion, setStudyCountInformation} = useContext(StudyIdContext)
+  const { setStudyIdArray, setStudyReferenceIdArray,studyReferenceIdArray, setSeriesIdList, totalPages, setTotalPages, studyCountInforamtion, setStudyCountInformation, studyIdArray} = useContext(StudyIdContext)
   const { isFilterSelected, isAdvanceSearchSelected, setIsAdvanceSearchSelected } = useContext(FilterSelectedContext);
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
@@ -155,6 +156,8 @@ const Dicom = () => {
   const [reUploadOptionModel, setReUploadOptionModel] = useState(false) ; 
   const [reuploadStudyData, setReuploadStudyData] = useState({}) ; 
 
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]); // Store the selected row keys
+
   const checkPermissionStatus = name => {
     const permission = permissionData['StudyTable view']?.find(
       data => data.permission === name
@@ -198,42 +201,29 @@ const Dicom = () => {
 
             studyData.map((element) => {
               if (element.series_id === ChatData.room_name) {
-
                 let chatnotificationData = localStorage.getItem("chat-data");
-
                 if (chatnotificationData === null) {
                   localStorage.setItem("chat-data", JSON.stringify([]));
                 }
-
                 let chatdata = localStorage.getItem("chat-data");
                 chatdata = JSON.parse(chatdata);
-
                 chatdata.push(
                   {
                     'message': `Message send by ${ChatData.sender_username} for Study Reference id - ${element?.refernce_id}`,
                     "Patientid": element?.refernce_id
                   }
                 )
-
                 localStorage.setItem("chat-data", JSON.stringify(chatdata));
-
                 if (ChatData.urgent_case) {
-                  
-                  // localstorage notification message
                   setChatNotificationData([...chatNotificationData,
                   { message: `Message send by ${ChatData.sender_username} for Study Reference id - ${element?.refernce_id}`, "Patientid": element?.refernce_id }]);
-
                   NotificationMessage("important",
                     "New chat message", `Message send by ${ChatData.sender_username} for Patient - ${element.name} and Patient Id - ${element.refernce_id}`,
                     2,
                     "topLeft");
-
                 } else {
-
-                  // localstorage notification message 
                   setChatNotificationData([...chatNotificationData,
                   { message: `Message send by ${ChatData.sender_username} for Study Reference id - ${element?.refernce_id}`, "Patientid": element?.refernce_id }]);
-                  
                   NotificationMessage("success",
                     "New chat message", `Message send by ${ChatData.sender_username} for Patient - ${element.name} and Patient Id - ${element.refernce_id}`,
                     2,
@@ -740,6 +730,19 @@ const Dicom = () => {
     }
   }
 
+  const handleCellClick = (record) => {
+    const newSelectedRowKeys = [...selectedRowKeys];
+    
+    const index = newSelectedRowKeys.indexOf(record.id);
+    if (index > -1) {
+      newSelectedRowKeys.splice(index, 1);
+    } else {
+      newSelectedRowKeys.push(record.id);
+    }
+    setSelectedRowKeys(newSelectedRowKeys); // Update the selected row keys
+  
+  };
+
   const columns = [
     {
       title: 'Status',
@@ -776,8 +779,11 @@ const Dicom = () => {
             {text}
           </Tag>
         </Tooltip>
-      )
-    },
+      ),
+      onCell: (record) => ({
+        onClick: () => handleCellClick(record)
+      })
+      },
     checkPermissionStatus('Study id') && {
       title: "Reference Id",
       dataIndex: 'refernce_id',
@@ -788,9 +794,11 @@ const Dicom = () => {
           <Tag color='#cd201f'>{text}</Tag>
         </> : <>
           <Tag color='#2db7f5'>{text}</Tag>
-
         </>
       ),
+      onCell: (record) => ({
+        onClick: () => handleCellClick(record)
+      })
     },
     {
       title: "Patient Id",
@@ -800,6 +808,9 @@ const Dicom = () => {
       render: (text, record) => (
         text
       ),
+      onCell: (record) => ({
+        onClick: () => handleCellClick(record)
+      })
     },
     checkPermissionStatus('View Patient name') && {
       title: "Patient's Name",
@@ -814,7 +825,9 @@ const Dicom = () => {
           <Tag color='#2db7f5' style={{maxWidth:"100%",whiteSpace:"normal"}}>{text}</Tag>
         </>
       ),
-
+      onCell: (record) => ({
+        onClick: () => handleCellClick(record)
+      })
     },
     {
       title: 'Mod',
@@ -824,6 +837,9 @@ const Dicom = () => {
       render: (text, record) => (
         text
       ),
+      onCell: (record) => ({
+        onClick: () => handleCellClick(record)
+      })
     },
     checkPermissionStatus('View Study description') && {
       title: 'Description',
@@ -836,12 +852,18 @@ const Dicom = () => {
       render: (text, record) => (
         text
       ),
+      onCell: (record) => ({
+        onClick: () => handleCellClick(record)
+      })
     },
     {
       title: 'Study date',
       dataIndex: 'created_at',
       width: "12%",
-      render: (text, record) => convertToDDMMYYYY(record?.created_at)
+      render: (text, record) => convertToDDMMYYYY(record?.created_at), 
+      onCell: (record) => ({
+        onClick: () => handleCellClick(record)
+      })
     },
     checkPermissionStatus('View Institution name') && {
       title: 'Institution',
@@ -857,7 +879,10 @@ const Dicom = () => {
         </>:<>
           <Tag color='#2db7f5'>{text}</Tag>
         </>
-      )
+      ), 
+      onCell: (record) => ({
+        onClick: () => handleCellClick(record)
+      })
     },
     {
       title: 'Count',
@@ -867,11 +892,16 @@ const Dicom = () => {
       render: (text, record) => (
         <Statistic value={studyCountInforamtion[record?.study?.study_original_id] !== undefined ?`${studyCountInforamtion[record?.study?.study_original_id]['series_count']}/${studyCountInforamtion[record?.study?.study_original_id]['instance_count']}`:"0/0"} style={{ fontSize: "1.4rem" }} />
       ),
+      onCell: (record) => ({
+        onClick: () => handleCellClick(record)
+      })
     },
+
     {
       title: "Report",
       dataIndex: "chat",
       width: "9%",
+      className: "highlight-study-column", 
       render: (text, record) => (
         <>
           <div>
@@ -1051,15 +1081,17 @@ const Dicom = () => {
 
   ].filter(Boolean)
 
-  const rowSelection = {
+  const rowSelection =otherPremissionStatus("Studies permission", "Study Checkbox")?{
+    selectedRowKeys: selectedRowKeys, // Track selected row keys
     onChange: (selectedRowKeys, selectedRows) => {
       setStudyIdArray(prev => selectedRows?.map(data => data.id));
       setStudyReferenceIdArray(prev => selectedRows?.map(data => data));
+      setSelectedRowKeys(selectedRowKeys);
     },
     getCheckboxProps: record => ({
       id: record.id
     })
-  }
+  } : false
 
   // **** Email share option handler **** // 
   const [form] = Form.useForm()
@@ -1100,9 +1132,7 @@ const Dicom = () => {
 
   // **** Image drawer option handler **** // 
   const ImageDrawerHandler = async (record) => {
-
     // handleCellDoubleClick(record);
-
     getInstanceData({ study_id: record.study.study_original_id })
       .then(res => {
         if (res.data.status) {
@@ -1538,10 +1568,8 @@ const Dicom = () => {
         columns={columns}
         scroll={{ y: "calc(100vh - 275px)", x: "100%" }}
         key={studyData.map(o => o.key)}
-        rowSelection={otherPremissionStatus("Studies permission", "Study Checkbo") == false?false:true}
+        rowSelection={rowSelection}        
         loading={isLoading}
-        
-        // Pagination handle
         pagination={{
           current: Pagination.page,
           pageSize: localStorage.getItem("pageSize") || Pagination.limit,
@@ -1579,6 +1607,7 @@ const Dicom = () => {
           },
           onShowSizeChange: onShowSizeChange
         }}
+
       />
 
       {/* ==== Edit study option ====  */}

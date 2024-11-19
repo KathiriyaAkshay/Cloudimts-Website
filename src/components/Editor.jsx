@@ -43,6 +43,8 @@ const Editor = ({ id }) => {
   const [referenceImageCount, setReferenceImageCount] = useState(1);
   const [seriesId, setSeriesId] = useState(null);
   const [isReportPreviewOpen, setIsReportPreviewOpen] = useState(false);
+  const [convertTableInformation, setConvertTableInformation] = useState(undefined) ; 
+  const [studyDescriptionReload, setStudyDescriptionReload] = useState(0) ;
 
   const [form] = Form.useForm();
   const [reportStudyDescription, setReportStudyDescription] = useState(null);
@@ -222,6 +224,7 @@ const Editor = ({ id }) => {
         delete tempData?.patient_details['Patient name'];
 
         setInstitutionReport({ ...reportResponseData['data'] })
+        setConvertTableInformation({ "patient_details": { ...{ "Patient id": tempPatientId, "Patient name": tempPatientName }, ...tempData?.patient_details }, "institution_details": { ...tempData?.institution_details } })
         convertedPatientTableInitially({ "patient_details": { ...{ "Patient id": tempPatientId, "Patient name": tempPatientName }, ...tempData?.patient_details }, "institution_details": { ...tempData?.institution_details } })
       }
     }
@@ -359,43 +362,87 @@ const Editor = ({ id }) => {
   const [imageSlider, setImageSlider] = useState([])
 
   const convertedPatientTableInitially = (institutionReport) => {
-    institutionReport.patient_details = Object.assign(institutionReport.patient_details)
+    institutionReport.patient_details = Object.assign(institutionReport.patient_details);
     const keys = Object.keys(institutionReport?.institution_details);
     var temp = ``;
     const data = `<div>
-
-    <table style="width: 100%; border-collapse: collapse;">
-      <tbody>
-        ${institutionReport.hasOwnProperty('patient_details') && selectedItem.isPatientSelected ?
-        Object.entries(institutionReport?.patient_details)
-          .map(([key, value], index) => {
-            temp = `
-            <tr>
-              <td style="text-align: left; padding: 8px;font-weight:600">${key}</td>
-              <td style="padding: 8px;">${value}</td>`;
-
-            if (index < keys.length) {
-              temp +=
-                `<td style="text-align: left; padding: 8px;font-weight:600  ">${keys[index]}</td>
-              <td style="padding: 8px;">${institutionReport.institution_details[keys[index]]}</td></tr>`;
-            } else {
-              temp += `</tr>`
-            }
-
-            return temp;
-
-          })
-          .join('')
-        : ''}
-
-
-      </tbody>
-    </table>
-  </div>`
-    setEditorData(prev =>
-      `${prev}${data}`
-    )
-  }
+      <table style="width: 100%; border-collapse: collapse;">
+        <tbody>
+          ${institutionReport.hasOwnProperty('patient_details') && selectedItem.isPatientSelected ?
+            Object.entries(institutionReport?.patient_details)
+              .map(([key, value], index) => {
+                // Check for null value and replace with "-"
+                const displayValue = value === null ? '-' : value;
+  
+                temp = `
+                <tr>
+                  <td style="text-align: left; padding: 8px;font-weight:600">${key}</td>
+                  <td style="padding: 8px;">${displayValue}</td>`;
+  
+                if (index < keys.length) {
+                  const institutionKey = keys[index];
+                  const institutionValue = institutionReport.institution_details[institutionKey];
+                  const displayInstitutionValue = institutionValue === null ? '-' : institutionValue;
+  
+                  temp += `
+                    <td style="text-align: left; padding: 8px;font-weight:600">${institutionKey}</td>
+                    <td style="padding: 8px;">${displayInstitutionValue}</td></tr>`;
+                } else {
+                  temp += `</tr>`;
+                }
+  
+                return temp;
+  
+              })
+              .join('')
+            : ''}
+        </tbody>
+      </table>
+    </div>`;
+  
+    setEditorData(prev => `${prev}${data}`);
+  };
+  
+  const initializePatientTableData = (institutionReport) => {
+    institutionReport.patient_details = Object.assign(institutionReport.patient_details);
+    const keys = Object.keys(institutionReport?.institution_details);
+    var temp = ``;
+    const data = `<div>
+      <table style="width: 100%; border-collapse: collapse;">
+        <tbody>
+          ${institutionReport.hasOwnProperty('patient_details') && selectedItem.isPatientSelected ?
+            Object.entries(institutionReport?.patient_details)
+              .map(([key, value], index) => {
+                // Check for null value and replace with "-"
+                const displayValue = value === null ? '-' : value;
+  
+                temp = `
+                <tr>
+                  <td style="text-align: left; padding: 8px;font-weight:600">${key}</td>
+                  <td style="padding: 8px;">${displayValue}</td>`;
+  
+                if (index < keys.length) {
+                  const institutionKey = keys[index];
+                  const institutionValue = institutionReport.institution_details[institutionKey];
+                  const displayInstitutionValue = institutionValue === null ? '-' : institutionValue;
+  
+                  temp += `
+                    <td style="text-align: left; padding: 8px;font-weight:600">${institutionKey}</td>
+                    <td style="padding: 8px;">${displayInstitutionValue}</td></tr>`;
+                } else {
+                  temp += `</tr>`;
+                }
+  
+                return temp;
+  
+              })
+              .join('')
+            : ''}
+        </tbody>
+      </table>
+    </div>`;
+    return data ; 
+  };
 
   // **** Submit report handler **** // 
   const handleReportSave = async () => {
@@ -428,8 +475,12 @@ const Editor = ({ id }) => {
   }
 
   useEffect(() => {
-    setEditorData(prev => prev + docFiledata)
-  }, [docFiledata])
+    if (docFiledata !== "" && convertTableInformation != undefined){
+      let data = initializePatientTableData(convertTableInformation) ; 
+      setEditorData(data + docFiledata)
+      setReportStudyDescription(null);
+    }
+  }, [docFiledata, convertTableInformation])
 
 
   const scrollToBottom = () => {
@@ -477,6 +528,26 @@ const Editor = ({ id }) => {
       retrieveTemplateOptions();
     }
   }, [institutionId, genderId]);
+
+  useEffect(() => {
+    if (reportStudyDescription !== null){
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(editorData, "text/html");
+      const rows = doc.querySelectorAll("tr");
+      rows.forEach((row) => {
+        const firstCell = row.querySelector("td strong");
+        if (firstCell && firstCell.textContent.trim() === "Study description") {
+          const valueCell = row.querySelector("td:nth-child(2)");
+          if (valueCell) {
+            valueCell.textContent = reportStudyDescription;
+          }
+        }
+      });
+      const serializer = new XMLSerializer();
+      const updatedEditorData = serializer.serializeToString(doc);
+      setEditorData(updatedEditorData);
+    }
+  }, [reportStudyDescription, studyDescriptionReload]);
 
   return (
     <>
@@ -718,7 +789,7 @@ const Editor = ({ id }) => {
                     marginLeft: "auto"
                   }}>
                     <Button type='primary' onClick={() => handleReportSave()}>
-                      Report
+                      Submit Report
                     </Button>
                   </div>
                 </div>
@@ -881,7 +952,7 @@ const Editor = ({ id }) => {
               <div className='drawer-info-div'
                 style={{ backgroundColor: "#efefef" }}>
                 <div style={{ display: "flex" }}>
-                  <Button
+                  {/* <Button
                     icon={<PlusOutlined />}
                     style={{ marginTop: "auto", marginBottom: "auto", marginLeft: 10 }}
                     onClick={() => {
@@ -894,7 +965,7 @@ const Editor = ({ id }) => {
                         isStudyDescriptionSelected: true
                       }))
                     }}
-                  />
+                  /> */}
                   <div>
                     <div className='drawer-info-title'>Study Description</div>
                     <div className='drawer-info-data'>{patientInformation?.Study_description || "-"}</div>

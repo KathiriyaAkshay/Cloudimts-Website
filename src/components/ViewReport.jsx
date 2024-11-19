@@ -54,11 +54,12 @@ const ViewReport = ({ id }) => {
       };
       let responseData = await APIHandler("POST", requestPayload, "studies/v1/update-report");
       if (responseData === false) {
-        NotificationMessage("warning", "Network request failed");
+        NotificationMessage("warning", "Network request failed", "", 1, "topLeft");
       } else if (responseData['status'] === true) {
-        NotificationMessage("success", "Update report successfully");
+        NotificationMessage("success", "Update report successfully", "", 1, "topLeft");
+        navigate(-1)
       } else {
-        NotificationMessage("warning", responseData['message']);
+        NotificationMessage("warning", responseData['message'], "", 1, "topLeft");
       }
   
       setLoading(false);
@@ -66,7 +67,7 @@ const ViewReport = ({ id }) => {
 
   }
 
-  // ******* save report as draft related option handler *********** // 
+  // ******* Save report as draft related option handler *********** // 
   const saveDraftReportOptionHandler = async () => {
     if (localStorage.getItem('studyId') == null){
       NotificationMessage("Have some internal error try again") ; 
@@ -79,11 +80,11 @@ const ViewReport = ({ id }) => {
       };
       let responseData = await APIHandler("POST", requestPayload, "studies/v1/draft-reoprt");
       if (responseData === false) {
-        NotificationMessage("warning", "Network request failed");
+        NotificationMessage("warning", "Network request failed", "", 1, "topLeft");
       } else if (responseData['status'] === true) {
-        NotificationMessage("success", "Report save as draft");
+        NotificationMessage("success", "Report save as draft", "", 1, "topLeft");
       } else {
-        NotificationMessage("warning", responseData['message']);
+        NotificationMessage("warning", responseData['message'], "", 1, "topLeft");
       }
   
       setLoading(false);

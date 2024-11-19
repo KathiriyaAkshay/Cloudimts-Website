@@ -20,8 +20,7 @@ import { BsEyeFill } from 'react-icons/bs'
 import {
   DownloadOutlined,
   MailOutlined,
-  WhatsAppOutlined,
-  CloseCircleFilled
+  WhatsAppOutlined
 } from '@ant-design/icons'
 import ImageCarousel from './ImageCarousel'
 import { useNavigate } from 'react-router-dom'
@@ -377,19 +376,19 @@ const StudyReports = ({
 
               {/* ==== OHIF viewer option ====  */}
 
-              <Button key='back' className='Report-modal-option-button'
+              {/* <Button key='back' className='Report-modal-option-button'
                 onClick={OHIFViewerHandler}>
                 OHIF Viewer
-              </Button>
+              </Button> */}
 
               {/* ==== Weasis Viewer option =====  */}
 
-              <Button key='back' className='Report-modal-option-button'
+              {/* <Button key='back' className='Report-modal-option-button'
                 onClick={WeasisViewerHandler}>
                 Weasis viewer
-              </Button>
+              </Button> */}
 
-              {checkPermissionStatus('Report study') && (
+              {/* {checkPermissionStatus('Report study') && (
                 <Button
                   key='submit'
                   type='primary'
@@ -401,7 +400,7 @@ const StudyReports = ({
                 >
                   Simplified Report
                 </Button>
-              )}
+              )} */}
 
               {checkPermissionStatus('Report study') && (
                 <Button
@@ -415,7 +414,7 @@ const StudyReports = ({
                     window.open(`/reports/${studyID}`, '_blank');
                   }}
                 >
-                  Advanced File Report
+                  Study Report
                 </Button>
               )}
 
@@ -451,7 +450,7 @@ const StudyReports = ({
                       onClick={() => setShow(true)}
                       style={{ marginRight: '10px' }}
                     >
-                      Study Images
+                      Patient data
                     </Button>
                   )}
                 </div>
@@ -520,15 +519,16 @@ const StudyReports = ({
       />
 
       {/* Study reference image information  */}
-
-      <ImageCarousel
-        studyImages={studyImages}
-        show={show}
-        setShow={setShow}
-      />
+      {show && (
+        <ImageCarousel 
+          Carousel
+          studyImages={studyImages}
+          show={show}
+          setShow={setShow}
+        />
+      )}
 
       {/* Simplified report reference image information  */}
-
       <ImageCarousel
         studyImages={normalReportImages}
         show={isViewReportModalOpen}

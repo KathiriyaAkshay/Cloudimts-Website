@@ -414,94 +414,38 @@ const HeaderButton = ({
       {/* ==== Study report submit option page ====  */}
 
       {window.location.pathname === `/reports/${id}` && (
-        <Draggable>
-          <div className='iod-setting-div report-option-div'>
+        <div className='iod-setting-div report-option-div'>
 
-              <Button
-              type='primary'
-              icon={reportOptionToggle ? <EyeInvisibleOutlined /> : <EyeOutlined />}
-              onClick={() => {setReportOptionToggle((prev) => !prev)}}
-            />
+            <Button
+            type='primary'
+            icon={reportOptionToggle ? <EyeInvisibleOutlined /> : <EyeOutlined />}
+            onClick={() => {setReportOptionToggle((prev) => !prev)}}
+          />
 
-            {!reportOptionToggle && (
-              <>
-                {/* <Button
-                  type='primary'
-                  className='ohif-basic-viewer-option'
-                  onClick={() =>
-                    {setSelectedItem(prev => ({
-                      isPatientSelected: false,
-                      isInstitutionSelected: false,
-                      isImagesSelected: false,
-                      isOhifViewerSelected: true,
-                      templateId: prev?.templateId,
-                      isStudyDescriptionSelected: false
-                    })) ; }
-                  }
-                > 
+          {!reportOptionToggle && (
+            <>
+              {/* <Button
+                type='primary'
+                className='ohif-basic-viewer-option'
+                onClick={() =>
+                  {setSelectedItem(prev => ({
+                    isPatientSelected: false,
+                    isInstitutionSelected: false,
+                    isImagesSelected: false,
+                    isOhifViewerSelected: true,
+                    templateId: prev?.templateId,
+                    isStudyDescriptionSelected: false
+                  })) ; }
+                }
+              > 
 
-                  <div className='viewer-option-layout'>
-                    <img className='ohif-option-image' src={OHIF} alt="" srcset="" />
-                    <span className='viewer-option-text'>v1 | Basic</span>
-                  </div>
-                </Button>*/}
+                <div className='viewer-option-layout'>
+                  <img className='ohif-option-image' src={OHIF} alt="" srcset="" />
+                  <span className='viewer-option-text'>v1 | Basic</span>
+                </div>
+              </Button>*/}
 
-                <Button onClick={() =>
-                    setSelectedItem(prev => ({
-                      isPatientSelected: false,
-                      isInstitutionSelected: false,
-                      isImagesSelected: false,
-                      isOhifViewerSelected: false,
-                      templateId: prev?.templateId,
-                      isStudyDescriptionSelected: false, 
-                      showPreview: true
-                    }))
-                  }>
-                  Preview
-                </Button>
-
-
-                <Button
-                  type='primary'
-                  className='ohif-basic-viewer-option'
-                  onClick={() =>
-                    {setSelectedItem(prev => ({
-                      isPatientSelected: false,
-                      isInstitutionSelected: false,
-                      isImagesSelected: false,
-                      isOhifViewerSelected: true,
-                      templateId: prev?.templateId,
-                      isStudyDescriptionSelected: false
-                    })) ; }
-                  }
-                > 
-
-                  <div className='viewer-option-layout'>
-                    <img className='ohif-option-image' src={OHIF} alt="" srcset="" />
-                    {/* <span className='viewer-option-text'>v3 | Total Metabolic</span> */}
-                  </div>
-                </Button>
-
-                <Button
-                  type='primary'
-                  className='kiware-viewer-option'
-                  onClick={() => {OHIFViewerOptionHandler("kitware")}}
-                > 
-
-                  <div className='viewer-option-layout'>
-                    <img className='ohif-option-image' src={WeasisViewer} alt="" srcset="" />
-                    {/* <span className='viewer-option-text'>Kitware's VolView</span> */}
-                  </div>
-                </Button>
-
-                <Upload {...props}>
-                  <Button icon={<UploadOutlined />}>Insert Doc File</Button>
-                </Upload>
-
-                <Button 
-                  type = {selectedItem?.patientInfo?"primary":"default"}
-                  onClick={() => {
-                  setPatientInformationDrawer(true) ; 
+              <Button onClick={() =>
                   setSelectedItem(prev => ({
                     isPatientSelected: false,
                     isInstitutionSelected: false,
@@ -509,49 +453,103 @@ const HeaderButton = ({
                     isOhifViewerSelected: false,
                     templateId: prev?.templateId,
                     isStudyDescriptionSelected: false, 
-                    patientInfo: true
+                    showPreview: true
                   }))
-                }}>
-                  Patient data
-                </Button>
+                }>
+                Preview
+              </Button>
 
-                <Button
-                  type={selectedItem?.isImagesSelected?"primary":"default"}
-                  onClick={() =>
-                    setSelectedItem(prev => ({
-                      isPatientSelected: false,
-                      isInstitutionSelected: false,
-                      isImagesSelected: !prev?.isImagesSelected,
-                      isOhifViewerSelected: false,
-                      templateId: prev?.templateId,
-                      isStudyDescriptionSelected: false
-                    }))
-                  }
-                >
-                  Study Images
-                </Button>
 
-                {/* <Button
-                  icon = {<PlusOutlined/>}
-                  onClick={() =>
-                    setSelectedItem(prev => ({
-                      isPatientSelected: false,
-                      isInstitutionSelected: false,
-                      isImagesSelected: false,
-                      isOhifViewerSelected: false,
-                      templateId: prev?.templateId,
-                      isStudyDescriptionSelected: true
-                    }))
-                  }
-                >
-                  Study Description
-                </Button> */}
+              <Button
+                type='primary'
+                className='ohif-basic-viewer-option'
+                onClick={() =>
+                  {setSelectedItem(prev => ({
+                    isPatientSelected: false,
+                    isInstitutionSelected: false,
+                    isImagesSelected: false,
+                    isOhifViewerSelected: true,
+                    templateId: prev?.templateId,
+                    isStudyDescriptionSelected: false
+                  })) ; }
+                }
+              > 
 
-              </>
-            )}
+                <div className='viewer-option-layout'>
+                  <img className='ohif-option-image' src={OHIF} alt="" srcset="" />
+                  {/* <span className='viewer-option-text'>v3 | Total Metabolic</span> */}
+                </div>
+              </Button>
 
-          </div>
-        </Draggable>
+              <Button
+                type='primary'
+                className='kiware-viewer-option'
+                onClick={() => {OHIFViewerOptionHandler("kitware")}}
+              > 
+
+                <div className='viewer-option-layout'>
+                  <img className='ohif-option-image' src={WeasisViewer} alt="" srcset="" />
+                  {/* <span className='viewer-option-text'>Kitware's VolView</span> */}
+                </div>
+              </Button>
+
+              <Upload {...props}>
+                <Button icon={<UploadOutlined />}>Insert Doc File</Button>
+              </Upload>
+
+              <Button 
+                type = {selectedItem?.patientInfo?"primary":"default"}
+                onClick={() => {
+                setPatientInformationDrawer(true) ; 
+                setSelectedItem(prev => ({
+                  isPatientSelected: false,
+                  isInstitutionSelected: false,
+                  isImagesSelected: false,
+                  isOhifViewerSelected: false,
+                  templateId: prev?.templateId,
+                  isStudyDescriptionSelected: false, 
+                  patientInfo: true
+                }))
+              }}>
+                Patient data
+              </Button>
+
+              <Button
+                type={selectedItem?.isImagesSelected?"primary":"default"}
+                onClick={() =>
+                  setSelectedItem(prev => ({
+                    isPatientSelected: false,
+                    isInstitutionSelected: false,
+                    isImagesSelected: !prev?.isImagesSelected,
+                    isOhifViewerSelected: false,
+                    templateId: prev?.templateId,
+                    isStudyDescriptionSelected: false
+                  }))
+                }
+              >
+                Study Images
+              </Button>
+
+              {/* <Button
+                icon = {<PlusOutlined/>}
+                onClick={() =>
+                  setSelectedItem(prev => ({
+                    isPatientSelected: false,
+                    isInstitutionSelected: false,
+                    isImagesSelected: false,
+                    isOhifViewerSelected: false,
+                    templateId: prev?.templateId,
+                    isStudyDescriptionSelected: true
+                  }))
+                }
+              >
+                Study Description
+              </Button> */}
+
+            </>
+          )}
+
+        </div>
       )}
 
       {/* ==== Billing related page =====  */}

@@ -1,4 +1,4 @@
-import { Col, Modal, Row, Image, Button, Tooltip } from "antd";
+import { Col, Modal, Row, Image, Button, Tooltip, Flex } from "antd";
 import React from "react";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -11,7 +11,8 @@ import {
   ZoomInOutlined,
   ZoomOutOutlined,
 } from '@ant-design/icons';
-import PDFOptionIcon from "../../assets/images/pdf-file.png" ; 
+import PDFOptionIcon from "../../assets/images/pdf-file.png";
+import OtherFileOptionIcon from "../../assets/images/other-file.png";
 
 const ImageCarousel = ({
   studyImages,
@@ -20,20 +21,27 @@ const ImageCarousel = ({
   showStudyData = false,
   studyData,
 }) => {
-
   function isPDF(url) {
     const fileExtension = url.split('.').pop().toLowerCase();
     return fileExtension === 'pdf';
   }
 
+  function isImage(url) {
+    const fileExtension = url.split('.').pop().toLowerCase();
+    const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg'];
+    return imageExtensions.includes(fileExtension);
+  }
+
+
+
   function getFileNameFromURL(url) {
     // Extract the last part of the URL after the last slash
     const pathSegments = url.split('/');
     const lastSegment = pathSegments[pathSegments.length - 1];
-  
+
     // Extract the file name using a regular expression to remove query parameters
     const fileName = lastSegment.replace(/[\?|#].*$/, '');
-  
+
     return fileName;
   }
 
@@ -53,7 +61,7 @@ const ImageCarousel = ({
 
     const link = document.createElement('a');
     link.href = imageUrl;
-    link.target = "_blank" ; 
+    link.target = "_blank";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -61,12 +69,12 @@ const ImageCarousel = ({
   return (
 
     <Modal
-      title={showStudyData ? "Normal Report" : "Study Images"}
+      title={showStudyData ? "Normal Report" : "Patient data"}
       open={show}
       onCancel={() => setShow(false)}
       footer={null}
       width={580}
-      className = "Normal-report-view-option-modal"
+      className="Normal-report-view-option-modal"
     >
       {showStudyData && (
         <Row gutter={15}>
@@ -110,19 +118,38 @@ const ImageCarousel = ({
           slidesToScroll={1}
           infinite={false}
         >
-          {studyImages?.map((image) => (
+          {studyImages?.map((image, index) => (
             <>
 
-              <Tooltip title = {getFileNameFromURL(image)}>
-                <Button style={{marginLeft: "auto", marginBottom: "0.50rem"}} 
-                  icon= {<DownloadOutlined/>}
-                  onClick={() => onDownload(image)}></Button>
-              </Tooltip>
+              <Flex justify="flex-start" align="flex-start" style={{marginBottom: 10}}>
+                <Tooltip title={getFileNameFromURL(image)}>
+                  <Button style={{ marginLeft: "auto", marginTop: "auto", marginBottom: "auto" }}
+                    icon={<DownloadOutlined />}
+                    onClick={() => onDownload(image)}></Button>
+                </Tooltip>
+                <div
+                  style={{
+                    marginTop: "auto",
+                    marginBottom: "auto",
+                    marginLeft: 10,
+                    overflow: "hidden", // Ensures content outside the box is hidden
+                    textOverflow: "ellipsis", // Displays ... for truncated text
+                    whiteSpace: "nowrap", // Prevents text from wrapping
+                    maxWidth: "400px", // Adjust width as needed
+                  }}
+                >
+                  <strong>{`${index + 1}/${studyImages?.length}`}</strong>
+                  <span style={{marginLeft: 10}}>
+                    {getFileNameFromURL(image)}
+                  </span>
+                </div>
+
+              </Flex>
 
               <Image
-                src={isPDF(image)?PDFOptionIcon:image}
+                src={isPDF(image) ? PDFOptionIcon : isImage(image) ? image : OtherFileOptionIcon}
                 alt="image"
-                style={{ width: "500px", height: "300px" }}
+                style={{ width: "500px", height: "400px", objectFit: "contain", marginTop: 10 }}
                 preview={{
                   toolbarRender: (
                     _,

@@ -22,7 +22,7 @@ const NotificationMessage = (
     message: alertMessage,
     className: _className,
     description,
-    duration: duration === undefined ?3:duration,
+    duration: duration === undefined ?3:duration > 5?2:duration,
     placement : placement === undefined ?"topRight": placement
   });
 };

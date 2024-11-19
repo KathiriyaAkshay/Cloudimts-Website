@@ -6,6 +6,7 @@ import { dummyRequest, getBase64 } from "../helpers/utils";
 import { DownloadOutlined } from "@ant-design/icons";
 import PDFFileIcon from "../assets/images/pdf-file.png";
 import DocxFileIcon from "../assets/images/docx-file.png";
+import OtherFileIcon from "../assets/images/other-file.png"
 
 const UploadImage = ({
   values,
@@ -57,20 +58,23 @@ const UploadImage = ({
 
   // Check Particular URL stand for PDF or not 
   function isPDF(url) {
-
-    let pdfFileExtensionList = ["pdf"];
-    let WordFileExtensionList = ["docx"];
-
+    const pdfFileExtensionList = ["pdf"];
+    const wordFileExtensionList = ["docx", "doc"];
+    const imageFileExtensionList = ["jpg", "jpeg", "png", "gif", "bmp", "svg", "webp"];
+  
     const fileExtension = url.split('.').pop().toLowerCase();
-
+  
     if (pdfFileExtensionList.includes(fileExtension)) {
-      return "pdf"
-    } else if (WordFileExtensionList.includes(fileExtension)) {
-      return "word"
+      return "pdf";
+    } else if (wordFileExtensionList.includes(fileExtension)) {
+      return "word";
+    } else if (imageFileExtensionList.includes(fileExtension)) {
+      return "image";
     } else {
-      return 'image';
+      return false; // If the file type does not match any known category
     }
   }
+  
 
   function getFileNameFromURL(url) {
     // Extract the last part of the URL after the last slash
@@ -154,10 +158,7 @@ const UploadImage = ({
           {multipleImageFile?.length > 0 && (
             <div className="all-upload-document-list-div">
               {multipleImageFile.map((data) => (
-
                 isPDF(data) === "pdf" ? <>
-
-                  {/* ==== Pdf file option ====  */}
                   <div className="Report-reference-document">
 
                     <div className="Reference-option-button-layout">
@@ -189,7 +190,6 @@ const UploadImage = ({
                   </div>
 
                 </> : <>
-
                   {isPDF(data) === "image" ? <>
 
                     {/* ==== Image File option ====  */}
@@ -225,36 +225,65 @@ const UploadImage = ({
                     </div>
 
                   </> : <>
+                    {isPDF(data) == "word"?<>
+                      <div className="Report-reference-document">
 
-                    {/* ==== Other file option ====  */}
-                    <div className="Report-reference-document">
+                        <div className="Reference-option-button-layout">
 
-                      <div className="Reference-option-button-layout">
+                          <Tooltip title={getFileNameFromURL(data)}>
+                            <Button danger className="Reference-download-option-button"
+                              icon={<DeleteOutlined />}
+                              onClick={() => DeleteOptionHandler(data)}>
+                            </Button>
+                          </Tooltip>
 
-                        <Tooltip title={getFileNameFromURL(data)}>
-                          <Button danger className="Reference-download-option-button"
-                            icon={<DeleteOutlined />}
-                            onClick={() => DeleteOptionHandler(data)}>
-                          </Button>
-                        </Tooltip>
+                          <Tooltip title={getFileNameFromURL(data)}>
+                            <Button type="primary" className="Reference-download-option-button"
+                              icon={<DownloadOutlined />}
+                              onClick={() => handleDownload(data)}>
+                            </Button>
+                          </Tooltip>
 
-                        <Tooltip title={getFileNameFromURL(data)}>
-                          <Button type="primary" className="Reference-download-option-button"
-                            icon={<DownloadOutlined />}
-                            onClick={() => handleDownload(data)}>
-                          </Button>
-                        </Tooltip>
+                        </div>
 
+                        <Image
+                          style={{ width: "100px", height: "100px" }}
+                          src={DocxFileIcon}
+                          onLoad={() => setImageLoaded(true)}
+                          alt="file"
+                          className="Reference-image"
+                        />
                       </div>
+                    </>:<>
+                      <div className="Report-reference-document">
 
-                      <Image
-                        style={{ width: "100px", height: "100px" }}
-                        src={DocxFileIcon}
-                        onLoad={() => setImageLoaded(true)}
-                        alt="file"
-                        className="Reference-image"
-                      />
-                    </div>
+                        <div className="Reference-option-button-layout">
+
+                          <Tooltip title={getFileNameFromURL(data)}>
+                            <Button danger className="Reference-download-option-button"
+                              icon={<DeleteOutlined />}
+                              onClick={() => DeleteOptionHandler(data)}>
+                            </Button>
+                          </Tooltip>
+
+                          <Tooltip title={getFileNameFromURL(data)}>
+                            <Button type="primary" className="Reference-download-option-button"
+                              icon={<DownloadOutlined />}
+                              onClick={() => handleDownload(data)}>
+                            </Button>
+                          </Tooltip>
+
+                        </div>
+
+                        <Image
+                          style={{ width: "100px", height: "100px" }}
+                          src={OtherFileIcon}
+                          onLoad={() => setImageLoaded(true)}
+                          alt="file"
+                          className="Reference-image"
+                        />
+                      </div>
+                    </>}
 
                   </>}
                 </>
@@ -345,15 +374,7 @@ const UploadImage = ({
             </p>
           </Dragger>
         </div>
-
-      
-
       </Form.Item>
-
-      {/* Image preview modal  */}
-
-      
-
       <Modal
         open={previewOpen}
         onCancel={handleImagePreviewCancel}
