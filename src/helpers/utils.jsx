@@ -108,12 +108,18 @@ export const EmailHeaderContent = `
     <meta name='viewport' content='width=device-width, initial-scale=1.0'>
     <style>
         body {
-            font-family: "Montserrat", sans-serif;
-            margin: 0;
-            padding: 0;
-            margin-top: 40px;
-            margin-left: 20px; 
-            margin-right: 20px; 
+            font-family: sans-serif;
+        }
+
+        .report-page{
+          font-family: "Arial", sans-serif;
+          margin: 15px; /* Adds margin to all sides of the report */
+          padding-bottom: 10px; /* Adds space at the bottom for the disclaimer */
+          background-color: #ffffff; /* White background for the report */
+          color: #333; /* Dark gray text for easy readability */
+          display: flex;
+          flex-direction: column;
+          min-height: 100vh; /* Ensures the page covers the full height */
         }
 
         .table {
@@ -123,11 +129,12 @@ export const EmailHeaderContent = `
         }
 
         table {
-            border-collapse: collapse;
-            width: 100%;
-            margin-bottom: 20px;
-            margin-left: auto; 
-            margin-right: auto;
+          border-collapse: collapse;
+          width: 90%;
+          margin-bottom: 20px;
+          margin-left: auto; 
+          margin-right: auto;
+          border-radius: 10px;
         }
 
         th,
@@ -139,9 +146,56 @@ export const EmailHeaderContent = `
             padding-top: 4px;
             padding-bottom: 4px;
         }
+
+        .report-header-div{
+          height: 80px; 
+          width: "100%" ; 
+          border-bottom: 1px solid #d1d1d5;
+          margin-bottom: 15px;
+        }
+
+        .disclaimer-title {
+          font-size: 14px; /* Slightly reduced for subtle emphasis */
+          font-weight: bold; /* Use 'bold' for better readability */
+          text-transform: uppercase; /* Optional: Makes the title stand out */
+          margin-bottom: 8px; /* Adds spacing below the title */
+          color: #333; /* Neutral color for professional appearance */
+        }
+                
+        .disclaimer-content {
+          font-size: 11px; /* Slightly increased for better readability */
+          line-height: 1.5; /* Adds spacing between lines for easier reading */
+          color: #555; /* Subtle gray for less visual dominance */
+          margin-top: 4px; /* Adds spacing above content */
+          text-align: justify; /* Aligns content for a cleaner look */
+        }
+
+        .disclaimer-section{
+          font-size: 12px; /* Standard font size for disclaimer text */
+          text-align: center; /* Center the disclaimer text */
+          color: #777; /* Lighter gray text for the disclaimer */
+          padding: 15px 0;
+          border-top: 1px solid #ccc; /* Adds a subtle divider line above the disclaimer */
+          position: relative;
+          bottom: 0;
+          margin-top: 15px;
+        }
     </style>
 </head>
 <body>
+<div class = "report-page">
+<div class = "report-header-div"></div>
+`
+
+export const ReportDesclamierContent = `
+<div class = "disclaimer-section">
+  <div class = "disclaimer-title">
+    Disclaimer
+  </div>
+  <div class = "disclaimer-content">
+    This medical diagnostic report is generated based on the image and patient information obtained from the source of origin, Cloudimts assumes no responsibility for errors or omission of or in the image, or in the contents of the report, which are a direct interpretation of the image sent from source. In no event shall Cloudimts be liable for any special, direct, indirect, consequential, or incidental damages or any damages whatsoever, whether in an action of negligence or other tort, arising out of or in connection with the use of the Cloudimts Service or the contents of the Service. This report does not replace professional medical advice, additional diagnoses, or treatment.
+</div>
+</div>
 `
 
 

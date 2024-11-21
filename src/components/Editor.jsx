@@ -15,7 +15,7 @@ import Slider from 'react-slick'
 import NotificationMessage from './NotificationMessage'
 import { useNavigate } from 'react-router-dom'
 import APIHandler from '../apis/apiHandler'
-import { descriptionOptions, EmailHeaderContent } from '../helpers/utils'
+import { descriptionOptions, EmailHeaderContent, ReportDesclamierContent } from '../helpers/utils'
 import { CloseCircleOutlined, DownloadOutlined, PlusOutlined } from '@ant-design/icons'
 import OHIF from "../assets/images/menu.png";
 import KitWareViewer from "../assets/images/viewers.png";
@@ -453,7 +453,14 @@ const Editor = ({ id }) => {
       setIsLoading(true);
       await saveAdvancedFileReport({
         id,
-        report: `${editorData} ${`<p style="text-align: left; margin-top: 20px;"><img src=${signatureImage} alt="signature image" style="width:512px;height:160px;text-align: right;"></p>`} ${`<p style="text-align: right;">${username}</p>`}`,
+        report: `${editorData} ${`
+          <p style="text-align: left; margin-top: 20px;">
+            <p>Reported By,</p>
+            <img src=${signatureImage} alt="signature image" style="width:200px;height:100px;text-align: left;">
+          </p>`} ${`
+            <p style="text-align: left; font-weight: 600; font-size: 16px;">
+              ${username}
+            </p>`}`,
         report_study_description: reportStudyDescription
       })
         .then(res => {
@@ -818,42 +825,41 @@ const Editor = ({ id }) => {
       </div>
 
       {/* ======= Report preview related information model =======  */}
-      {isReportPreviewOpen && (
-        <Modal
-          title="Report Preview"
-          className='report-preview-model'
-          open={isReportPreviewOpen}
-          onCancel={() => { setIsReportPreviewOpen(false) }}
-          centered
-          width={"70%"}
-          footer={null}
-          style={{
-            content: {
-              overflowY: "auto",
-              maxHeight: "85vh",
-              overflowY: "auto"
-            },
+      
+      <Modal
+      title="Report Preview"
+      className="report-preview-model"
+      open={selectedItem?.showPreview}
+      onCancel={() => { setSelectedItem(prev => ({
+        isPatientSelected: false,
+        isInstitutionSelected: false,
+        isImagesSelected: false,
+        isOhifViewerSelected: false,
+        templateId: prev?.templateId,
+        isStudyDescriptionSelected: false, 
+        showPreview: false
+      }))}}
+      centered
+      width="70%"
+      style={{ height: "80vh" }} // Adjust overall modal height if needed
+      footer={null}
+    >
+      {editorData !== null && (
+        <div
+          className="html_preview"
+          dangerouslySetInnerHTML={{
+            __html: `${EmailHeaderContent} ${editorData} ${`
+              <p style="text-align: left; margin-top: 20px;">
+                <p>Reported By,</p>
+                <img src=${signatureImage} alt="signature image" style="width:200px;height:100px;text-align: left;">
+                </p>`} ${`<p style="text-align: left; font-weight: 600; font-size: 16px;">${username}</p>`} ${ReportDesclamierContent} 
+              </div> 
+            </body>
+            </html> `
           }}
-        >
-          <div style={{
-            backgroundColor: "#efefef",
-            padding: "10px"
-          }}>
-            {editorData !== null && (
-
-              <div
-                className='html_preview'
-                dangerouslySetInnerHTML={{
-                  __html: `${EmailHeaderContent} ${editorData}
-                  </body>
-                  </html> `}}
-              >
-
-              </div>
-            )}
-          </div>
-        </Modal>
+        ></div>
       )}
+      </Modal>
 
       {/* ======== Patient information related drawer information =========  */}
       <Drawer
