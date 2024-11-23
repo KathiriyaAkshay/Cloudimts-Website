@@ -15,7 +15,7 @@ import Slider from 'react-slick'
 import NotificationMessage from './NotificationMessage'
 import { useNavigate } from 'react-router-dom'
 import APIHandler from '../apis/apiHandler'
-import { descriptionOptions, EmailHeaderContent } from '../helpers/utils'
+import { descriptionOptions, EmailHeaderContent, ReportDesclamierContent } from '../helpers/utils'
 import { CloseCircleOutlined, DownloadOutlined, PlusOutlined } from '@ant-design/icons'
 import OHIF from "../assets/images/menu.png";
 import KitWareViewer from "../assets/images/viewers.png";
@@ -43,8 +43,8 @@ const Editor = ({ id }) => {
   const [referenceImageCount, setReferenceImageCount] = useState(1);
   const [seriesId, setSeriesId] = useState(null);
   const [isReportPreviewOpen, setIsReportPreviewOpen] = useState(false);
-  const [convertTableInformation, setConvertTableInformation] = useState(undefined) ; 
-  const [studyDescriptionReload, setStudyDescriptionReload] = useState(0) ;
+  const [convertTableInformation, setConvertTableInformation] = useState(undefined);
+  const [studyDescriptionReload, setStudyDescriptionReload] = useState(0);
 
   const [form] = Form.useForm();
   const [reportStudyDescription, setReportStudyDescription] = useState(null);
@@ -78,31 +78,31 @@ const Editor = ({ id }) => {
       dataIndex: 'study_description'
     },
     {
-      title: "Action", 
+      title: "Action",
       render: (text, record) => (
         <Space>
-          
+
           {/* View report option  */}
-          <Tooltip title = "View">
+          <Tooltip title="View">
             <BsEyeFill
               className='action-icon'
               onClick={() => {
                 if (record?.report_type === "Advanced report") {
                   window.open(`/reports/${record?.id}/view`, '_blank');
-                }                
+                }
               }}
             />
           </Tooltip>
-          
+
           {/* Download report option  */}
-          <Tooltip title = "Download">
+          <Tooltip title="Download">
             <DownloadOutlined
               className='action-icon'
-              onClick={async() => {
+              onClick={async () => {
                 console.log(record);
-                let responseData = await APIHandler("POST", {id: record?.id}, "studies/v1/report-download") ;
-                if (responseData?.status){
-                  let report_download_url = responseData?.message ; 
+                let responseData = await APIHandler("POST", { id: record?.id }, "studies/v1/report-download");
+                if (responseData?.status) {
+                  let report_download_url = responseData?.message;
                   let report_patient_name = patientInformation?.Patient_name.replace(/ /g, "-");
                   let updated_report_name = `${patientInformation?.Patiend_id}-${report_patient_name}-report.pdf`;
                   downloadPDF(report_download_url, updated_report_name);
@@ -110,7 +110,7 @@ const Editor = ({ id }) => {
               }}
             />
           </Tooltip>
-        
+
         </Space>
       )
     }
@@ -369,40 +369,40 @@ const Editor = ({ id }) => {
       <table style="width: 100%; border-collapse: collapse;">
         <tbody>
           ${institutionReport.hasOwnProperty('patient_details') && selectedItem.isPatientSelected ?
-            Object.entries(institutionReport?.patient_details)
-              .map(([key, value], index) => {
-                // Check for null value and replace with "-"
-                const displayValue = value === null ? '-' : value;
-  
-                temp = `
+        Object.entries(institutionReport?.patient_details)
+          .map(([key, value], index) => {
+            // Check for null value and replace with "-"
+            const displayValue = value === null ? '-' : value;
+
+            temp = `
                 <tr>
                   <td style="text-align: left; padding: 8px;font-weight:600">${key}</td>
                   <td style="padding: 8px;">${displayValue}</td>`;
-  
-                if (index < keys.length) {
-                  const institutionKey = keys[index];
-                  const institutionValue = institutionReport.institution_details[institutionKey];
-                  const displayInstitutionValue = institutionValue === null ? '-' : institutionValue;
-  
-                  temp += `
+
+            if (index < keys.length) {
+              const institutionKey = keys[index];
+              const institutionValue = institutionReport.institution_details[institutionKey];
+              const displayInstitutionValue = institutionValue === null ? '-' : institutionValue;
+
+              temp += `
                     <td style="text-align: left; padding: 8px;font-weight:600">${institutionKey}</td>
                     <td style="padding: 8px;">${displayInstitutionValue}</td></tr>`;
-                } else {
-                  temp += `</tr>`;
-                }
-  
-                return temp;
-  
-              })
-              .join('')
-            : ''}
+            } else {
+              temp += `</tr>`;
+            }
+
+            return temp;
+
+          })
+          .join('')
+        : ''}
         </tbody>
       </table>
     </div>`;
-  
+
     setEditorData(prev => `${prev}${data}`);
   };
-  
+
   const initializePatientTableData = (institutionReport) => {
     institutionReport.patient_details = Object.assign(institutionReport.patient_details);
     const keys = Object.keys(institutionReport?.institution_details);
@@ -411,37 +411,37 @@ const Editor = ({ id }) => {
       <table style="width: 100%; border-collapse: collapse;">
         <tbody>
           ${institutionReport.hasOwnProperty('patient_details') && selectedItem.isPatientSelected ?
-            Object.entries(institutionReport?.patient_details)
-              .map(([key, value], index) => {
-                // Check for null value and replace with "-"
-                const displayValue = value === null ? '-' : value;
-  
-                temp = `
+        Object.entries(institutionReport?.patient_details)
+          .map(([key, value], index) => {
+            // Check for null value and replace with "-"
+            const displayValue = value === null ? '-' : value;
+
+            temp = `
                 <tr>
                   <td style="text-align: left; padding: 8px;font-weight:600">${key}</td>
                   <td style="padding: 8px;">${displayValue}</td>`;
-  
-                if (index < keys.length) {
-                  const institutionKey = keys[index];
-                  const institutionValue = institutionReport.institution_details[institutionKey];
-                  const displayInstitutionValue = institutionValue === null ? '-' : institutionValue;
-  
-                  temp += `
+
+            if (index < keys.length) {
+              const institutionKey = keys[index];
+              const institutionValue = institutionReport.institution_details[institutionKey];
+              const displayInstitutionValue = institutionValue === null ? '-' : institutionValue;
+
+              temp += `
                     <td style="text-align: left; padding: 8px;font-weight:600">${institutionKey}</td>
                     <td style="padding: 8px;">${displayInstitutionValue}</td></tr>`;
-                } else {
-                  temp += `</tr>`;
-                }
-  
-                return temp;
-  
-              })
-              .join('')
-            : ''}
+            } else {
+              temp += `</tr>`;
+            }
+
+            return temp;
+
+          })
+          .join('')
+        : ''}
         </tbody>
       </table>
     </div>`;
-    return data ; 
+    return data;
   };
 
   // **** Submit report handler **** // 
@@ -453,7 +453,14 @@ const Editor = ({ id }) => {
       setIsLoading(true);
       await saveAdvancedFileReport({
         id,
-        report: `${editorData} ${`<p style="text-align: left; margin-top: 20px;"><img src=${signatureImage} alt="signature image" style="width:512px;height:160px;text-align: right;"></p>`} ${`<p style="text-align: right;">${username}</p>`}`,
+        report: `${editorData} ${`
+          <p style="text-align: left; margin-top: 20px;">
+            <p>Reported By,</p>
+            <img src=${signatureImage} alt="signature image" style="width:200px;height:100px;text-align: left;">
+          </p>`} ${`
+            <p style="text-align: left; font-weight: 600; font-size: 16px;">
+              ${username}
+            </p>`}`,
         report_study_description: reportStudyDescription
       })
         .then(res => {
@@ -475,8 +482,8 @@ const Editor = ({ id }) => {
   }
 
   useEffect(() => {
-    if (docFiledata !== "" && convertTableInformation != undefined){
-      let data = initializePatientTableData(convertTableInformation) ; 
+    if (docFiledata !== "" && convertTableInformation != undefined) {
+      let data = initializePatientTableData(convertTableInformation);
       setEditorData(data + docFiledata)
       setReportStudyDescription(null);
     }
@@ -530,7 +537,7 @@ const Editor = ({ id }) => {
   }, [institutionId, genderId]);
 
   useEffect(() => {
-    if (reportStudyDescription !== null){
+    if (reportStudyDescription !== null) {
       const parser = new DOMParser();
       const doc = parser.parseFromString(editorData, "text/html");
       const rows = doc.querySelectorAll("tr");
@@ -570,7 +577,7 @@ const Editor = ({ id }) => {
                     {/* Study Images related slider */}
                     {selectedItem?.isImagesSelected && imageSlider.length > 0 && (
                       <>
-                        <div style={{display: "flex"}}>
+                        <div style={{ display: "flex" }}>
                           <div>
                             <Typography.Title style={{
                               fontSize: "22px",
@@ -588,10 +595,10 @@ const Editor = ({ id }) => {
                             </div>
                           </div>
 
-                          <div style={{marginLeft: "auto", marginTop: "auto", marginBottom: "auto", marginRight: "10px"}}>
+                          <div style={{ marginLeft: "auto", marginTop: "auto", marginBottom: "auto", marginRight: "10px" }}>
                             <Button
                               type='primary'
-                              icon = {<CloseCircleOutlined/>}
+                              icon={<CloseCircleOutlined />}
                               onClick={() => {
                                 setSelectedItem(prev => ({
                                   isPatientSelected: false,
@@ -651,7 +658,33 @@ const Editor = ({ id }) => {
                     {selectedItem?.isOhifViewerSelected && (
                       <>
                         <div style={{ width: "100%", height: "100%", overflowY: "auto" }} onBeforeInput={scrollToBottom}>
-                          <iframe src={studyUIDInformation} width="100%" height="800px" className='ohif-container'></iframe>
+                          <iframe src={studyUIDInformation} width="100%" height="800px" className='ohif-container' id='ohif-frame'></iframe>
+
+                          <Button
+                            style={{ marginLeft: "auto" }}
+                            type='primary'
+                            onClick={() => {
+                              let frameObj = document.getElementById('ohif-frame');
+
+if (frameObj && frameObj.contentWindow) {
+  // Access the iframe content (same-origin)
+  let frameContent = frameObj.contentWindow.document.body.innerHTML;
+
+  // Check and log the content
+  if (frameContent) {
+    console.log(frameContent);
+  } else {
+    console.log('Unable to access iframe content');
+  }
+} else {
+  console.error('Iframe is not available or is not loaded yet.');
+}
+
+                            }}
+                          >
+                            Insert
+                          </Button>
+
                         </div>
                       </>
                     )}
@@ -818,42 +851,43 @@ const Editor = ({ id }) => {
       </div>
 
       {/* ======= Report preview related information model =======  */}
-      {isReportPreviewOpen && (
-        <Modal
-          title="Report Preview"
-          className='report-preview-model'
-          open={isReportPreviewOpen}
-          onCancel={() => { setIsReportPreviewOpen(false) }}
-          centered
-          width={"70%"}
-          footer={null}
-          style={{
-            content: {
-              overflowY: "auto",
-              maxHeight: "85vh",
-              overflowY: "auto"
-            },
-          }}
-        >
-          <div style={{
-            backgroundColor: "#efefef",
-            padding: "10px"
-          }}>
-            {editorData !== null && (
 
-              <div
-                className='html_preview'
-                dangerouslySetInnerHTML={{
-                  __html: `${EmailHeaderContent} ${editorData}
-                  </body>
-                  </html> `}}
-              >
-
-              </div>
-            )}
-          </div>
-        </Modal>
-      )}
+      <Modal
+        title="Report Preview"
+        className="report-preview-model"
+        open={selectedItem?.showPreview}
+        onCancel={() => {
+          setSelectedItem(prev => ({
+            isPatientSelected: false,
+            isInstitutionSelected: false,
+            isImagesSelected: false,
+            isOhifViewerSelected: false,
+            templateId: prev?.templateId,
+            isStudyDescriptionSelected: false,
+            showPreview: false
+          }))
+        }}
+        centered
+        width="70%"
+        style={{ height: "80vh" }} // Adjust overall modal height if needed
+        footer={null}
+      >
+        {editorData !== null && (
+          <div
+            className="html_preview"
+            dangerouslySetInnerHTML={{
+              __html: `${EmailHeaderContent} ${editorData} ${`
+              <p style="text-align: left; margin-top: 20px;">
+                <p>Reported By,</p>
+                <img src=${signatureImage} alt="signature image" style="width:200px;height:100px;text-align: left;">
+                </p>`} ${`<p style="text-align: left; font-weight: 600; font-size: 16px;">${username}</p>`} ${ReportDesclamierContent} 
+              </div> 
+            </body>
+            </html> `
+            }}
+          ></div>
+        )}
+      </Modal>
 
       {/* ======== Patient information related drawer information =========  */}
       <Drawer

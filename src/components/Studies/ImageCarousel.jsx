@@ -1,4 +1,4 @@
-import { Col, Modal, Row, Image, Button, Tooltip, Flex } from "antd";
+import { Col, Modal, Row, Image, Button, Tooltip, Flex, Space } from "antd";
 import React from "react";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
