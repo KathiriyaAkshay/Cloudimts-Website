@@ -783,7 +783,26 @@ const Dicom = () => {
       onCell: (record) => ({
         onClick: () => handleCellClick(record)
       })
-      },
+    },
+    checkPermissionStatus('View Institution name') && {
+      title: 'Institution',
+      dataIndex: 'institution',
+      width: "10%",
+      className: `${checkPermissionStatus('View Institution name')
+        ? 'Study-count-column '
+        : 'column-display-none'
+        }`, 
+      render: (text, record) => (
+        record.urgent_case?<>
+          <Tag color='red'>{text}</Tag>
+        </>:<>
+          <Tag color='blue'>{text}</Tag>
+        </>
+      ), 
+      onCell: (record) => ({
+        onClick: () => handleCellClick(record)
+      })
+    },
     checkPermissionStatus('Study id') && {
       title: "Reference Id",
       dataIndex: 'refernce_id',
@@ -861,25 +880,6 @@ const Dicom = () => {
       dataIndex: 'created_at',
       width: "12%",
       render: (text, record) => convertToDDMMYYYY(record?.created_at), 
-      onCell: (record) => ({
-        onClick: () => handleCellClick(record)
-      })
-    },
-    checkPermissionStatus('View Institution name') && {
-      title: 'Institution',
-      dataIndex: 'institution',
-      width: "10%",
-      className: `${checkPermissionStatus('View Institution name')
-        ? 'Study-count-column '
-        : 'column-display-none'
-        }`, 
-      render: (text, record) => (
-        record.urgent_case?<>
-          <Tag color='#cd201f'>{text}</Tag>
-        </>:<>
-          <Tag color='#2db7f5'>{text}</Tag>
-        </>
-      ), 
       onCell: (record) => ({
         onClick: () => handleCellClick(record)
       })
@@ -1376,6 +1376,29 @@ const Dicom = () => {
               <p className='total_page_info_title'>Total Studies <br/>{totalPages}</p>
             </div>
             
+            {/* ===== Reference id  input =====  */}
+
+            <Col span={3}>
+
+              <Form.Item
+                name="refernce_id"
+                rules={[
+                  {
+                    required: false,
+                    whitespace: true,
+                    message: "Please enter Reference Id",
+                  },
+                ]}
+              >
+                <Input 
+                  onPressEnter={() => {quickForm.submit()}}
+                  placeholder="Reference Id" 
+                  onChange={(e) => {
+                    HandlePatientIdChange(e.target.value)
+                  }}
+                />
+              </Form.Item>
+            </Col>
             <Col span={3}>
 
               {/* ===== Patient id input ======  */}
@@ -1401,29 +1424,6 @@ const Dicom = () => {
               </Form.Item>
             </Col>
 
-            {/* ===== Reference id  input =====  */}
-
-            <Col span={3}>
-
-              <Form.Item
-                name="refernce_id"
-                rules={[
-                  {
-                    required: false,
-                    whitespace: true,
-                    message: "Please enter Reference Id",
-                  },
-                ]}
-              >
-                <Input 
-                  onPressEnter={() => {quickForm.submit()}}
-                  placeholder="Reference Id" 
-                  onChange={(e) => {
-                    HandlePatientIdChange(e.target.value)
-                  }}
-                />
-              </Form.Item>
-            </Col>
 
             {/* ===== Patient name selection option ======  */}
 

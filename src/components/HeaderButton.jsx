@@ -145,46 +145,45 @@ const HeaderButton = ({
       reader.onload = async (e) => {
         const arrayBuffer = reader.result;
         const text = await mammoth.convertToHtml({ arrayBuffer });
-
         const data = `
           <!DOCTYPE html>
-  <html lang="en">
-  <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Centered Content with Table Border</title>
-  <style>
-      body {
-          margin: 0;
-          padding: 0;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          height: 100vh;
-          width:100%;
-      }
-      .container {
-          text-align: center;
-          border: 2px solid #000;
-          padding: 20px;
-      }
-      table {
-          border-collapse: collapse;
-          margin: auto;
-      }
-      table, th, td {
-          padding:5px !important;
-          border: 1px solid #000;
-      }
-  </style>
-  </head>
-  <body>
-  <div class="container">`+ text.value + `
-  </div>
-  </body>
-  </html>
+            <html lang="en">
+            <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Centered Content with Table Border</title>
+            <style>
+                body {
+                    margin: 0;
+                    padding: 0;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    height: 100vh;
+                    width:100%;
+                }
+                .container {
+                    text-align: center;
+                    border: 2px solid #000;
+                    padding: 20px;
+                }
+                table {
+                    border-collapse: collapse;
+                    margin: auto;
+                }
+                table, th, td {
+                    padding:5px !important;
+                    border: 1px solid #000;
+                }
+            </style>
+            </head>
+            <body>
+            <div class="container">`+ text.value + `
+            </div>
+            </body>
+            </html>
    
-  `
+          `
         setDocFileData(text.value);
 
       };
@@ -492,7 +491,8 @@ const HeaderButton = ({
                   {/* <span className='viewer-option-text'>Kitware's VolView</span> */}
                 </div>
               </Button>
-
+                
+              {/* Upload doc file related option button  */}
               <Upload {...props}>
                 <Button icon={<UploadOutlined />}>Insert Doc File</Button>
               </Upload>
