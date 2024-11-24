@@ -1067,9 +1067,7 @@ const Dicom = () => {
                   style={{ cursor: "pointer" }}
                   onClick={() => {
                     handleCellDoubleClick(record);
-                    let url = `$dicom:rs --url "http://localhost:8042/dicom-web" -r "patientID=PHP 65360"`
-                    let encodedUrl = 'weasis://' + encodeURIComponent(url.substring(9));
-                    // window.open("weasis://%24dicom%3Ars+--url+%22https%3A%2F%2Fdemo.orthanc-server.com%2Fdicom-web%22+-r+%22patientID%3Dozp00SjY2xG%22")
+                    WeasisViewerHandler(record?.patient_id)
                   }}
                 />
               </Tooltip>
@@ -1349,6 +1347,15 @@ const Dicom = () => {
       }
     }
   }, [chatStudyData]) ; 
+
+  // Weasis viewer option handler 
+  const WeasisViewerHandler = (patientId) => {
+
+    const originalString = `$dicom:rs --url "https://viewer.cloudimts.com/dicomweb" -r "patientID=${patientId}"`;
+    let encodedString = encodeURIComponent(originalString);
+    encodedString = "weasis://" + encodedString;
+    window.open(encodedString, "_blank");
+  }
 
   return (
     <>
