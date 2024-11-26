@@ -483,12 +483,27 @@ const HeaderButton = ({
               <Button
                 type='primary'
                 className='kiware-viewer-option'
-                onClick={() => {OHIFViewerOptionHandler("kitware")}}
               > 
 
                 <div className='viewer-option-layout'>
-                  <img className='ohif-option-image' src={WeasisViewer} alt="" srcset="" />
-                  {/* <span className='viewer-option-text'>Kitware's VolView</span> */}
+                  <img 
+                    className='ohif-option-image' 
+                    src={WeasisViewer} 
+                    alt="" 
+                    srcset="" 
+                    onClick={() => {
+                      setSelectedItem(prev => ({
+                        isPatientSelected: false,
+                        isInstitutionSelected: false,
+                        isImagesSelected: false,
+                        isOhifViewerSelected: false,
+                        templateId: prev?.templateId,
+                        isStudyDescriptionSelected: false, 
+                        patientInfo: false,
+                        weasisOption: true
+                      }))
+                    }}
+                  />
                 </div>
               </Button>
                 

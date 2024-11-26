@@ -250,7 +250,7 @@ const StudyReports = ({
   // **** Weasis viewer handler **** // 
   const WeasisViewerHandler = () => {
 
-    const originalString = '$dicom:rs --url "https://viewer.cloudimts.com/orthanc" -r "patientID=5Yp0E"';
+    const originalString = '$dicom:rs --url "https://viewer.cloudimts.com/dicomweb" -r "patientID=20759"';
     let encodedString = encodeURIComponent(originalString);
     encodedString = "weasis://" + encodedString;
     window.open(encodedString, "_blank");

@@ -556,6 +556,31 @@ const Editor = ({ id }) => {
     }
   }, [reportStudyDescription, studyDescriptionReload]);
 
+  // Weasis viewer option handler 
+  const WeasisViewerHandler = (patientId) => {
+
+    const originalString = `$dicom:rs --url "https://viewer.cloudimts.com/dicomweb" -r "patientID=${patientId}"`;
+    let encodedString = encodeURIComponent(originalString);
+    encodedString = "weasis://" + encodedString;
+    window.open(encodedString, "_blank");
+  }
+
+  useEffect(() => {
+    if (selectedItem?.weasisOption && patientInformation?.Patient_id !== undefined){
+      setSelectedItem(prev => ({
+        isPatientSelected: false,
+        isInstitutionSelected: false,
+        isImagesSelected: false,
+        isOhifViewerSelected: false,
+        templateId: prev?.templateId,
+        isStudyDescriptionSelected: false, 
+        patientInfo: false,
+        weasisOption: false
+      }))
+      WeasisViewerHandler(patientInformation?.Patient_id);
+    }
+  }, [selectedItem, patientInformation?.Patient_id])
+
   return (
     <>
 
@@ -666,19 +691,19 @@ const Editor = ({ id }) => {
                             onClick={() => {
                               let frameObj = document.getElementById('ohif-frame');
 
-if (frameObj && frameObj.contentWindow) {
-  // Access the iframe content (same-origin)
-  let frameContent = frameObj.contentWindow.document.body.innerHTML;
+                              if (frameObj && frameObj.contentWindow) {
+                                // Access the iframe content (same-origin)
+                                let frameContent = frameObj.contentWindow.document.body.innerHTML;
 
-  // Check and log the content
-  if (frameContent) {
-    console.log(frameContent);
-  } else {
-    console.log('Unable to access iframe content');
-  }
-} else {
-  console.error('Iframe is not available or is not loaded yet.');
-}
+                                // Check and log the content
+                                if (frameContent) {
+                                  console.log(frameContent);
+                                } else {
+                                  console.log('Unable to access iframe content');
+                                }
+                              } else {
+                                console.error('Iframe is not available or is not loaded yet.');
+                              }
 
                             }}
                           >
@@ -710,7 +735,8 @@ if (frameObj && frameObj.contentWindow) {
               <Splitter.Panel>
                 <div style={{
                   display: "flex",
-                  gap: 10
+                  gap: 10, 
+                  flexWrap: "wrap"
                 }}>
 
                   <div style={{
