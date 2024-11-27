@@ -450,32 +450,42 @@ const Editor = ({ id }) => {
       NotificationMessage("warning", "Please, Select report study description")
     } else {
 
-      setIsLoading(true);
-      await saveAdvancedFileReport({
-        id,
-        report: `${editorData} ${`
+      console.log(`${editorData} ${`
           <p style="text-align: left; margin-top: 20px;">
             <p>Reported By,</p>
             <img src=${signatureImage} alt="signature image" style="width:200px;height:100px;text-align: left;">
           </p>`} ${`
             <p style="text-align: left; font-weight: 600; font-size: 16px;">
               ${username}
-            </p>`}`,
-        report_study_description: reportStudyDescription
-      })
-        .then(res => {
-          if (res.data.status) {
-            navigate(-1)
-          } else {
-            NotificationMessage(
-              'warning',
-              'Network request failed',
-              res.data.message
-            )
-          }
-        })
-        .catch(err => NotificationMessage('warning', err.response.data.message))
-      setIsLoading(false)
+        </p>`}`);
+      
+
+      // setIsLoading(true);
+      // await saveAdvancedFileReport({
+      //   id,
+      //   report: `${editorData} ${`
+      //     <p style="text-align: left; margin-top: 20px;">
+      //       <p>Reported By,</p>
+      //       <img src=${signatureImage} alt="signature image" style="width:200px;height:100px;text-align: left;">
+      //     </p>`} ${`
+      //       <p style="text-align: left; font-weight: 600; font-size: 16px;">
+      //         ${username}
+      //       </p>`}`,
+      //   report_study_description: reportStudyDescription
+      // })
+      //   .then(res => {
+      //     if (res.data.status) {
+      //       navigate(-1)
+      //     } else {
+      //       NotificationMessage(
+      //         'warning',
+      //         'Network request failed',
+      //         res.data.message
+      //       )
+      //     }
+      //   })
+      //   .catch(err => NotificationMessage('warning', err.response.data.message))
+      // setIsLoading(false)
     }
 
 

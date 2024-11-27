@@ -88,7 +88,7 @@ const UploadStudyImages = () => {
                     <Button onClick={UploadStudyHandler} type='primary' style={{ float: "right" }} icon={<UploadOutlined />}>Upload Study</Button>
 
                     {allSelectImages?.length !== 0 && (
-                        <Button className='clear-all-image-option-button' onClick={() => { setAllSelectImages([]) }} type='primary' style={{ float: "right", marginRight: "1rem" }} icon={<ClearOutlined />}>
+                        <Button danger onClick={() => { setAllSelectImages([]) }} type='primary' style={{ float: "right", marginRight: "1rem" }} icon={<ClearOutlined />}>
                             Clear all images
                         </Button>
                     )}
