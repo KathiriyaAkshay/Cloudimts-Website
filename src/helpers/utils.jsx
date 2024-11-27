@@ -145,6 +145,7 @@ export const EmailHeaderContent = `
             text-align: center;
             padding-top: 4px;
             padding-bottom: 4px;
+            font-weight: 600;
         }
 
         .report-header-div{

@@ -794,9 +794,13 @@ const Dicom = () => {
         }`, 
       render: (text, record) => (
         record.urgent_case?<>
-          <Tag color='red'>{text}</Tag>
+          <Tag color='red'>
+            <span style={{fontWeight: 600}}>{text}</span>
+          </Tag>
         </>:<>
-          <Tag color='blue'>{text}</Tag>
+          <Tag color='blue'>
+            <span style={{fontWeight: 600}}>{text}</span>
+          </Tag>
         </>
       ), 
       onCell: (record) => ({
@@ -810,9 +814,13 @@ const Dicom = () => {
       className: `${checkPermissionStatus('View Patient id') ? '' : 'column-display-none'}`,
       render: (text, record) => (
         record.urgent_case ? <>
-          <Tag color='#cd201f'>{text}</Tag>
+          <Tag color='#cd201f'>
+            <span style={{fontWeight: 500}}>{text}</span>
+          </Tag>
         </> : <>
-          <Tag color='#2db7f5'>{text}</Tag>
+          <Tag color='#2db7f5'>
+            <span style={{fontWeight: 500}}>{text}</span>
+          </Tag>
         </>
       ),
       onCell: (record) => ({
@@ -825,7 +833,7 @@ const Dicom = () => {
       width: "7%",
       className: `${checkPermissionStatus('View Patient id') ? '' : 'column-display-none'}`,
       render: (text, record) => (
-        text
+        <span style={{fontWeight: 500}}>{text}</span>
       ),
       onCell: (record) => ({
         onClick: () => handleCellClick(record)
@@ -839,9 +847,9 @@ const Dicom = () => {
       className: `${checkPermissionStatus('View Patient name') ? '' : 'column-display-none'}`,
       render: (text, record) => (
         record.urgent_case ? <>
-          <Tag color='#cd201f' style={{maxWidth:"100%",whiteSpace:"normal"}}>{text}</Tag>
+          <Tag color='#cd201f' style={{maxWidth:"100%",whiteSpace:"normal", fontWeight: 500}}>{text}</Tag>
         </> : <>
-          <Tag color='#2db7f5' style={{maxWidth:"100%",whiteSpace:"normal"}}>{text}</Tag>
+          <Tag color='#2db7f5' style={{maxWidth:"100%",whiteSpace:"normal", fontWeight: 500}}>{text}</Tag>
         </>
       ),
       onCell: (record) => ({
@@ -854,7 +862,7 @@ const Dicom = () => {
       width: "7%",
       className: 'Study-count-column',
       render: (text, record) => (
-        text
+        <span style={{fontWeight: 600}}>{text}</span>
       ),
       onCell: (record) => ({
         onClick: () => handleCellClick(record)
@@ -869,7 +877,9 @@ const Dicom = () => {
         : 'column-display-none'
         }`,
       render: (text, record) => (
-        text
+        <span style={{
+          fontWeight: 500
+        }}>{text}</span>
       ),
       onCell: (record) => ({
         onClick: () => handleCellClick(record)
@@ -879,7 +889,7 @@ const Dicom = () => {
       title: 'Study date',
       dataIndex: 'created_at',
       width: "12%",
-      render: (text, record) => convertToDDMMYYYY(record?.created_at), 
+      render: (text, record) => <span style={{fontWeight: 500}}>{convertToDDMMYYYY(record?.created_at)}</span>, 
       onCell: (record) => ({
         onClick: () => handleCellClick(record)
       })
@@ -890,7 +900,8 @@ const Dicom = () => {
       width: "6%",
       className: 'Study-count-column',
       render: (text, record) => (
-        <Statistic value={studyCountInforamtion[record?.study?.study_original_id] !== undefined ?`${studyCountInforamtion[record?.study?.study_original_id]['series_count']}/${studyCountInforamtion[record?.study?.study_original_id]['instance_count']}`:"0/0"} style={{ fontSize: "1.4rem" }} />
+        <Statistic value={studyCountInforamtion[record?.study?.study_original_id] !== undefined ?`${studyCountInforamtion[record?.study?.study_original_id]['series_count']}/${studyCountInforamtion[record?.study?.study_original_id]['instance_count']}`:"0/0"} 
+          style={{ fontSize: "1.4rem", fontWeight: 500 }} />
       ),
       onCell: (record) => ({
         onClick: () => handleCellClick(record)

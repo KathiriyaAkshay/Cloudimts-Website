@@ -7,7 +7,8 @@ import {
   Tag,
   Tooltip,
   Typography,
-  Popconfirm
+  Popconfirm,
+  Table
 } from "antd";
 import React, { useContext, useEffect, useState } from "react";
 import {
@@ -494,9 +495,10 @@ const StudyReports = ({
 
               <div style={{ paddingRight: '1rem' }}>
                 {tableData?.length > 0 && (
-                  <TableWithFilter
-                    tableColumns={columns}
-                    tableData={tableData}
+                  <Table
+                    columns={columns}
+                    dataSource={tableData}
+                    pagination={false}
                   />
                 )}
               </div>
