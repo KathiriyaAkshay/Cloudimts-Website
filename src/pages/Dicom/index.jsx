@@ -814,13 +814,9 @@ const Dicom = () => {
       className: `${checkPermissionStatus('View Patient id') ? '' : 'column-display-none'}`,
       render: (text, record) => (
         record.urgent_case ? <>
-          <Tag color='#cd201f'>
-            <span style={{fontWeight: 500}}>{text}</span>
-          </Tag>
+            <span style={{fontWeight: 500, color: "red"}}>{text}</span>
         </> : <>
-          <Tag color='#2db7f5'>
             <span style={{fontWeight: 500}}>{text}</span>
-          </Tag>
         </>
       ),
       onCell: (record) => ({
@@ -847,9 +843,9 @@ const Dicom = () => {
       className: `${checkPermissionStatus('View Patient name') ? '' : 'column-display-none'}`,
       render: (text, record) => (
         record.urgent_case ? <>
-          <Tag color='#cd201f' style={{maxWidth:"100%",whiteSpace:"normal", fontWeight: 500}}>{text}</Tag>
+          <span style={{maxWidth: "100%", whiteSpace: "normal", fontWeight: 500, color: "red"}}>{text}</span>
         </> : <>
-          <Tag color='#2db7f5' style={{maxWidth:"100%",whiteSpace:"normal", fontWeight: 500}}>{text}</Tag>
+          <span style={{maxWidth: "100%", whiteSpace: "normal", fontWeight: 500}}>{text}</span>
         </>
       ),
       onCell: (record) => ({
@@ -1414,6 +1410,9 @@ const Dicom = () => {
                   onChange={(e) => {
                     HandlePatientIdChange(e.target.value)
                   }}
+                  style={{
+                  }}
+                  className='dicom-quick-filter'
                 />
               </Form.Item>
             </Col>
