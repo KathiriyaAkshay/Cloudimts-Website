@@ -163,7 +163,7 @@ const ManualEntry = () => {
                         <EditOutlined />
                     </Button>
                     
-                    <Button onClick={() => {DeleteSeriesOptionHandler(record?.id)}}>
+                    <Button danger onClick={() => {DeleteSeriesOptionHandler(record?.id)}}>
                         <DeleteOutlined/>
                     </Button>
                 </Space>
@@ -176,9 +176,10 @@ const ManualEntry = () => {
 
     const AddSeriesOptionHandler = async (values) => {
         if (editId == null){
+            const fieldValue = form.getFieldsValue() ; 
             setPatientSeriesData([...patientSeriesData, {
-                "study_description": values?.series_description, 
-                "modality": values?.modality, 
+                "study_description": fieldValue.description, 
+                "modality": fieldValue.modality, 
                 "study_images": value, 
                 "id": totalInsertSeies, 
                 "series_id": generateRandomString()
@@ -316,6 +317,8 @@ const ManualEntry = () => {
                     >
                         <Row className='w-100'>
                             <Col span={12}>
+
+                                {/* Patient name  */}
                                 <Form.Item
                                     label="Patient's Name"
                                     name="patient_name"
@@ -328,7 +331,8 @@ const ManualEntry = () => {
                                 >
                                     <Input />
                                 </Form.Item>
-
+                                
+                                {/* Patient id  */}
                                 <Form.Item
                                     label="Patient's Id   "
                                     name="patient_id"
@@ -341,7 +345,8 @@ const ManualEntry = () => {
                                 >
                                     <Input />
                                 </Form.Item>
-
+                                
+                                {/* Study description information  */}
                                 <Form.Item
                                     label="Description"
                                     name="description"
@@ -349,7 +354,7 @@ const ManualEntry = () => {
                                     <Input />
                                 </Form.Item>
 
-
+                                {/* Age information  */}
                                 <Form.Item
                                     label="Age"
                                     name="age"
@@ -362,7 +367,8 @@ const ManualEntry = () => {
                                 >
                                     <Input />
                                 </Form.Item>
-
+                                
+                                {/* Modality information  */}
                                 <Form.Item
                                     label="Modality"
                                     name="modality"
@@ -378,7 +384,8 @@ const ManualEntry = () => {
                                     </Select>
                                 </Form.Item>
                             </Col>
-
+                            
+                            {/* Institution name information  */}
                             <Col span={12}>
                                 <Form.Item
                                     label="Institution Name"
@@ -403,7 +410,7 @@ const ManualEntry = () => {
                                         },
                                     ]}
                                 >
-                                    <Input />
+                                    <Input placeholder='B199' />
                                 </Form.Item>
 
 
@@ -438,11 +445,24 @@ const ManualEntry = () => {
                                     style={{ marginTop: "1rem" }}
                                 >
                                     <Button onClick={() => {
-                                        setShowManualEntry(false);
-                                        patientSeriesForm.resetFields();
-                                        setValues([]);
-                                        setIsModalOpen(true)
-                                    }}>Add Image Series</Button>
+                                        const values = form.getFieldsValue() ; 
+                                        
+                                        if (values?.description == undefined || values?.description == ""){
+                                            NotificationMessage("warning", "Please, Enter Study description") ; 
+                                            return ; 
+                                        }   else if (values?.modality == undefined || values?.modality == ""){
+                                            NotificationMessage("warning", "Please, Select Study modality") ; 
+                                            return ; 
+                                        }   else {
+                                            setShowManualEntry(false);
+                                            patientSeriesForm.resetFields();
+                                            setValues([]);
+                                            setIsModalOpen(true)
+                                        }
+                                        
+                                    }}>
+                                        Add Image Series
+                                    </Button>
                                 </Form.Item>
                             </Col>
                         </Row>
@@ -460,25 +480,37 @@ const ManualEntry = () => {
                         </Form.Item>
                     </Form>
 
-                    <Table columns={columns} dataSource={patientSeriesData} pagination={false} />
+                    <Table 
+                        columns={columns} 
+                        dataSource={patientSeriesData} 
+                        pagination={false} 
+                    />
                 </Spin>
             </div>
 
             {/* ==== Upload image related model =====  */}
             {isModalOpen && (
-                <Modal title="Add Image Series" width={800} open={isModalOpen} onOk={() => { patientSeriesForm.submit() }} onCancel={handleCancel}>
+                <Modal 
+                    title="Add Image Series" 
+                    width={800} 
+                    open={isModalOpen} 
+                    onOk={() => { patientSeriesForm.submit() }} 
+                    onCancel={handleCancel}
+                    centered
+                >
                     <Form
-                        className='add-image-series'
                         form={patientSeriesForm}
                         name="basic"
                         labelCol={{
-                            span: 8,
+                            span: 4,
                         }}
                         wrapperCol={{
                             span: 16,
                         }}
                         style={{
                             maxWidth: "100%",
+                            padding: 10, 
+                            paddingTop: 20
                         }}
                         initialValues={{
                             remember: true,
@@ -487,7 +519,7 @@ const ManualEntry = () => {
                         onFinishFailed={onFinishFailed}
                         autoComplete="off"
                     >
-                        <Form.Item
+                        {/* <Form.Item
                             label="Series Description"
                             name="series_description"
                             rules={[
@@ -512,7 +544,7 @@ const ManualEntry = () => {
                         >
                             <Select options={modality}>
                             </Select>
-                        </Form.Item>
+                        </Form.Item> */}
 
                         <UploadImage
                             isAddImageSeries={true}

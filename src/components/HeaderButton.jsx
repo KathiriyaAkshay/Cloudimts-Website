@@ -415,11 +415,11 @@ const HeaderButton = ({
       {window.location.pathname === `/reports/${id}` && (
         <div className='iod-setting-div report-option-div'>
 
-            <Button
+            {/* <Button
             type='primary'
             icon={reportOptionToggle ? <EyeInvisibleOutlined /> : <EyeOutlined />}
             onClick={() => {setReportOptionToggle((prev) => !prev)}}
-          />
+          /> */}
 
           {!reportOptionToggle && (
             <>

@@ -1,7 +1,8 @@
-import { Col, Modal, Row, Spin, Tabs } from 'antd'
+import { Modal, Row, Spin, Table, Tabs, Typography } from 'antd'
 import React, { useEffect, useState } from 'react'
 import { fetchSupport } from '../apis/studiesApi'
-import TableWithFilter from './TableWithFilter'
+const {Paragraph} = Typography ; 
+import { ToolOutlined } from '@ant-design/icons';
 
 const CustomerSupportModal = ({ show, setShow }) => {
   const [tableData, setTableData] = useState([])
@@ -85,28 +86,34 @@ const CustomerSupportModal = ({ show, setShow }) => {
           <Tabs>
             <Tabs.TabPane key={'1'} tab='Email Support'>
               <Row gutter={15}>
-                <TableWithFilter
-                  tableColumns={columns}
-                  tableData={tableData?.filter(data => data?.option === 1)}
-                  pagination
+                <Table
+                  columns={columns}
+                  dataSource={tableData?.filter(data => data?.option === 1)}
+                  pagination = {false}
+                  style={{
+                    width:"100%"
+                  }}
                 />
               </Row>
             </Tabs.TabPane>
             <Tabs.TabPane key={'2'} tab='Phone Support'>
               <Row gutter={15}>
-                <TableWithFilter
-                  tableColumns={PhoneColumns}
-                  tableData={tableData?.filter(data => data?.option === 2)}
-                  pagination
+                <Table
+                  columns={PhoneColumns}
+                  dataSource={tableData?.filter(data => data?.option === 2)}
+                  pagination = {false}
+                  style={{
+                    width:"100%"
+                  }}
                 />
               </Row>
             </Tabs.TabPane>
             <Tabs.TabPane key={'3'} tab='Remote Support'>
               <Row gutter={15}>
-                <p style={{fontWeight:"400",fontSize:"1rem"}}>
-                  We offer remote support through AnyDesk. If you encounter any difficulties with our services, 
-                  please contact us via email or phone. We will make an effort to resolve the issue by connecting remotely
-                </p>
+              <Paragraph style={{ fontWeight: 400, fontSize: "1rem", display: "flex", alignItems: "center", gap: "8px" }}>
+            <ToolOutlined style={{ fontSize: "1.2rem", color: "#faad14" }} />
+            Under construction.
+        </Paragraph>
               </Row>
             </Tabs.TabPane>
           </Tabs>

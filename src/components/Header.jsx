@@ -38,7 +38,6 @@ import { deleteStudy } from '../apis/studiesApi'
 import { FilterSelectedContext } from '../hooks/filterSelectedContext'
 import { retrieveSystemFilters } from '../helpers/studyDataFilter'
 import { StudyDataContext } from '../hooks/studyDataContext'
-import APIHandler from '../apis/apiHandler'
 
 const { Header, Sider, Content } = Layout
 
@@ -158,36 +157,36 @@ const BasicLayout = ({ children }) => {
 
     // Institution option
     checkPermissionStatus('Show Option - Institution option') && {
-      label: menuLabel('Institution'),
+      label: <NavLink to={"/institutions"}>Institution</NavLink>,
       key: 'SubMenu',
       icon: <MdOutlineHomeWork />,
-      children: [
-        {
-          label: <NavLink to={'/institutions'}>All Institution</NavLink>,
-          key: 'all-institution'
-        },
-        {
-          label: <NavLink to={'/institutions/add'}>Create Institution</NavLink>,
-          key: 'add-institution'
-        }
-      ]
+      // children: [
+      //   {
+      //     label: <NavLink to={'/institutions'}>All Institution</NavLink>,
+      //     key: 'all-institution'
+      //   },
+      //   {
+      //     label: <NavLink to={'/institutions/add'}>Create Institution</NavLink>,
+      //     key: 'add-institution'
+      //   }
+      // ]
     },
 
     // User option
     checkPermissionStatus('Show Option - User option') && {
-      label: menuLabel('Users'),
+      label: <NavLink to={"/users"}>User</NavLink>,
       key: 'users',
       icon: <AiOutlineUserAdd />,
-      children: [
-        {
-          label: <NavLink to={'/users'}>All Users</NavLink>,
-          key: 'all-users'
-        },
-        {
-          label: <NavLink to={'/users/add'}>Create Users</NavLink>,
-          key: 'add-users'
-        }
-      ]
+      // children: [
+      //   {
+      //     label: <NavLink to={'/users'}>All Users</NavLink>,
+      //     key: 'all-users'
+      //   },
+      //   {
+      //     label: <NavLink to={'/users/add'}>Create Users</NavLink>,
+      //     key: 'add-users'
+      //   }
+      // ]
     },
 
     // Role option
@@ -206,11 +205,11 @@ const BasicLayout = ({ children }) => {
     },
 
     // Email option
-    checkPermissionStatus('Show Option - Email option') && {
-      label: <NavLink to={'/users/email'}>Email</NavLink>,
-      key: 'email',
-      icon: <AiOutlineMail />
-    },
+    // checkPermissionStatus('Show Option - Email option') && {
+    //   label: <NavLink to={'/users/email'}>Email</NavLink>,
+    //   key: 'email',
+    //   icon: <AiOutlineMail />
+    // },
 
     // Template option
     checkPermissionStatus('Show Option - Template option') && {
