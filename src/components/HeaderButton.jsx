@@ -75,47 +75,6 @@ const HeaderButton = ({
 
   const [systemFilters, setSystemsFilters] = useState([])
 
-
-  // **** Reterive templates list for Study report page **** //
-  const retrieveTemplateOptions = async () => {
-
-    let report_modality = localStorage.getItem("report-modality") ;
-    let requestPayload = {
-      "page_number": 1,
-      "page_limit": 200,
-      "modality": report_modality,
-      "institution": templateInstitutionOption,
-      "radiologist": parseInt(localStorage.getItem("userID"))
-    };
-
-    if (genderOption !== null && genderOption !== undefined){
-      requestPayload['gender'] = genderOption ; 
-    }
-    let responseData = await APIHandler("POST", requestPayload, "report/v1/submitReportlist")
-
-    if (responseData === false) {
-    } else if (responseData?.status === true) {
-
-      const resData = responseData?.data.map((data) => ({
-        label: data?.name,
-        value: data?.id
-      }))
-
-      setTemplateOptions([...resData]);
-
-    } else {
-    }
-
-  }
-
-  useEffect(() => {
-
-    if (window.location.pathname === `/reports/${id}` && templateOption !== null) {
-      // retrieveTemplateOptions();
-    }
-
-  }, [window.location.pathname, templateOption, genderOption])
-
   // **** Reterive system filter list for Study page **** // 
   const fetchSystemFilter = async () => {
 
@@ -203,21 +162,6 @@ const HeaderButton = ({
       handleFileChange(info)
     },
   };
-
-  // OHIF viewer option handler 
-  const OHIFViewerOptionHandler = (option) => {
-    let studyId = localStorage.getItem("studyUIDValue"); 
-    
-    if (option == "volume"){
-      window.open(`https://viewer.cloudimts.com/ohif/viewer?hangingprotocolId=mprAnd3DVolumeViewport&url=../studies/${studyId}//ohif-dicom-json`, "_blank") ; 
-    } else if (option == "total"){
-      window.open(`https://viewer.cloudimts.com/ohif/tmtv?url=../studies/${studyId}//ohif-dicom-json`, "_blank") ; 
-    } else if (option == "kitware"){
-      window.open(`https://viewer.cloudimts.com/volview/index.html?names=[archive.zip]&urls=[../studies/${studyId}/archive]`, "_blank") ; 
-
-    }
-  }
-
 
   // Report option div related toggle handler 
   const [reportOptionToggle, setReportOptionToggle] = useState(false); 
@@ -397,7 +341,6 @@ const HeaderButton = ({
 
 
       {/* ==== Add template related page ====  */}
-
       {window.location.pathname === '/reports' && (
         <div className='iod-setting-div'>
           <Button

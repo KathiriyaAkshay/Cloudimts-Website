@@ -7,6 +7,7 @@ import { DownloadOutlined } from "@ant-design/icons";
 import PDFFileIcon from "../assets/images/pdf-file.png";
 import DocxFileIcon from "../assets/images/docx-file.png";
 import OtherFileIcon from "../assets/images/other-file.png"
+import NotificationMessage from "./NotificationMessage";
 
 const UploadImage = ({
   values,
@@ -123,6 +124,24 @@ const UploadImage = ({
   const DeleteValues=(name)=>{
     setValues((obj)=>obj.filter(item => item.url.name !== name))
   }
+
+  const MAX_FILE_SIZE = 2 * 1024 * 1024; // For example, 5 MB
+  const handleBeforeUpload = (file) => {
+    if (file.size > MAX_FILE_SIZE) {
+      // message.error('File size must be smaller than 5MB!');
+      return Upload.LIST_IGNORE; // Prevents the upload
+    }
+    return true; // Allows the upload
+  };
+  useEffect(() => {
+    console.log("Values changes");
+    
+  }, [values])
+
+  useEffect(() => {
+    console.log(showManualEntry);
+    
+  },[showManualEntry])
 
 
   return (
@@ -340,6 +359,16 @@ const UploadImage = ({
             listType="picture-card"
             maxCount={multipleImage ? (manualEntry ? 12 : 10) : 1}
             customRequest={dummyRequest}
+            beforeUpload={(file) => {
+              const maxSizeInMB = 2; // Set the size limit (e.g., 2 MB)
+              const isValidSize = file.size / 1024 / 1024 <= maxSizeInMB;
+          
+              if (!isValidSize) {
+                setImageUploadError(`File size must be smaller than ${maxSizeInMB}MB!`);
+              }
+          
+              return isValidSize; // Return false to reject the file if it exceeds the limit
+            }}            
             onPreview={handleImagePreview}
             onDrop={(_) => { }}
             onChange={(info, _) => {
@@ -360,7 +389,7 @@ const UploadImage = ({
                 case "removed":
                   break;
                 default:
-                  console.log("rer");
+                  setImageUploadError(info.file.response);
               }
             }}
           >

@@ -16,7 +16,8 @@ import {
   Statistic,
   Button,
   Select, 
-  Image
+  Image, 
+  notification
 } from 'antd'; 
 import { CheckCircleOutlined, ClearOutlined, CloseCircleOutlined, CloseOutlined, PictureOutlined } from '@ant-design/icons'
 import { useBreadcrumbs } from '../../hooks/useBreadcrumbs'
@@ -83,7 +84,8 @@ const Dicom = () => {
   const [isReportModalOpen, setIsReportModalOpen] = useState(false)
   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false)
   const [isImageModalOpen, setImageDrawerOpen] = useState(false)
-  const [isShareStudyModalOpen, setIsShareStudyModalOpen] = useState(false)
+  const [isShareStudyModalOpen, setIsShareStudyModalOpen] = useState(false) ; 
+  const [api, contextHolder] = notification.useNotification();
 
   // Breadcumbs information 
   const { changeBreadcrumbs } = useBreadcrumbs()
@@ -147,9 +149,6 @@ const Dicom = () => {
 
   const [quickFilterPayload, setQuickFilterPayload] = useState({})
   const [advanceSearchPayload, setAdvanceSearchPayload] = useState({})
-
-  // SeriesId list information 
-  const [setPreviousSeriesResponse] = useState(null);
 
   const [notificationValue, setNotificationValue] = useState(0);
 
@@ -356,9 +355,8 @@ const Dicom = () => {
   }, [series_remove_id]) ; 
 
   // ******** Fetch series information count related api ********** // 4
-
   async function fetchSeriesCountInformation(series_list) {
-    if (series_list?.length !== 0) {
+    if (series_list?.length !== 0 && window?.location?.pathname == "/studies") {
       let remove_series_id = [...series_remove_id];
       const requestPayload = { series_list };
       try {
@@ -978,21 +976,23 @@ const Dicom = () => {
         <>
           <div>
             <div>
-              <Tooltip title={`Study series`}>
-                <PictureOutlined
-                  className='action-icon'
-                  style={{ width: "max-content" }}
-                  onClick={() => {
-                    setStudyUId(record.study?.study_original_id); 
+              {!record?.manual_upload && (
+                <Tooltip title={`Study series`}>
+                  <PictureOutlined
+                    className='action-icon'
+                    style={{ width: "max-content" }}
+                    onClick={() => {
+                      setStudyUId(record.study?.study_original_id); 
 
-                    if (record?.manual_upload){
-                      SeriesImagesFetchHandler(record?.id)
-                    } else {
-                      ImageDrawerHandler(record)
-                    }
-                  }}
-                />
-              </Tooltip>
+                      if (record?.manual_upload){
+                        SeriesImagesFetchHandler(record?.id)
+                      } else {
+                        ImageDrawerHandler(record)
+                      }
+                    }}
+                  />
+                </Tooltip>
+              )}
               
               {checkPermissionStatus('Study share option') && (
                 <Tooltip title={`Share Study`}>
@@ -1052,36 +1052,52 @@ const Dicom = () => {
       title: "Viewer",
       dataIndex: "chat",
       width: "7%",
-      render: (text, record) => (
-        <>
-          <div>
+      render: (text, record) => {
+        return !record?.manual_upload?(
+          <>
             <div>
-
-              <Tooltip title={`OHIF Viewer`}>
-                <img src={OHIFViewer}
-                  style={{ cursor: "pointer" }}
-                  className='ohif-viwer-option-icon'
-                  onClick={() => {
-                    handleCellDoubleClick(record);
-                    window.open(`https://viewer.cloudimts.com/ohif/viewer?url=../studies/${record?.study?.study_original_id}/ohif-dicom-json`, "_blank");
-                  }} />
-              </Tooltip>
-
-              <Tooltip title={`Weasis Viewer`}>
-                <img
-                  src={WeasisViewer}
-                  className='Weasis-viewer-option-icon'
-                  style={{ cursor: "pointer" }}
-                  onClick={() => {
-                    handleCellDoubleClick(record);
-                    WeasisViewerHandler(record?.patient_id)
-                  }}
-                />
-              </Tooltip>
+              <div>
+  
+                <Tooltip title={`OHIF Viewer`}>
+                  <img src={OHIFViewer}
+                    style={{ cursor: "pointer" }}
+                    className='ohif-viwer-option-icon'
+                    onClick={() => {
+                      handleCellDoubleClick(record);
+                      window.open(`https://viewer.cloudimts.com/ohif/viewer?url=../studies/${record?.study?.study_original_id}/ohif-dicom-json`, "_blank");
+                    }} />
+                </Tooltip>
+  
+                <Tooltip title={`Weasis Viewer`}>
+                  <img
+                    src={WeasisViewer}
+                    className='Weasis-viewer-option-icon'
+                    style={{ cursor: "pointer" }}
+                    onClick={() => {
+                      handleCellDoubleClick(record);
+                      WeasisViewerHandler(record?.patient_id)
+                    }}
+                  />
+                </Tooltip>
+              </div>
             </div>
-          </div>
-        </>
-      )
+          </>
+        ):<Tooltip title={`Study series`}>
+          <PictureOutlined
+            className='action-icon'
+            style={{ width: "max-content" }}
+            onClick={() => {
+              setStudyUId(record.study?.study_original_id); 
+
+              if (record?.manual_upload){
+                SeriesImagesFetchHandler(record?.id)
+              } else {
+                ImageDrawerHandler(record)
+              }
+            }}
+        />
+      </Tooltip>
+      }
     },
 
   ].filter(Boolean)
@@ -1364,8 +1380,27 @@ const Dicom = () => {
     window.open(encodedString, "_blank");
   }
 
+  // Notification data check related data handler 
+  useEffect(() => {
+    let tempData = localStorage.getItem("chat-data");
+    if (tempData !== null && studyData?.length > 0) {
+      tempData = JSON.parse(tempData);
+
+      const updatedTitles = tempData.map((element) => ({
+        title: element?.title,
+        description: element?.message,
+        studyId: element?.Patientid
+      }));
+
+    } else {
+    }
+  }, [chatNotificationData, studyData]) ;
+
+
+
   return (
     <>
+      {contextHolder}
 
       {/* ==== Study Quick filter option ====  */}
 
@@ -1623,6 +1658,7 @@ const Dicom = () => {
             setPagination({ ...Pagination, page, limit: pageSize })
           },
           onShowSizeChange: onShowSizeChange
+          
         }}
 
       />
@@ -1713,7 +1749,7 @@ const Dicom = () => {
           setPersonName(null)
           localStorage.removeItem("currentChatId")
         }}
-        width={700}
+        width={400}
         open={isDrawerOpen}
         className='chat-drawer'
       >

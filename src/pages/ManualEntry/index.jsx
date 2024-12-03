@@ -123,7 +123,6 @@ const ManualEntry = () => {
     const EditSeriesOptionHandler = async (id) => {
         setShowManualEntry(true);
         const element = patientSeriesData?.find((element) => element?.id === id);
-        console.log(element);
         patientSeriesForm.resetFields() ; 
         patientSeriesForm.setFieldsValue({
             series_description: element?.study_description, 
@@ -147,6 +146,15 @@ const ManualEntry = () => {
             title: 'Session Description',
             dataIndex: 'study_description',
             key: 'session_desc',
+            render: (text, record) => {
+                return(
+                    <span style={{
+                        fontWeight: 600
+                    }}>
+                        {text}
+                    </span>
+                )
+            }
         },
         {
             title: 'Modality',
@@ -154,11 +162,20 @@ const ManualEntry = () => {
             key: 'modality',
         },
         {
+            title: "Images", 
+            dataIndex: "", 
+            render: (text, record) => {
+                let count = patientSeriesData?.find((element) => element?.id === record?.id) ;
+                return(
+                    <div>{count?.study_images?.length}</div>
+                )
+            }
+        }, 
+        {
             title: 'Action',
             key: 'action',
             render: (_, record) => (
                 <Space size="middle">
-
                     <Button onClick={() => {EditSeriesOptionHandler(record?.id)}}>
                         <EditOutlined />
                     </Button>
@@ -173,6 +190,7 @@ const ManualEntry = () => {
 
     const [patientSeriesData, setPatientSeriesData] = useState([]) ; 
     const [totalInsertSeies, setTotalInsertSeries] = useState(0) ; 
+    const [imageFile, setImageFile] = useState([]) ; 
 
     const AddSeriesOptionHandler = async (values) => {
         if (editId == null){
@@ -285,7 +303,7 @@ const ManualEntry = () => {
                 NotificationMessage("success", "Upload Series successfully") ;
             });
             
-            navigation("/studies") ; 
+            // navigation("/studies") ; 
 
         }
 
@@ -296,7 +314,11 @@ const ManualEntry = () => {
 
             <div className='manual-entry p-2'>
                 <Spin spinning={uploadingStudy}>
-                    <div className='w-100 text-center header'>Manual Entry</div>
+                    <div className='w-100 text-center header'>
+                        <span style={{
+                            fontWeight: 600
+                        }}>Manual Entry</span>
+                    </div>
                     <Form
                         form={form}
                         name="basic"
@@ -313,6 +335,7 @@ const ManualEntry = () => {
                         onFinishFailed={onFinishFailed}
                         autoComplete="off"
                         className='manul-entry-form'
+                        requiredMark = {true}
                         
                     >
                         <Row className='w-100'>
@@ -365,7 +388,7 @@ const ManualEntry = () => {
                                         },
                                     ]}
                                 >
-                                    <Input />
+                                    <Input type='number' />
                                 </Form.Item>
                                 
                                 {/* Modality information  */}
@@ -442,7 +465,7 @@ const ManualEntry = () => {
                                 <Form.Item
                                     label="images"
                                     name="images"
-                                    style={{ marginTop: "1rem" }}
+                                    style={{ marginTop: "3rem" }}
                                 >
                                     <Button onClick={() => {
                                         const values = form.getFieldsValue() ; 
@@ -554,6 +577,7 @@ const ManualEntry = () => {
                             showManualEntry={showManualEntry}
                             multipleImage = {true}
                             isManualSeriesUpload = {true}
+                            setImageFile={setImageFile}
                         />
 
                     </Form>

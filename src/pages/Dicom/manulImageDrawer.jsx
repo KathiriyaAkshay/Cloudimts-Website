@@ -1,5 +1,5 @@
 import { React } from 'react';
-import { Modal, Image } from 'antd' ; 
+import { Modal, Image, Flex, Tag } from 'antd' ; 
 
 const ManulImageDrawer = ({ 
         isDrawerOpen, 
@@ -8,13 +8,21 @@ const ManulImageDrawer = ({
     }) => {
     return (
         <Modal
-            title='Study Images'
+            title={
+                <div style={{ display: 'flex', paddingTop: 5, paddingBottom: 3 }}>
+                    <Tag color='#2db7f5'>MANUAL Upload</Tag>
+                    <div>
+                        Study Image
+                    </div>
+                </div>
+            }
             open={isDrawerOpen}
             onOk={() => setImageDrawerOpen(false)}
             onCancel={() => {setImageDrawerOpen(false)}}
             width={1000}
             footer={null}
             centered
+            className='image-manual-upload'
         >   
             <div style={{ 
                 display: "flex", 
