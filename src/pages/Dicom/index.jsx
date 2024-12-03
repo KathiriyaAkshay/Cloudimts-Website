@@ -60,7 +60,7 @@ import { saveAs } from 'file-saver'
 import * as XLSX from 'xlsx'
 import AssignStudyModified from '../../components/Studies/AssignStudyModified'
 import ImageDrawer from './ImageDrawer'
-import { convertToDDMMYYYY, modifyDate } from '../../helpers/utils'
+import { convertToDDMMYYYY, modifyDate, removeNullValues } from '../../helpers/utils'
 import  OHIFViewer from "../../assets/images/menu.png";
 import WeasisViewer from "../../assets/images/Weasis.png";
 import API from '../../apis/getApi' 
@@ -478,7 +478,7 @@ const Dicom = () => {
     setQuickFilterPayload(values)
 
     filterStudyData({
-      filter: values,
+      filter: removeNullValues(values),
       page_size: pagination?.limit || 10,
       page_number: pagination?.page || 1,
       all_permission_id: JSON.parse(localStorage.getItem('all_permission_id')),

@@ -79,19 +79,16 @@ const ManualEntry = () => {
     }
 
     function generateRandomString() {
-        function generateSegment() {
-            return Math.floor((1 + Math.random()) * 0x10000).toString(8).substring(1);
-        }
-    
-        return `${generateSegment()}${generateSegment()}-${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}-${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}-${generateSegment()}${generateSegment()}-${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}d`;
+        const generateSegment = () => Math.floor((1 + Math.random()) * 0x10000).toString(8).substring(1);
+        return `${generateSegment()}-${generateSegment()}-${generateSegment()}-${generateSegment()}-${generateSegment()}`;
     }
-
+    
     function generateRandomIdentifier() {
         function generateSegment() {
             return Math.floor(Math.random() * 100000).toString();
         }
     
-        return `1.${generateSegment()}.${generateSegment()}.${generateSegment()}.${generateSegment()}.${generateSegment()}.${generateSegment()}.${generateSegment()}.${generateSegment()}.${generateSegment()}`;
+        return `1.${generateSegment()}.${generateSegment()}.${generateSegment()}.${generateSegment()}.${generateSegment()}`;
     }
 
     useEffect(() => {
