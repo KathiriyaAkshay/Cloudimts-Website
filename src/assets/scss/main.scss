@@ -3385,3 +3385,14 @@ form.ant-form .ant-form-item .ant-form-item-label label{
     font-size: 12px !important;
   }
 }
+
+.common-notification-div{
+  padding: 8px !important; 
+  padding-top: 12px !important;
+  padding-bottom: 12px !important;
+  max-width: 350px !important;
+  .ant-notification-notice-message{
+    font-size: 14px !important ;
+    font-weight: 600; 
+  }
+}

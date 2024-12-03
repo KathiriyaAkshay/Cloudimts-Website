@@ -190,29 +190,39 @@ const ManualEntry = () => {
     const [imageFile, setImageFile] = useState([]) ; 
 
     const AddSeriesOptionHandler = async (values) => {
+        console.log(value);
+        
         if (editId == null){
-            const fieldValue = form.getFieldsValue() ; 
-            setPatientSeriesData([...patientSeriesData, {
-                "study_description": fieldValue.description, 
-                "modality": fieldValue.modality, 
-                "study_images": value, 
-                "id": totalInsertSeies, 
-                "series_id": generateRandomString()
-            }]); 
-            setTotalInsertSeries((prev) => prev + 1) ; 
+            if (value?.length == 0 ){
+                NotificationMessage("warning", "Please, Select at least one image") ; 
+            }   else {
+                const fieldValue = form.getFieldsValue() ; 
+                setPatientSeriesData([...patientSeriesData, {
+                    "study_description": fieldValue.description, 
+                    "modality": fieldValue.modality, 
+                    "study_images": value, 
+                    "id": totalInsertSeies, 
+                    "series_id": generateRandomString()
+                }]); 
+                setTotalInsertSeries((prev) => prev + 1) ; 
+            }
         }   else {
-            setPatientSeriesData((prev) =>
-                prev?.map((element) => {
-                    if (element?.id === editId) {
-                        return {
-                            ...element, "study_description": values?.series_description, "modality": values?.modality,
-                            "study_images": value
-                        };
-                    } else {
-                        return { ...element };
-                    }
-                })
-            );
+            if (value?.length == 0){
+                NotificationMessage("warning", "Please, Select at least one image") ; 
+            }   else {
+                setPatientSeriesData((prev) =>
+                    prev?.map((element) => {
+                        if (element?.id === editId) {
+                            return {
+                                ...element, "study_description": values?.series_description, "modality": values?.modality,
+                                "study_images": value
+                            };
+                        } else {
+                            return { ...element };
+                        }
+                    })
+                );
+            }
         }
         setIsModalOpen(false) ; 
         setEditId(null) ; 
