@@ -1567,7 +1567,7 @@
   width: 100%;
   padding-top: 0.50rem;
   padding-bottom: 0.50rem;
-  padding-left: 1rem;
+  // padding-left: 1rem;
   padding-right: 1rem;
   border-bottom-width: 0px !important;
   border-top-left-radius: 10px !important;
@@ -1625,6 +1625,10 @@
   padding-bottom: 0.7rem;
   padding-left: 1rem;
   padding-right: 1rem;
+}
+
+.social-chatmessanger-wrap textarea{
+  overflow-y: hidden !important;
 }
 
 .Chat-message-input {

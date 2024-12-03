@@ -1019,7 +1019,12 @@ const Dicom = () => {
                     setSeriesID(record.series_id)
                     setStudyID(record.id)
                     setIsDrawerOpen(true)
-                    setPersonName(`${record.study.patient_id} | ${record.name}`)
+                    // setPersonName(`${record.study.patient_id} | ${record.name}`)
+                    setPersonName({
+                      "patient_id": record?.study.patient_id, 
+                      "patient_name": record?.study?.patient_name,
+                      "reference_id": record?.refernce_id
+                    })
                     setUrgentCase(record.urgent_case)
                     localStorage.setItem("currentChatId", record.series_id)
                   }}
@@ -1753,8 +1758,15 @@ const Dicom = () => {
         open={isDrawerOpen}
         className='chat-drawer'
       >
-        <div style={{position:"absolute",right:"0.5rem",top:"1rem",zIndex:"999"}}>
-          <CloseOutlined style={{font:"1.3rem",cursor:"pointer"}} onClick={() => {
+        <div style={{
+          position:"absolute",
+          right:"0.5rem",
+          top:"1rem",
+          zIndex:"999",
+          paddingRight: 10
+        }}>
+          <CloseOutlined 
+            style={{fontSize:"1.3rem",cursor:"pointer"}} onClick={() => {
               setStudyID(null)
               setSeriesID(null)
               setIsDrawerOpen(false)
