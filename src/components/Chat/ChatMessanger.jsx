@@ -91,6 +91,10 @@ const ChatMessanger = props => {
   const { roomID, setRoomID } = useContext(RoomDataContext)
   const roomName = `${orderId}/${user}/${userId}` ; 
 
+  console.log("Room name -------------------");
+  console.log(roomName);
+  
+
   const QuoteStyle = isHousemateChat
   ? imageStore?.length < 4 && imageStore?.length
   ? { bottom: '172px' }
@@ -243,10 +247,9 @@ const ChatMessanger = props => {
   
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
-  
       if (data.id != null || data.id !== undefined) {
-        localStorage.setItem('roomID', data.id);
         setRoomID((prev) => (data.id != null || data.id !== undefined ? data.id : prev));
+        localStorage.setItem('roomID', data.id);
       }
   
       handleAllChatHistory(
@@ -311,6 +314,14 @@ const ChatMessanger = props => {
 
   // **** Send chat message in particular chat room **** // 
   const sendMessage = async () => {
+
+    console.log("Room id information ------------------");
+    console.log(localStorage.getItem("roomID"));
+    
+    console.log("Room name related informatioh ---------------");
+    console.log(orderId);
+    
+    
     
     if (quotedMessageContainer){
 
@@ -325,7 +336,7 @@ const ChatMessanger = props => {
           room_name: orderId,
           media: '',
           media_option: false,
-          room_id: roomID,  
+          room_id: localStorage.getItem("roomID"),  
           is_quoted: true,
           quoted_message: quotedMessageInfo?.media, 
           urgent_case: urgentCase,
@@ -341,7 +352,7 @@ const ChatMessanger = props => {
           room_name: orderId,
           media: '',
           media_option: false,
-          room_id: roomID,  
+          room_id: localStorage.getItem("roomID"),  
           is_quoted: true,
           quoted_message: quotedMessageInfo?.content, 
           urgent_case: urgentCase , 
@@ -398,7 +409,7 @@ const ChatMessanger = props => {
           content: chatData,
           send_from_id: Number(user),
           room_name: orderId,
-          room_id: roomID,
+          room_id: localStorage.getItem("roomID"),
           is_quoted: 'False',
           quoted_message: "", 
           urgentCase: urgentCase, 
@@ -439,7 +450,7 @@ const ChatMessanger = props => {
             room_name: orderId,
             media: '',
             media_option: false,
-            room_id: roomID,
+            room_id: localStorage.getItem("roomID"),
             is_quoted: false,
             quoted_message: '', 
             urgent_case: urgentCase, 

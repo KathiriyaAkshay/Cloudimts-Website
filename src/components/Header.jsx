@@ -246,14 +246,14 @@ const BasicLayout = ({ children }) => {
     {
       label: <NavLink to={'/upload'}>Upload image</NavLink>,
       key: 'Upload image',
-      icon: <CloudUploadOutlined />, 
-      children : [
+      icon: <CloudUploadOutlined />,
+      children: [
         {
-          label: <NavLink to={"/upload"}>Upload dicom images</NavLink>, 
+          label: <NavLink to={"/upload"}>Upload dicom images</NavLink>,
           key: "Dicom image"
-        }, 
+        },
         {
-          label: <NavLink to={"/manual-entry"}>ImageUpload</NavLink>, 
+          label: <NavLink to={"/manual-entry"}>ImageUpload</NavLink>,
           key: "Image upload"
         }
       ]
@@ -315,8 +315,6 @@ const BasicLayout = ({ children }) => {
   // **** Chat notification data handle **** // 
 
   const [chatNotificationTitle, setChatNotificationTitle] = useState([]);
-  const [isFilterChecked, setIsFilterChecked] = useState(null)
-  const [isSystemFilterChecked, setIsSystemFilterChecked] = useState(null)
 
   // Notification message press handler 
   const ChatMessageClickHandler = (reference_id) => {
@@ -329,35 +327,45 @@ const BasicLayout = ({ children }) => {
     setChatNotificationData([]);
   }
 
+  // =========== Notification content related information ============== // 
   const notification_content = (
     <div>
-      <Button danger onClick={() => { ClearNotificationMessageHandler() }}>Clear notification</Button>
+      <Button
+        icon={<DeleteOutlined />}
+        danger
+        onClick={() => { ClearNotificationMessageHandler(); }}>
+        Clear
+      </Button>
       <List
         style={{ width: "30rem", height: "30rem", overflowY: "auto" }}
         itemLayout="horizontal"
         dataSource={chatNotificationTitle}
         className='chat-message-notification-layout'
         renderItem={(item, index) => (
-          <List.Item>
+          <List.Item
+            className="chat-notification-item"
+          >
             <List.Item.Meta
-              onClick={() => { ChatMessageClickHandler(item?.studyId); }}
-              className='chat-notification'
+              onClick={() => ChatMessageClickHandler(item?.studyId)}
+              className="chat-notification"
               avatar={<Avatar src={`https://api.dicebear.com/7.x/miniavs/svg?seed=${index}`} />}
-              title={item.title}
-              description={item?.description}
+              title={<strong>{item.title}</strong>}  // Emphasizing title with bold
+              description={
+                <div>
+                  <span>{item?.description}</span>
+                </div>
+              }
             />
           </List.Item>
         )}
       />
     </div>
+
   )
 
   const SetChatNotificationData = () => {
-
     let tempData = localStorage.getItem("chat-data");
-
     if (tempData !== null) {
-
       tempData = JSON.parse(tempData);
       const updatedTitles = tempData.map((element) => ({
         title: element?.title,
@@ -523,7 +531,7 @@ const BasicLayout = ({ children }) => {
 
                   {/* ==== Notification option ====  */}
 
-                  <Popover 
+                  <Popover
                     content={chatNotificationTitle?.length > 0 ? notification_content : <><Empty /></>}
                     title={"Notifications"} placement='bottomLeft'>
                     <Badge count={chatNotificationTitle?.length}>
@@ -552,7 +560,7 @@ const BasicLayout = ({ children }) => {
                       >
                         <DeleteOutlined />
                       </Button>
-                    </Popconfirm> 
+                    </Popconfirm>
                   )}
 
 
@@ -562,7 +570,7 @@ const BasicLayout = ({ children }) => {
                     type='primary'
                     className='header-secondary-option-button'
                     onClick={() => {
-                      window.location.reload() ; 
+                      window.location.reload();
                     }}
                   >
                     <ReloadOutlined />

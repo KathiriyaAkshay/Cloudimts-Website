@@ -193,14 +193,16 @@ const Dicom = () => {
         const eventData = JSON.parse(event.data);
 
         if (eventData.payload.status == "new-chat") {
-
-          let ChatData = eventData.payload.data;
+          let ChatData = eventData.payload.data; // Chat data related information 
 
           if ((localStorage.getItem("currentChatId") !== ChatData.room_name) || localStorage.getItem("currentChatId") == null) {
-
             studyData.map((element) => {
               if (element.series_id === ChatData.room_name) {
+                
+                // Store chat data for all notification related information ---- Start 
                 let chatnotificationData = localStorage.getItem("chat-data");
+                console.log(ChatData.sender_username);
+                
                 if (chatnotificationData === null) {
                   localStorage.setItem("chat-data", JSON.stringify([]));
                 }
@@ -208,25 +210,43 @@ const Dicom = () => {
                 chatdata = JSON.parse(chatdata);
                 chatdata.push(
                   {
+                    sender: ChatData.sender_username,
                     'message': `Message send by ${ChatData.sender_username} for Study Reference id - ${element?.refernce_id}`,
-                    "Patientid": element?.refernce_id
+                    "Patientid": element?.refernce_id, 
+                    ...element, 
                   }
                 )
                 localStorage.setItem("chat-data", JSON.stringify(chatdata));
+                // Store chat data for all notification related information ---- End 
+
                 if (ChatData.urgent_case) {
-                  setChatNotificationData([...chatNotificationData,
-                  { message: `Message send by ${ChatData.sender_username} for Study Reference id - ${element?.refernce_id}`, "Patientid": element?.refernce_id }]);
-                  NotificationMessage("important",
-                    "New chat message", `Message send by ${ChatData.sender_username} for Patient - ${element.name} and Patient Id - ${element.refernce_id}`,
-                    2,
-                    "topLeft");
+                  setChatNotificationData([
+                    ...chatNotificationData,
+                    { message: 
+                      `Message send by ${ChatData.sender_username} for Study Reference id - ${element?.refernce_id}`, 
+                      "Patientid": element?.refernce_id, 
+                      ...element, 
+                      sender: ChatData.sender_username
+                    }]);
+                  // NotificationMessage("important",
+                  //   "New chat message", `Message send by ${ChatData.sender_username} for Patient - ${element.name} and Patient Id - ${element.refernce_id}`,
+                  //   2,
+                  //   "topLeft");
                 } else {
-                  setChatNotificationData([...chatNotificationData,
-                  { message: `Message send by ${ChatData.sender_username} for Study Reference id - ${element?.refernce_id}`, "Patientid": element?.refernce_id }]);
-                  NotificationMessage("success",
-                    "New chat message", `Message send by ${ChatData.sender_username} for Patient - ${element.name} and Patient Id - ${element.refernce_id}`,
-                    2,
-                    "topLeft");
+
+                  setChatNotificationData([
+                    ...chatNotificationData,
+                    { message: 
+                      `Message send by ${ChatData.sender_username} for Study Reference id - ${element?.refernce_id}`, 
+                      "Patientid": element?.refernce_id, 
+                      ...element, 
+                      sender: ChatData.sender_username
+                    }]);
+                  
+                  // NotificationMessage("success",
+                  //   "New chat message", `Message send by ${ChatData.sender_username} for Patient - ${element.name} and Patient Id - ${element.refernce_id}`,
+                  //   2,
+                  //   "topLeft");
                 }
               }
             })
@@ -1364,7 +1384,12 @@ const Dicom = () => {
           setSeriesID(element?.series_id) ; 
           setStudyID(element?.id) ; 
           setIsDrawerOpen(true) ; 
-          setPersonName(`${element.study.patient_id} | ${element.name}`)
+          // setPersonName(`${element.study.patient_id} | ${element.name}`) 
+          setPersonName({
+            "patient_id": element?.study.patient_id, 
+            "patient_name": element?.study?.patient_name,
+            "reference_id": element?.refernce_id
+          })
           setUrgentCase(element?.urgent_case)
           localStorage.setItem("currentChatId", element?.series_id)
         }
@@ -1385,23 +1410,101 @@ const Dicom = () => {
     window.open(encodedString, "_blank");
   }
 
-  // Notification data check related data handler 
+  // =================== Chat Notification related Functionality Handler ==================== //
+  
+  const ChatMessageClickHandler = (reference_id) => {
+    setChatStudyData(reference_id)
+  }
+
   useEffect(() => {
-    let tempData = localStorage.getItem("chat-data");
-    if (tempData !== null && studyData?.length > 0) {
-      tempData = JSON.parse(tempData);
+    // Handle visibility change for notifications
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        let tempData = localStorage.getItem("chat-data");
+        let view_notification = localStorage.getItem("view-notification");
+        
+        view_notification = view_notification !== null ? JSON.parse(view_notification) : [];
+  
+        if (tempData !== null && studyData?.length > 0) {
+          tempData = JSON.parse(tempData);
+  
+          tempData.forEach((element) => {
+            if (!view_notification?.includes(element?.id)) {
+              view_notification.push(element?.id);
+              if (element?.urgent_case) {
+                api.error({
+                  message: `Message from ${element?.sender}`,
+                  description: (
+                    <span>
+                      <strong>Ref ID:</strong> {element?.refernce_id}, <strong>Patient:</strong> {element?.name}. Please review.
+                    </span>
+                  ),
+                  duration: 0,
+                  placement: "bottomLeft",
+                  className: "chat-notification-div",
+                });
+              } else {
+                api.info({
+                  message: `Message from ${element?.sender}`,
+                  description: (
+                    <span>
+                      <strong>Ref ID:</strong> {element?.refernce_id}, <strong>Patient:</strong> {element?.name}. Please review.
+                    </span>
+                  ),
+                  duration: 0,
+                  placement: "bottomLeft",
+                  className: "chat-notification-div",
+                  onClick: () => {
+                    
+                    // Update localstorage "chat-data" start ================
+                    let chat_data = localStorage.getItem("chat-data");
+                    chat_data = chat_data !== null?JSON.parse(chat_data):[] ; 
 
-      const updatedTitles = tempData.map((element) => ({
-        title: element?.title,
-        description: element?.message,
-        studyId: element?.Patientid
-      }));
+                    chat_data = chat_data.filter(item => item?.id !== element?.id) ; 
+                    localStorage.setItem("chat-data", JSON.stringify(chat_data)); 
 
-    } else {
-    }
-  }, [chatNotificationData, studyData]) ;
+                    // Update localstorage "chat-data" end ==================
 
+                    // Update localstorage "view-notification" start ===========
+                    let view_notification = localStorage.getItem("view-notification") ; 
+                    view_notification = view_notification !== null?JSON.parse(view_notification):[] ; 
+                    view_notification = view_notification.filter(item => item != element?.id) ; 
+                    localStorage.setItem("view-notification", JSON.stringify(view_notification)) ; 
 
+                    // Update localstorage "view-notification" end =============
+                    setChatNotificationData((prevData) => {
+                      return prevData.filter(item => item?.id !== element?.id);
+                    });
+
+                    ChatMessageClickHandler(element?.refernce_id);
+                    api.destroy(element?.refernce_id) ; 
+                  },
+                  key: element?.refernce_id
+                });                
+              }
+            }
+          });
+  
+          localStorage.setItem("view-notification", JSON.stringify(view_notification));
+        }
+      }
+    };
+  
+    // Clear notifications on page reload
+    const clearViewNotification = () => {
+      localStorage.setItem("view-notification", JSON.stringify([]));
+    };
+  
+    // Add event listeners
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    window.addEventListener("beforeunload", clearViewNotification);
+  
+    return () => {
+      // Cleanup event listeners
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("beforeunload", clearViewNotification);
+    };
+  }, [chatNotificationData, studyData]);
 
   return (
     <>
