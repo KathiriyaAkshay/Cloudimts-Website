@@ -3,10 +3,12 @@ import { Space, Table, Tag, Button, Card, Spin } from "antd";
 import { useParams } from 'react-router-dom';
 import APIHandler from "../apis/apiHandler";
 import {
-    FilePdfOutlined 
+    FilePdfOutlined
 } from '@ant-design/icons';
-import NotificationMessage from "./NotificationMessage"; 
+import NotificationMessage from "./NotificationMessage";
 import { parseInt } from "lodash";
+import { EyeOutlined } from "@ant-design/icons";
+import { UserOutlined } from "@ant-design/icons";
 
 const ReportSummary = () => {
     const { id } = useParams();
@@ -18,7 +20,7 @@ const ReportSummary = () => {
     const [isLoading, setIsLoading] = useState(false);
 
     const OHIFViewerHandler = () => {
-        window.open(`https://viewer.cloudimts.com/ohif/viewer?url=../studies/${patientDetails?.study_id}/ohif-dicom-json`, "_blank") ; 
+        window.open(`https://viewer.cloudimts.com/ohif/viewer?url=../studies/${patientDetails?.study_id}/ohif-dicom-json`, "_blank");
 
     }
 
@@ -29,36 +31,68 @@ const ReportSummary = () => {
             title: "Patient Id",
             dataIndex: "patient_id",
             key: "patient_id",
+            render: (text, record) => {
+                return (
+                    <div style={{ fontWeight: 600 }}>{text}</div>
+                )
+            }
         },
         {
             title: "Patient Name",
             dataIndex: "patient_name",
             key: "patient_name",
+            render: (text, record) => {
+                return (
+                    <Tag color="#f50">
+                        <div style={{ fontWeight: 600 }}>{text}</div>
+                    </Tag>
+                )
+            }
         },
         {
             title: "Institution Name",
             dataIndex: "institution_name",
             key: "institution_name",
+            render: (text, record) => {
+                return (
+                    <div style={{ fontWeight: 600 }}>{text}</div>
+                )
+            }
         },
         {
             title: "Modality",
             dataIndex: "modality",
             key: "modality",
+            render: (text, record) => {
+                return (
+                    <div style={{ fontWeight: 600 }}>{text}</div>
+                )
+            }
         },
-        {
-            title: "Accession Number",
-            dataIndex: "accession_number",
-            key: "accession_number",
-        },
+        // {
+        //     title: "Accession Number",
+        //     dataIndex: "accession_number",
+        //     key: "accession_number",
+        // },
         {
             title: "Gender",
             dataIndex: "gender",
             key: "gender",
+            render: (text, record) => {
+                return (
+                    <div style={{ fontWeight: 600 }}>{text || "-"}</div>
+                )
+            }
         },
         {
             title: "Age",
             dataIndex: "age",
             key: "age",
+            render: (text, record) => {
+                return (
+                    <div style={{ fontWeight: 600 }}>{text || "-"}</div>
+                )
+            }
         },
         {
             title: "Actions",
@@ -67,7 +101,15 @@ const ReportSummary = () => {
             width: "25%",
             render: (_, record) => (
                 <Space size="middle">
-                    <Button onClick={() => {OHIFViewerHandler(record)}} danger>OHF Viewer</Button>
+                    <Button
+                        type="primary"
+                        shape="round"
+                        icon={<EyeOutlined />}
+                        danger
+                        onClick={() => OHIFViewerHandler(record)}
+                    >
+                        OHIF Viewer
+                    </Button>
                 </Space>
             ),
         },
@@ -83,7 +125,7 @@ const ReportSummary = () => {
                 <Space size="middle">
                     <Button type="primary" danger className="red-color-button"
                         onClick={() => DownloadReport(record)}>
-                        <FilePdfOutlined/> &nbsp; Report
+                        <FilePdfOutlined /> &nbsp; Report
                     </Button>
                 </Space>
             ),
@@ -178,7 +220,7 @@ const ReportSummary = () => {
                     'reported_contact': element?.report_by?.email,
                     'modality_study_description': element?.study_description,
                     'report_type': element?.report_type,
-                    'report_id': element?.id, 
+                    'report_id': element?.id,
                     "report_url": element?.report_url
                 })
             })
@@ -192,7 +234,7 @@ const ReportSummary = () => {
 
     const DownloadReport = async (record) => {
         setIsLoading(true);
-        
+
         // URL of the PDF file
         var pdfUrl = record?.report_url;
 
@@ -237,34 +279,40 @@ const ReportSummary = () => {
                         <div
                             style={{
                                 marginLeft: "0.4rem",
-                                fontWeight: "600",
                                 fontSize: "18px",
                                 paddingLeft: "1rem",
                                 marginTop: "auto",
                                 marginBottom: "auto",
                             }}
                         >
-                            Study Reports of {patientDetails?.Patient_name}
+                            Study report of <span style={{
+                                fontWeight: 600
+                            }}>{patientDetails?.Patient_name}</span>
                         </div>
 
                         <div className="report-summary-buttons">
                             <Button
-                                className="primary-thin-button"
+                                type="primary"
+                                shape="round"
+                                icon={<UserOutlined />}
                                 onClick={toggleShowState}
-                                borderColorDisabled
+                                className="primary-thin-button"
+                                style={{
+                                    border: "1px solid #1890ff", // Optional custom border color
+                                    backgroundColor: "#e6f7ff", // Light blue background
+                                    color: "#FFF",           // Primary color text
+                                }}
                             >
                                 + Patient Details
                             </Button>
-
-                            {/* Back option button  */}
-
-                            <Button type="primary" className="report-back-option-button">Back</Button>
                         </div>
                     </div>
 
                     {/* ==== Basic patient details information =====  */}
 
-                    <div className="w-95 report-summary-table-res" style={{ marginLeft: "auto", marginRight: "auto", marginTop: "20px" }}>
+                    <div className="report-summary-table-res" style={{
+                        marginLeft: "auto", marginRight: "auto", marginTop: "20px", width: "98%"
+                    }}>
                         <Card bordered={false} style={{ width: "100%" }}>
                             <Table
                                 columns={columns}
@@ -275,10 +323,10 @@ const ReportSummary = () => {
                         </Card>
                     </div>
 
+                    {/* Patient details related information division  */}
                     <div
-                        className="w-100"
                         id="patient_details_div"
-                        style={{ display: "none", marginLeft: "auto", marginRight: "auto", marginTop: "20px" }}
+                        style={{ display: "none", marginLeft: "auto", marginRight: "auto", marginTop: "20px", width: "98%", animation: "ease-in" }}
                     >
                         <div style={{ width: "100%" }}>
                             <Card
@@ -294,9 +342,8 @@ const ReportSummary = () => {
                                                 <td className="bold-text">Patient's Name :</td>
                                                 <td >
                                                     <Tag
-                                                        color="#87d068"
-                                                        style={{marginTop: "0.70rem", fontSize: "0.85rem", paddingTop: "0.30rem", paddingBottom:"0.30rem"}}
-                                                        className="Assign-study-info-tag w-100"
+                                                        color="#f50"
+                                                        style={{ marginTop: "0.70rem", fontSize: "0.85rem", paddingTop: "0.30rem", paddingBottom: "0.30rem" }}
                                                     >
                                                         {patientDetails?.Patient_name}
                                                     </Tag>
@@ -308,7 +355,7 @@ const ReportSummary = () => {
                                                 <td>
                                                     <Tag
                                                         color="#87d068"
-                                                        style={{marginTop: "0.70rem", fontSize: "0.85rem", paddingTop: "0.30rem", paddingBottom:"0.30rem"}}
+                                                        style={{ marginTop: "0.70rem", fontSize: "0.85rem", paddingTop: "0.30rem", paddingBottom: "0.30rem" }}
                                                         className="Assign-study-info-tag w-100"
                                                     >
                                                         {patientDetails?.Patient_id}
@@ -318,22 +365,22 @@ const ReportSummary = () => {
 
                                             <tr>
                                                 <td className="bold-text">Modality :</td>
-                                                <td className="report-patient-data">{patientDetails?.Modality}</td>
+                                                <td className="report-patient-data">{patientDetails?.Modality || "-"}</td>
                                             </tr>
 
                                             <tr>
                                                 <td className="bold-text">Study Description :</td>
-                                                <td className="report-patient-data">{patientDetails?.Study_description}</td>
+                                                <td className="report-patient-data">{patientDetails?.Study_description || "-"}</td>
                                             </tr>
                                             <tr>
                                                 <td className="bold-text">Patient comments :</td>
-                                                <td className="report-patient-data">{patientDetails?.Patient_comments}</td>
+                                                <td className="report-patient-data">{patientDetails?.Patient_comments || "-"}</td>
                                             </tr>
 
-                                            <tr>
+                                            {/* <tr>
                                                 <td className="bold-text">Institution :</td>
-                                                <td className="report-patient-data">{patientDetails?.institution?.Institution_name}</td>
-                                            </tr>
+                                                <td className="report-patient-data">{patientDetails?.institution?.Institution_name || "-"}</td>
+                                            </tr> */}
 
                                         </table>
                                     </div>
@@ -341,33 +388,33 @@ const ReportSummary = () => {
                                         <table>
                                             <tr>
                                                 <td className="bold-text">Gender :</td>
-                                                <td className="report-patient-data">{patientDetails?.Gender}</td>
+                                                <td className="report-patient-data">{patientDetails?.Gender || "-"}</td>
                                             </tr>
 
                                             <tr>
                                                 <td className="bold-text">Age</td>
-                                                <td className="report-patient-data">{patientDetails?.Age}</td>
+                                                <td className="report-patient-data">{patientDetails?.Age || "-"}</td>
                                             </tr>
 
                                             <tr>
                                                 <td className="bold-text">Date Of Birth:</td>
-                                                <td className="report-patient-data">{patientDetails?.DOB}</td>
+                                                <td className="report-patient-data">{patientDetails?.DOB || "-"}</td>
                                             </tr>
                                             <tr>
                                                 <td className="bold-text">Accession Number :</td>
-                                                <td className="report-patient-data">{patientDetails?.Accession_number}</td>
+                                                <td className="report-patient-data">{patientDetails?.Accession_number || "-"}</td>
                                             </tr>
                                             <tr>
                                                 <td className="bold-text">
                                                     Reffering Physician Name :
                                                 </td>
-                                                <td className="report-patient-data">{patientDetails?.Referring_physician_name}</td>
+                                                <td className="report-patient-data">{patientDetails?.Referring_physician_name || "-"}</td>
                                             </tr>
                                             <tr>
                                                 <td className="bold-text">
                                                     Performing Physician Name :
                                                 </td>
-                                                <td className="report-patient-data">{patientDetails?.Performing_physician_name}</td>
+                                                <td className="report-patient-data">{patientDetails?.Performing_physician_name || "-"}</td>
                                             </tr>
                                         </table>
                                     </div>
@@ -378,7 +425,8 @@ const ReportSummary = () => {
 
                     {/* ==== Patient report information ====  */}
 
-                    <div className="w-95 report-summary-table-res" style={{ marginLeft: "auto", marginRight: "auto", marginTop: "25px" }}>
+                    <div className="report-summary-table-res"
+                        style={{ marginLeft: "auto", marginRight: "auto", marginTop: "25px", width: "98%" }}>
                         <Card
                             title="Report information"
                             bordered={false}
@@ -389,6 +437,9 @@ const ReportSummary = () => {
                                 dataSource={patientReport}
                                 pagination={false}
                                 scroll={{ y: 175 }}
+                                locale={{
+                                    emptyText: "No patient reports available"
+                                }}
                             />
                         </Card>
                     </div>
