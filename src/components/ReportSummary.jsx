@@ -9,6 +9,7 @@ import NotificationMessage from "./NotificationMessage";
 import { parseInt } from "lodash";
 import { EyeOutlined } from "@ant-design/icons";
 import { UserOutlined } from "@ant-design/icons";
+import { DownloadOutlined } from "@ant-design/icons";
 
 const ReportSummary = () => {
     const { id } = useParams();
@@ -123,9 +124,13 @@ const ReportSummary = () => {
             width: "10%",
             render: (_, record) => (
                 <Space size="middle">
-                    <Button type="primary" danger className="red-color-button"
-                        onClick={() => DownloadReport(record)}>
-                        <FilePdfOutlined /> &nbsp; Report
+                    <Button
+                        type="primary"
+                        style={{ backgroundColor: '#e0a800', borderColor: '#28a745' }}
+                        onClick={() => DownloadReport(record)}
+                        icon={<DownloadOutlined/>}
+                    >
+                        Report
                     </Button>
                 </Space>
             ),
@@ -135,12 +140,22 @@ const ReportSummary = () => {
             title: "Report Date",
             dataIndex: "report_date",
             key: "report_date",
+            render: (text, record) => {
+                return (
+                    <div style={{ color: "#000", fontWeight: 600 }}>{text}</div>
+                )
+            }
         },
 
         {
             title: "Reported By",
             dataIndex: "reported_by",
             key: "reported_by",
+            render: (text, record) => {
+                return (
+                    <div>{text}</div>
+                )
+            }
         },
 
         // {
@@ -150,16 +165,21 @@ const ReportSummary = () => {
         // },
 
         {
-            title: "On Report time study Description",
+            title: "Report on Time Study Description",
             dataIndex: "modality_study_description",
             key: "modality_study_description",
+            render: (text, record) => {
+                return (
+                    <div>{text}</div>
+                )
+            }
         },
 
-        {
-            title: "Report Type",
-            dataIndex: "report_type",
-            key: "report_type",
-        }
+        // {
+        //     title: "Report Type",
+        //     dataIndex: "report_type",
+        //     key: "report_type",
+        // }
     ];
 
     const toggleShowState = () => {
