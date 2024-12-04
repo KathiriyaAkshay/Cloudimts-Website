@@ -197,12 +197,12 @@ const BasicLayout = ({ children }) => {
     },
 
     // Chat option
-    checkPermissionStatus('Show Chat Option') && {
-      label: <NavLink to={'/chats'}>Chats</NavLink>,
-      key: 'Chats',
-      icon: <WechatOutlined style={{ height: '20px', width: '20px' }} />,
-      className: 'Chat-icon'
-    },
+    // checkPermissionStatus('Show Chat Option') && {
+    //   label: <NavLink to={'/chats'}>Chats</NavLink>,
+    //   key: 'Chats',
+    //   icon: <WechatOutlined style={{ height: '20px', width: '20px' }} />,
+    //   className: 'Chat-icon'
+    // },
 
     // Email option
     // checkPermissionStatus('Show Option - Email option') && {
