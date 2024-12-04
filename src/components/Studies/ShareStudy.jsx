@@ -398,11 +398,16 @@ const ShareStudy = ({
                     {
                       required: true,
                       message: 'Please enter valid email address'
+                    }, 
+                    {
+                      type: "email",
+                      message: "Please enter a valid email address",
                     }
                   ]}
                 >
                   <Input
                     placeholder='Enter Email address'
+                    type='email'
                   />
                   {/* <Select
                     placeholder='Select Email'
@@ -416,7 +421,7 @@ const ShareStudy = ({
                   /> */}
                 </Form.Item>
               </Col>
-              {/* <Col xs={24}>
+              <Col xs={24}>
                 <Form.Item
                   name='attach_dicom'
                   label='Attach Dicom Images'
@@ -425,9 +430,9 @@ const ShareStudy = ({
                 >
                   <Switch />
                 </Form.Item>
-                <Button type="primary" onClick={() => setIsNewEmailModalOpen(true)}>Add New Email</Button>
+                {/* <Button type="primary" onClick={() => setIsNewEmailModalOpen(true)}>Add New Email</Button> */}
 
-              </Col> */}
+              </Col>
             </Row>
           </Form>
         </Spin>
