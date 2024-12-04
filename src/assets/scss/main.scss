@@ -1567,7 +1567,7 @@
   width: 100%;
   padding-top: 0.50rem;
   padding-bottom: 0.50rem;
-  padding-left: 1rem;
+  // padding-left: 1rem;
   padding-right: 1rem;
   border-bottom-width: 0px !important;
   border-top-left-radius: 10px !important;
@@ -1625,6 +1625,10 @@
   padding-bottom: 0.7rem;
   padding-left: 1rem;
   padding-right: 1rem;
+}
+
+.social-chatmessanger-wrap textarea{
+  overflow-y: hidden !important;
 }
 
 .Chat-message-input {
@@ -3358,4 +3362,37 @@ form.ant-form .ant-form-item .ant-form-item-label label{
   padding-bottom: 6px;
   padding-left: 8px;
   padding-right: 8px;
+}
+
+.image-manual-upload{
+  .ant-modal-header{
+    background-color: #3d5a80 !important;
+  }
+}
+
+.chat-notification-div{
+  padding: 8px !important; 
+  padding-top: 12px !important;
+  padding-bottom: 12px !important;
+  width: 300px !important;
+
+  .ant-notification-notice-message{
+    font-size: 14px !important ;
+    font-weight: 600; 
+  }
+
+  .ant-notification-notice-description{
+    font-size: 12px !important;
+  }
+}
+
+.common-notification-div{
+  padding: 8px !important; 
+  padding-top: 12px !important;
+  padding-bottom: 12px !important;
+  max-width: 350px !important;
+  .ant-notification-notice-message{
+    font-size: 14px !important ;
+    font-weight: 600; 
+  }
 }

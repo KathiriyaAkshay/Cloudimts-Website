@@ -79,19 +79,16 @@ const ManualEntry = () => {
     }
 
     function generateRandomString() {
-        function generateSegment() {
-            return Math.floor((1 + Math.random()) * 0x10000).toString(8).substring(1);
-        }
-    
-        return `${generateSegment()}${generateSegment()}-${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}-${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}-${generateSegment()}${generateSegment()}-${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}${generateSegment()}d`;
+        const generateSegment = () => Math.floor((1 + Math.random()) * 0x10000).toString(8).substring(1);
+        return `${generateSegment()}-${generateSegment()}-${generateSegment()}-${generateSegment()}-${generateSegment()}`;
     }
-
+    
     function generateRandomIdentifier() {
         function generateSegment() {
             return Math.floor(Math.random() * 100000).toString();
         }
     
-        return `1.${generateSegment()}.${generateSegment()}.${generateSegment()}.${generateSegment()}.${generateSegment()}.${generateSegment()}.${generateSegment()}.${generateSegment()}.${generateSegment()}`;
+        return `1.${generateSegment()}.${generateSegment()}.${generateSegment()}.${generateSegment()}.${generateSegment()}`;
     }
 
     useEffect(() => {
@@ -123,7 +120,6 @@ const ManualEntry = () => {
     const EditSeriesOptionHandler = async (id) => {
         setShowManualEntry(true);
         const element = patientSeriesData?.find((element) => element?.id === id);
-        console.log(element);
         patientSeriesForm.resetFields() ; 
         patientSeriesForm.setFieldsValue({
             series_description: element?.study_description, 
@@ -147,6 +143,15 @@ const ManualEntry = () => {
             title: 'Session Description',
             dataIndex: 'study_description',
             key: 'session_desc',
+            render: (text, record) => {
+                return(
+                    <span style={{
+                        fontWeight: 600
+                    }}>
+                        {text}
+                    </span>
+                )
+            }
         },
         {
             title: 'Modality',
@@ -154,16 +159,25 @@ const ManualEntry = () => {
             key: 'modality',
         },
         {
+            title: "Images", 
+            dataIndex: "", 
+            render: (text, record) => {
+                let count = patientSeriesData?.find((element) => element?.id === record?.id) ;
+                return(
+                    <div>{count?.study_images?.length}</div>
+                )
+            }
+        }, 
+        {
             title: 'Action',
             key: 'action',
             render: (_, record) => (
                 <Space size="middle">
-
                     <Button onClick={() => {EditSeriesOptionHandler(record?.id)}}>
                         <EditOutlined />
                     </Button>
                     
-                    <Button onClick={() => {DeleteSeriesOptionHandler(record?.id)}}>
+                    <Button danger onClick={() => {DeleteSeriesOptionHandler(record?.id)}}>
                         <DeleteOutlined/>
                     </Button>
                 </Space>
@@ -173,30 +187,42 @@ const ManualEntry = () => {
 
     const [patientSeriesData, setPatientSeriesData] = useState([]) ; 
     const [totalInsertSeies, setTotalInsertSeries] = useState(0) ; 
+    const [imageFile, setImageFile] = useState([]) ; 
 
     const AddSeriesOptionHandler = async (values) => {
+        console.log(value);
+        
         if (editId == null){
-            setPatientSeriesData([...patientSeriesData, {
-                "study_description": values?.series_description, 
-                "modality": values?.modality, 
-                "study_images": value, 
-                "id": totalInsertSeies, 
-                "series_id": generateRandomString()
-            }]); 
-            setTotalInsertSeries((prev) => prev + 1) ; 
+            if (value?.length == 0 ){
+                NotificationMessage("warning", "Please, Select at least one image") ; 
+            }   else {
+                const fieldValue = form.getFieldsValue() ; 
+                setPatientSeriesData([...patientSeriesData, {
+                    "study_description": fieldValue.description, 
+                    "modality": fieldValue.modality, 
+                    "study_images": value, 
+                    "id": totalInsertSeies, 
+                    "series_id": generateRandomString()
+                }]); 
+                setTotalInsertSeries((prev) => prev + 1) ; 
+            }
         }   else {
-            setPatientSeriesData((prev) =>
-                prev?.map((element) => {
-                    if (element?.id === editId) {
-                        return {
-                            ...element, "study_description": values?.series_description, "modality": values?.modality,
-                            "study_images": value
-                        };
-                    } else {
-                        return { ...element };
-                    }
-                })
-            );
+            if (value?.length == 0){
+                NotificationMessage("warning", "Please, Select at least one image") ; 
+            }   else {
+                setPatientSeriesData((prev) =>
+                    prev?.map((element) => {
+                        if (element?.id === editId) {
+                            return {
+                                ...element, "study_description": values?.series_description, "modality": values?.modality,
+                                "study_images": value
+                            };
+                        } else {
+                            return { ...element };
+                        }
+                    })
+                );
+            }
         }
         setIsModalOpen(false) ; 
         setEditId(null) ; 
@@ -284,7 +310,7 @@ const ManualEntry = () => {
                 NotificationMessage("success", "Upload Series successfully") ;
             });
             
-            navigation("/studies") ; 
+            // navigation("/studies") ; 
 
         }
 
@@ -295,7 +321,11 @@ const ManualEntry = () => {
 
             <div className='manual-entry p-2'>
                 <Spin spinning={uploadingStudy}>
-                    <div className='w-100 text-center header'>Manual Entry</div>
+                    <div className='w-100 text-center header'>
+                        <span style={{
+                            fontWeight: 600
+                        }}>Manual Entry</span>
+                    </div>
                     <Form
                         form={form}
                         name="basic"
@@ -312,10 +342,13 @@ const ManualEntry = () => {
                         onFinishFailed={onFinishFailed}
                         autoComplete="off"
                         className='manul-entry-form'
+                        requiredMark = {true}
                         
                     >
                         <Row className='w-100'>
                             <Col span={12}>
+
+                                {/* Patient name  */}
                                 <Form.Item
                                     label="Patient's Name"
                                     name="patient_name"
@@ -328,7 +361,8 @@ const ManualEntry = () => {
                                 >
                                     <Input />
                                 </Form.Item>
-
+                                
+                                {/* Patient id  */}
                                 <Form.Item
                                     label="Patient's Id   "
                                     name="patient_id"
@@ -341,7 +375,8 @@ const ManualEntry = () => {
                                 >
                                     <Input />
                                 </Form.Item>
-
+                                
+                                {/* Study description information  */}
                                 <Form.Item
                                     label="Description"
                                     name="description"
@@ -349,7 +384,7 @@ const ManualEntry = () => {
                                     <Input />
                                 </Form.Item>
 
-
+                                {/* Age information  */}
                                 <Form.Item
                                     label="Age"
                                     name="age"
@@ -360,9 +395,10 @@ const ManualEntry = () => {
                                         },
                                     ]}
                                 >
-                                    <Input />
+                                    <Input type='number' />
                                 </Form.Item>
-
+                                
+                                {/* Modality information  */}
                                 <Form.Item
                                     label="Modality"
                                     name="modality"
@@ -378,7 +414,8 @@ const ManualEntry = () => {
                                     </Select>
                                 </Form.Item>
                             </Col>
-
+                            
+                            {/* Institution name information  */}
                             <Col span={12}>
                                 <Form.Item
                                     label="Institution Name"
@@ -403,7 +440,7 @@ const ManualEntry = () => {
                                         },
                                     ]}
                                 >
-                                    <Input />
+                                    <Input placeholder='B199' />
                                 </Form.Item>
 
 
@@ -435,14 +472,27 @@ const ManualEntry = () => {
                                 <Form.Item
                                     label="images"
                                     name="images"
-                                    style={{ marginTop: "1rem" }}
+                                    style={{ marginTop: "3rem" }}
                                 >
                                     <Button onClick={() => {
-                                        setShowManualEntry(false);
-                                        patientSeriesForm.resetFields();
-                                        setValues([]);
-                                        setIsModalOpen(true)
-                                    }}>Add Image Series</Button>
+                                        const values = form.getFieldsValue() ; 
+                                        
+                                        if (values?.description == undefined || values?.description == ""){
+                                            NotificationMessage("warning", "Please, Enter Study description") ; 
+                                            return ; 
+                                        }   else if (values?.modality == undefined || values?.modality == ""){
+                                            NotificationMessage("warning", "Please, Select Study modality") ; 
+                                            return ; 
+                                        }   else {
+                                            setShowManualEntry(false);
+                                            patientSeriesForm.resetFields();
+                                            setValues([]);
+                                            setIsModalOpen(true)
+                                        }
+                                        
+                                    }}>
+                                        Add Image Series
+                                    </Button>
                                 </Form.Item>
                             </Col>
                         </Row>
@@ -460,25 +510,37 @@ const ManualEntry = () => {
                         </Form.Item>
                     </Form>
 
-                    <Table columns={columns} dataSource={patientSeriesData} pagination={false} />
+                    <Table 
+                        columns={columns} 
+                        dataSource={patientSeriesData} 
+                        pagination={false} 
+                    />
                 </Spin>
             </div>
 
             {/* ==== Upload image related model =====  */}
             {isModalOpen && (
-                <Modal title="Add Image Series" width={800} open={isModalOpen} onOk={() => { patientSeriesForm.submit() }} onCancel={handleCancel}>
+                <Modal 
+                    title="Add Image Series" 
+                    width={800} 
+                    open={isModalOpen} 
+                    onOk={() => { patientSeriesForm.submit() }} 
+                    onCancel={handleCancel}
+                    centered
+                >
                     <Form
-                        className='add-image-series'
                         form={patientSeriesForm}
                         name="basic"
                         labelCol={{
-                            span: 8,
+                            span: 4,
                         }}
                         wrapperCol={{
                             span: 16,
                         }}
                         style={{
                             maxWidth: "100%",
+                            padding: 10, 
+                            paddingTop: 20
                         }}
                         initialValues={{
                             remember: true,
@@ -487,7 +549,7 @@ const ManualEntry = () => {
                         onFinishFailed={onFinishFailed}
                         autoComplete="off"
                     >
-                        <Form.Item
+                        {/* <Form.Item
                             label="Series Description"
                             name="series_description"
                             rules={[
@@ -512,7 +574,7 @@ const ManualEntry = () => {
                         >
                             <Select options={modality}>
                             </Select>
-                        </Form.Item>
+                        </Form.Item> */}
 
                         <UploadImage
                             isAddImageSeries={true}
@@ -522,6 +584,7 @@ const ManualEntry = () => {
                             showManualEntry={showManualEntry}
                             multipleImage = {true}
                             isManualSeriesUpload = {true}
+                            setImageFile={setImageFile}
                         />
 
                     </Form>

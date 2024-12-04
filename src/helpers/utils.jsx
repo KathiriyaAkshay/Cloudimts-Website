@@ -99,6 +99,14 @@ export function generateRandomEmail() {
   return `${username}@${domain}`;
 }
 
+export function removeNullValues(obj) {
+  // Create a new object without keys having null values
+  return Object.fromEntries(
+    Object.entries(obj).filter(([key, value]) => value !== null)
+  );
+}
+
+
 export const EmailHeaderContent = `
 <!DOCTYPE html>
 <html lang='en'>

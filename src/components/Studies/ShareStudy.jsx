@@ -401,7 +401,10 @@ const ShareStudy = ({
                     }
                   ]}
                 >
-                  <Select
+                  <Input
+                    placeholder='Enter Email address'
+                  />
+                  {/* <Select
                     placeholder='Select Email'
                     options={emailOptions}
                     showSearch
@@ -410,10 +413,10 @@ const ShareStudy = ({
                         .toLowerCase()
                         .localeCompare((optionB?.label ?? '').toLowerCase())
                     }
-                  />
+                  /> */}
                 </Form.Item>
               </Col>
-              <Col xs={24}>
+              {/* <Col xs={24}>
                 <Form.Item
                   name='attach_dicom'
                   label='Attach Dicom Images'
@@ -424,7 +427,7 @@ const ShareStudy = ({
                 </Form.Item>
                 <Button type="primary" onClick={() => setIsNewEmailModalOpen(true)}>Add New Email</Button>
 
-              </Col>
+              </Col> */}
             </Row>
           </Form>
         </Spin>

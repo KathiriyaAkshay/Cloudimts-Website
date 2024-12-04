@@ -7,6 +7,7 @@ import { DownloadOutlined } from "@ant-design/icons";
 import PDFFileIcon from "../assets/images/pdf-file.png";
 import DocxFileIcon from "../assets/images/docx-file.png";
 import OtherFileIcon from "../assets/images/other-file.png"
+import NotificationMessage from "./NotificationMessage";
 
 const UploadImage = ({
   values,
@@ -123,6 +124,24 @@ const UploadImage = ({
   const DeleteValues=(name)=>{
     setValues((obj)=>obj.filter(item => item.url.name !== name))
   }
+
+  const MAX_FILE_SIZE = 2 * 1024 * 1024; // For example, 5 MB
+  const handleBeforeUpload = (file) => {
+    if (file.size > MAX_FILE_SIZE) {
+      // message.error('File size must be smaller than 5MB!');
+      return Upload.LIST_IGNORE; // Prevents the upload
+    }
+    return true; // Allows the upload
+  };
+  useEffect(() => {
+    console.log("Values changes");
+    
+  }, [values])
+
+  useEffect(() => {
+    console.log(showManualEntry);
+    
+  },[showManualEntry])
 
 
   return (
@@ -294,37 +313,44 @@ const UploadImage = ({
         </div>
 
         {showManualEntry && (
-            <div className="all-upload-document-list-div">
-            {values.map((file) => {
-              return(
-                <div className="Report-reference-document">
+            <div className="all-upload-document-list-div"
+              style={{marginTop: isManualSeriesUpload?"10px":"0rem"}}
+            >
+              {values.map((file) => {
+                return(
+                  <div className="Report-reference-document">
 
-                <div className="Reference-option-button-layout">
+                    <div className="Reference-option-button-layout">
 
-                  <Tooltip title={file.url.name}>
-                    <Button danger className="Reference-download-option-button"
-                      icon={<DeleteOutlined />}
-                      onClick={() => DeleteValues(file.url.name)}>
-                    </Button>
-                  </Tooltip>
+                      <Tooltip title={file.url.name}>
+                        <Button danger className="Reference-download-option-button"
+                          icon={<DeleteOutlined />}
+                          onClick={() => DeleteValues(file.url.name)}>
+                        </Button>
+                      </Tooltip>
 
-                </div>
+                    </div>
 
-                <Image
-                  style={{ width: "100px", height: "100px" }}
-                  src={URL.createObjectURL(file.url)}
-                  onLoad={() => setImageLoaded(true)}
-                  alt="file"
-                  className="Reference-image"
-                />
-              </div>
-              )
-            })}
+                    <Image
+                      style={{ width: "100px", height: "100px" }}
+                      src={URL.createObjectURL(file.url)}
+                      onLoad={() => setImageLoaded(true)}
+                      alt="file"
+                      className="Reference-image"
+                    />
+                  </div>
+                )
+              })}
           </div>
         )}
 
         {/* ==== File selection drawer ====  */}
-        <div style={{...{ maxHeight: `${drawerHeight}rem`, minHeight: isClinicalHistory ? "6.8rem" : "11rem", overflowX: "auto" , overflowY: isManualSeriesUpload == true?"hidden":null}}}>
+        <div style={{...{ 
+          maxHeight: `${drawerHeight}rem`, 
+          minHeight: isClinicalHistory ? "6.8rem" : "11rem", 
+          overflowX: "auto" , 
+          overflowY: isManualSeriesUpload == true?"hidden":null
+        }}}>
           <Dragger
             name="url"
             style={{ height: "100%" }}
@@ -333,6 +359,16 @@ const UploadImage = ({
             listType="picture-card"
             maxCount={multipleImage ? (manualEntry ? 12 : 10) : 1}
             customRequest={dummyRequest}
+            beforeUpload={(file) => {
+              const maxSizeInMB = 2; // Set the size limit (e.g., 2 MB)
+              const isValidSize = file.size / 1024 / 1024 <= maxSizeInMB;
+          
+              if (!isValidSize) {
+                setImageUploadError(`File size must be smaller than ${maxSizeInMB}MB!`);
+              }
+          
+              return isValidSize; // Return false to reject the file if it exceeds the limit
+            }}            
             onPreview={handleImagePreview}
             onDrop={(_) => { }}
             onChange={(info, _) => {
@@ -353,7 +389,7 @@ const UploadImage = ({
                 case "removed":
                   break;
                 default:
-                  console.log("rer");
+                  setImageUploadError(info.file.response);
               }
             }}
           >

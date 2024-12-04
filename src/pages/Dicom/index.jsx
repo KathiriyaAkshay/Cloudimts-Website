@@ -16,7 +16,8 @@ import {
   Statistic,
   Button,
   Select, 
-  Image
+  Image, 
+  notification
 } from 'antd'; 
 import { CheckCircleOutlined, ClearOutlined, CloseCircleOutlined, CloseOutlined, PictureOutlined } from '@ant-design/icons'
 import { useBreadcrumbs } from '../../hooks/useBreadcrumbs'
@@ -59,7 +60,7 @@ import { saveAs } from 'file-saver'
 import * as XLSX from 'xlsx'
 import AssignStudyModified from '../../components/Studies/AssignStudyModified'
 import ImageDrawer from './ImageDrawer'
-import { convertToDDMMYYYY, modifyDate } from '../../helpers/utils'
+import { convertToDDMMYYYY, modifyDate, removeNullValues } from '../../helpers/utils'
 import  OHIFViewer from "../../assets/images/menu.png";
 import WeasisViewer from "../../assets/images/Weasis.png";
 import API from '../../apis/getApi' 
@@ -83,7 +84,8 @@ const Dicom = () => {
   const [isReportModalOpen, setIsReportModalOpen] = useState(false)
   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false)
   const [isImageModalOpen, setImageDrawerOpen] = useState(false)
-  const [isShareStudyModalOpen, setIsShareStudyModalOpen] = useState(false)
+  const [isShareStudyModalOpen, setIsShareStudyModalOpen] = useState(false) ; 
+  const [api, contextHolder] = notification.useNotification();
 
   // Breadcumbs information 
   const { changeBreadcrumbs } = useBreadcrumbs()
@@ -148,9 +150,6 @@ const Dicom = () => {
   const [quickFilterPayload, setQuickFilterPayload] = useState({})
   const [advanceSearchPayload, setAdvanceSearchPayload] = useState({})
 
-  // SeriesId list information 
-  const [setPreviousSeriesResponse] = useState(null);
-
   const [notificationValue, setNotificationValue] = useState(0);
 
   const [reUploadOptionModel, setReUploadOptionModel] = useState(false) ; 
@@ -194,14 +193,16 @@ const Dicom = () => {
         const eventData = JSON.parse(event.data);
 
         if (eventData.payload.status == "new-chat") {
-
-          let ChatData = eventData.payload.data;
+          let ChatData = eventData.payload.data; // Chat data related information 
 
           if ((localStorage.getItem("currentChatId") !== ChatData.room_name) || localStorage.getItem("currentChatId") == null) {
-
             studyData.map((element) => {
               if (element.series_id === ChatData.room_name) {
+                
+                // Store chat data for all notification related information ---- Start 
                 let chatnotificationData = localStorage.getItem("chat-data");
+                console.log(ChatData.sender_username);
+                
                 if (chatnotificationData === null) {
                   localStorage.setItem("chat-data", JSON.stringify([]));
                 }
@@ -209,25 +210,43 @@ const Dicom = () => {
                 chatdata = JSON.parse(chatdata);
                 chatdata.push(
                   {
+                    sender: ChatData.sender_username,
                     'message': `Message send by ${ChatData.sender_username} for Study Reference id - ${element?.refernce_id}`,
-                    "Patientid": element?.refernce_id
+                    "Patientid": element?.refernce_id, 
+                    ...element, 
                   }
                 )
                 localStorage.setItem("chat-data", JSON.stringify(chatdata));
+                // Store chat data for all notification related information ---- End 
+
                 if (ChatData.urgent_case) {
-                  setChatNotificationData([...chatNotificationData,
-                  { message: `Message send by ${ChatData.sender_username} for Study Reference id - ${element?.refernce_id}`, "Patientid": element?.refernce_id }]);
-                  NotificationMessage("important",
-                    "New chat message", `Message send by ${ChatData.sender_username} for Patient - ${element.name} and Patient Id - ${element.refernce_id}`,
-                    2,
-                    "topLeft");
+                  setChatNotificationData([
+                    ...chatNotificationData,
+                    { message: 
+                      `Message send by ${ChatData.sender_username} for Study Reference id - ${element?.refernce_id}`, 
+                      "Patientid": element?.refernce_id, 
+                      ...element, 
+                      sender: ChatData.sender_username
+                    }]);
+                  // NotificationMessage("important",
+                  //   "New chat message", `Message send by ${ChatData.sender_username} for Patient - ${element.name} and Patient Id - ${element.refernce_id}`,
+                  //   2,
+                  //   "topLeft");
                 } else {
-                  setChatNotificationData([...chatNotificationData,
-                  { message: `Message send by ${ChatData.sender_username} for Study Reference id - ${element?.refernce_id}`, "Patientid": element?.refernce_id }]);
-                  NotificationMessage("success",
-                    "New chat message", `Message send by ${ChatData.sender_username} for Patient - ${element.name} and Patient Id - ${element.refernce_id}`,
-                    2,
-                    "topLeft");
+
+                  setChatNotificationData([
+                    ...chatNotificationData,
+                    { message: 
+                      `Message send by ${ChatData.sender_username} for Study Reference id - ${element?.refernce_id}`, 
+                      "Patientid": element?.refernce_id, 
+                      ...element, 
+                      sender: ChatData.sender_username
+                    }]);
+                  
+                  // NotificationMessage("success",
+                  //   "New chat message", `Message send by ${ChatData.sender_username} for Patient - ${element.name} and Patient Id - ${element.refernce_id}`,
+                  //   2,
+                  //   "topLeft");
                 }
               }
             })
@@ -356,9 +375,8 @@ const Dicom = () => {
   }, [series_remove_id]) ; 
 
   // ******** Fetch series information count related api ********** // 4
-
   async function fetchSeriesCountInformation(series_list) {
-    if (series_list?.length !== 0) {
+    if (series_list?.length !== 0 && window?.location?.pathname == "/studies") {
       let remove_series_id = [...series_remove_id];
       const requestPayload = { series_list };
       try {
@@ -460,7 +478,7 @@ const Dicom = () => {
     setQuickFilterPayload(values)
 
     filterStudyData({
-      filter: values,
+      filter: removeNullValues(values),
       page_size: pagination?.limit || 10,
       page_number: pagination?.page || 1,
       all_permission_id: JSON.parse(localStorage.getItem('all_permission_id')),
@@ -978,21 +996,23 @@ const Dicom = () => {
         <>
           <div>
             <div>
-              <Tooltip title={`Study series`}>
-                <PictureOutlined
-                  className='action-icon'
-                  style={{ width: "max-content" }}
-                  onClick={() => {
-                    setStudyUId(record.study?.study_original_id); 
+              {!record?.manual_upload && (
+                <Tooltip title={`Study series`}>
+                  <PictureOutlined
+                    className='action-icon'
+                    style={{ width: "max-content" }}
+                    onClick={() => {
+                      setStudyUId(record.study?.study_original_id); 
 
-                    if (record?.manual_upload){
-                      SeriesImagesFetchHandler(record?.id)
-                    } else {
-                      ImageDrawerHandler(record)
-                    }
-                  }}
-                />
-              </Tooltip>
+                      if (record?.manual_upload){
+                        SeriesImagesFetchHandler(record?.id)
+                      } else {
+                        ImageDrawerHandler(record)
+                      }
+                    }}
+                  />
+                </Tooltip>
+              )}
               
               {checkPermissionStatus('Study share option') && (
                 <Tooltip title={`Share Study`}>
@@ -1019,7 +1039,12 @@ const Dicom = () => {
                     setSeriesID(record.series_id)
                     setStudyID(record.id)
                     setIsDrawerOpen(true)
-                    setPersonName(`${record.study.patient_id} | ${record.name}`)
+                    // setPersonName(`${record.study.patient_id} | ${record.name}`)
+                    setPersonName({
+                      "patient_id": record?.study.patient_id, 
+                      "patient_name": record?.study?.patient_name,
+                      "reference_id": record?.refernce_id
+                    })
                     setUrgentCase(record.urgent_case)
                     localStorage.setItem("currentChatId", record.series_id)
                   }}
@@ -1052,36 +1077,52 @@ const Dicom = () => {
       title: "Viewer",
       dataIndex: "chat",
       width: "7%",
-      render: (text, record) => (
-        <>
-          <div>
+      render: (text, record) => {
+        return !record?.manual_upload?(
+          <>
             <div>
-
-              <Tooltip title={`OHIF Viewer`}>
-                <img src={OHIFViewer}
-                  style={{ cursor: "pointer" }}
-                  className='ohif-viwer-option-icon'
-                  onClick={() => {
-                    handleCellDoubleClick(record);
-                    window.open(`https://viewer.cloudimts.com/ohif/viewer?url=../studies/${record?.study?.study_original_id}/ohif-dicom-json`, "_blank");
-                  }} />
-              </Tooltip>
-
-              <Tooltip title={`Weasis Viewer`}>
-                <img
-                  src={WeasisViewer}
-                  className='Weasis-viewer-option-icon'
-                  style={{ cursor: "pointer" }}
-                  onClick={() => {
-                    handleCellDoubleClick(record);
-                    WeasisViewerHandler(record?.patient_id)
-                  }}
-                />
-              </Tooltip>
+              <div>
+  
+                <Tooltip title={`OHIF Viewer`}>
+                  <img src={OHIFViewer}
+                    style={{ cursor: "pointer" }}
+                    className='ohif-viwer-option-icon'
+                    onClick={() => {
+                      handleCellDoubleClick(record);
+                      window.open(`https://viewer.cloudimts.com/ohif/viewer?url=../studies/${record?.study?.study_original_id}/ohif-dicom-json`, "_blank");
+                    }} />
+                </Tooltip>
+  
+                <Tooltip title={`Weasis Viewer`}>
+                  <img
+                    src={WeasisViewer}
+                    className='Weasis-viewer-option-icon'
+                    style={{ cursor: "pointer" }}
+                    onClick={() => {
+                      handleCellDoubleClick(record);
+                      WeasisViewerHandler(record?.patient_id)
+                    }}
+                  />
+                </Tooltip>
+              </div>
             </div>
-          </div>
-        </>
-      )
+          </>
+        ):<Tooltip title={`Study series`}>
+          <PictureOutlined
+            className='action-icon'
+            style={{ width: "max-content" }}
+            onClick={() => {
+              setStudyUId(record.study?.study_original_id); 
+
+              if (record?.manual_upload){
+                SeriesImagesFetchHandler(record?.id)
+              } else {
+                ImageDrawerHandler(record)
+              }
+            }}
+        />
+      </Tooltip>
+      }
     },
 
   ].filter(Boolean)
@@ -1343,7 +1384,12 @@ const Dicom = () => {
           setSeriesID(element?.series_id) ; 
           setStudyID(element?.id) ; 
           setIsDrawerOpen(true) ; 
-          setPersonName(`${element.study.patient_id} | ${element.name}`)
+          // setPersonName(`${element.study.patient_id} | ${element.name}`) 
+          setPersonName({
+            "patient_id": element?.study.patient_id, 
+            "patient_name": element?.study?.patient_name,
+            "reference_id": element?.refernce_id
+          })
           setUrgentCase(element?.urgent_case)
           localStorage.setItem("currentChatId", element?.series_id)
         }
@@ -1364,8 +1410,105 @@ const Dicom = () => {
     window.open(encodedString, "_blank");
   }
 
+  // =================== Chat Notification related Functionality Handler ==================== //
+  
+  const ChatMessageClickHandler = (reference_id) => {
+    setChatStudyData(reference_id)
+  }
+
+  useEffect(() => {
+    // Handle visibility change for notifications
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        let tempData = localStorage.getItem("chat-data");
+        let view_notification = localStorage.getItem("view-notification");
+        
+        view_notification = view_notification !== null ? JSON.parse(view_notification) : [];
+  
+        if (tempData !== null && studyData?.length > 0) {
+          tempData = JSON.parse(tempData);
+  
+          tempData.forEach((element) => {
+            if (!view_notification?.includes(element?.id)) {
+              view_notification.push(element?.id);
+              if (element?.urgent_case) {
+                api.error({
+                  message: `Message from ${element?.sender}`,
+                  description: (
+                    <span>
+                      <strong>Ref ID:</strong> {element?.refernce_id}, <strong>Patient:</strong> {element?.name}. Please review.
+                    </span>
+                  ),
+                  duration: 0,
+                  placement: "bottomLeft",
+                  className: "chat-notification-div",
+                });
+              } else {
+                api.info({
+                  message: `Message from ${element?.sender}`,
+                  description: (
+                    <span>
+                      <strong>Ref ID:</strong> {element?.refernce_id}, <strong>Patient:</strong> {element?.name}. Please review.
+                    </span>
+                  ),
+                  duration: 0,
+                  placement: "bottomLeft",
+                  className: "chat-notification-div",
+                  onClick: () => {
+                    
+                    // Update localstorage "chat-data" start ================
+                    let chat_data = localStorage.getItem("chat-data");
+                    chat_data = chat_data !== null?JSON.parse(chat_data):[] ; 
+
+                    chat_data = chat_data.filter(item => item?.id !== element?.id) ; 
+                    localStorage.setItem("chat-data", JSON.stringify(chat_data)); 
+
+                    // Update localstorage "chat-data" end ==================
+
+                    // Update localstorage "view-notification" start ===========
+                    let view_notification = localStorage.getItem("view-notification") ; 
+                    view_notification = view_notification !== null?JSON.parse(view_notification):[] ; 
+                    view_notification = view_notification.filter(item => item != element?.id) ; 
+                    localStorage.setItem("view-notification", JSON.stringify(view_notification)) ; 
+
+                    // Update localstorage "view-notification" end =============
+                    setChatNotificationData((prevData) => {
+                      return prevData.filter(item => item?.id !== element?.id);
+                    });
+
+                    ChatMessageClickHandler(element?.refernce_id);
+                    api.destroy(element?.refernce_id) ; 
+                  },
+                  key: element?.refernce_id
+                });                
+              }
+            }
+          });
+  
+          localStorage.setItem("view-notification", JSON.stringify(view_notification));
+        }
+      }
+    };
+  
+    // Clear notifications on page reload
+    const clearViewNotification = () => {
+      localStorage.setItem("view-notification", JSON.stringify([]));
+    };
+  
+    // Add event listeners
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    window.addEventListener("beforeunload", clearViewNotification);
+  
+    return () => {
+      // Cleanup event listeners
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("beforeunload", clearViewNotification);
+    };
+  }, [chatNotificationData, studyData]);
+
   return (
     <>
+      {contextHolder}
 
       {/* ==== Study Quick filter option ====  */}
 
@@ -1623,6 +1766,7 @@ const Dicom = () => {
             setPagination({ ...Pagination, page, limit: pageSize })
           },
           onShowSizeChange: onShowSizeChange
+          
         }}
 
       />
@@ -1713,12 +1857,19 @@ const Dicom = () => {
           setPersonName(null)
           localStorage.removeItem("currentChatId")
         }}
-        width={700}
+        width={400}
         open={isDrawerOpen}
         className='chat-drawer'
       >
-        <div style={{position:"absolute",right:"0.5rem",top:"1rem",zIndex:"999"}}>
-          <CloseOutlined style={{font:"1.3rem",cursor:"pointer"}} onClick={() => {
+        <div style={{
+          position:"absolute",
+          right:"0.5rem",
+          top:"1rem",
+          zIndex:"999",
+          paddingRight: 10
+        }}>
+          <CloseOutlined 
+            style={{fontSize:"1.3rem",cursor:"pointer"}} onClick={() => {
               setStudyID(null)
               setSeriesID(null)
               setIsDrawerOpen(false)

@@ -38,6 +38,9 @@ const UploadHistory = () => {
             title: 'Series id',
             dataIndex: 'series_id',
             key: 'address',
+            ellipsis: {
+                showTitle: true,
+            },
         },
         {
             title: 'Manual upload',
