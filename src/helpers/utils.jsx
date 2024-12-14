@@ -142,7 +142,7 @@ export const EmailHeaderContent = `
           table {
             border-collapse: separate; /* Use separate to allow border-radius to work */
             border-spacing: 0; /* Remove spacing between cells */
-            width: 90%;
+            width: 95%;
             margin-bottom: 20px;
             margin-left: auto;
             margin-right: auto;
@@ -153,10 +153,10 @@ export const EmailHeaderContent = `
 
         th, td {
             border: 1px solid #7b7b7f; /* Apply borders to cells */
-            padding-top: 8px;
-            padding-botton: 8px; 
-            padding-left: 4px;
-            padding-right: 4px;
+            padding-top: 10px;
+            padding-botton: 10px; 
+            padding-left: 6px;
+            padding-right: 6px;
         }
 
         th, td {

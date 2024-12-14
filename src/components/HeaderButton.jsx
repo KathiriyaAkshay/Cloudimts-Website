@@ -390,14 +390,16 @@ const HeaderButton = ({
 
               <Tooltip title = "OHIF">
                 <Button
-                  type='primary'
                   className='ohif-basic-viewer-option'
+                  style={{
+                    backgroundColor: selectedItem?.isOhifViewerSelected?"#FFA500 !important;":"#FFF"
+                  }}
                   onClick={() =>
                     {setSelectedItem(prev => ({
                       isPatientSelected: false,
                       isInstitutionSelected: false,
                       isImagesSelected: false,
-                      isOhifViewerSelected: true,
+                      isOhifViewerSelected: !prev?.isOhifViewerSelected,
                       templateId: prev?.templateId,
                       isStudyDescriptionSelected: false
                     })) ; }
@@ -416,7 +418,6 @@ const HeaderButton = ({
                   type='primary'
                   className='kiware-viewer-option'
                 > 
-
                   <div className='viewer-option-layout'>
                     <img 
                       className='ohif-option-image' 
