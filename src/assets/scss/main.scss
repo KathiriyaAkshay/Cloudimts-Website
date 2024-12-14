@@ -3385,6 +3385,18 @@ form.ant-form .ant-form-item .ant-form-item-label label{
   }
 }
 
+.report-preview-modal{
+  .ant-modal-content{
+    height: 95vh !important;
+  }
+
+  .ant-modal-body{
+    height: auto !important ;
+    max-height: max-content !important;
+    background-color: #ffffff !important;
+  }
+}
+
 .common-notification-div{
   padding: 8px !important; 
   padding-top: 12px !important;
@@ -3395,3 +3407,43 @@ form.ant-form .ant-form-item .ant-form-item-label label{
     font-weight: 600; 
   }
 }
+
+.a4-preview-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f5f5f5;
+  padding: 20px;
+}
+
+.a4-page {
+  width: 220mm; /* A4 width */
+  min-height: 297mm; /* A4 height */
+  background: white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  // padding: 20mm;
+  overflow: hidden; /* Prevent content spill */
+  position: relative;
+  page-break-inside: avoid;
+}
+
+.html_preview {
+  font-size: 12pt;
+  line-height: 1.5;
+  max-height: 100%;
+  overflow-y: auto; /* Allow scrolling for overflowing content */
+  page-break-inside: avoid;
+}
+
+/* For print view pagination */
+@media print {
+  .a4-page {
+    page-break-after: always;
+    width: 100%;
+    height: auto;
+  }
+  .a4-preview-container {
+    box-shadow: none;
+  }
+}
+
