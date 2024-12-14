@@ -37,7 +37,6 @@ const Editor = ({ id }) => {
   const [signatureImage, setSignatureImage] = useState(null)
   const [username, setUsername] = useState('')
   const user_id = localStorage.getItem('userID')
-  const navigate = useNavigate();
 
   const [institutionReport, setInstitutionReport] = useState({});
   const [referenceImageCount, setReferenceImageCount] = useState(1);
@@ -449,46 +448,7 @@ const Editor = ({ id }) => {
     if (reportStudyDescription == null) {
       NotificationMessage("warning", "Please, Select report study description")
     } else {
-
-      console.log(`${editorData} ${`
-          <p style="text-align: left; margin-top: 20px;">
-            <p>Reported By,</p>
-            <img src=${signatureImage} alt="signature image" style="width:200px;height:100px;text-align: left;">
-          </p>`} ${`
-            <p style="text-align: left; font-weight: 600; font-size: 16px;">
-              ${username}
-        </p>`}`);
-
-
-      // setIsLoading(true);
-      // await saveAdvancedFileReport({
-      //   id,
-      //   report: `${editorData} ${`
-      //     <p style="text-align: left; margin-top: 20px;">
-      //       <p>Reported By,</p>
-      //       <img src=${signatureImage} alt="signature image" style="width:200px;height:100px;text-align: left;">
-      //     </p>`} ${`
-      //       <p style="text-align: left; font-weight: 600; font-size: 16px;">
-      //         ${username}
-      //       </p>`}`,
-      //   report_study_description: reportStudyDescription
-      // })
-      //   .then(res => {
-      //     if (res.data.status) {
-      //       navigate(-1)
-      //     } else {
-      //       NotificationMessage(
-      //         'warning',
-      //         'Network request failed',
-      //         res.data.message
-      //       )
-      //     }
-      //   })
-      //   .catch(err => NotificationMessage('warning', err.response.data.message))
-      // setIsLoading(false)
     }
-
-
   }
 
   useEffect(() => {
@@ -912,22 +872,22 @@ const Editor = ({ id }) => {
         }}
         footer={null}
       >
-        {editorData !== null && (
+        {editorData !== null && selectedItem?.showPreview && (
           <div className="a4-preview-container">
             <div className="a4-page">
               <div
                 className="html-preview"
                 dangerouslySetInnerHTML={{
                   __html: `
-              ${EmailHeaderContent} 
-              ${editorData} 
-              <div style="margin-top: 20px; text-align: left;">
-                <p>Reported By,</p>
-                <img src=${signatureImage} alt="signature image" style="width:200px;height:100px;text-align: left;">
-              </div>
-              <p style="text-align: left; font-weight: 600; font-size: 16px;">${username}</p>
-              ${ReportDesclamierContent}
-            `,
+                    ${EmailHeaderContent} 
+                    ${editorData} 
+                    <div style="margin-top: 20px; text-align: left;">
+                      <p>Reported By,</p>
+                      <img src=${signatureImage} alt="signature image" style="width:200px;height:100px;text-align: left;">
+                    </div>
+                    <p style="text-align: left; font-weight: 600; font-size: 16px;">${username}</p>
+                    ${ReportDesclamierContent}
+                  `,
                 }}
               ></div>
             </div>
