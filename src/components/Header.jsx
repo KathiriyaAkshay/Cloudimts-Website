@@ -461,7 +461,6 @@ const BasicLayout = ({ children }) => {
         {menu}
 
         <Layout className='site-layout'>
-
           <Header
             className='site-layout-background'
             style={{

@@ -140,7 +140,9 @@ const TableWithFilter = ({
                 ? { x: 500 }
                 : {y:dashboard?"calc(100vh - 320px)":
                   isAuditModal?"calc(79vh - 335px)":
-                  window.location.pathname == "/institutions"?"calc(100vh - 269px)":"calc(100vh - 255px)"}
+                  window.location.pathname == "/institutions"?"calc(100vh - 269px)":
+                  window.location.pathname == "/study-logs"?"calc(120vh - 10px)"
+                  :"calc(100vh - 255px)"}
               : { y: 375, x: window.screen.width < 1000 ? 1000 : null }
           }
           loading={loadingTableData}
