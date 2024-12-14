@@ -2,6 +2,7 @@ import {
   Button,
   Select,
   Tag,
+  Tooltip,
   Upload
 } from 'antd'
 import React, { useContext, useEffect, useState } from 'react'
@@ -387,68 +388,58 @@ const HeaderButton = ({
                 </div>
               </Button>*/}
 
-              <Button onClick={() =>
-                  setSelectedItem(prev => ({
-                    isPatientSelected: false,
-                    isInstitutionSelected: false,
-                    isImagesSelected: false,
-                    isOhifViewerSelected: false,
-                    templateId: prev?.templateId,
-                    isStudyDescriptionSelected: false, 
-                    showPreview: true
-                  }))
-                }>
-                Preview
-              </Button>
+              <Tooltip title = "OHIF">
+                <Button
+                  className='ohif-basic-viewer-option'
+                  style={{
+                    backgroundColor: selectedItem?.isOhifViewerSelected?"#FFA500 !important;":"#FFF"
+                  }}
+                  onClick={() =>
+                    {setSelectedItem(prev => ({
+                      isPatientSelected: false,
+                      isInstitutionSelected: false,
+                      isImagesSelected: false,
+                      isOhifViewerSelected: !prev?.isOhifViewerSelected,
+                      templateId: prev?.templateId,
+                      isStudyDescriptionSelected: false
+                    })) ; }
+                  }
+                > 
 
-
-              <Button
-                type='primary'
-                className='ohif-basic-viewer-option'
-                onClick={() =>
-                  {setSelectedItem(prev => ({
-                    isPatientSelected: false,
-                    isInstitutionSelected: false,
-                    isImagesSelected: false,
-                    isOhifViewerSelected: true,
-                    templateId: prev?.templateId,
-                    isStudyDescriptionSelected: false
-                  })) ; }
-                }
-              > 
-
-                <div className='viewer-option-layout'>
-                  <img className='ohif-option-image' src={OHIF} alt="" srcset="" />
-                  {/* <span className='viewer-option-text'>v3 | Total Metabolic</span> */}
-                </div>
-              </Button>
-
-              <Button
-                type='primary'
-                className='kiware-viewer-option'
-              > 
-
-                <div className='viewer-option-layout'>
-                  <img 
-                    className='ohif-option-image' 
-                    src={WeasisViewer} 
-                    alt="" 
-                    srcset="" 
-                    onClick={() => {
-                      setSelectedItem(prev => ({
-                        isPatientSelected: false,
-                        isInstitutionSelected: false,
-                        isImagesSelected: false,
-                        isOhifViewerSelected: false,
-                        templateId: prev?.templateId,
-                        isStudyDescriptionSelected: false, 
-                        patientInfo: false,
-                        weasisOption: true
-                      }))
-                    }}
-                  />
-                </div>
-              </Button>
+                  <div className='viewer-option-layout'>
+                    <img className='ohif-option-image' src={OHIF} alt="" srcset="" />
+                    {/* <span className='viewer-option-text'>v3 | Total Metabolic</span> */}
+                  </div>
+                </Button>
+              </Tooltip>
+                
+              <Tooltip title = "Weasis">
+                <Button
+                  type='primary'
+                  className='kiware-viewer-option'
+                > 
+                  <div className='viewer-option-layout'>
+                    <img 
+                      className='ohif-option-image' 
+                      src={WeasisViewer} 
+                      alt="" 
+                      srcset="" 
+                      onClick={() => {
+                        setSelectedItem(prev => ({
+                          isPatientSelected: false,
+                          isInstitutionSelected: false,
+                          isImagesSelected: false,
+                          isOhifViewerSelected: false,
+                          templateId: prev?.templateId,
+                          isStudyDescriptionSelected: false, 
+                          patientInfo: false,
+                          weasisOption: true
+                        }))
+                      }}
+                    />
+                  </div>
+                </Button>
+              </Tooltip>
                 
               {/* Upload doc file related option button  */}
               <Upload {...props}>
@@ -486,6 +477,20 @@ const HeaderButton = ({
                 }
               >
                 Study Images
+              </Button>
+
+              <Button type='primary' onClick={() =>
+                  setSelectedItem(prev => ({
+                    isPatientSelected: false,
+                    isInstitutionSelected: false,
+                    isImagesSelected: false,
+                    isOhifViewerSelected: false,
+                    templateId: prev?.templateId,
+                    isStudyDescriptionSelected: false, 
+                    showPreview: true
+                  }))
+                }>
+                Preview
               </Button>
 
               {/* <Button

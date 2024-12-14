@@ -37,7 +37,6 @@ const Editor = ({ id }) => {
   const [signatureImage, setSignatureImage] = useState(null)
   const [username, setUsername] = useState('')
   const user_id = localStorage.getItem('userID')
-  const navigate = useNavigate();
 
   const [institutionReport, setInstitutionReport] = useState({});
   const [referenceImageCount, setReferenceImageCount] = useState(1);
@@ -449,46 +448,7 @@ const Editor = ({ id }) => {
     if (reportStudyDescription == null) {
       NotificationMessage("warning", "Please, Select report study description")
     } else {
-
-      console.log(`${editorData} ${`
-          <p style="text-align: left; margin-top: 20px;">
-            <p>Reported By,</p>
-            <img src=${signatureImage} alt="signature image" style="width:200px;height:100px;text-align: left;">
-          </p>`} ${`
-            <p style="text-align: left; font-weight: 600; font-size: 16px;">
-              ${username}
-        </p>`}`);
-      
-
-      // setIsLoading(true);
-      // await saveAdvancedFileReport({
-      //   id,
-      //   report: `${editorData} ${`
-      //     <p style="text-align: left; margin-top: 20px;">
-      //       <p>Reported By,</p>
-      //       <img src=${signatureImage} alt="signature image" style="width:200px;height:100px;text-align: left;">
-      //     </p>`} ${`
-      //       <p style="text-align: left; font-weight: 600; font-size: 16px;">
-      //         ${username}
-      //       </p>`}`,
-      //   report_study_description: reportStudyDescription
-      // })
-      //   .then(res => {
-      //     if (res.data.status) {
-      //       navigate(-1)
-      //     } else {
-      //       NotificationMessage(
-      //         'warning',
-      //         'Network request failed',
-      //         res.data.message
-      //       )
-      //     }
-      //   })
-      //   .catch(err => NotificationMessage('warning', err.response.data.message))
-      // setIsLoading(false)
     }
-
-
   }
 
   useEffect(() => {
@@ -576,14 +536,14 @@ const Editor = ({ id }) => {
   }
 
   useEffect(() => {
-    if (selectedItem?.weasisOption && patientInformation?.Patient_id !== undefined){
+    if (selectedItem?.weasisOption && patientInformation?.Patient_id !== undefined) {
       setSelectedItem(prev => ({
         isPatientSelected: false,
         isInstitutionSelected: false,
         isImagesSelected: false,
         isOhifViewerSelected: false,
         templateId: prev?.templateId,
-        isStudyDescriptionSelected: false, 
+        isStudyDescriptionSelected: false,
         patientInfo: false,
         weasisOption: false
       }))
@@ -745,7 +705,7 @@ const Editor = ({ id }) => {
               <Splitter.Panel>
                 <div style={{
                   display: "flex",
-                  gap: 10, 
+                  gap: 10,
                   flexWrap: "wrap"
                 }}>
 
@@ -887,43 +847,54 @@ const Editor = ({ id }) => {
       </div>
 
       {/* ======= Report preview related information model =======  */}
-
       <Modal
         title="Report Preview"
-        className="report-preview-model"
+        className="report-preview-modal"
         open={selectedItem?.showPreview}
         onCancel={() => {
-          setSelectedItem(prev => ({
+          setSelectedItem((prev) => ({
             isPatientSelected: false,
             isInstitutionSelected: false,
             isImagesSelected: false,
             isOhifViewerSelected: false,
             templateId: prev?.templateId,
             isStudyDescriptionSelected: false,
-            showPreview: false
-          }))
+            showPreview: false,
+          }));
         }}
         centered
-        width="70%"
-        style={{ height: "80vh" }} // Adjust overall modal height if needed
+        width={"fit-content"}
+        // width="794px"
+        style={{
+          content: {
+            height: "100vh"
+          }
+        }}
         footer={null}
       >
-        {editorData !== null && (
-          <div
-            className="html_preview"
-            dangerouslySetInnerHTML={{
-              __html: `${EmailHeaderContent} ${editorData} ${`
-              <p style="text-align: left; margin-top: 20px;">
-                <p>Reported By,</p>
-                <img src=${signatureImage} alt="signature image" style="width:200px;height:100px;text-align: left;">
-                </p>`} ${`<p style="text-align: left; font-weight: 600; font-size: 16px;">${username}</p>`} ${ReportDesclamierContent} 
-              </div> 
-            </body>
-            </html> `
-            }}
-          ></div>
+        {editorData !== null && selectedItem?.showPreview && (
+          <div className="a4-preview-container">
+            <div className="a4-page">
+              <div
+                className="html-preview"
+                dangerouslySetInnerHTML={{
+                  __html: `
+                    ${EmailHeaderContent} 
+                    ${editorData} 
+                    <div style="margin-top: 20px; text-align: left;">
+                      <p>Reported By,</p>
+                      <img src=${signatureImage} alt="signature image" style="width:200px;height:100px;text-align: left;">
+                    </div>
+                    <p style="text-align: left; font-weight: 600; font-size: 16px;">${username}</p>
+                    ${ReportDesclamierContent}
+                  `,
+                }}
+              ></div>
+            </div>
+          </div>
         )}
       </Modal>
+
 
       {/* ======== Patient information related drawer information =========  */}
       <Drawer
