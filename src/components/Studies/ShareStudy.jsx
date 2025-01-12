@@ -134,11 +134,11 @@ const ShareStudy = ({
     }
   }, [studyID])
 
-  useEffect(() => {
-    if (isEmailModalOpen) {
-      retrieveEmailOptions()
-    }
-  }, [isEmailModalOpen])
+  // useEffect(() => {
+  //   if (isEmailModalOpen) {
+  //     retrieveEmailOptions()
+  //   }
+  // }, [isEmailModalOpen])
 
   useEffect(() => {
     if (isNewEmailModalOpen) {

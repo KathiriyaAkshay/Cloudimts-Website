@@ -34,14 +34,14 @@ const UploadHistory = () => {
             key: 'address',
             width: 130
         },
-        {
-            title: 'Series id',
-            dataIndex: 'series_id',
-            key: 'address',
-            ellipsis: {
-                showTitle: true,
-            },
-        },
+        // {
+        //     title: 'Series id',
+        //     dataIndex: 'series_id',
+        //     key: 'address',
+        //     ellipsis: {
+        //         showTitle: true,
+        //     },
+        // },
         {
             title: 'Manual upload',
             dataIndex: 'manual_upload',

@@ -16,7 +16,8 @@ import {
   Upload,
   message,
   Image,
-  Popconfirm
+  Popconfirm,
+  Table
 } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
 import { useBreadcrumbs } from "../../hooks/useBreadcrumbs";
@@ -363,8 +364,11 @@ const AddUsers = () => {
       } ; 
 
       if (requestPayload?.email == undefined  ){
-        requestPayload["email"] = generateRandomEmail() ; 
-      } 
+        requestPayload["email"] = generateRandomEmail() ;
+        requestPayload["is_email_blank"] = true ;  
+      }   else {
+        requestPayload["is_email_blank"] = false
+      }
 
       if (requestPayload?.remote_address == undefined){
         requestPayload["remote_address"] = null ; 
@@ -1184,11 +1188,12 @@ const AddUsers = () => {
             >
               <Row>
                 <Col xs={24} sm={24} md={24} lg={24}>
-                  <TableWithFilter
-                    tableColumns={institutionColumn}
-                    tableData={institutionOptions}
+                  <Table
+                    columns={institutionColumn}
+                    dataSource={institutionOptions}
                     className="Institution-logs-table"
-                    pagination
+                    pagination = {false}
+                    style={{marginTop: 10}}
                   />
                 </Col>
                 <Col xs={24} sm={24} md={24} lg={24} className='justify-end mt'>

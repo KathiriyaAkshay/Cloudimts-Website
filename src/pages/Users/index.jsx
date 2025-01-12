@@ -251,9 +251,15 @@ const Users = () => {
       className: `${checkPermissionStatus('View Email') ? '' : 'column-display-none'
         }`, 
       render: (text, record) => {
-        return(
-          <div>{text || "-"}</div>
-        )
+        if (record?.is_email_blank){
+          return(
+            <div>-</div>
+          )
+        } else {
+          return(
+            <div>{text || "-"}</div>
+          )
+        }
       }
     },
 

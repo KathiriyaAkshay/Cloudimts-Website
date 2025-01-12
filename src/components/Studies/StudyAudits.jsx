@@ -115,7 +115,7 @@ const StudyAudits = ({ isModalOpen, setIsModalOpen, studyID, setStudyID, referen
     if (studyID && isModalOpen) {
       retrieveStudyData()
     }
-  }, [studyID])
+  }, [studyID, isModalOpen])
 
 
   const auditColumns = [
@@ -171,7 +171,14 @@ const StudyAudits = ({ isModalOpen, setIsModalOpen, studyID, setStudyID, referen
     },
     {
       title: 'Target User',
-      dataIndex: 'target_user'
+      dataIndex: 'target_user', 
+      render: (text, record) => {
+        return(
+          <div style={{fontWeight: 600}}>
+            {text}
+          </div>
+        )
+      }
     }
   ]
 

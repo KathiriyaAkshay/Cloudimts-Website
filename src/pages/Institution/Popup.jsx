@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { Button, Form, Input, Popconfirm, Table, Select, Typography, Tooltip, Spin } from 'antd';
+import { Button, Form, Input, Popconfirm, Table, Select, Typography, Tooltip, Spin, Tag } from 'antd';
 import { SearchOutlined,SaveOutlined,CloseOutlined, ReloadOutlined } from '@ant-design/icons';
 const { Title } = Typography;
 const EditableContext = React.createContext(null);
@@ -666,29 +666,32 @@ const CustomReportHeaderGenerator = ({institutionId, isModalOpen}) => {
 
                         <div className='Report-setting-option-title' style={{display: "flex", flexDirection: "row", marginBottom: "16px", marginTop: "8px"}}>
                             
-                            <Button
-                                onClick={handleAdd}
-                                className='Report-option-add-button Green-option-add-button'
-                                style={{
-                                    marginTop: "auto", 
-                                    marginBottom: "auto"
-                                }}
-                            >
-                                + Add a row
-                            </Button>
-
                             <div className='Report-option-title' 
                                 style={
                                     {
                                         marginTop: "auto", 
                                         marginBottom: "auto", 
                                         fontSize: "16px", 
-                                        marginLeft: "16px", 
                                         fontWeight: 600
                                     }
                                 }>
-                                Patient report setting
+                                <Tag color='#87d068'>
+                                    Patient Report Setting
+                                </Tag>
                             </div>
+
+                            <Button
+                                onClick={handleAdd}
+                                className='Report-option-add-button Green-option-add-button'
+                                style={{
+                                    marginTop: "auto", 
+                                    marginBottom: "auto", 
+                                    marginLeft: "10px"
+                                }}
+                            >
+                                + Add a row
+                            </Button>
+
 
 
                         </div>
@@ -698,9 +701,8 @@ const CustomReportHeaderGenerator = ({institutionId, isModalOpen}) => {
                             rowClassName={() => 'editable-row'}
                             dataSource={dataSource}
                             columns={columns}
-                            scroll={{ y: 200 }}
                             pagination={false}
-                            className='Insert-report-info-table'
+                            className='insert-report-info-table'
                         />
 
                     </div>  
@@ -716,31 +718,30 @@ const CustomReportHeaderGenerator = ({institutionId, isModalOpen}) => {
 
                         <div className='Report-setting-option-title' style={{display: "flex", flexDirection: "row", marginBottom: "16px", marginTop: "16px"}}>
                             
-                            <Button
-                                onClick={handleAddSec}
-                                className='Report-option-add-button Green-option-add-button'
-                                style={{
-                                    marginTop: "auto", 
-                                    marginBottom: "auto"
-                                }}
-                            >
-                                + Add a row
-                            </Button>
-
                             <div className='Report-option-title' 
                                 style={
                                     {
                                         marginTop: "auto", 
                                         marginBottom: "auto", 
                                         fontSize: "16px", 
-                                        marginLeft: "16px", 
-                                        fontWeight: 600 
+                                        fontWeight: 600
                                     }
                                 }>
-                                Institution report setting
+                                <Tag color='#87d068'>
+                                    Institution Report Setting
+                                </Tag>
                             </div>
-
-
+                            <Button
+                                onClick={handleAddSec}
+                                className='Report-option-add-button Green-option-add-button'
+                                style={{
+                                    marginTop: "auto", 
+                                    marginBottom: "auto", 
+                                    marginLeft: "10px"
+                                }}
+                            >
+                                + Add a row
+                            </Button>
                         </div>
 
                         <Table
@@ -748,7 +749,6 @@ const CustomReportHeaderGenerator = ({institutionId, isModalOpen}) => {
                             rowClassName={() => 'editable-row'} 
                             dataSource={dataSourceSec}
                             columns={columnsSec}
-                            scroll={{ y: 200 }}
                             pagination={false}
                         />
                     </div>

@@ -70,11 +70,12 @@ import ReUploadStudyModel from '../../components/Studies/reloadUpload';
 import ReUploadIcon from "../../assets/images/reupload.png" ; 
 import ManulImageDrawer from './manulImageDrawer'
 import moment from 'moment';
+import { DownloadOutlined } from '@ant-design/icons';
 
-const BASE_URL = import.meta.env.VITE_APP_SOCKET_BASE_URL
+const BASE_URL = import.meta.env.VITE_APP_SOCKET_BASE_URL ;
 let timeOut = null ; 
-const Dicom = () => {
 
+const Dicom = () => {
   const [isLoading, setIsLoading] = useState(false)
   const { setStudyIdArray, setStudyReferenceIdArray,studyReferenceIdArray, setSeriesIdList, totalPages, setTotalPages, studyCountInforamtion, setStudyCountInformation, studyIdArray} = useContext(StudyIdContext)
   const { isFilterSelected, isAdvanceSearchSelected, setIsAdvanceSearchSelected } = useContext(FilterSelectedContext);
@@ -86,6 +87,11 @@ const Dicom = () => {
   const [isImageModalOpen, setImageDrawerOpen] = useState(false)
   const [isShareStudyModalOpen, setIsShareStudyModalOpen] = useState(false) ; 
   const [api, contextHolder] = notification.useNotification();
+
+  const disabledDate = (current) => {
+    // Disable all dates after today
+    return current && current > moment();
+  };
 
   // Breadcumbs information 
   const { changeBreadcrumbs } = useBreadcrumbs()
@@ -1082,7 +1088,8 @@ const Dicom = () => {
           <>
             <div>
               <div>
-  
+
+                {/* OHIF Viewer option  */}
                 <Tooltip title={`OHIF Viewer`}>
                   <img src={OHIFViewer}
                     style={{ cursor: "pointer" }}
@@ -1092,7 +1099,8 @@ const Dicom = () => {
                       window.open(`https://viewer.cloudimts.com/ohif/viewer?url=../studies/${record?.study?.study_original_id}/ohif-dicom-json`, "_blank");
                     }} />
                 </Tooltip>
-  
+                
+                {/* Weasis viewer option  */}
                 <Tooltip title={`Weasis Viewer`}>
                   <img
                     src={WeasisViewer}
@@ -1104,6 +1112,15 @@ const Dicom = () => {
                     }}
                   />
                 </Tooltip>
+
+                {/* Download option  */}
+                <div>
+                  <Tooltip title = "Download">
+                    <DownloadOutlined onClick={() => {
+                      DownloadStudy(record?.study?.study_original_id)
+                    }}/>
+                  </Tooltip>
+                </div>
               </div>
             </div>
           </>
@@ -1506,6 +1523,12 @@ const Dicom = () => {
     };
   }, [chatNotificationData, studyData]);
 
+  // ********** Study download related option button ******* //
+  const DownloadStudy = (study_id) => {
+    let download_study_url = `https://viewer.cloudimts.com/studies/${study_id}/archive`;
+    window.open(download_study_url);
+  };
+
   return (
     <>
       {contextHolder}
@@ -1782,7 +1805,6 @@ const Dicom = () => {
       />
 
       {/* ==== Assign study modal ==== */}
-
       <AssignStudy
         isAssignModalOpen={isAssignModalOpen}
         setIsAssignModalOpen={setIsAssignModalOpen}
@@ -1802,7 +1824,6 @@ const Dicom = () => {
       />
 
       {/* ==== Study report modal ====  */}
-
       <StudyReports
         isReportModalOpen={isReportModalOpen}
         setIsReportModalOpen={setIsReportModalOpen}
@@ -1968,7 +1989,7 @@ const Dicom = () => {
                     }
                   ]}
                 >
-                  <DatePicker format={'DD/MM/YYYY'}/>
+                  <DatePicker format={'DD/MM/YYYY'} disabledDate={disabledDate} />
                 </Form.Item>
               </Col>
 
@@ -1985,7 +2006,7 @@ const Dicom = () => {
                     }
                   ]}
                 >
-                  <DatePicker format={'DD/MM/YYYY'}/>
+                  <DatePicker format={'DD/MM/YYYY'} disabledDate={disabledDate} />
                 </Form.Item>
               </Col>
             </Row>

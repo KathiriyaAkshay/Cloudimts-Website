@@ -1,7 +1,7 @@
 import { CKEditor } from '@ckeditor/ckeditor5-react'
 import React, { useContext, useEffect, useState, useRef, useCallback } from 'react'
 import '../../ckeditor5/build/ckeditor'
-import { Button, Card, Col, Row, Spin, Typography, Input, Select, Form, Divider, Space, Tooltip, Modal, Drawer, Table } from 'antd'
+import { Button, Card, Col, Row, Spin, Typography, Input, Select, Form, Divider, Space, Tooltip, Modal, Drawer, Table, Flex } from 'antd'
 import {
   fetchTemplate,
   fetchUserSignature,
@@ -27,7 +27,8 @@ import WeasisViewer from "../assets/images/Weasis.png";
 import { BsEyeFill } from 'react-icons/bs'
 
 const Editor = ({ id }) => {
-
+  const navigate = useNavigate() ; 
+  const user_id = localStorage.getItem('userID')
   const [editorData, setEditorData] = useState('')
   const [cardDetails, setCardDetails] = useState({})
   const [isLoading, setIsLoading] = useState(false)
@@ -36,7 +37,6 @@ const Editor = ({ id }) => {
   const [studyImageID, setStudyImageID] = useState(0)
   const [signatureImage, setSignatureImage] = useState(null)
   const [username, setUsername] = useState('')
-  const user_id = localStorage.getItem('userID')
 
   const [institutionReport, setInstitutionReport] = useState({});
   const [referenceImageCount, setReferenceImageCount] = useState(1);
@@ -448,6 +448,39 @@ const Editor = ({ id }) => {
     if (reportStudyDescription == null) {
       NotificationMessage("warning", "Please, Select report study description")
     } else {
+      setIsLoading(true);
+      await saveAdvancedFileReport({
+        id,
+        report: `${EmailHeaderContent} 
+          ${editorData} 
+          <div style="margin-top: 20px; text-align: left;">
+            <p>Reported By,</p>
+            <img src=${signatureImage} alt="signature image" style="width:200px;height:100px;text-align: left;">
+          </div>
+          <p style="text-align: left; font-weight: 600; font-size: 16px;">${username}</p>
+          ${ReportDesclamierContent}
+        `,
+        report_study_description: reportStudyDescription
+      })
+        .then(res => {
+          if (res.data.status) {
+            NotificationMessage("success", "Study report successfully") ; 
+            // navigate("/studies");
+          } else {
+            NotificationMessage(
+              'warning',
+              'Network request failed',
+              res.data.message
+            )
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          
+          // NotificationMessage('warning', err.response.data.message)
+        })
+      setIsLoading(false)
+      
     }
   }
 
@@ -683,144 +716,83 @@ const Editor = ({ id }) => {
                         </div>
                       </>
                     )}
-
-                    {/* {selectedItem?.isOhifViewerSelected && (
-                      <>
-                        <div className='btn-div insert-report-details-option'>
-                          <Button type='primary' onClick={() => convertPatientDataToTable(true)}>
-                            Insert
-                          </Button>
-                        </div>
-
-                      </>
-                    )} */}
                   </div>
 
                 </Splitter.Panel>
               )}
 
-
               {/* Study description selection and Editor related option  */}
-
               <Splitter.Panel>
-                <div style={{
-                  display: "flex",
-                  gap: 10,
-                  flexWrap: "wrap"
-                }}>
-
-                  <div style={{
-                    marginBottom: "auto",
-                    marginTop: 15,
-                    fontWeight: 600
-                  }}>
-                    Study Description
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 10}}>
+                  
+                  <div style={{width: "50%"}}>
+                    <div style={{paddingLeft: 10  }}>
+                      <Form labelAlign="left" form={form}>
+                        <Form.Item
+                          name="study_description"
+                          className="report-description-selection"
+                          rules={[
+                            { required: true, message: "Please select Modality Study Description" },
+                          ]}
+                        >
+                          <Select
+                            placeholder="Select Study Description"
+                            showSearch
+                            filterSort={(optionA, optionB) =>
+                              (optionA?.label ?? "").toLowerCase().localeCompare((optionB?.label ?? "").toLowerCase())
+                            }
+                            dropdownRender={(menu) => (
+                              <>
+                                {menu}
+                                <Divider style={{ margin: "8px 0" }} />
+                                <Space style={{ padding: "0 8px 4px" }}>
+                                  <Input placeholder="Please enter item" ref={inputRef} value={name} onChange={onNameChange} onKeyDown={(e) => e.stopPropagation()} />
+                                  <Button type="text" icon={<PlusOutlined />} onClick={addItem}>
+                                    Add item
+                                  </Button>
+                                </Space>
+                              </>
+                            )}
+                            options={items.map((item) => ({ label: item?.label, value: item?.value }))}
+                            value={reportStudyDescription}
+                            onChange={(value) => setReportStudyDescription(value)}
+                          />
+                        </Form.Item>
+                      </Form>
+                    </div>
                   </div>
-
-                  {/* Study description selection  */}
-                  <div style={{ width: "50%" }}>
-                    <Form
-                      labelAlign="left"
-                      form={form}
-                    >
-                      <Form.Item
-                        name="study_description"
-                        className="report-description-selection"
-                        rules={[
-                          {
-                            required: true,
-                            message: "Please select Modality Study Description",
-                          },
-                        ]}
-                      >
+                  
+                  <Flex style={{width: "47%", justifyContent: "flex-end", gap: 15}}>
+                    <div style={{marginTop: "auto", marginBottom: "auto"}}>
+                      <Tooltip title = "Report template">
                         <Select
-                          placeholder="Select Study Description"
+                          className="template-selection-option-division"
+                          placeholder="choose template"
+                          options={templateOption}
                           showSearch
-                          filterSort={(optionA, optionB) =>
-                            (optionA?.label ?? "")
-                              .toLowerCase()
-                              .localeCompare((optionB?.label ?? "").toLowerCase())
+                          value={selectedItem?.templateId}
+                          onChange={(e) =>
+                            setSelectedItem((prev) => ({
+                              isPatientSelected: prev?.isPatientSelected,
+                              isInstitutionSelected: prev?.isInstitutionSelected,
+                              isImagesSelected: prev?.isImagesSelected,
+                              templateId: e,
+                              isStudyDescriptionSelected: prev?.isStudyDescriptionSelected,
+                            }))
                           }
-                          dropdownRender={(menu) => (
-                            <>
-                              {menu}
-                              <Divider
-                                style={{
-                                  margin: '8px 0',
-                                }}
-                              />
-                              <Space
-                                style={{
-                                  padding: '0 8px 4px',
-                                }}
-                              >
-                                <Input
-                                  placeholder="Please enter item"
-                                  ref={inputRef}
-                                  value={name}
-                                  onChange={onNameChange}
-                                  onKeyDown={(e) => e.stopPropagation()}
-                                />
-                                <Button type="text" icon={<PlusOutlined />} onClick={addItem}>
-                                  Add item
-                                </Button>
-                              </Space>
-                            </>
-                          )}
-                          options={items.map((item) => ({
-                            label: item?.label,
-                            value: item?.value,
-                          }))}
-                          value={reportStudyDescription}
-                          onChange={(value) => {
-                            setReportStudyDescription(value)
-                          }}
                         />
-                      </Form.Item>
-                    </Form>
-                  </div>
+                      </Tooltip>
+                    </div>
 
-                  <div style={{
-                    marginBottom: "auto",
-                    marginTop: 15,
-                    fontWeight: 600,
-                    marginLeft: 10,
-                    marginRight: 10
-                  }}>
-                    Template
-                  </div>
-
-                  {/* Study template related selection  */}
-                  <div style={{
-                    marginTop: 10
-                  }}>
-                    <Select
-                      style={{ width: "12rem" }}
-                      className='template-selection-option-division'
-                      placeholder='choose template'
-                      options={templateOption}
-                      showSearch
-                      value={selectedItem?.templateId}
-                      onChange={e =>
-                        setSelectedItem(prev => ({
-                          isPatientSelected: prev?.isPatientSelected,
-                          isInstitutionSelected: prev?.isInstitutionSelected,
-                          isImagesSelected: prev?.isImagesSelected,
-                          templateId: e,
-                          isStudyDescriptionSelected: prev?.isStudyDescriptionSelected
-                        }))
-                      }
-                    />
-                  </div>
-
-                  <div style={{
-                    marginTop: 10,
-                    marginLeft: "auto"
-                  }}>
-                    <Button type='primary' onClick={() => handleReportSave()}>
-                      Submit Report
-                    </Button>
-                  </div>
+                    <div >
+                      <Button type="primary" 
+                        loading = {isLoading}
+                        onClick={() => handleReportSave()} 
+                        style={{ marginTop: 10 }}>
+                        Submit Report
+                      </Button>
+                    </div>
+                  </Flex>
                 </div>
 
                 <Divider style={{ marginTop: 5, marginBottom: 8 }} />
@@ -846,7 +818,7 @@ const Editor = ({ id }) => {
 
       </div>
 
-      {/* ======= Report preview related information model =======  */}
+      {/* ====== Report review related information model =====  */}
       <Modal
         title="Report Preview"
         className="report-preview-modal"
@@ -864,7 +836,6 @@ const Editor = ({ id }) => {
         }}
         centered
         width={"fit-content"}
-        // width="794px"
         style={{
           content: {
             height: "100vh"
@@ -896,7 +867,7 @@ const Editor = ({ id }) => {
       </Modal>
 
 
-      {/* ======== Patient information related drawer information =========  */}
+      {/* ====== Patient information related drawer ======  */}
       <Drawer
         title="Patient Info"
         placement='left'
@@ -911,7 +882,7 @@ const Editor = ({ id }) => {
           borderWidth: 0,
         }}>
 
-          {/* Patient information option button  */}
+          {/* ========= Patient information option button ==========  */}
           <Button type={partientInfoDrawerOption == "info" ? "primary" : "default"} style={{
             marginTop: 0,
             marginRight: 10
@@ -921,7 +892,7 @@ const Editor = ({ id }) => {
             </div>
           </Button>
 
-          {/* Report information option button  */}
+          {/* ========== Report information option button ===========  */}
           <Button type={partientInfoDrawerOption == "report" ? "primary" : "default"}
             onClick={() => { setPatientInfoDrawerOption("report") }}
           >

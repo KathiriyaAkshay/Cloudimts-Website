@@ -11,7 +11,7 @@ const index = () => {
   useEffect(() => {
     const crumbs = [{ name: "Studies", to: "/studies" }];
     crumbs.push({
-      name: "Advanced Report",
+      name: "Report",
     });
     changeBreadcrumbs(crumbs);
   }, []);

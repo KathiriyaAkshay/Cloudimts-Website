@@ -369,7 +369,7 @@ const AssignStudy = ({
       FetchRadiologist();
       FetchInstitutionModalityList();
     }
-  }, [studyID]);
+  }, [studyID, isAssignModalOpen]);
 
 
   return (
