@@ -882,7 +882,9 @@ const Dicom = () => {
       width: "7%",
       className: 'Study-count-column',
       render: (text, record) => (
-        <span style={{fontWeight: 600}}>{text}</span>
+        <span>
+          {studyCountInforamtion[record?.study?.study_original_id] !== undefined ?`${studyCountInforamtion[record?.study?.study_original_id]['modality']}`:"0/0"}
+        </span>
       ),
       onCell: (record) => ({
         onClick: () => handleCellClick(record)
@@ -897,9 +899,7 @@ const Dicom = () => {
         : 'column-display-none'
         }`,
       render: (text, record) => (
-        <span style={{
-          fontWeight: 500
-        }}>{text}</span>
+        <span>{text}</span>
       ),
       onCell: (record) => ({
         onClick: () => handleCellClick(record)
@@ -909,7 +909,7 @@ const Dicom = () => {
       title: 'Study date',
       dataIndex: 'created_at',
       width: "12%",
-      render: (text, record) => <span style={{fontWeight: 500}}>{convertToDDMMYYYY(record?.created_at)}</span>, 
+      render: (text, record) => <span>{convertToDDMMYYYY(record?.created_at)}</span>, 
       onCell: (record) => ({
         onClick: () => handleCellClick(record)
       })
@@ -921,7 +921,7 @@ const Dicom = () => {
       className: 'Study-count-column',
       render: (text, record) => (
         <Statistic value={studyCountInforamtion[record?.study?.study_original_id] !== undefined ?`${studyCountInforamtion[record?.study?.study_original_id]['series_count']}/${studyCountInforamtion[record?.study?.study_original_id]['instance_count']}`:"0/0"} 
-          style={{ fontSize: "1.4rem", fontWeight: 500 }} />
+          style={{ fontSize: "1.4rem"}} />
       ),
       onCell: (record) => ({
         onClick: () => handleCellClick(record)
