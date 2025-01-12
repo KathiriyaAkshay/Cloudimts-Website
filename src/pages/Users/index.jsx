@@ -249,7 +249,18 @@ const Users = () => {
       title: 'Email',
       dataIndex: 'email',
       className: `${checkPermissionStatus('View Email') ? '' : 'column-display-none'
-        }`
+        }`, 
+      render: (text, record) => {
+        if (record?.is_email_blank){
+          return(
+            <div>-</div>
+          )
+        } else {
+          return(
+            <div>{text || "-"}</div>
+          )
+        }
+      }
     },
 
     checkPermissionStatus('View contact number') && {

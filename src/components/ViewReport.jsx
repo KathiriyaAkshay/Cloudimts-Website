@@ -6,7 +6,10 @@ import NotificationMessage from './NotificationMessage'
 import APIHandler from '../apis/apiHandler';
 import { useNavigate } from 'react-router-dom';
 import { Spin } from 'antd'; 
-import { UserPermissionContext } from '../hooks/userPermissionContext'
+import { UserPermissionContext } from '../hooks/userPermissionContext' ; 
+import { EmailHeaderContent } from '../helpers/utils'
+import { ReportDesclamierContent } from '../helpers/utils'
+import { report } from 'process'
 
 const ViewReport = ({ id }) => {
   const [editorData, setEditorData] = useState('')
@@ -46,10 +49,14 @@ const ViewReport = ({ id }) => {
     if (localStorage.getItem('studyId') == null){
       NotificationMessage("Have some internal error try again") ; 
     } else {
+      let report_content = `${EmailHeaderContent}
+        ${editorData}
+        ${ReportDesclamierContent}
+      `
       setLoading(true) ; 
       let requestPayload = {
         id: id,
-        report: editorData, 
+        report: report_content, 
         studyId: localStorage.getItem("studyId")
       };
       let responseData = await APIHandler("POST", requestPayload, "studies/v1/update-report");
@@ -73,9 +80,16 @@ const ViewReport = ({ id }) => {
       NotificationMessage("Have some internal error try again") ; 
     } else {
       setLoading(true) ; 
+      let report_content = `
+        ${EmailHeaderContent}
+        ${editorData}
+        <div/>
+        <body/>
+        <html/>
+      `
       let requestPayload = {
         id: id,
-        report: editorData, 
+        report: report_content, 
         studyId: localStorage.getItem("studyId")
       };
       let responseData = await APIHandler("POST", requestPayload, "studies/v1/draft-reoprt");
@@ -83,6 +97,7 @@ const ViewReport = ({ id }) => {
         NotificationMessage("warning", "Network request failed", "", 1, "topLeft");
       } else if (responseData['status'] === true) {
         NotificationMessage("success", "Report save as draft", "", 1, "topLeft");
+        navigate(-1) ; 
       } else {
         NotificationMessage("warning", responseData['message'], "", 1, "topLeft");
       }

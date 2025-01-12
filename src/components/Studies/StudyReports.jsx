@@ -7,7 +7,6 @@ import {
   Tag,
   Tooltip,
   Typography,
-  Popconfirm,
   Table
 } from "antd";
 import React, { useContext, useEffect, useState } from "react";
@@ -16,10 +15,10 @@ import {
   viewReported
 } from '../../apis/studiesApi'
 import FileReport from './FileReport'
-import TableWithFilter from '../TableWithFilter'
 import { BsEyeFill } from 'react-icons/bs'
 import {
   DownloadOutlined,
+  FileFilled,
   MailOutlined,
   WhatsAppOutlined
 } from '@ant-design/icons'
@@ -29,6 +28,7 @@ import { UserPermissionContext } from '../../hooks/userPermissionContext'
 import APIHandler from '../../apis/apiHandler';
 import NotificationMessage from "../NotificationMessage";
 import { convertToDDMMYYYY } from "../../helpers/utils";
+import { TabletFilled } from "@ant-design/icons";
 
 const StudyReports = ({
   isReportModalOpen,
@@ -153,7 +153,7 @@ const StudyReports = ({
     if (studyID && isReportModalOpen) {
       retrieveStudyData()
     }
-  }, [studyID])
+  }, [studyID, isReportModalOpen])
 
   // **** Download report in pdf formate option handler **** // 
   function downloadPDF(pdfUrl, pdfName) {
@@ -259,6 +259,16 @@ const StudyReports = ({
 
   const columns = [
     {
+      title : "Index", 
+      render: (text, record, index) => {
+        return(
+          <div>
+            {index + 1}
+          </div>
+        )
+      }
+    }, 
+    {
       title: 'Report Time',
       dataIndex: 'reporting_time',
       render: (text, record) => convertToDDMMYYYY(record?.reporting_time)
@@ -274,13 +284,6 @@ const StudyReports = ({
       title: 'Study Description',
       dataIndex: 'study_description'
     },
-
-    {
-      title: 'Report Type',
-      dataIndex: 'report_type'
-    },
-
-
     {
       title: 'Actions',
       dataIndex: 'actions',
@@ -408,6 +411,7 @@ const StudyReports = ({
                   key='link'
                   type='primary'
                   className='secondary-btn Report-modal-option-button'
+                  icon = {<FileFilled/>}
                   onClick={async () => {
                     await studyStatusHandler()
                     pageNumberHandler()

@@ -2103,7 +2103,7 @@
 .Green-option-add-button:hover {
   background-color: rgb(15, 151, 0);
   border-color: rgb(1, 194, 14) !important;
-  color: white !important;
+  color: #000 !important;
 }
 
 
@@ -2116,7 +2116,7 @@
 .Danger-button:hover {
   background-color: rgb(227, 0, 0);
   border-color: rgb(227, 0, 0) !important;
-  color: white !important;
+  color: #000 !important;
 }
 
 .Reset-button {
@@ -2128,7 +2128,7 @@
 .Reset-button:hover {
   background-color: rgb(227, 140, 0);
   border-color: rgb(227, 140, 0) !important;
-  color: white !important;
+  color: #000 !important;
 }
 
 thead>tr>th {
@@ -2300,39 +2300,6 @@ thead>tr>th {
   color: red;
 }
 
-
-// @media only screen and (min-height: 600px) and (max-height:700px) {
-//   .ant-table-body {
-//     max-height: 400px !important;
-//   }
-// }
-
-
-// @media only screen and (min-height: 800px) and (max-height:900px) {
-//   .ant-table-body {
-//     max-height: 500px !important;
-//   }
-// }
-
-
-// @media only screen and (min-height: 900px) and (max-height:1000px) {
-//   .ant-table-body {
-//     max-height: 600px !important;
-//   }
-// }
-
-// @media only screen and (min-height: 1000px) and (max-height:1200px) {
-//   .ant-table-body {
-//     max-height: 700px !important;
-//   }
-// }
-
-// @media only screen and (min-height: 1200px) {
-//   .ant-table-body {
-//     max-height: 800px !important;
-//   }
-// }
-
 .reply-chat-option-image{
   padding: 0.5rem 0;
 }
@@ -2471,27 +2438,6 @@ label[for="study_description"]{
   background-color: #fcfcfc;
   padding-left: 1%;
   padding-right: 1%;
-
-  // .ant-card-head{
-  //   background-color: #33b3e9;
-  //   color: white;
-  //   height: fit-content;
-  // }   
-
-  // .particular-modality-info-division{
-  //   margin-top: 1rem !important;
-  //   margin-right: 1rem !important;
-    
-  //   .ant-card-body{
-  //     padding: 0.70rem !important;
-  //     padding-left: 1.5rem !important;
-  //     padding-right: 1.5rem !important;
-  //   }
-
-  //   .particular-modality-charges-title{
-  //     margin-bottom: 0.20rem;
-  //   }
-  // }
 }
 
 .clinical-history-modal{
@@ -3279,12 +3225,12 @@ form.ant-form .ant-form-item .ant-form-item-label label{
 
 
 .institution-checkbox .ant-checkbox-inner{
-  background-color: #dcdcdc !important;
+  background-color: #ededed !important;
   border-color: transparent !important;
 }
 
 .institution-checkbox .ant-checkbox-checked .ant-checkbox-inner::after {
-  border-color: #1677ff !important; /* Custom checkmark color */
+  border-color: #006aff !important; /* Custom checkmark color */
 }
 
 .institution-modality-table{
@@ -3328,7 +3274,6 @@ form.ant-form .ant-form-item .ant-form-item-label label{
 
 .drawer-title{
   font-size: 16px;
-  font-weight: 600;
 }
 
 .drawer-info-main-div{
@@ -3447,3 +3392,6 @@ form.ant-form .ant-form-item .ant-form-item-label label{
   }
 }
 
+.ant-table-cell{
+  color: #000000 !important;
+}

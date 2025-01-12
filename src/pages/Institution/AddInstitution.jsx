@@ -1368,10 +1368,10 @@ const AddInstitution = () => {
             >
               <Row gutter={30}>
                 <Col lg={24} md={24} sm={24}>
-                  <TableWithFilter
-                    tableColumns={reportColumns}
-                    tableData={reportTableData}
-                    pagination
+                  <Table
+                    columns={reportColumns}
+                    dataSource={reportTableData}
+                    pagination = {false}
                   />
                 </Col>
                 <Col xs={24} sm={24} md={24} lg={24} className='justify-end mt'>
@@ -1418,10 +1418,10 @@ const AddInstitution = () => {
             >
               <Row gutter={30}>
                 <Col lg={24} md={24} sm={24}>
-                  <TableWithFilter
-                    tableColumns={uploadSettingsColumns}
-                    tableData={uploadSettingsData}
-                    pagination
+                  <Table
+                    columns={uploadSettingsColumns}
+                    dataSource={uploadSettingsData}
+                    pagination = {false}
                   />
                 </Col>
 
@@ -1600,7 +1600,7 @@ const AddInstitution = () => {
 
       <Modal
         centered
-        title='Conformation'
+        title='Confirmation'
         open={isModalOpen}
         onOk={() => form.submit()}
         onCancel={() => setIsModalOpen(false)}

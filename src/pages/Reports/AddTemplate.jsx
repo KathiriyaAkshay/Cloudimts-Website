@@ -17,10 +17,11 @@ import APIHandler from '../../apis/apiHandler'
 import { UploadOutlined } from '@ant-design/icons'
 
 const AddTemplate = () => {
-  const [editorData, setEditorData] = useState('')
+  const navigate = useNavigate() ; 
+  const [editorData, setEditorData] = useState('') ; 
+  const [loading, setLoading] = useState(false) ; 
   const { changeBreadcrumbs } = useBreadcrumbs()
   const [form] = Form.useForm()
-  const navigate = useNavigate()
   const { id } = useParams()
 
   // **** Reterive particular template information **** // 
@@ -207,22 +208,28 @@ const AddTemplate = () => {
         if (values?.study_radiologist !== undefined) {
           requestPayload['radiologist'] = radiologistMatch == 1 ? radiologistMatchValue : values?.study_radiologist
         }
+        setLoading(true) ;
         updateReport({ ...requestPayload })
-          .then(res => {
-            if (res.data.status) {
-              NotificationMessage('success', 'Template updated successfully')
-              navigate('/reports')
-            } else {
-              NotificationMessage(
-                'warning',
-                'Network request failed',
-                res.data.message
-              )
-            }
-          })
-          .catch(err =>
-            NotificationMessage('warning', 'Network request failed', err.response.data.message)
-          )
+        .then(res => {
+          setLoading(false); // Ensure loading is stopped for both success and failure cases
+          if (res.data.status) {
+            NotificationMessage('success', 'Template updated successfully');
+            navigate('/reports');
+          } else {
+            NotificationMessage(
+              'warning',
+              'Network request failed',
+              res.data.message || 'Unknown error occurred'
+            );
+          }
+        })
+        .catch(err => {
+          setLoading(false);
+          const errorMessage =
+            err.response?.data?.message || 'An unexpected error occurred';
+          NotificationMessage('warning', 'Network request failed', errorMessage);
+        });
+
       }
     } else {
       NotificationMessage('warning', 'Please enter valid template')
@@ -496,7 +503,7 @@ const AddTemplate = () => {
 
             <Form.Item className='btn-div'>
               <Button onClick={() => navigate(-1)}>Cancel</Button>
-              <Button type='primary' htmlType='submit'>
+              <Button type='primary' htmlType='submit' loading = {loading}>
                 Save
               </Button>
             </Form.Item>

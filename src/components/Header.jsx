@@ -249,11 +249,11 @@ const BasicLayout = ({ children }) => {
       icon: <CloudUploadOutlined />,
       children: [
         {
-          label: <NavLink to={"/upload"}>Upload dicom images</NavLink>,
+          label: <NavLink to={"/upload"}>UPLOAD DIOCM IMAGE</NavLink>,
           key: "Dicom image"
         },
         {
-          label: <NavLink to={"/manual-entry"}>ImageUpload</NavLink>,
+          label: <NavLink to={"/manual-entry"}>IMAGE UPLOAD</NavLink>,
           key: "Image upload"
         }
       ]
@@ -268,11 +268,11 @@ const BasicLayout = ({ children }) => {
     },
 
     // Filter option
-    {
-      label: <NavLink to={'/filters'}>Filters</NavLink>,
-      key: 'filters',
-      icon: <AiOutlineFilter />
-    },
+    // {
+    //   label: <NavLink to={'/filters'}>Filters</NavLink>,
+    //   key: 'filters',
+    //   icon: <AiOutlineFilter />
+    // },
 
   ].filter(Boolean);
 
@@ -461,7 +461,6 @@ const BasicLayout = ({ children }) => {
         {menu}
 
         <Layout className='site-layout'>
-
           <Header
             className='site-layout-background'
             style={{
