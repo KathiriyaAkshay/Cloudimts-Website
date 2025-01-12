@@ -1089,38 +1089,41 @@ const Dicom = () => {
             <div>
               <div>
 
-                {/* OHIF Viewer option  */}
-                <Tooltip title={`OHIF Viewer`}>
-                  <img src={OHIFViewer}
-                    style={{ cursor: "pointer" }}
-                    className='ohif-viwer-option-icon'
-                    onClick={() => {
-                      handleCellDoubleClick(record);
-                      window.open(`https://viewer.cloudimts.com/ohif/viewer?url=../studies/${record?.study?.study_original_id}/ohif-dicom-json`, "_blank");
-                    }} />
-                </Tooltip>
-                
-                {/* Weasis viewer option  */}
-                <Tooltip title={`Weasis Viewer`}>
-                  <img
-                    src={WeasisViewer}
-                    className='Weasis-viewer-option-icon'
-                    style={{ cursor: "pointer" }}
-                    onClick={() => {
-                      handleCellDoubleClick(record);
-                      WeasisViewerHandler(record?.patient_id)
-                    }}
-                  />
-                </Tooltip>
-
-                {/* Download option  */}
-                <div>
-                  <Tooltip title = "Download">
-                    <DownloadOutlined onClick={() => {
-                      DownloadStudy(record?.study?.study_original_id)
-                    }}/>
+                {otherPremissionStatus("Studies permission", "OHIF Viewer") && (
+                  <Tooltip title={`OHIF Viewer`}>
+                    <img src={OHIFViewer}
+                      style={{ cursor: "pointer" }}
+                      className='ohif-viwer-option-icon'
+                      onClick={() => {
+                        handleCellDoubleClick(record);
+                        window.open(`https://viewer.cloudimts.com/ohif/viewer?url=../studies/${record?.study?.study_original_id}/ohif-dicom-json`, "_blank");
+                      }} />
                   </Tooltip>
-                </div>
+                )}
+                
+                {otherPremissionStatus("Studies permission", "Weasis Viewer") && (
+                  <Tooltip title={`Weasis Viewer`}>
+                    <img
+                      src={WeasisViewer}
+                      className='Weasis-viewer-option-icon'
+                      style={{ cursor: "pointer" }}
+                      onClick={() => {
+                        handleCellDoubleClick(record);
+                        WeasisViewerHandler(record?.patient_id)
+                      }}
+                    />
+                  </Tooltip>
+                )}
+
+                {otherPremissionStatus("Studies permission", "Download Option") && (
+                  <div>
+                    <Tooltip title = "Download">
+                      <DownloadOutlined onClick={() => {
+                        DownloadStudy(record?.study?.study_original_id)
+                      }}/>
+                    </Tooltip>
+                  </div>
+                )}
               </div>
             </div>
           </>

@@ -14,6 +14,7 @@ const AssignStudyModified = ({
   const [form] = Form.useForm();
   const { studyIdArray, setStudyIdArray, studyReferenceIdArray } = useContext(StudyIdContext);
   const [seriesIdList, setSeriesIdList] = useState([]) ; 
+  const [radiologistType, setRadiologistType] = useState("cloudimts_radiologist");  
 
   useEffect(() => {
     let temp = [] ; 
@@ -26,20 +27,23 @@ const AssignStudyModified = ({
 
   // **** Retervie all radiologist name for assign study **** // 
   const FetchRadiologist = async () => {
-
     let requestPayload = {};
-
+    let request_url = undefined ; 
+    if (radiologistType == "cloudimts_radiologist"){
+      request_url = `institute/v1/fetch-radiologist-name?is_cloudimts_radiologist=true`
+    } else {
+      request_url = `institute/v1/fetch-radiologist-name`
+    }
     let responseData = await APIHandler(
       "POST",
       requestPayload,
-      "institute/v1/fetch-radiologist-name"
+      request_url
     );
-
     if (responseData["status"] === true) {
-
       const resData = responseData['data'].map((element) => ({
         label: element.name,
-        value: element.id
+        value: element.id, 
+        ...element
       }))
 
       setOptions(resData);
@@ -50,7 +54,7 @@ const AssignStudyModified = ({
 
   useEffect(() => {
     FetchRadiologist();
-  }, []);
+  }, [radiologistType]);
 
   const handleSubmit = async (values) => {
 
@@ -132,7 +136,7 @@ const AssignStudyModified = ({
 
           </div>
 
-          <div className="Assign-study-upload-option-input-layout" style={{ marginTop: 20 }}>
+          <div className="Assign-study-upload-option-input-layout" style={{ marginTop: 5 }}>
 
             <div className="quick-assign-study-division w-100">
 
@@ -145,8 +149,44 @@ const AssignStudyModified = ({
                 }}
                 form={form}
                 onFinish={handleSubmit}
+                initialValues={{
+                  radiologist_type: "cloudimts_radiologist"
+                }}
                 className="mt"
               >
+
+                {/* Radiologist option selection  */}
+                <Form.Item
+                  name="radiologist_type"
+                  className="category-select"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please select radiologist",
+                    },
+                  ]}
+                  style={{ marginTop: "auto", width: "100%" }}
+                >
+                  <Select
+                    placeholder="Radiologist type"
+                    options={[
+                      {label: "Cloudimts Radiologist", value: "cloudimts_radiologist"}, 
+                      {label: "Radiologist / Referral Physicians", value: "radiologist"}
+                    ]}
+                    showSearch
+                    value={radiologistType}
+                    onChange={(event) => {
+                      setRadiologistType(event)
+                    }}
+                    filterSort={(optionA, optionB) =>
+                      (optionA?.label ?? "")
+                        .toLowerCase()
+                        .localeCompare((optionB?.label ?? "").toLowerCase())
+                    }
+                  />
+                </Form.Item>
+
+                {/* Radiologist selection  */}
                 <Form.Item
                   label="Choose Radiologist"
                   name="radiologist"
@@ -161,14 +201,27 @@ const AssignStudyModified = ({
                 >
                   <Select
                     placeholder="Select Radiologist"
-                    options={options}
                     showSearch
                     filterSort={(optionA, optionB) =>
                       (optionA?.label ?? "")
                         .toLowerCase()
                         .localeCompare((optionB?.label ?? "").toLowerCase())
                     }
-                  />
+                  >
+                    {options?.map((element) => (
+                      <Select.Option key={element?.value} value = {element?.value}>
+                        <div>
+                          <span style={{fontWeight: 600}}>
+                            {String(element?.label).toUpperCase()}
+                          </span>
+                          <span style={{marginLeft: 4, marginRight: 4}}>|</span>
+                          <span style={{color: "blue", marginRight: 4}}>
+                            {`${element?.role } => ${element?.institution}`}
+                          </span>
+                        </div>
+                      </Select.Option>
+                    ))}
+                  </Select>
                 </Form.Item>
 
               </Form>

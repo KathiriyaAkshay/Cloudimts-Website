@@ -17,13 +17,8 @@ import { useNavigate } from 'react-router-dom'
 import APIHandler from '../apis/apiHandler'
 import { descriptionOptions, EmailHeaderContent, ReportDesclamierContent } from '../helpers/utils'
 import { CloseCircleOutlined, DownloadOutlined, PlusOutlined } from '@ant-design/icons'
-import OHIF from "../assets/images/menu.png";
-import KitWareViewer from "../assets/images/viewers.png";
-import TableWithFilter from './TableWithFilter'
 import { convertToDDMMYYYY } from '../helpers/utils'
 import { Splitter } from 'antd'
-import OHIFViewer from "../assets/images/menu.png";
-import WeasisViewer from "../assets/images/Weasis.png";
 import { BsEyeFill } from 'react-icons/bs'
 
 const Editor = ({ id }) => {

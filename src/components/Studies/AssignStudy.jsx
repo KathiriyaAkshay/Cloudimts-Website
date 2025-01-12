@@ -28,6 +28,7 @@ import { descriptionOptions } from "../../helpers/utils";
 import APIHandler from "../../apis/apiHandler";
 import { UserPermissionContext } from "../../hooks/userPermissionContext";
 import { PlusOutlined } from "@ant-design/icons";
+import { CENTER_OWNER_RADIOLOGIST, RADIOLOGIST } from "../../constant/radiologist.role";
 
 const AssignStudy = ({
   isAssignModalOpen,
@@ -187,8 +188,7 @@ const AssignStudy = ({
 
           setModalData(modifiedData);
 
-          // **** Fetch particular institution radiologist **** // 
-
+          // ******** Fetch particular institution radiologist ******* // 
           const FetchRadiologist = async () => {
             let requestPayload = {
               institution_id: resData?.institution_id,
@@ -204,11 +204,18 @@ const AssignStudy = ({
               const resData = responseData.data.map((data) => ({
                 label: data.name,
                 value: data.id,
+                "role": RADIOLOGIST,
+                "time": data?.time
               }));
-              setInstitutionRadiologist([{
-                label: "Cloudimts Panel",
-                value: 6
-              }, ...resData]);
+
+              const center_owner_radiologist = responseData?.center_owner_radiologist?.map((element) => ({
+                label: element.name,
+                value: element.id,
+                "role": CENTER_OWNER_RADIOLOGIST,
+                "time": element?.time
+              }))
+
+              setInstitutionRadiologist([...center_owner_radiologist, ...resData]);
             }
           };
 
@@ -234,17 +241,13 @@ const AssignStudy = ({
 
   // **** Retervice all radiologist data **** // 
   const FetchRadiologist = async () => {
-
     let requestPayload = {};
-
     let responseData = await APIHandler(
       "POST",
       requestPayload,
       "institute/v1/fetch-radiologist-name"
     );
-
     if (responseData["status"] === true) {
-
       responseData?.data?.map((element) => {
         if (element?.id === assignUserId) {
           const exists = institutionRadiologist.indexOf({ label: element?.name, value: element?.id });
@@ -366,7 +369,7 @@ const AssignStudy = ({
       retrieveStudyData();
       retrieveAssignStudyDetails();
       setValues([]);
-      FetchRadiologist();
+      // FetchRadiologist();
       FetchInstitutionModalityList();
     }
   }, [studyID, isAssignModalOpen]);
@@ -490,14 +493,28 @@ const AssignStudy = ({
                       >
                         <Select
                           placeholder="Select Radiologist"
-                          options={institutionRadiologist}
                           showSearch
                           filterSort={(optionA, optionB) =>
                             (optionA?.label ?? "")
                               .toLowerCase()
                               .localeCompare((optionB?.label ?? "").toLowerCase())
                           }
-                        />
+                        >
+                          {institutionRadiologist?.map((element) => (
+                            <Select.Option key={element?.value} value={element?.value}>
+                              <div>
+                                <span style={{fontWeight: 600}}>
+                                  {String(element?.label).toUpperCase()}
+                                </span>
+                                <span style={{marginLeft: 4, marginRight: 4}}>|</span>
+                                <span style={{marginLeft: "auto"}}>
+                                  {element?.role}
+                                </span>
+                              </div>
+                            </Select.Option>
+                          ))}
+                        </Select>
+
                       </Form.Item>
                     </Col>
                     <Col span={11}>

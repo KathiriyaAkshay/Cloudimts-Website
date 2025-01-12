@@ -775,10 +775,6 @@ const AddUsers = () => {
                       action="https://file.io"
                       beforeUpload={beforeUpload}
                       onChange={handleProfileChange}
-                      style={{
-                        width: "2rem",
-                        height: "1rem"
-                      }}
                     >
                       {imageUrl ? (
                         <Image
@@ -911,6 +907,10 @@ const AddUsers = () => {
                     <Select
                       placeholder='Select Role'
                       options={roleOptions}
+                      showSearch
+                      filterOption={(input, option) =>
+                        (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
+                      }
                     />
                   </Form.Item>
 
@@ -1259,10 +1259,9 @@ const AddUsers = () => {
                     /> */}
 
                     <ImgCrop 
-                      // rotationSlider
-                      aspect={1}
+                      aspect={2}
                       minZoom={0.3}
-                      zoom={1.5}            // Adjust initial zoom level if supported by ImgCrop
+                      zoom={1.5} 
                     >
                       <Upload
                         action="https://file.io"
