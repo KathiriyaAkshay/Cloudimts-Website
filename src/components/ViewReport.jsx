@@ -9,13 +9,14 @@ import { Spin } from 'antd';
 import { UserPermissionContext } from '../hooks/userPermissionContext' ; 
 import { EmailHeaderContent } from '../helpers/utils'
 import { ReportDesclamierContent } from '../helpers/utils'
-import { report } from 'process'
+import { DownloadOutlined } from '@ant-design/icons'
 
 const ViewReport = ({ id }) => {
   const [editorData, setEditorData] = useState('')
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const {permissionData} = useContext(UserPermissionContext) ; 
+  const [downloadReportLoading, setDownloadReportLoading] = useState(false) ; 
 
   const otherPremissionStatus = (title, permission_name) => {
     const permission = permissionData[title]?.find(
@@ -106,6 +107,68 @@ const ViewReport = ({ id }) => {
     }
   }
 
+  // ************ Download report related option button handler ********** // 
+
+  function downloadPDF(pdfUrl, pdfName) {
+    var pdfUrl = pdfUrl;
+
+    var link = document.createElement('a');
+    link.style.display = 'none';
+    link.setAttribute('download', pdfName);
+    link.setAttribute('href', pdfUrl);
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  const downloadReport = async () => {
+    let requestPayload = { id: localStorage.getItem("studyId") };
+    setDownloadReportLoading(true); 
+
+    let responseData = await APIHandler('POST', requestPayload, 'studies/v1/complete-study');
+
+    if (responseData === false) {
+      NotificationMessage("warning", "Network request failed");
+
+    } else if (responseData['status'] === true) {
+
+      let responseData = await APIHandler("POST", { id: id }, "studies/v1/report-download");
+
+      if (responseData === false) {
+
+        NotificationMessage(
+          "warning",
+          "Network request failed"
+        );
+
+      } else if (responseData?.status) {
+
+        let report_download_url = responseData?.message;
+        let report_patient_name = "Patient-name";
+        let report_patient_id = "Patient-id" ; 
+
+        let updated_report_name = `${report_patient_id}-${report_patient_name}-report.pdf`;
+
+        downloadPDF(report_download_url, updated_report_name);
+
+      } else {
+
+        NotificationMessage(
+          "warning",
+          "Network request failed",
+          responseData?.message
+        )
+      }
+
+    } else {
+
+      NotificationMessage("warning", "Network request failed", responseData['message']);
+    }
+
+    setDownloadReportLoading(false) ; 
+  }
+
   return (
     <div>
 
@@ -117,7 +180,10 @@ const ViewReport = ({ id }) => {
           marginBottom: '10px', 
           marginTop: "-15px"
         }}
-      >
+      > 
+
+        {/* ========= Save Report as Draft and Update report options =========  */}
+        
         {otherPremissionStatus("Studies permission", "Update Report") && (
           <>
             <Button type="primary"
@@ -129,6 +195,15 @@ const ViewReport = ({ id }) => {
             </Button>
           </>
         )}
+
+        {/* ====== Download reoprt option button =====  */}
+        <Button
+          icon = {<DownloadOutlined/>}
+          loading = {downloadReportLoading}
+          onClick={() => {downloadReport()}}
+        >
+          Download Report
+        </Button>
 
         {otherPremissionStatus("Studies permission", "Update Report") && (
           <>
