@@ -4,6 +4,7 @@ import { getStudyData, updateStudyData } from '../../apis/studiesApi'
 import NotificationMessage from '../NotificationMessage'
 import dayjs from 'dayjs'
 import { descriptionOptions } from '../../helpers/utils'
+import { parseDateFormat } from '../../helpers/dateFormater'
 
 const EditStudy = ({
   isEditModalOpen,
@@ -30,7 +31,7 @@ const EditStudy = ({
             study_description: resData?.Study_description,
             dob:
               resData.DOB !== ''
-                ? resData.DOB && dayjs(resData.DOB, 'DD/MM/YYYY')
+                ? resData.DOB && dayjs(parseDateFormat(resData?.DOB))
                 : '',
             gender: resData?.Gender,
             referring_physician: resData?.Referring_physician_name
@@ -58,11 +59,11 @@ const EditStudy = ({
     if (studyID && isEditModalOpen) {
       retrieveStudyData()
     }
-  }, [studyID])
+  }, [studyID, isEditModalOpen])
 
 
   const handleSubmit = values => {
-
+    setIsLoading(true) ; 
     let  modifiedData = {
       ...values,
       id: studyID,
@@ -96,7 +97,8 @@ const EditStudy = ({
           'Edit study',
           err.response.data.message
         )
-      )
+    )
+    setIsLoading(false) ; 
   }
 
   const GenderSelectionOption = [
@@ -109,6 +111,7 @@ const EditStudy = ({
       title='Edit Study'
       open={isEditModalOpen}
       onOk={() => form.submit()}
+      loading = {isLoading}
       onCancel={() => {
         setStudyID(null)
         setIsEditModalOpen(false)

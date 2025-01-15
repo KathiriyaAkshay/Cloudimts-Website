@@ -17,6 +17,7 @@ import {
 import FileReport from './FileReport'
 import { BsEyeFill } from 'react-icons/bs'
 import {
+  DeleteFilled,
   DownloadOutlined,
   FileFilled,
   MailOutlined,
@@ -29,6 +30,9 @@ import APIHandler from '../../apis/apiHandler';
 import NotificationMessage from "../NotificationMessage";
 import { convertToDDMMYYYY } from "../../helpers/utils";
 import { TabletFilled } from "@ant-design/icons";
+import { BsTrashFill } from "react-icons/bs";
+
+const ADVANCED_REPORT_OPTION = 'Advanced report' ; 
 
 const StudyReports = ({
   isReportModalOpen,
@@ -248,13 +252,26 @@ const StudyReports = ({
     window.open(url, "_blank");
   }
 
-  // **** Weasis viewer handler **** // 
-  const WeasisViewerHandler = () => {
+  // **** Delete report option handler **** // 
+  const DeleteReportHandle = async (record) => {
+    setIsLoading(true) ; 
+    let responseData = await APIHandler('DELETE', {}, `studies/v1/delete-report?id=${record?.id}`);
+    setIsLoading(false) ; 
 
-    const originalString = '$dicom:rs --url "https://viewer.cloudimts.com/dicomweb" -r "patientID=20759"';
-    let encodedString = encodeURIComponent(originalString);
-    encodedString = "weasis://" + encodedString;
-    window.open(encodedString, "_blank");
+    if (responseData == false){
+      NotificationMessage("warning", "Network request failed") ; 
+    } else if (responseData?.status){
+      NotificationMessage("success", "Report deleted successfully") ; 
+
+      setTableData((prev) => {
+        return prev?.filter((item) => item?.id !== record?.id);
+      });
+    
+    
+    } else {
+      NotificationMessage("warning", responseData?.message) ; 
+    }
+
   }
 
   const columns = [
@@ -301,7 +318,7 @@ const StudyReports = ({
                 
                 await handleStudyStatus(); // Draft reated status update
                 
-                record.report_type === 'Advanced report' &&
+                record.report_type === ADVANCED_REPORT_OPTION &&
                   navigate(`/reports/${record.id}/view`)
                 if (record.report_type === 'Normal report') {
                   setIsViewReportModalOpen(true)
@@ -316,7 +333,7 @@ const StudyReports = ({
 
           {/* ==== Download report option =====  */}
 
-          {record.report_type === 'Advanced report' && (
+          {record.report_type === ADVANCED_REPORT_OPTION && (
 
             <Tooltip title={'Download'}>
               <DownloadOutlined
@@ -328,7 +345,7 @@ const StudyReports = ({
 
           {/* ===== Email share option ====== */}
 
-          {record.report_type === 'Advanced report' && (
+          {record.report_type === ADVANCED_REPORT_OPTION && (
             <Tooltip title={'Email'}>
               <MailOutlined
                 className='action-icon'
@@ -339,7 +356,7 @@ const StudyReports = ({
 
           {/* ==== Whatsapp share option ====  */}
 
-          {record.report_type === 'Advanced report' && (
+          {record.report_type === ADVANCED_REPORT_OPTION && (
             <Tooltip title={'Whatsapp'}>
               <WhatsAppOutlined className='action-icon'
                 onClick={() => isWhatsappShareModelOpen(true)}
@@ -347,6 +364,12 @@ const StudyReports = ({
             </Tooltip>
           )}
 
+          {checkPermissionStatus("Delete Report") && (
+            <Tooltip title = "Delete Report">
+              <BsTrashFill style={{ fontSize: "20px", color: "#f5473b", cursor: "pointer" }} 
+                onClick={() => {DeleteReportHandle(record)}}/>
+            </Tooltip>
+          )}
 
         </Space>
       )
@@ -376,37 +399,8 @@ const StudyReports = ({
           
           <div className='Assign-study-reports-option-input-layout'>
 
-            <div className='Report-modal-all-option-div'>
-
-              {/* ==== OHIF viewer option ====  */}
-
-              {/* <Button key='back' className='Report-modal-option-button'
-                onClick={OHIFViewerHandler}>
-                OHIF Viewer
-              </Button> */}
-
-              {/* ==== Weasis Viewer option =====  */}
-
-              {/* <Button key='back' className='Report-modal-option-button'
-                onClick={WeasisViewerHandler}>
-                Weasis viewer
-              </Button> */}
-
-              {/* {checkPermissionStatus('Report study') && (
-                <Button
-                  key='submit'
-                  type='primary'
-                  className='secondary-btn Report-modal-option-button'
-                  onClick={async () => {
-                    await studyStatusHandler()
-                    setIsFileReportModalOpen(true)
-                  }}
-                >
-                  Simplified Report
-                </Button>
-              )} */}
-
-              {checkPermissionStatus('Report study') && (
+            {checkPermissionStatus("Report study") && (
+              <div className='Report-modal-all-option-div'>
                 <Button
                   key='link'
                   type='primary'
@@ -421,9 +415,9 @@ const StudyReports = ({
                 >
                   Study Report
                 </Button>
-              )}
+                </div>
+            )}
 
-            </div>
 
             {/* Patient data information  */}
 

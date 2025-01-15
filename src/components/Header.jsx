@@ -616,7 +616,7 @@ const BasicLayout = ({ children }) => {
                     onClick={() => setIsAdvancedSearchModalOpen(true)}
                   >
                     <SearchOutlined style={{ fontWeight: '500' }} />
-                      Report and Search
+                      Search - Studies
                   </Button>
 
                   {/* ==== Filter option ====  */}

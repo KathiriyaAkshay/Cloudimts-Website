@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { fetchEmailList, getStudyData, sendEmail } from '../../apis/studiesApi'
 import {
   Button,
@@ -14,17 +14,19 @@ import {
   Tag,
   Typography
 } from 'antd'
-import { MdEmail, MdOutlineWhatsapp } from 'react-icons/md'
+import { MdEmail, MdOutlineDownload, MdOutlineWhatsapp } from 'react-icons/md'
 import NotificationMessage from '../NotificationMessage'
 import APIHandler from '../../apis/apiHandler'
 import { getMoreDetails } from '../../apis/studiesApi'
 import API from '../../apis/getApi'
+import { UserPermissionContext } from '../../hooks/userPermissionContext'
 const ShareStudy = ({
   isShareStudyModalOpen,
   setIsShareStudyModalOpen,
   studyID,
   setStudyID,
-  referenceId
+  referenceId, 
+  record
 }) => {
   const token = localStorage.getItem('token')
 
@@ -35,6 +37,15 @@ const ShareStudy = ({
   const [isNewEmailModalOpen, setIsNewEmailModalOpen] = useState(false)
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false)
   const [isWhatsappModalOpen, setIsWhatsappModalOpen] = useState(false)
+
+  // ***** Pemission data context ***** // 
+  const {permissionData} = useContext(UserPermissionContext) ; 
+  const otherPremissionStatus = (title, permission_name) => {
+    const permission = permissionData[title]?.find(
+      data => data.permission === permission_name
+    )?.permission_value
+    return permission
+  }
 
   const [emailOptions, setEmailOptions] = useState([])
   const [form] = Form.useForm()
@@ -102,7 +113,6 @@ const ShareStudy = ({
   }
 
   // **** Reterive email list option information **** // 
-
   const retrieveEmailOptions = () => {
     fetchEmailList()
       .then(res => {
@@ -140,16 +150,8 @@ const ShareStudy = ({
   //   }
   // }, [isEmailModalOpen])
 
-  useEffect(() => {
-    if (isNewEmailModalOpen) {
-      retrieveRoleOptions()
-    }
-  }, [isNewEmailModalOpen])
-
   // **** Email share option handler **** // 
   const handleSubmitEmail = async values => {
-    console.log("Run this function");
-    console.log(values);
   
     setIsEmailSending(true)
 
@@ -206,6 +208,14 @@ const ShareStudy = ({
     }
   }
 
+  // ********** Study download related option button ******* //
+
+  // ********** Study download related option button ******* //
+  const DownloadStudy = (study_id) => {
+    let download_study_url = `https://viewer.cloudimts.com/studies/${study_id}/archive`;
+    window.open(download_study_url);
+  };
+
   const modalHeader = (
     <div
       style={{
@@ -217,6 +227,8 @@ const ShareStudy = ({
     >
       <span>Share Study</span>
       <div>
+        
+        {/* Email share related option button  */}
         <Button style={{ background: 'transparent', border: '1px solid #fff' }}>
           <MdEmail
             className='action-icon'
@@ -225,6 +237,7 @@ const ShareStudy = ({
           />
         </Button>
 
+        {/* Whatsapp share related option button  */}
         <Button style={{ background: 'transparent', border: '1px solid #fff', marginLeft: "0.3rem" }}>
           <MdOutlineWhatsapp
             className='action-icon'
@@ -232,9 +245,22 @@ const ShareStudy = ({
             onClick={() => setIsWhatsappModalOpen(true)}
           />
         </Button>
+        
+        {/* Download option button  */}
+        {!record?.manual_upload && (
+          otherPremissionStatus("Studies permission", "Download Option") && (
+            <Button
+              style={{ background: 'transparent', border: '1px solid #fff', marginLeft: "0.3rem" }}
+              onClick={() => DownloadStudy(record?.study?.study_original_id)} // Handle file download on button click
+            >
+              <MdOutlineDownload
+                className='action-icon'
+                style={{ color: '#fff' }}
+              />
+            </Button>
+          )
+        )}
       </div>
-
-
     </div>
   )
   
