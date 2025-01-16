@@ -726,13 +726,14 @@ const Dicom = () => {
           'Patient id': element?.study?.patient_id,
           'Patient name': element?.study?.patient_name,
           Id: element?.id,
-          Modality: element?.modality,
+          Modality: studyCountInforamtion[element?.study?.study_original_id] !== undefined ? `${studyCountInforamtion[element?.study?.study_original_id]['modality']}` : element?.modality,
           'Study Description': element?.study_description,
           'Institution name': element?.institution?.name,
           Status: element?.status,
           'Urgent case': element?.urgent_case,
           'Study date': element?.created_at,
-          'Updated at': element?.updated_at
+          'Reported Doctor': element?.assign_user?.perform_user,
+          'Reported At': element?.assign_user?.time
         })
       })
 
@@ -886,7 +887,7 @@ const Dicom = () => {
       className: 'Study-count-column',
       render: (text, record) => (
         <span>
-          {studyCountInforamtion[record?.study?.study_original_id] !== undefined ? `${studyCountInforamtion[record?.study?.study_original_id]['modality']}` : "0/0"}
+          {studyCountInforamtion[record?.study?.study_original_id] !== undefined ? `${studyCountInforamtion[record?.study?.study_original_id]['modality']}` : ""}
         </span>
       ),
       onCell: (record) => ({
