@@ -1,41 +1,10 @@
 import { Modal, Row, Spin, Table, Tabs, Typography } from 'antd'
 import React, { useEffect, useState } from 'react'
-import { fetchSupport } from '../apis/studiesApi'
 const {Paragraph} = Typography ; 
 import { ToolOutlined } from '@ant-design/icons';
 
-const CustomerSupportModal = ({ show, setShow }) => {
-  const [tableData, setTableData] = useState([])
-  const [isLoading, setIsLoading] = useState(false)
 
-  useEffect(() => {
-    retrieveSupportData()
-  }, [])
-
-  const retrieveSupportData = async () => {
-    setIsLoading(true)
-    await fetchSupport()
-      .then(res => {
-        if (res.data.status) {
-          setTableData(res.data.data)
-        } else {
-          NotificationMessage(
-            'warning',
-            'Network request failed',
-            res.data.message
-          )
-        }
-      })
-      .catch(err =>
-        NotificationMessage(
-          'warning',
-          'Network request failed',
-          err.response.data.message
-        )
-      )
-    setIsLoading(false)
-  }
-
+const CustomerSupportModal = ({ show, setShow, supportData }) => {
   const columns = [
     {
       title: 'Description',
@@ -82,13 +51,13 @@ const CustomerSupportModal = ({ show, setShow }) => {
         }}
         footer={null}
       >
-        <Spin spinning={isLoading}>
+        <Spin spinning={false}>
           <Tabs>
             <Tabs.TabPane key={'1'} tab='Email Support'>
               <Row gutter={15}>
                 <Table
                   columns={columns}
-                  dataSource={tableData?.filter(data => data?.option === 1)}
+                  dataSource={supportData?.filter(data => data?.option === 1)}
                   pagination = {false}
                   style={{
                     width:"100%"
@@ -100,7 +69,7 @@ const CustomerSupportModal = ({ show, setShow }) => {
               <Row gutter={15}>
                 <Table
                   columns={PhoneColumns}
-                  dataSource={tableData?.filter(data => data?.option === 2)}
+                  dataSource={supportData?.filter(data => data?.option === 2)}
                   pagination = {false}
                   style={{
                     width:"100%"

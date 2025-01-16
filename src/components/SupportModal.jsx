@@ -101,7 +101,7 @@ const SupportModal = ({ retrieveSupportData, setSupportId, supportId }) => {
     <Modal
       centered
       width={'50%'}
-      title={'Add New Support'}
+      title={supportId?'Edit Support Details':'Add New Support'}
       open={isSupportModalOpen}
       onOk={() => form.submit()}
       onCancel={() => {

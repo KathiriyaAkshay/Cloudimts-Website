@@ -340,7 +340,6 @@ const HeaderButton = ({
         </div>
       )}
 
-
       {/* ==== Add template related page ====  */}
       {window.location.pathname === '/reports' && (
         <div className='iod-setting-div'>
@@ -355,7 +354,6 @@ const HeaderButton = ({
       )}
 
       {/* ==== Study report submit option page ====  */}
-
       {window.location.pathname === `/reports/${id}` && (
         <div className='iod-setting-div report-option-div'>
 
@@ -516,7 +514,6 @@ const HeaderButton = ({
       )}
 
       {/* ==== Billing related page =====  */}
-
       {window.location.pathname === '/billing' && (
         <div className='iod-setting-div'>
 
@@ -571,12 +568,10 @@ const HeaderButton = ({
       )}
 
       {/* ===== Support option page ====  */}
-
       {window.location.pathname === '/support' && (
-
         <>
           <div className='iod-setting-div'>
-            <Button
+            {/* <Button
               type='primary'
               onClick={() => { setEmailSupportOption(true); setPhoneSupportOption(false); }}
               className='btn-icon-div header-secondary-option-button'
@@ -590,7 +585,7 @@ const HeaderButton = ({
               className='btn-icon-div header-secondary-option-button'
             >
               Phonesupport details
-            </Button>
+            </Button> */}
 
             <Button
               type='primary'

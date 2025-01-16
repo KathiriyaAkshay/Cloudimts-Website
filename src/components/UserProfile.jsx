@@ -3,35 +3,38 @@ import {
   MailOutlined,
   UserOutlined,
   SyncOutlined,
-  DownloadOutlined, 
-  UploadOutlined
+  DownloadOutlined,
+  UploadOutlined,
+  ContactsOutlined
 } from "@ant-design/icons";
+import { BiSupport } from "react-icons/bi";
 import {
   Avatar,
   Button,
   Drawer,
+  Flex,
   Row,
   Space,
   Spin,
   Tooltip,
-  Upload, 
+  Upload,
   message
 } from "antd";
-import { useContext, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { UserDetailsContext } from "../hooks/userDetailsContext";
 import CustomerSupportModal from "./CustomerSupportModal";
-import { BiSupport } from "react-icons/bi";
 import APIHandler from "../apis/apiHandler";
 import NotificationMessage from "./NotificationMessage";
 import UserImage from '../assets/images/ProfileImg.png';
 import { uploadImage } from "../apis/studiesApi";
+import { fetchSupport } from "../apis/studiesApi";
 
 const UserProfile = () => {
-  const [showDrawer, setShowDrawer] = useState(false);
-  const [userData, setUserData] = useState({});
-  const { userDetails, changeUserDetails } = useContext(UserDetailsContext);
   const navigate = useNavigate();
+
+  const [showDrawer, setShowDrawer] = useState(false);
+  const { changeUserDetails } = useContext(UserDetailsContext);
   const [show, setShow] = useState(false);
   const [profileSpinner, setProfileSpinner] = useState(false);
   const [profileInformation, setProfileInformation] = useState({});
@@ -48,39 +51,39 @@ const UserProfile = () => {
 
     const formData = {
       image: fileList[0]
-    } ; 
+    };
 
     try {
-      
-      let response = await uploadImage(formData) ; 
-      let user_profile_image = response?.data?.image_url ; 
-       
-      let requestPayload = {"profile_image": user_profile_image} ; 
-      let responseData = await APIHandler("POST", requestPayload, "user/v1/update-user-profile") ; 
-  
-      if (responseData === false){
-  
-        message.error("Network request failed") ; 
-      
-      } else if (responseData?.status === true){
-  
-        message.success("Update profile image successfully") ; 
-        setFileList([]) ; 
-        setProfileInformation({...profileInformation, user_profile_image: user_profile_image}) ; 
-        
+
+      let response = await uploadImage(formData);
+      let user_profile_image = response?.data?.image_url;
+
+      let requestPayload = { "profile_image": user_profile_image };
+      let responseData = await APIHandler("POST", requestPayload, "user/v1/update-user-profile");
+
+      if (responseData === false) {
+
+        message.error("Network request failed");
+
+      } else if (responseData?.status === true) {
+
+        message.success("Update profile image successfully");
+        setFileList([]);
+        setProfileInformation({ ...profileInformation, user_profile_image: user_profile_image });
+
       } else {
-  
-        message.warning(responseData?.message) ; 
-   
+
+        message.warning(responseData?.message);
+
       }
     } catch (error) {
-      
+
     }
 
   };
 
   const props = {
-    multiple: false, 
+    multiple: false,
     onRemove: (file) => {
       const index = fileList.indexOf(file);
       const newFileList = fileList.slice();
@@ -89,8 +92,8 @@ const UserProfile = () => {
     },
 
     beforeUpload: (file) => {
-      if (fileList?.length >= 1){
-        message.warning("You can only select one profile image at a time") ; 
+      if (fileList?.length >= 1) {
+        message.warning("You can only select one profile image at a time");
       } else {
         setFileList([...fileList, file]);
       }
@@ -167,6 +170,42 @@ const UserProfile = () => {
     }
   }
 
+  // Reterive support details related option 
+  const [supportData, setSupportData] = useState([]);
+  const [showInTopSupportData, setShowInTopSupportData] = useState([]);
+
+  const retrieveSupportData = async () => {
+    await fetchSupport()
+      .then(res => {
+        if (res.data.status) {
+          setSupportData(res.data.data)
+        } else {
+          NotificationMessage(
+            'warning',
+            'Network request failed',
+            res.data.message
+          )
+        }
+      })
+      .catch(err =>
+        NotificationMessage(
+          'warning',
+          'Network request failed',
+          err.response.data.message
+        )
+      )
+  }
+
+  useEffect(() => {
+    if (supportData?.length > 0) {
+      let temp = supportData?.filter((item) => item?.show_in_top == true);
+      setShowInTopSupportData(temp);
+    }
+  }, [supportData])
+
+  useEffect(() => { retrieveSupportData() }, [])
+
+
   return (
     <>
       <Row justify={"end"} align={"middle"} style={{ marginLeft: "auto" }}>
@@ -175,8 +214,23 @@ const UserProfile = () => {
 
         <Space size={15}>
 
-          {/* ==== Support option icon ====  */}
+          <Flex className="support-details-main-div">
+            {showInTopSupportData?.map((element) => {
+              return (
+                <Flex style={{ marginTop: "auto", marginBottom: "auto" }}>
+                  <BiSupport
+                    className="support-information-icon" />
+                  <div className="support-contact">
+                    <Tooltip title={element?.option_description}>
+                      {element?.option_value}
+                    </Tooltip>
+                  </div>
+                </Flex>
+              )
+            })}
+          </Flex>
 
+          {/* ==== Support option icon ====  */}
           <Button
             onClick={() => setShow(true)}
             type="primary"
@@ -196,7 +250,7 @@ const UserProfile = () => {
                 <DownloadOutlined />
               </Button>
             </Tooltip>
-          ) }
+          )}
 
 
           {/* ==== User option icon ====  */}
@@ -214,8 +268,11 @@ const UserProfile = () => {
 
         </Space>
 
-
-        <CustomerSupportModal show={show} setShow={setShow} />
+        <CustomerSupportModal
+          show={show}
+          setShow={setShow}
+          supportData={supportData}
+        />
 
       </Row>
 
@@ -231,7 +288,7 @@ const UserProfile = () => {
 
           {/* User image  */}
           <div style={{ width: "100%", textAlign: "center" }}>
-            <img src={profileInformation?.user_profile_image === null?UserImage:profileInformation?.user_profile_image} alt="user_profile" width="100px" height="100px" />
+            <img src={profileInformation?.user_profile_image === null ? UserImage : profileInformation?.user_profile_image} alt="user_profile" width="100px" height="100px" />
           </div>
 
           {/* Username information  */}
@@ -240,7 +297,7 @@ const UserProfile = () => {
           </div>
 
           {/* Update profile image option input  */}
-          <div style={{textAlign: "center", marginTop: "16px"}}>
+          <div style={{ textAlign: "center", marginTop: "16px" }}>
 
             <Upload {...props}>
               <Button icon={<UploadOutlined />}>Update Profile image</Button>
