@@ -449,7 +449,7 @@ const BasicLayout = ({ children }) => {
 
   useEffect(() => {
     if (window.location.pathname === '/studies') {
-      fetchSystemFilter()
+      // fetchSystemFilter()
     }
   }, [window.location.pathname])
 
@@ -618,30 +618,6 @@ const BasicLayout = ({ children }) => {
                     <SearchOutlined style={{ fontWeight: '500' }} />
                       Search - Studies
                   </Button>
-
-                  {/* ==== Filter option ====  */}
-
-                  {/* <div style={{ position: 'relative' }}>
-                    <Popover
-                      content={content}
-                      title={null}
-                      trigger='click'
-                      style={{ minWidth: '300px' }}
-                      className='filter-popover'
-                    >
-                      <Button
-                        type='primary'
-                        className={`btn-icon-div ${(Object.keys(systemFilterPayload)?.length !== 0 ||
-                          Object.keys(studyDataPayload)?.length !== 0) &&
-                          'filter-selected'
-                          }`}
-                        onClick={() => setIsFilterCollapseOpen(prev => !prev)}
-                      >
-                        <FilterOutlined style={{ fontWeight: '500' }} /> Filters
-                      </Button>
-                    </Popover>
-                  </div> */}
-
 
                 </div>
 
