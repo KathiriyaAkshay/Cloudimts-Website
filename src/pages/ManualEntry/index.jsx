@@ -190,8 +190,6 @@ const ManualEntry = () => {
     const [imageFile, setImageFile] = useState([]) ; 
 
     const AddSeriesOptionHandler = async (values) => {
-        console.log(value);
-        
         if (editId == null){
             if (value?.length == 0 ){
                 NotificationMessage("warning", "Please, Select at least one image") ; 
@@ -310,11 +308,18 @@ const ManualEntry = () => {
                 NotificationMessage("success", "Upload Series successfully") ;
             });
             
-            // navigation("/studies") ; 
+            navigation("/studies") ; 
 
         }
 
     }
+
+    function generateAccessionNumber() {
+        const letter = String.fromCharCode(65 + Math.floor(Math.random() * 26)); // Generates a random uppercase letter (A-Z)
+        const numbers = Math.floor(1000 + Math.random() * 9000); // Generates a 4-digit random number (1000-9999)
+        return `${letter}${numbers}`;
+    }
+      
 
     return (
         <div className='manual-entry-wrapper'>
@@ -324,7 +329,7 @@ const ManualEntry = () => {
                     <div className='w-100 text-center header'>
                         <span style={{
                             fontWeight: 600
-                        }}>Manual Entry</span>
+                        }}>Manual Upload</span>
                     </div>
                     <Form
                         form={form}
@@ -343,6 +348,9 @@ const ManualEntry = () => {
                         autoComplete="off"
                         className='manul-entry-form'
                         requiredMark = {true}
+                        initialValues={{
+                            "accession_number": generateAccessionNumber()
+                        }}
                         
                     >
                         <Row className='w-100'>
@@ -440,7 +448,7 @@ const ManualEntry = () => {
                                         },
                                     ]}
                                 >
-                                    <Input placeholder='B199' />
+                                    <Input placeholder='B199'  />
                                 </Form.Item>
 
 
