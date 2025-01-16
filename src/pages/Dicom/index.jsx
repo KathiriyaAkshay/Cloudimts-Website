@@ -208,8 +208,6 @@ const Dicom = () => {
 
                 // Store chat data for all notification related information ---- Start 
                 let chatnotificationData = localStorage.getItem("chat-data");
-                console.log(ChatData.sender_username);
-
                 if (chatnotificationData === null) {
                   localStorage.setItem("chat-data", JSON.stringify([]));
                 }
@@ -885,11 +883,13 @@ const Dicom = () => {
       dataIndex: 'modality',
       width: "7%",
       className: 'Study-count-column',
-      render: (text, record) => (
-        <span>
-          {studyCountInforamtion[record?.study?.study_original_id] !== undefined ? `${studyCountInforamtion[record?.study?.study_original_id]['modality']}` : ""}
-        </span>
-      ),
+      render: (text, record) => {
+        return(
+          <span>
+            {studyCountInforamtion[record?.study?.study_original_id]['modality'] !== undefined ? `${studyCountInforamtion[record?.study?.study_original_id]['modality']}` : record?.modality}
+          </span>
+        )
+      },
       onCell: (record) => ({
         onClick: () => handleCellClick(record)
       })
