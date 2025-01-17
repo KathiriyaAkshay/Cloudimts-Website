@@ -884,11 +884,19 @@ const Dicom = () => {
       width: "7%",
       className: 'Study-count-column',
       render: (text, record) => {
-        return(
-          <span>
-            {studyCountInforamtion[record?.study?.study_original_id]['modality'] !== undefined ? `${studyCountInforamtion[record?.study?.study_original_id]['modality']}` : record?.modality}
-          </span>
-        )
+        if (studyCountInforamtion[record?.study?.study_original_id] !== undefined && studyCountInforamtion[record?.study?.study_original_id]['modality'] !== undefined){
+          return(
+            <span>
+                {studyCountInforamtion[record?.study?.study_original_id]['modality']}
+            </span>
+          )
+        } else {
+          return(
+            <span>
+              {record?.modality}
+            </span>
+          )
+        }
       },
       onCell: (record) => ({
         onClick: () => handleCellClick(record)
