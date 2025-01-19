@@ -1944,7 +1944,6 @@ const Dicom = () => {
       {/* ==== Quick assign study option ====  */}
 
       {isQuickAssignStudyModalOpen && (
-
         <AssignStudyModified
           isAssignModifiedModalOpen={isQuickAssignStudyModalOpen}
           setIsAssignModifiedModalOpen={setIsQuickAssignStudyModalOpen}

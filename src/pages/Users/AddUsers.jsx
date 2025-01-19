@@ -17,7 +17,8 @@ import {
   message,
   Image,
   Popconfirm,
-  Table
+  Table, 
+  Flex
 } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
 import { useBreadcrumbs } from "../../hooks/useBreadcrumbs";
@@ -26,12 +27,11 @@ import API from "../../apis/getApi";
 import NotificationMessage from "../../components/NotificationMessage";
 import dayjs from "dayjs";
 import { cities, generateRandomEmail } from '../../helpers/utils';
-import { states } from '../../helpers/utils';
 import UploadImage from "../../components/UploadImage";
 import { uploadImage } from "../../apis/studiesApi";
-import { LoadingOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
+import { CrownOutlined, LoadingOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
 import ImgCrop from 'antd-img-crop';
-
+import { SUPERADMIN_ROLE_ID } from '../../constant/role.id';
 
 const { Step } = Steps;
 
@@ -637,7 +637,6 @@ const AddUsers = () => {
     setCheckAll(checked);
     let temp = {} ; 
     tableData?.map((element) => {
-      console.log(element);
       temp[`${element?.id}_isAllowed`] = checked ; 
     })
     form.setFieldsValue(temp) ; 
@@ -1187,15 +1186,30 @@ const AddUsers = () => {
               onFinish={handleSubmit}
             >
               <Row>
-                <Col xs={24} sm={24} md={24} lg={24}>
-                  <Table
-                    columns={institutionColumn}
-                    dataSource={institutionOptions}
-                    className="Institution-logs-table"
-                    pagination = {false}
-                    style={{marginTop: 10}}
-                  />
-                </Col>
+                {form.getFieldValue("role_id") == SUPERADMIN_ROLE_ID && (
+                  <div style={{marginTop: 20}}>
+                    <div style={{width: "100%", marginLeft: "auto"}}>
+                      <CrownOutlined
+                        style={{fontSize: 40, marginLeft: "auto"}}
+                      />
+                    </div>
+                    <div style={{marginTop: 8, fontWeight: 600}}>
+                      A Superadmin user has permission to view all studies across all institutions.
+                    </div>
+                  </div>
+                )}
+
+                {form.getFieldValue("role_id") != SUPERADMIN_ROLE_ID && (
+                  <Col xs={24} sm={24} md={24} lg={24}>
+                    <Table
+                      columns={institutionColumn}
+                      dataSource={institutionOptions}
+                      className="Institution-logs-table"
+                      pagination = {false}
+                      style={{marginTop: 10}}
+                    />
+                  </Col>
+                )}
                 <Col xs={24} sm={24} md={24} lg={24} className='justify-end mt'>
                   <Button type='primary' onClick={handlePrevStep}
                     className='update-button-option'>

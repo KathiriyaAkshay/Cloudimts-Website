@@ -703,7 +703,6 @@ const AssignStudy = ({
 
 
         </div>
-
       </Spin>
     </Modal>
   );

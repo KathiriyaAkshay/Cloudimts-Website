@@ -361,6 +361,17 @@ const HeaderButton = ({
                 <Tooltip>
                   <Button
                     icon = {<PictureOutlined/>}
+                    onClick={() =>
+                      {setSelectedItem(prev => ({
+                        isPatientSelected: false,
+                        isInstitutionSelected: false,
+                        isImagesSelected: false,
+                        isOhifViewerSelected: false,
+                        templateId: false,
+                        isStudyDescriptionSelected: false, 
+                        isManualImageOpen: !prev?.isManualImageOpen
+                      })) ; }
+                    }
                   />
                 </Tooltip>
               </>:<>
@@ -419,7 +430,9 @@ const HeaderButton = ({
                 
               {/* Upload doc file related option button  */}
               <Upload {...props}>
-                <Button icon={<UploadOutlined />}>Insert Doc File</Button>
+                <Button 
+                  icon={<UploadOutlined />}
+                >Insert Doc File</Button>
               </Upload>
 
               <Button 

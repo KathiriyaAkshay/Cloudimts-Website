@@ -10,6 +10,7 @@ const ReportDataProvider = ({ children }) => {
     isOhifViewerSelected:false,
     templateId: null,
     isStudyDescriptionSelected: false,
+    isManualImageOpen: false
   });
 
   const [docFiledata,setDocFileData]=useState("");

@@ -419,11 +419,11 @@ const BasicLayout = ({ children }) => {
   // **** Quick assign study option handler for Study page **** // 
 
   const QuickAssignStudyModalHandler = () => {
-    if (studyIdArray.length === 0) {
-      NotificationMessage("warning", "Please, Select study for assign");
-    } else {
-      setIsQuickAssignStudyModalOpen(true);
-    }
+    setIsQuickAssignStudyModalOpen(true);
+    // if (studyIdArray.length === 0) {
+    //   NotificationMessage("warning", "Please, Select study for assign");
+    // } else {
+    // }
   }
 
   // ==== Study page filter dropdown ===== //   
