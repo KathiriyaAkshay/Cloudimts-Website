@@ -730,8 +730,8 @@ const Dicom = () => {
           Status: element?.status,
           'Urgent case': element?.urgent_case,
           'Study date': element?.created_at,
-          'Reported Doctor': element?.assign_user?.perform_user,
-          'Reported At': element?.assign_user?.time
+          'Reported At': element?.assign_user?.time,
+          'Reported Doctor': element?.assign_user?.perform_user
         })
       })
 
@@ -1545,11 +1545,6 @@ const Dicom = () => {
     };
   }, [chatNotificationData, studyData]);
 
-  // ********** Study download related option button ******* //
-  const DownloadStudy = (study_id) => {
-    let download_study_url = `https://viewer.cloudimts.com/studies/${study_id}/archive`;
-    window.open(download_study_url);
-  };
 
   return (
     <>
@@ -1955,6 +1950,7 @@ const Dicom = () => {
           setIsAssignModifiedModalOpen={setIsQuickAssignStudyModalOpen}
           studyID={studyID}
           setStudyID={setStudyID}
+          setSelectedRowKeys = {setSelectedRowKeys}
         />
 
       )}

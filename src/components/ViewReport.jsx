@@ -1,5 +1,5 @@
 import { CKEditor } from '@ckeditor/ckeditor5-react'
-import { Button, Card, Popconfirm } from 'antd'
+import { Button, Card, Popconfirm, Tooltip } from 'antd'
 import React, { useContext, useEffect, useState } from 'react'
 import { downloadAdvancedFileReport } from '../apis/studiesApi'
 import NotificationMessage from './NotificationMessage'
@@ -9,7 +9,8 @@ import { Spin } from 'antd';
 import { UserPermissionContext } from '../hooks/userPermissionContext' ; 
 import { EmailHeaderContent } from '../helpers/utils'
 import { ReportDesclamierContent } from '../helpers/utils'
-import { DownloadOutlined } from '@ant-design/icons'
+import { DownloadOutlined, FilePdfOutlined, FileWordOutlined } from '@ant-design/icons'; 
+import { viewReported } from '../apis/studiesApi'
 
 const ViewReport = ({ id }) => {
   const [editorData, setEditorData] = useState('')
@@ -42,7 +43,7 @@ const ViewReport = ({ id }) => {
           )
         }
       })
-      .catch(err => NotificationMessage('warning', err.response.data.message))
+      .catch((err )=> {})
   }
 
   // ******* Update report related option handler *********** // 
@@ -108,7 +109,6 @@ const ViewReport = ({ id }) => {
   }
 
   // ************ Download report related option button handler ********** // 
-
   function downloadPDF(pdfUrl, pdfName) {
     var pdfUrl = pdfUrl;
 
@@ -122,7 +122,7 @@ const ViewReport = ({ id }) => {
     document.body.removeChild(link);
   }
 
-  const downloadReport = async () => {
+  const downloadReport = async (option) => {
     let requestPayload = { id: localStorage.getItem("studyId") };
     setDownloadReportLoading(true); 
 
@@ -145,12 +145,24 @@ const ViewReport = ({ id }) => {
       } else if (responseData?.status) {
 
         let report_download_url = responseData?.message;
-        let report_patient_name = "Patient-name";
-        let report_patient_id = "Patient-id" ; 
 
-        let updated_report_name = `${report_patient_id}-${report_patient_name}-report.pdf`;
+        function removeFileExtension(url) {
+          const lastDotIndex = url.lastIndexOf('.');
+          return lastDotIndex !== -1 ? url.substring(0, lastDotIndex) : url;
+        }
+        
+        if (option == "pdf"){
+          let report_url = removeFileExtension(report_download_url) + ".pdf" ; 
+          let report_patient_name = patientName.replace(/ /g, "-");
+          let updated_report_name = `${patientId}-${report_patient_name}-report.pdf`;
+          downloadPDF(report_url, updated_report_name);
+        } else {
+          let report_url = removeFileExtension(report_download_url) + ".docx" ; 
+          let report_patient_name = patientName.replace(/ /g, "-");
+          let updated_report_name = `${patientId}-${report_patient_name}-report.docx`;
+          downloadPDF(report_url, updated_report_name);
+        }
 
-        downloadPDF(report_download_url, updated_report_name);
 
       } else {
 
@@ -167,6 +179,29 @@ const ViewReport = ({ id }) => {
     }
 
     setDownloadReportLoading(false) ; 
+  }
+
+  // **** Draft related status handler ***** // 
+  const handleStudyStatus = async () => {
+    let studyId = localStorage.getItem('studyId') ; 
+    await viewReported({ id: studyId })
+      .then(res => {
+        if (res.data.status) {
+        } else {
+          NotificationMessage(
+            'warning',
+            'Network request failed',
+            res.data.message
+          )
+        }
+      })
+      .catch(err =>
+        NotificationMessage(
+          'warning',
+          'Network request failed',
+          err.response.data.message
+        )
+      )
   }
 
   return (
@@ -186,24 +221,43 @@ const ViewReport = ({ id }) => {
         
         {otherPremissionStatus("Studies permission", "Update Report") && (
           <>
+            
             <Button type="primary"
               onClick={() => UpdateReportHandler()}>
                 Update report
             </Button>
-            <Button  onClick={() => {saveDraftReportOptionHandler()}}>
+
+            <Button  
+              onClick={async () => {
+                await handleStudyStatus() ;
+                await saveDraftReportOptionHandler()
+              }}>
               Save as Draft
             </Button>
+
           </>
         )}
 
         {/* ====== Download reoprt option button =====  */}
-        <Button
-          icon = {<DownloadOutlined/>}
-          loading = {downloadReportLoading}
-          onClick={() => {downloadReport()}}
-        >
-          Download Report
-        </Button>
+        <Tooltip title = {"PDF Download"}>
+          <FilePdfOutlined
+            className='action-icon'
+            style={{fontSize: 20}}
+            onClick={() => {
+              downloadReport("pdf") ; 
+            }}
+          />
+        </Tooltip>
+
+        <Tooltip title = {"Word Download"}>
+          <FileWordOutlined
+            classID='action-icon'
+            style={{fontSize: 20}}
+            onClick={() => {
+              downloadReport("word")
+            }}
+          />
+        </Tooltip>
 
         {otherPremissionStatus("Studies permission", "Update Report") && (
           <>
@@ -234,6 +288,7 @@ const ViewReport = ({ id }) => {
               const data = editor.getData()
               setEditorData(data)
             }}
+            disabled = {!otherPremissionStatus("Studies permission", "Update Report")}
           />
         </Card>
 

@@ -20,6 +20,8 @@ import {
   DeleteFilled,
   DownloadOutlined,
   FileFilled,
+  FilePdfOutlined,
+  FileWordOutlined,
   MailOutlined,
   WhatsAppOutlined
 } from '@ant-design/icons'
@@ -174,7 +176,7 @@ const StudyReports = ({
   }
 
   // **** Update study status to ClosedStudy handler **** // 
-  const downloadReport = async (reportId) => {
+  const downloadReport = async (reportId, option) => {
 
     let requestPayload = { id: studyID };
 
@@ -197,11 +199,24 @@ const StudyReports = ({
       } else if (responseData?.status) {
 
         let report_download_url = responseData?.message;
-        let report_patient_name = patientName.replace(/ /g, "-");
 
-        let updated_report_name = `${patientId}-${report_patient_name}-report.pdf`;
+        function removeFileExtension(url) {
+          const lastDotIndex = url.lastIndexOf('.');
+          return lastDotIndex !== -1 ? url.substring(0, lastDotIndex) : url;
+        }
+        
+        if (option == "pdf"){
+          let report_url = removeFileExtension(report_download_url) + ".pdf" ; 
+          let report_patient_name = patientName.replace(/ /g, "-");
+          let updated_report_name = `${patientId}-${report_patient_name}-report.pdf`;
+          downloadPDF(report_url, updated_report_name);
+        } else {
+          let report_url = removeFileExtension(report_download_url) + ".docx" ; 
+          let report_patient_name = patientName.replace(/ /g, "-");
+          let updated_report_name = `${patientId}-${report_patient_name}-report.docx`;
+          downloadPDF(report_url, updated_report_name);
+        }
 
-        downloadPDF(report_download_url, updated_report_name);
 
       } else {
 
@@ -216,28 +231,6 @@ const StudyReports = ({
 
       NotificationMessage("warning", "Network request failed", responseData['message']);
     }
-  }
-
-  // **** Update study status to ViewReport **** // 
-  const handleStudyStatus = async () => {
-    await viewReported({ id: studyID })
-      .then(res => {
-        if (res.data.status) {
-        } else {
-          NotificationMessage(
-            'warning',
-            'Network request failed',
-            res.data.message
-          )
-        }
-      })
-      .catch(err =>
-        NotificationMessage(
-          'warning',
-          'Network request failed',
-          err.response.data.message
-        )
-      )
   }
 
   // **** Email share option handler *** // 
@@ -316,7 +309,7 @@ const StudyReports = ({
               className='action-icon'
               onClick={async () => {
                 
-                await handleStudyStatus(); // Draft reated status update
+                // await handleStudyStatus(); // Draft reated status update
                 
                 record.report_type === ADVANCED_REPORT_OPTION &&
                   navigate(`/reports/${record.id}/view`)
@@ -334,13 +327,22 @@ const StudyReports = ({
           {/* ==== Download report option =====  */}
 
           {record.report_type === ADVANCED_REPORT_OPTION && (
+            <>
+              <Tooltip title={'PDF Download'}>
+                <FilePdfOutlined
+                  className='action-icon'
+                  onClick={() => downloadReport(record.id, "pdf")}
+                />
+              </Tooltip>
 
-            <Tooltip title={'Download'}>
-              <DownloadOutlined
-                className='action-icon'
-                onClick={() => downloadReport(record.id)}
-              />
-            </Tooltip>
+              <Tooltip title={'Word Download'}>
+                <FileWordOutlined
+                  className='action-icon'
+                  onClick={() => downloadReport(record.id, "word")}
+                />
+              </Tooltip>
+            
+            </>
           )}
 
           {/* ===== Email share option ====== */}
@@ -410,7 +412,7 @@ const StudyReports = ({
                     await studyStatusHandler()
                     pageNumberHandler()
                     setIsReportModalOpen(false)
-                    window.open(`/reports/${studyID}`, '_blank');
+                    navigate(`/reports/${studyID}`);
                   }}
                 >
                   Study Report

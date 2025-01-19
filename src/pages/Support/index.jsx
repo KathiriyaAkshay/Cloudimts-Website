@@ -156,7 +156,13 @@ const index = () => {
     {
       title: 'Email/Phone',
       dataIndex: 'option_value',
-      render: (text, record) => (record?.option === 1 ? text : '-')
+      render: (text, record) => {
+        return(
+          <div>
+            {text}
+          </div>
+        )
+      }
     },
     {
       title: 'Description',

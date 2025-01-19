@@ -22,23 +22,25 @@ import { Splitter } from 'antd'
 import { BsEyeFill } from 'react-icons/bs'
 
 const Editor = ({ id }) => {
-  const navigate = useNavigate() ; 
+  const navigate = useNavigate();
   const user_id = localStorage.getItem('userID')
   const [editorData, setEditorData] = useState('')
   const [cardDetails, setCardDetails] = useState({})
   const [isLoading, setIsLoading] = useState(false)
   const { selectedItem, setSelectedItem, docFiledata } = useContext(ReportDataContext)
-  const { setTemplateOption, patientInforamtionDrawer, setPatientInformationDrawer } = useContext(filterDataContext)
+  const { setTemplateOption, 
+    patientInforamtionDrawer, 
+    setPatientInformationDrawer, 
+    setIsManualStudy
+  } = useContext(filterDataContext)
   const [studyImageID, setStudyImageID] = useState(0)
   const [signatureImage, setSignatureImage] = useState(null)
   const [username, setUsername] = useState('')
 
   const [institutionReport, setInstitutionReport] = useState({});
-  const [referenceImageCount, setReferenceImageCount] = useState(1);
   const [seriesId, setSeriesId] = useState(null);
   const [isReportPreviewOpen, setIsReportPreviewOpen] = useState(false);
   const [convertTableInformation, setConvertTableInformation] = useState(undefined);
-  const [studyDescriptionReload, setStudyDescriptionReload] = useState(0);
 
   const [form] = Form.useForm();
   const [reportStudyDescription, setReportStudyDescription] = useState(null);
@@ -48,6 +50,7 @@ const Editor = ({ id }) => {
 
   const [partientInfoDrawerOption, setPatientInfoDrawerOption] = useState("info");
 
+  // ********* Download pdf handler ************* // 
   function downloadPDF(pdfUrl, pdfName) {
     var pdfUrl = pdfUrl;
 
@@ -126,16 +129,16 @@ const Editor = ({ id }) => {
   // **** StudyUID information **** // 
   const studyUIDInformation = `https://viewer.cloudimts.com/ohif/viewer?url=../studies/` + localStorage.getItem("studyUIDValue") + "/ohif-dicom-json";
 
-  useEffect(() => {
-    setSelectedItem(prev => ({
-      isPatientSelected: true,
-      isInstitutionSelected: false,
-      isImagesSelected: false,
-      isOhifViewerSelected: false,
-      templateId: null,
-      isStudyDescriptionSelected: false
-    }))
-  }, [])
+  // useEffect(() => {
+  //   setSelectedItem(prev => ({
+  //     isPatientSelected: true,
+  //     isInstitutionSelected: false,
+  //     isImagesSelected: false,
+  //     isOhifViewerSelected: false,
+  //     templateId: null,
+  //     isStudyDescriptionSelected: false
+  //   }))
+  // }, [])
 
   // **** Reterive user signature related information **** // 
   const retrieveUserSignature = async () => {
@@ -159,7 +162,7 @@ const Editor = ({ id }) => {
     setIsLoading(false)
   }
 
-  // **** Reterive patient details related information **** // 
+  // ******** Fetch particular study related information handler ********** // 
   const [institutionId, setInstitutionId] = useState(undefined);
   const [genderId, setGenderId] = useState(undefined);
   const [patientInformation, setPatientInformation] = useState(undefined);
@@ -218,8 +221,9 @@ const Editor = ({ id }) => {
         delete tempData?.patient_details['Patient name'];
 
         setInstitutionReport({ ...reportResponseData['data'] })
-        setConvertTableInformation({ "patient_details": { ...{ "Patient id": tempPatientId, "Patient name": tempPatientName }, ...tempData?.patient_details }, "institution_details": { ...tempData?.institution_details } })
-        convertedPatientTableInitially({ "patient_details": { ...{ "Patient id": tempPatientId, "Patient name": tempPatientName }, ...tempData?.patient_details }, "institution_details": { ...tempData?.institution_details } })
+        setConvertTableInformation({ "patient_details": { ...tempData?.patient_details }, "institution_details": { ...tempData?.institution_details } })
+        // convertedPatientTableInitially({ "patient_details": { ...{ "Patient id": tempPatientId, "Patient name": tempPatientName }, ...tempData?.patient_details }, "institution_details": { ...tempData?.institution_details } })
+        convertedPatientTableInitially({ "patient_details": { ...tempData?.patient_details }, "institution_details": { ...tempData?.institution_details } })
       }
     }
   }
@@ -349,7 +353,6 @@ const Editor = ({ id }) => {
         : `${prev}${data}`
     )
 
-    selectedItem.isImagesSelected && setReferenceImageCount(prev => prev + 1)
 
   }
 
@@ -357,39 +360,50 @@ const Editor = ({ id }) => {
 
   const convertedPatientTableInitially = (institutionReport) => {
     institutionReport.patient_details = Object.assign(institutionReport.patient_details);
-    const keys = Object.keys(institutionReport?.institution_details);
-    var temp = ``;
     const data = `<div>
       <table style="width: 100%; border-collapse: collapse;">
         <tbody>
-          ${institutionReport.hasOwnProperty('patient_details') && selectedItem.isPatientSelected ?
-        Object.entries(institutionReport?.patient_details)
-          .map(([key, value], index) => {
-            // Check for null value and replace with "-"
-            const displayValue = value === null ? '-' : value;
 
-            temp = `
-                <tr>
-                  <td style="text-align: left; padding: 8px;font-weight:600">${key}</td>
-                  <td style="padding: 8px;">${displayValue}</td>`;
+          ${(() => {
+            const patientLeftData = Object.entries(institutionReport?.patient_details).filter(([_, detail]) => detail.position === 'left');
+            const patientRightData = Object.entries(institutionReport?.patient_details).filter(([_, detail]) => detail.position === 'right');
+            const institutionLeftData = Object.entries(institutionReport?.institution_details).filter(([_, detail]) => detail.position === 'left') ; 
+            const institutionRightData = Object.entries(institutionReport?.institution_details).filter(([_, detail]) => detail.position === 'right') ; 
 
-            if (index < keys.length) {
-              const institutionKey = keys[index];
-              const institutionValue = institutionReport.institution_details[institutionKey];
-              const displayInstitutionValue = institutionValue === null ? '-' : institutionValue;
+            const leftData = [...patientLeftData, ...institutionLeftData] ;
+            const rightData = [...patientRightData, ...institutionRightData] ; 
 
-              temp += `
-                    <td style="text-align: left; padding: 8px;font-weight:600">${institutionKey}</td>
-                    <td style="padding: 8px;">${displayInstitutionValue}</td></tr>`;
-            } else {
-              temp += `</tr>`;
-            }
+            const maxLength = Math.max(leftData?.length, rightData?.length);
+            const dataArray = Array.from({ length: maxLength }).fill(0);
+            
+            let tableContent = dataArray?.map((element, index) => {
+              let newRow = '<tr>';
 
-            return temp;
+              // Combined left columns
+              let leftColumnName = leftData[index] !== undefined?leftData[index][0]:"" ; 
+              let leftColumnValue = leftData[index][1]?.value !== undefined?leftData[index][1]?.value:" "
 
-          })
-          .join('')
-        : ''}
+              newRow += `
+                <td style="text-align: left; padding: 8px; font-weight:600">${leftColumnName}</td>
+                <td style="padding: 8px;">${leftColumnValue}</td>
+              `;
+              
+              // Combined right columns 
+              let rightColumnName = rightData[index] !== undefined?rightData[index][0]:"" ; 
+              let rightColumnValue = rightData[index][1]?.value !== undefined?rightData[index][1]?.value:""
+              
+              newRow += `
+                <td style="text-align: left; padding: 8px; font-weight:600">${rightColumnName}</td>
+                <td style="padding: 8px;">${rightColumnValue}</td>
+              `;
+
+              newRow += '</tr>';
+              return newRow ; 
+            })
+
+            return tableContent ; 
+
+          })()}
         </tbody>
       </table>
     </div>`;
@@ -459,8 +473,8 @@ const Editor = ({ id }) => {
       })
         .then(res => {
           if (res.data.status) {
-            NotificationMessage("success", "Study report successfully") ; 
-            // navigate("/studies");
+            NotificationMessage("success", "Study report successfully");
+            navigate("/studies");
           } else {
             NotificationMessage(
               'warning',
@@ -470,12 +484,10 @@ const Editor = ({ id }) => {
           }
         })
         .catch((err) => {
-          console.log(err);
-          
-          // NotificationMessage('warning', err.response.data.message)
+          NotificationMessage('warning', err.response.data.message)
         })
       setIsLoading(false)
-      
+
     }
   }
 
@@ -552,7 +564,7 @@ const Editor = ({ id }) => {
       const updatedEditorData = serializer.serializeToString(doc);
       setEditorData(updatedEditorData);
     }
-  }, [reportStudyDescription, studyDescriptionReload]);
+  }, [reportStudyDescription]);
 
   // Weasis viewer option handler 
   const WeasisViewerHandler = (patientId) => {
@@ -718,10 +730,10 @@ const Editor = ({ id }) => {
 
               {/* Study description selection and Editor related option  */}
               <Splitter.Panel>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: 10}}>
-                  
-                  <div style={{width: "50%"}}>
-                    <div style={{paddingLeft: 10  }}>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
+
+                  <div style={{ width: "50%" }}>
+                    <div style={{ paddingLeft: 10 }}>
                       <Form labelAlign="left" form={form}>
                         <Form.Item
                           name="study_description"
@@ -756,10 +768,11 @@ const Editor = ({ id }) => {
                       </Form>
                     </div>
                   </div>
-                  
-                  <Flex style={{width: "47%", justifyContent: "flex-end", gap: 15}}>
-                    <div style={{marginTop: "auto", marginBottom: "auto"}}>
-                      <Tooltip title = "Report template">
+
+                  <Flex style={{ width: "47%", justifyContent: "flex-end", gap: 15 }}>
+
+                    <div style={{ marginTop: "auto", marginBottom: "auto" }}>
+                      <Tooltip title="Report template">
                         <Select
                           className="template-selection-option-division"
                           placeholder="choose template"
@@ -780,13 +793,21 @@ const Editor = ({ id }) => {
                     </div>
 
                     <div >
-                      <Button type="primary" 
-                        loading = {isLoading}
-                        onClick={() => handleReportSave()} 
+                      <Button type="primary"
+                        loading={isLoading}
+                        onClick={() => handleReportSave()}
                         style={{ marginTop: 10 }}>
                         Submit Report
                       </Button>
                     </div>
+
+                    <Button type="primary"
+                      onClick={() => navigate(-1)}
+                      style={{ marginTop: "auto", marginBottom: "auto" }}
+                    >
+                      Back
+                    </Button>
+
                   </Flex>
                 </div>
 
@@ -870,11 +891,12 @@ const Editor = ({ id }) => {
         onClose={() => { setPatientInformationDrawer(false) }}
         open={patientInforamtionDrawer}
         className='patient-info-drawer'
-        width={"50vw"}
+        width={"30vw"}
       >
 
         <div className='drawer-info-div' style={{
           borderWidth: 0,
+          width: "100%"
         }}>
 
           {/* ========= Patient information option button ==========  */}

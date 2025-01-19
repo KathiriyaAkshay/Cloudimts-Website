@@ -6,6 +6,7 @@ const EditableContext = React.createContext(null);
 const { Option } = Select;
 import NotificationMessage from "../../components/NotificationMessage"; 
 import APIHandler from "../../apis/apiHandler";
+import { render } from 'react-dom';
 
 
 const EditableRow = ({ index, ...props }) => {
@@ -158,13 +159,21 @@ const EditableCellSec = ({
 const CustomReportHeaderGenerator = ({institutionId, isModalOpen}) => {
 
     const [dataSource, setDataSource] = useState([]);
-    
     const [count, setCount] = useState(2);
-    
     const handleDelete = (key) => {
         const newData = dataSource.filter((item) => item.key !== key);
         setDataSource(newData);
     };
+
+    const handlePostitionChanges = (key, value) => {
+        const newData = dataSource.map((element) =>
+            element?.key === key ? { ...element, position: value } : element
+        );
+        setDataSource((prevData) => {
+            return [...newData]; // Update state with new data
+        });
+    }
+    
 
 
     const handleSelectChange = (key, value) => {
@@ -202,6 +211,25 @@ const CustomReportHeaderGenerator = ({institutionId, isModalOpen}) => {
             width: '30%',
             editable: true,
         },
+
+        {
+            title : "Position", 
+            dataIndex: "position",
+            render: (text, record) => {
+                return(
+                    <Select
+                        value = {text || "left"}
+                        options={[
+                            {label: "Left", value: "left"}, 
+                            {label: "Right", value: "right"}
+                        ]}
+                        onChange={(value) => {
+                            handlePostitionChanges(record?.key, value)
+                        }}
+                    />
+                )
+            }
+        }, 
         
         {
             title: 'Actions',
@@ -267,6 +295,15 @@ const CustomReportHeaderGenerator = ({institutionId, isModalOpen}) => {
         setDataSourceSec(newData);
     };
     
+    const handlePostitionChangesSec = (key, value) => {
+        const newData = dataSourceSec.map((element) =>
+            element?.key === key ? { ...element, position: value } : element
+        );
+        setDataSourceSec((prevData) => {
+            return [...newData]; // Update state with new data
+        });
+    }
+    
     const defaultColumnsSec = [
         {
             title: 'Institution Column-name',
@@ -285,6 +322,25 @@ const CustomReportHeaderGenerator = ({institutionId, isModalOpen}) => {
             width: '30%',
             editable: true,
         },
+
+        {
+            title : "Position", 
+            dataIndex: "position",
+            render: (text, record) => {
+                return(
+                    <Select
+                        value = {text || "left"}
+                        options={[
+                            {label: "Left", value: "left"}, 
+                            {label: "Right", value: "right"}
+                        ]}
+                        onChange={(value) => {
+                            handlePostitionChangesSec(record?.key, value)
+                        }}
+                    />
+                )
+            }
+        }, 
 
         {
             title: 'operation',
@@ -378,6 +434,7 @@ const CustomReportHeaderGenerator = ({institutionId, isModalOpen}) => {
         
     }
 
+    // ============ Fetch report related columns information ============== //
     const FetchReportColumn = async () => {
         
         setIsLoading(true) ; 
@@ -477,10 +534,13 @@ const CustomReportHeaderGenerator = ({institutionId, isModalOpen}) => {
 
             Object.keys(responseData['data']?.institution_report_details).forEach(key => {
                 const value = responseData['data']?.institution_report_details[key];
+                console.log(value);
+                
                 institutionReport.push({
                     'key': institutionIndex, 
                     'columnName': key, 
-                    'customColumnName': value
+                    'customColumnName': value?.column_name, 
+                    "position": value?.position
                 })
                 institutionIndex += 1; 
             });
@@ -497,7 +557,8 @@ const CustomReportHeaderGenerator = ({institutionId, isModalOpen}) => {
                     patientReport.push({
                         'key': patientReportIndex, 
                         'columnName': key, 
-                        'customColumnName': value
+                        'customColumnName': value?.column_name, 
+                        "position": value?.position
                     })
                     patientReportIndex += 1; 
                 }
@@ -582,18 +643,25 @@ const CustomReportHeaderGenerator = ({institutionId, isModalOpen}) => {
         NotificationMessage("success", "Report settings have been successfully reset.")
     }
 
+    // ****** Save institution report setting related option handler ***** // 
     const SaveReportOptionHandle = async () => {
 
         let savePatientdetails = {} ; 
 
         dataSource.map((element) => {
-            savePatientdetails[element.columnName] = element.customColumnName ; 
+            savePatientdetails[element.columnName] = {
+                "column_name": element.customColumnName, 
+                "position": element?.position || "left"
+            } ; 
         })
 
         let saveInstitutionDetails = {} ; 
 
         dataSourceSec.map((element) => {
-            saveInstitutionDetails[element.columnName] = element.customColumnName ; 
+            saveInstitutionDetails[element.columnName] = {
+                "column_name": element.customColumnName, 
+                "position": element?.position || "left"
+            } ; 
         })
 
         if (institutionId !== null){
@@ -604,7 +672,11 @@ const CustomReportHeaderGenerator = ({institutionId, isModalOpen}) => {
                 "patient_report_details": savePatientdetails
             }; 
 
+            setIsLoading(true) ; 
+
             let responseData = await APIHandler("POST", requestPayload, "institute/v1/update-institution-report") ; 
+
+            setIsLoading(false) ; 
 
             if (responseData === false){
             
@@ -637,20 +709,20 @@ const CustomReportHeaderGenerator = ({institutionId, isModalOpen}) => {
                         <div className='pop-up-icons'>
                             
                             <div style={{padding: "10px", paddingTop:"8px", paddingBottom: "8px"}}>
-                                <Tooltip title="save">
+                                <Tooltip title="Save">
                                     <Button className='Green-option-add-button' shape="circle" icon={<SaveOutlined />} 
                                         onClick={SaveReportOptionHandle}/>
                                 </Tooltip>
                             </div>
 
                             <div style={{padding: "10px", paddingTop:"8px", paddingBottom: "8px"}}>
-                                <Tooltip title="reset">
+                                <Tooltip title="Reset">
                                     <Button className="Reset-button" shape="circle" icon={<ReloadOutlined />} onClick={ResetOptionHandle}/>
                                 </Tooltip>
                             </div>
 
                             <div style={{padding: "10px", paddingTop:"8px", paddingBottom: "8px"}}>
-                                <Tooltip title="close">
+                                <Tooltip title="Close">
                                     <Button shape="circle" className="Danger-button" icon={<CloseOutlined /> }  
                                     onClick={closePopupDiv}/>
                                 </Tooltip>

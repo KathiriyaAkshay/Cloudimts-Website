@@ -8,10 +8,11 @@ const AssignStudyModified = ({
   isAssignModifiedModalOpen,
   setIsAssignModifiedModalOpen,
   setStudyID,
+  setSelectedRowKeys
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [form] = Form.useForm();
-  const { studyIdArray, setStudyIdArray, studyReferenceIdArray } = useContext(StudyIdContext);
+  const { studyIdArray, setStudyIdArray, studyReferenceIdArray, setStudyReferenceIdArray } = useContext(StudyIdContext);
   const [seriesIdList, setSeriesIdList] = useState([]) ; 
 
   const [radiologistType, setRadiologistType] = useState(undefined);
@@ -61,7 +62,6 @@ const AssignStudyModified = ({
 
   // Quick assign related handler =========================================
   const handleSubmit = async (values) => {
-
     if (radiologistType == undefined && referralRadiologist == undefined){
       NotificationMessage("warning", "Please, Select cloudimts radiologist or Referral radiologist") ; 
     } else {
@@ -104,9 +104,11 @@ const AssignStudyModified = ({
         form.submit();
       }}
       onCancel={() => {
+        setStudyReferenceIdArray([]); 
+        setStudyIdArray([]) ; 
+        setSelectedRowKeys([]) ; 
         setStudyID(null);
         setIsAssignModifiedModalOpen(false);
-        form.resetFields();
       }}
       width={"40%"}
 
@@ -140,7 +142,7 @@ const AssignStudyModified = ({
 
           </div>
 
-          <div className="Assign-study-upload-option-input-layout" style={{ marginTop: 5 }}>
+          <div  style={{ marginTop: 5 }}>
             <div className="quick-assign-study-division w-100">
               <Form
                 labelCol={{
@@ -155,13 +157,15 @@ const AssignStudyModified = ({
               >
 
                 {/* Cloudimts radiologist selection option  */}
-                <Form.Item
-                  label = "Cloudimts Radiologist"
-                  name="radiologist_type"
-                  className="category-select"
-                  style={{ marginTop: "auto", width: "100%" }}
-                >
+                <div className="category-select" style={{
+                  marginTop: "auto", 
+                  width: "100%"
+                }}>
+                  <div style={{fontWeight: 600, marginBottom: 7}}>
+                    Cloudimts Radiologist
+                  </div>
                   <Select
+                    style={{width: "100%"}}
                     placeholder="Cloudimts Radiologist"
                     showSearch
                     value={radiologistType}
@@ -189,16 +193,18 @@ const AssignStudyModified = ({
                       </Select.Option>
                     ))}
                   </Select>
-                </Form.Item>
+                </div>
 
                 {/* Refferal Radiologist selection  */}
-                <Form.Item
-                  label="Referral Radiologist"
-                  name="radiologist"
-                  className="category-select"
-                  style={{ marginTop: "auto", width: "100%" }}
-                >
+                <div style={{
+                  width: "100%", 
+                  marginTop: 20
+                }}>
+                  <div style={{fontWeight: 600, marginBottom: 7}}>
+                    Referral Radiologist
+                  </div>
                   <Select
+                    style={{width: "100%"}}
                     placeholder="Select Referral Radiologist"
                     showSearch
                     value = {referralRadiologist}
@@ -226,7 +232,14 @@ const AssignStudyModified = ({
                       </Select.Option>
                     ))}
                   </Select>
-                </Form.Item>
+                </div>
+                {/* <Form.Item
+                  label="Referral Radiologist"
+                  name="radiologist"
+                  className="category-select"
+                  style={{ marginTop: "auto", width: "100%" }}
+                >
+                </Form.Item> */}
 
               </Form>
 

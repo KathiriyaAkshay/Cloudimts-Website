@@ -37,18 +37,13 @@ import CustomReportHeaderGenerator from './Popup'
 const { Step } = Steps;
 
 const AddInstitution = () => {
-  const token = localStorage.getItem('token')
-  const { id } = useParams();
-
   const navigate = useNavigate();
 
+  const token = localStorage.getItem('token')
+  const { id } = useParams();
   const { changeBreadcrumbs } = useBreadcrumbs()
-
   const [form] = Form.useForm()
-
   const [currentStep, setCurrentStep] = useState(0)
-  const [tableData, setTableData] = useState([])
-  
   const [ctModalistyList, setCtModalityList] = useState([
     { id: "BRAIN", reporting_charge: 0, communication_charge: 0 },
     { id: "PNS", reporting_charge: 150, communication_charge: 50 },
@@ -1461,7 +1456,6 @@ const AddInstitution = () => {
           )}
 
           {/* Step5 --- Institution blocked user option  */}
-
           {currentStep === 4 && (
             <Form
               labelCol={{
@@ -1534,7 +1528,6 @@ const AddInstitution = () => {
           )}
 
           {/* Step6 ---- Institution inhouse radiologist option  */}
-
           {currentStep === 5 && (
             <Form
               labelCol={{
@@ -1597,7 +1590,6 @@ const AddInstitution = () => {
       </Card>
 
       {/* ==== Update details conformation model ====  */}
-
       <Modal
         centered
         title='Confirmation'

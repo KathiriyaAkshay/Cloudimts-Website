@@ -54,7 +54,9 @@ const FilterDataProvider = ({ children }) => {
   const [totalBillingCommunicationCharge, setTotalCommunicationCharge] = useState(null) ; 
   const [totalBillingMidnightCharge, setTotalMidnightCharge] = useState(null) ; 
 
-  const [patientInforamtionDrawer, setPatientInformationDrawer] = useState(true) ; 
+  const [patientInforamtionDrawer, setPatientInformationDrawer] = useState(false) ; 
+
+  const [isManualStudy, setIsManualStudy] = useState(false) ; 
 
   return (
     <filterDataContext.Provider
@@ -108,7 +110,9 @@ const FilterDataProvider = ({ children }) => {
         totalBillingMidnightCharge, 
         setTotalMidnightCharge, 
         genderOption, 
-        setGenderoption
+        setGenderoption, 
+        isManualStudy,
+        setIsManualStudy
       }}
     >
       {children}
