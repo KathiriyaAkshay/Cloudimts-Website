@@ -824,7 +824,7 @@ const Dicom = () => {
             <span style={{ fontWeight: 600 }}>{text}</span>
           </Tag>
         </> : <>
-          <Tag color='blue'>
+          <Tag color='black'>
             <span style={{ fontWeight: 600 }}>{text}</span>
           </Tag>
         </>

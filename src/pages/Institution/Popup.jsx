@@ -406,7 +406,7 @@ const CustomReportHeaderGenerator = ({institutionId, isModalOpen}) => {
             <Select style={{ width: 300, marginTop: "auto", marginBottom: "auto" }} value={value} onChange={onChange}>
                 {patientReportColumn.map((eleemnt) => { 
                     return(
-                        <Option value="option1">{eleemnt}</Option>
+                        <Option value={eleemnt}>{eleemnt}</Option>
                     )
                 })}
             </Select>
@@ -417,7 +417,10 @@ const CustomReportHeaderGenerator = ({institutionId, isModalOpen}) => {
 
     const InstitutionCustomSelect = ({ value, onChange }) => {
         return (
-            <Select style={{ width: 300, marginTop: "auto", marginBottom: "auto" }} value={value} onChange={onChange}>
+            <Select style={{ width: 300, marginTop: "auto", marginBottom: "auto" }} 
+                value={value} 
+                onChange={onChange}
+            >
                 {institutionReportColumn.map((eleemnt) => { 
                     return(
                         <Option value="option1">{eleemnt}</Option>

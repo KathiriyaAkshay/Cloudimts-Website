@@ -58,11 +58,14 @@ const AssignStudy = ({
       e.preventDefault();
     } catch (error) {
     }
-    setItems([{ label: name, value: name }, ...items]);
-    setName('');
-    setTimeout(() => {
-      inputRef.current?.focus();
-    }, 0);
+
+    if (name !== "" && name !== undefined && name !== null){
+      setItems([{ label: name, value: name }, ...items]);
+      setName('');
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 0);
+    }
   };
 
   // Permission information context
@@ -209,7 +212,7 @@ const AssignStudy = ({
             let responseData = await APIHandler(
               "POST",
               requestPayload,
-              "studies/v1/fetch-institution-radiologist"
+              "studies/v1/fetch-institution-radiologist?is_central_radiologist=true"
             );
 
             if (responseData["status"] === true) {
@@ -223,11 +226,19 @@ const AssignStudy = ({
               const center_owner_radiologist = responseData?.center_owner_radiologist?.map((element) => ({
                 label: element.name,
                 value: element.id,
-                "role": CENTER_OWNER_RADIOLOGIST,
+                "role": element?.role,
                 "time": element?.time
               }))
 
-              setInstitutionRadiologist([...resData]);
+              let temp = [...center_owner_radiologist, ...resData] ; 
+              const uniqueData = temp.reduce((acc, current) => {
+                const existing = acc.find(item => item.value === current.value);
+                if (!existing) {
+                  acc.push(current);
+                }
+                return acc;
+              }, []);
+              setInstitutionRadiologist([...uniqueData]);
             }
           };
 

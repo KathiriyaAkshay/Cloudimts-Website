@@ -420,12 +420,18 @@ const Editor = ({ id }) => {
   };
 
   const addItem = (e) => {
-    e.preventDefault();
-    setItems([{ label: name, value: name }, ...items]);
-    setName('');
-    setTimeout(() => {
-      inputRef.current?.focus();
-    }, 0);
+    try {
+      e.preventDefault();
+    } catch (error) {
+    }
+
+    if (name !== "" && name !== undefined && name !== null){
+      setItems([{ label: name, value: name }, ...items]);
+      setName('');
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 0);
+    }
   };
 
   // **** StudyUID information **** // 
