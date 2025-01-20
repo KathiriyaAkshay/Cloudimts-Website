@@ -197,6 +197,18 @@ const Editor = ({ id }) => {
       NotificationMessage('warning', 'Network request failed');
 
     } else if (responseData['status'] === true) {
+
+      let findElement = items?.filter((element) => String(element?.value).toLowerCase() == String(responseData?.data?.Study_description).toLowerCase()) ; 
+      if (findElement?.length == 0){
+        setName(responseData?.data?.Study_description)
+        addItem() ; 
+      }
+
+      // Set study description 
+      form.setFieldsValue({
+        "study_description": responseData?.data?.Study_description
+      })
+
       setReportStudyDescription(responseData?.data?.Study_description || undefined);
       setPatientInformation(responseData?.data);
       setPatientReportList(responseData?.report || []);
@@ -429,49 +441,6 @@ const Editor = ({ id }) => {
     return fileName;
   }
 
-
-
-  const initializePatientTableData = (institutionReport) => {
-    institutionReport.patient_details = Object.assign(institutionReport.patient_details);
-    const keys = Object.keys(institutionReport?.institution_details);
-    var temp = ``;
-    const data = `<div>
-      <table style="width: 100%; border-collapse: collapse;">
-        <tbody>
-          ${institutionReport.hasOwnProperty('patient_details') && selectedItem.isPatientSelected ?
-        Object.entries(institutionReport?.patient_details)
-          .map(([key, value], index) => {
-            // Check for null value and replace with "-"
-            const displayValue = value === null ? '-' : value;
-
-            temp = `
-                <tr>
-                  <td style="text-align: left; padding: 8px;font-weight:600">${key}</td>
-                  <td style="padding: 8px;">${displayValue}</td>`;
-
-            if (index < keys.length) {
-              const institutionKey = keys[index];
-              const institutionValue = institutionReport.institution_details[institutionKey];
-              const displayInstitutionValue = institutionValue === null ? '-' : institutionValue;
-
-              temp += `
-                    <td style="text-align: left; padding: 8px;font-weight:600">${institutionKey}</td>
-                    <td style="padding: 8px;">${displayInstitutionValue}</td></tr>`;
-            } else {
-              temp += `</tr>`;
-            }
-
-            return temp;
-
-          })
-          .join('')
-        : ''}
-        </tbody>
-      </table>
-    </div>`;
-    return data;
-  };
-
   // **** Submit report handler **** // 
   const handleReportSave = async () => {
     if (reportStudyDescription == null) {
@@ -519,26 +488,6 @@ const Editor = ({ id }) => {
   }
 
 
-  // useEffect(() => {
-  //   if (reportStudyDescription !== null) {
-  //     const parser = new DOMParser();
-  //     const doc = parser.parseFromString(editorData, "text/html");
-  //     const rows = doc.querySelectorAll("tr");
-  //     rows.forEach((row) => {
-  //       const firstCell = row.querySelector("td strong");
-  //       if (firstCell && firstCell.textContent.trim() === "Study description") {
-  //         const valueCell = row.querySelector("td:nth-child(2)");
-  //         if (valueCell) {
-  //           valueCell.textContent = reportStudyDescription;
-  //         }
-  //       }
-  //     });
-  //     const serializer = new XMLSerializer();
-  //     const updatedEditorData = serializer.serializeToString(doc);
-  //     setEditorData(updatedEditorData);
-  //   }
-  // }, [reportStudyDescription]);
-
   // Weasis viewer open handler =============================================================
   const WeasisViewerHandler = (patientId) => {
 
@@ -579,17 +528,12 @@ const Editor = ({ id }) => {
   }, [selectedItem, patientInformation?.Patient_id])
 
   useEffect(() => {
-    if (String(editorData).includes(",,,") && String(editorData) !== String(editorData).replace(",,,", '')) {
-      let tempEditorData = String(editorData).replace(",,,", '');
+    if (String(editorData).includes(",,,") && String(editorData) !== String(editorData).replace(",,,,", '')) {
+      let tempEditorData = String(editorData).replace(",,,,", '');
       setEditorData(tempEditorData);
     }
   }, [editorData]);
 
-  useEffect(() => {
-    console.log("Selected item");
-    console.log(selectedItem);
-
-  }, [selectedItem])
 
   return (
     <>
@@ -786,28 +730,34 @@ const Editor = ({ id }) => {
                             { required: true, message: "Please select Modality Study Description" },
                           ]}
                         >
-                          <Select
-                            placeholder="Select Study Description"
-                            showSearch
-                            filterSort={(optionA, optionB) =>
-                              (optionA?.label ?? "").toLowerCase().localeCompare((optionB?.label ?? "").toLowerCase())
-                            }
-                            dropdownRender={(menu) => (
-                              <>
-                                {menu}
-                                <Divider style={{ margin: "8px 0" }} />
-                                <Space style={{ padding: "0 8px 4px" }}>
-                                  <Input placeholder="Please enter item" ref={inputRef} value={name} onChange={onNameChange} onKeyDown={(e) => e.stopPropagation()} />
-                                  <Button type="text" icon={<PlusOutlined />} onClick={addItem}>
-                                    Add item
-                                  </Button>
-                                </Space>
-                              </>
-                            )}
-                            options={items.map((item) => ({ label: item?.label, value: item?.value }))}
-                            value={reportStudyDescription}
-                            onChange={(value) => setReportStudyDescription(value)}
-                          />
+                          <Tooltip title = {"Study Description"}>
+                            <Select
+                              placeholder="Select Study Description"
+                              className='reporting-study-description-selection'
+                              showSearch
+                              filterSort={(optionA, optionB) =>
+                                (optionA?.label ?? "").toLowerCase().localeCompare((optionB?.label ?? "").toLowerCase())
+                              }
+                              style={{
+                                fontWeight: 600
+                              }}
+                              dropdownRender={(menu) => (
+                                <>
+                                  {menu}
+                                  <Divider style={{ margin: "8px 0" }} />
+                                  <Space style={{ padding: "0 8px 4px" }}>
+                                    <Input placeholder="Please enter item" ref={inputRef} value={name} onChange={onNameChange} onKeyDown={(e) => e.stopPropagation()} />
+                                    <Button type="text" icon={<PlusOutlined />} onClick={addItem}>
+                                      Add item
+                                    </Button>
+                                  </Space>
+                                </>
+                              )}
+                              options={items.map((item) => ({ label: item?.label, value: item?.value }))}
+                              value={reportStudyDescription}
+                              onChange={(value) => setReportStudyDescription(value)}
+                            />
+                          </Tooltip>
                         </Form.Item>
                       </Form>
                     </div>

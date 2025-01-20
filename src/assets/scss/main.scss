@@ -3253,6 +3253,12 @@ form.ant-form .ant-form-item .ant-form-item-label label{
   margin-bottom: 0px !important;
 }
 
+.reporting-study-description-selection{
+  .ant-select-selection-item{
+    font-weight: 600;
+  }
+}
+
 .report-preview-model{
   .ant-modal-body{
     padding: 0 !important;

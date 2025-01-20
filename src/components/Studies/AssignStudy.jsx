@@ -54,7 +54,10 @@ const AssignStudy = ({
   };
 
   const addItem = (e) => {
-    e.preventDefault();
+    try {
+      e.preventDefault();
+    } catch (error) {
+    }
     setItems([{ label: name, value: name }, ...items]);
     setName('');
     setTimeout(() => {
@@ -79,6 +82,14 @@ const AssignStudy = ({
       .then((res) => {
         if (res.data.status) {
           setAssignUserId(res?.data?.assign_user[0]?.assign_user_id);
+          let study_description = res?.data?.study_description ; 
+          // Check existing study description related records 
+          let findElement = items?.filter((element) => String(element?.value).toLowerCase() == String(study_description).toLowerCase()) ; 
+          if (findElement?.length == 0){
+            setName(study_description)
+            addItem() ; 
+          }
+
           form.setFieldsValue({
             ...res.data?.data,
             radiologist: res.data?.assign_user?.map(
@@ -215,7 +226,7 @@ const AssignStudy = ({
                 "time": element?.time
               }))
 
-              setInstitutionRadiologist([...center_owner_radiologist, ...resData]);
+              setInstitutionRadiologist([...resData]);
             }
           };
 
@@ -367,13 +378,17 @@ const AssignStudy = ({
   useEffect(() => {
     if (studyID && isAssignModalOpen) {
       retrieveStudyData();
-      retrieveAssignStudyDetails();
       setValues([]);
       // FetchRadiologist();
       FetchInstitutionModalityList();
     }
   }, [studyID, isAssignModalOpen]);
 
+  useEffect(() => {
+    if (items?.length > 0 && isAssignModalOpen && studyID){
+      retrieveAssignStudyDetails();
+    } 
+  }, [items, isAssignModalOpen, studyID])
 
   return (
     <Modal
@@ -485,7 +500,6 @@ const AssignStudy = ({
                     <Col span={11}>
 
                       {/* **** Show paarticular institution radiologist ****  */}
-
                       <Form.Item
                         label="Choose Radiologist"
                         name="radiologist"
@@ -519,7 +533,7 @@ const AssignStudy = ({
                     </Col>
                     <Col span={11}>
 
-                      {/* Study description  */}
+                      {/* Study description selection  */}
 
                       <Form.Item
                         name="study_description"
@@ -577,8 +591,9 @@ const AssignStudy = ({
                     </Col>
                   </Row>
 
-
                   <Row justify="space-between">
+
+                    {/* Number of report information  */}
                     <Col span={5}>
                       <Form.Item
                         name="number_of_report"
@@ -593,27 +608,9 @@ const AssignStudy = ({
                         <Input />
                       </Form.Item>
 
-                      {/* Uregent case information  */}
-
-
-                      {/* <Form.Item
-                        name="urgent_case"
-                        label="Report Required"
-                        rules={[
-                          {
-                            required: true,
-                            message: "Please select Report Required",
-                          },
-                        ]}
-                      >
-                        <Radio.Group>
-                          <Radio value={false}>Regular</Radio>
-                          <Radio value={true}>Urgent</Radio>
-                        </Radio.Group>
-                      </Form.Item> */}
-
                     </Col>
-
+                    
+                    {/* Modality selection  */}
                     {modalityOptions?.length > 0 && (
 
                       <Col span={5}>
@@ -642,7 +639,7 @@ const AssignStudy = ({
 
                     <Col span={11}>
 
-
+                      {/* Case type selection  */}
                       <Form.Item
                         name="urgent_case"
                         label="Report Required"
