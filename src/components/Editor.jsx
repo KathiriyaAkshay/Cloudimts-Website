@@ -1023,11 +1023,15 @@ const Editor = ({ id }) => {
                 </div>
               </div>
 
-              <Divider style={{marginTop: 10, marginBottom: 10}}/>
 
-              <div style={{fontWeight: 600, marginBottom: 8}}>
-                Study documents
-              </div>
+              {(assignStudyDataImage?.length > 0 || assignStudyDataDocument?.length > 0 ) && (
+                <>
+                  <Divider style={{marginTop: 10, marginBottom: 10}}/>
+                  <div style={{fontWeight: 600, marginBottom: 8}}>
+                    Study documents
+                  </div>
+                </>
+              )}
 
               <Flex wrap = {"wrap"} gap={8}>
                 { assignStudyDataImage?.length > 0 && 

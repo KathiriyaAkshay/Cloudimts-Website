@@ -33,6 +33,7 @@ import NotificationMessage from "../NotificationMessage";
 import { convertToDDMMYYYY } from "../../helpers/utils";
 import { TabletFilled } from "@ant-design/icons";
 import { BsTrashFill } from "react-icons/bs";
+import StudyReferenceImagesModal from "./studyReferenceImagesModal";
 
 const ADVANCED_REPORT_OPTION = 'Advanced report' ; 
 
@@ -522,7 +523,10 @@ const StudyReports = ({
 
       {/* Study reference image information  */}
       {show && (
-        <ImageCarousel 
+        <StudyReferenceImagesModal 
+          imageData={studyImages}
+          isModalOpen={show}
+          handleClose={() => {setShow(false)}}
           Carousel
           studyImages={studyImages}
           show={show}

@@ -122,6 +122,7 @@ const AssignStudy = ({
       .then((res) => {
         if (res.data.status) {
           const resData = res.data.data;
+          
           const modifiedData = [
             {
               name: "Patient id",
@@ -381,14 +382,9 @@ const AssignStudy = ({
       setValues([]);
       // FetchRadiologist();
       FetchInstitutionModalityList();
+      retrieveAssignStudyDetails();
     }
   }, [studyID, isAssignModalOpen]);
-
-  useEffect(() => {
-    if (items?.length > 0 && isAssignModalOpen && studyID){
-      retrieveAssignStudyDetails();
-    } 
-  }, [items, isAssignModalOpen, studyID])
 
   return (
     <Modal
