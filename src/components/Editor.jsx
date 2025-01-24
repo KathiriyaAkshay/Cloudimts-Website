@@ -123,56 +123,42 @@ const Editor = ({ id }) => {
     setIsLoading(false)
   }
 
+  // Generate Report table related information 
   const convertedPatientTableInitially = (institutionReport, isReturn) => {
     setIsTableCreate(false);
-    institutionReport.patient_details = Object.assign(institutionReport.patient_details);
     const data = `<div>
-      <table style="width: 100%; border-collapse: collapse;">
+    <table style="width: 100%; border-collapse: collapse;">
         <tbody>
+            ${(() => {
+                if (!institutionReport) {
+                    return ''; 
+                }
 
-          ${(() => {
-        const patientLeftData = Object.entries(institutionReport?.patient_details).filter(([_, detail]) => detail.position === 'left');
-        const patientRightData = Object.entries(institutionReport?.patient_details).filter(([_, detail]) => detail.position === 'right');
-        const institutionLeftData = Object.entries(institutionReport?.institution_details).filter(([_, detail]) => detail.position === 'left');
-        const institutionRightData = Object.entries(institutionReport?.institution_details).filter(([_, detail]) => detail.position === 'right');
+                const leftData = [...institutionReport?.left];
+                const rightData = [...institutionReport?.right];
+                const maxLength = Math.max(leftData?.length, rightData?.length);
 
-        const leftData = [...patientLeftData, ...institutionLeftData];
-        const rightData = [...patientRightData, ...institutionRightData];
+                const generateTableRow = (leftColumn, rightColumn) => {
+                    let newRow = '<tr>';
+                    newRow += `
+                        <td style="text-align: left; padding: 8px; font-weight:600">${leftColumn?.column_name || ''}</td>
+                        <td style="padding: 8px;">${leftColumn?.column_value || ''}</td>
+                        <td style="text-align: left; padding: 8px; font-weight:600">${rightColumn?.column_name || ''}</td>
+                        <td style="padding: 8px;">${rightColumn?.column_value || ''}</td>
+                    `;
+                    newRow += '</tr>';
+                    return newRow;
+                };
 
-        const maxLength = Math.max(leftData?.length, rightData?.length);
-        const dataArray = Array.from({ length: maxLength }).fill(0);
-
-        let tableContent = dataArray?.map((element, index) => {
-          let newRow = '<tr>';
-
-          // Combined left columns
-          let leftColumnName = leftData[index] !== undefined ? leftData[index][0] : "";
-          let leftColumnValue = leftData[index] !== undefined ? leftData[index][1]?.value : " "
-
-          newRow += `
-                <td style="text-align: left; padding: 8px; font-weight:600">${leftColumnName}</td>
-                <td style="padding: 8px;">${leftColumnValue}</td>
-              `;
-
-          // Combined right columns 
-          let rightColumnName = rightData[index] !== undefined ? rightData[index][0] : "";
-          let rightColumnValue = rightData[index] !== undefined ? rightData[index][1]?.value : ""
-
-          newRow += `
-                <td style="text-align: left; padding: 8px; font-weight:600">${rightColumnName}</td>
-                <td style="padding: 8px;">${rightColumnValue}</td>
-              `;
-
-          newRow += '</tr>';
-          return newRow;
-        })
-
-        return tableContent;
-
-      })()}
+                return Array.from({ length: maxLength }).fill(0).map((_, index) => {
+                    const leftColumn = leftData[index];
+                    const rightColumn = rightData[index];
+                    return generateTableRow(leftColumn, rightColumn);
+                });
+            })()}
         </tbody>
-      </table>
-    </div>`;
+    </table>
+</div>`;
     setIsTableCreate(true);
     if (isReturn == true) {
       return data;
@@ -250,14 +236,8 @@ const Editor = ({ id }) => {
         'institute/v1/institution-report-details'
       )
       if (reportResponseData['status'] === true) {
-        let tempData = reportResponseData?.data;
-
-        delete tempData?.patient_details['Patient id']
-        delete tempData?.patient_details['Patient name'];
-
-        // setInstitutionReport({ ...reportResponseData['data'] })
-        setConvertTableInformation({ "patient_details": { ...tempData?.patient_details }, "institution_details": { ...tempData?.institution_details } })
-        convertedPatientTableInitially({ "patient_details": { ...tempData?.patient_details }, "institution_details": { ...tempData?.institution_details } })
+        setConvertTableInformation({ "left": [ ...reportResponseData?.data?.left ], "right": [ ...reportResponseData?.data?.right ] })
+        convertedPatientTableInitially({ "left": [ ...reportResponseData?.data?.left ], "right": [ ...reportResponseData?.data?.right ] }, undefined)
       }
     }
   }

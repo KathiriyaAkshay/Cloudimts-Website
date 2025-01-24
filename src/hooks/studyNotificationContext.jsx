@@ -95,7 +95,7 @@ const StudyNotificationProvider = ({ children }) => {
           // Assigned study status handler 
           let StudyId = eventData.payload.data.id ; 
           let InstitutionId = eventData.payload.data?.institution?.id ;
-          
+          let AssignUserID = eventData.payload?.data?.assign_user?.assign_user_id ; 
           let updateStudyStatus = 0 ; 
   
           setStudyData((prev) => {
@@ -130,6 +130,7 @@ const StudyNotificationProvider = ({ children }) => {
   
           let AllPermissionId = JSON.parse(localStorage.getItem("all_permission_id")) ; 
           let AllAssignId = JSON.parse(localStorage.getItem("all_assign_id")) ; 
+          let CustomUserId = localStorage.getItem("custom_user_id") ; 
   
           if (AllPermissionId.includes(InstitutionId) && updateStudyStatus === 0){
             setStudyData((prev) => [{...eventData.payload.data, 
@@ -142,37 +143,51 @@ const StudyNotificationProvider = ({ children }) => {
             } , ...prev]) ; 
 
             // Update SeriesID
-
             const temp = studyData
             .map(data => data?.study?.study_original_id)
             .filter(Boolean); temp ; 
 
             const uniqueItem = [...new Set(temp)] ; 
             setSeriesIdList([...uniqueItem]) ; 
-          } else {
+
+          } else if (AllAssignId.includes(InstitutionId) && updateStudyStatus === 0) {
   
-            if (AllAssignId.includes(InstitutionId) && updateStudyStatus === 0){
-              setStudyData((prev) => [{...eventData.payload.data, 
-                name: eventData.payload.data.study.patient_name,
-                institution: eventData.payload.data.institution.name, 
-                patient_id: eventData.payload.data.study.patient_id, 
-                study_id: eventData.payload.data.study.id, 
-                urgent_case: eventData?.payload?.data?.urgent_case  , 
-                modality: eventData?.payload?.data?.modality
-              } , ...prev]) ; 
+            setStudyData((prev) => [{...eventData.payload.data, 
+              name: eventData.payload.data.study.patient_name,
+              institution: eventData.payload.data.institution.name, 
+              patient_id: eventData.payload.data.study.patient_id, 
+              study_id: eventData.payload.data.study.id, 
+              urgent_case: eventData?.payload?.data?.urgent_case  , 
+              modality: eventData?.payload?.data?.modality
+            } , ...prev]) ; 
 
-              // Update SeriesID
+            // Update SeriesID
+            const temp = studyData
+            .map(data => data?.study?.study_original_id)
+            .filter(Boolean); temp ; 
 
-              const temp = studyData
-              .map(data => data?.study?.study_original_id)
-              .filter(Boolean); temp ; 
+            const uniqueItem = [...new Set(temp)] ; 
+            setSeriesIdList([...uniqueItem]) ; 
+          
+          } else if (+AssignUserID === +CustomUserId){
+            setStudyData((prev) => [{...eventData.payload.data, 
+              name: eventData.payload.data.study.patient_name,
+              institution: eventData.payload.data.institution.name, 
+              patient_id: eventData.payload.data.study.patient_id, 
+              study_id: eventData.payload.data.study.id, 
+              urgent_case: eventData?.payload?.data?.urgent_case  , 
+              modality: eventData?.payload?.data?.modality
+            } , ...prev]) ; 
 
-              const uniqueItem = [...new Set(temp)] ; 
-              setSeriesIdList([...uniqueItem]) ; 
-            }
+            // Update SeriesID
+            const temp = studyData
+            .map(data => data?.study?.study_original_id)
+            .filter(Boolean); temp ; 
+
+            const uniqueItem = [...new Set(temp)] ; 
+
           }
-  
-        
+      
         } else if (eventData.payload.status === "Un-Assigned") {
   
           // Assigned study status handler 

@@ -25,8 +25,6 @@ import TableWithFilter from '../../components/TableWithFilter'
 import API from '../../apis/getApi'
 import NotificationMessage from '../../components/NotificationMessage'
 import dayjs from 'dayjs'
-import { cities } from '../../helpers/utils';
-import { states } from '../../helpers/utils';
 import {
   getRadiologistList,
   updateBlockUsers,

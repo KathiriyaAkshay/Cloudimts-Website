@@ -527,10 +527,10 @@ const AssignStudy = ({
                                 <span style={{fontWeight: 600}}>
                                   {String(element?.label).toUpperCase()}
                                 </span>
-                                <span style={{marginLeft: 4, marginRight: 4}}>|</span>
-                                <span style={{marginLeft: "auto"}}>
+                                {/* <span style={{marginLeft: 4, marginRight: 4}}>|</span> */}
+                                {/* <span style={{marginLeft: "auto"}}>
                                   {element?.role}
-                                </span>
+                                </span> */}
                               </div>
                             </Select.Option>
                           ))}

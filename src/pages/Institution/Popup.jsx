@@ -6,8 +6,6 @@ const EditableContext = React.createContext(null);
 const { Option } = Select;
 import NotificationMessage from "../../components/NotificationMessage"; 
 import APIHandler from "../../apis/apiHandler";
-import { render } from 'react-dom';
-
 
 const EditableRow = ({ index, ...props }) => {
     const [form] = Form.useForm();
@@ -160,6 +158,28 @@ const CustomReportHeaderGenerator = ({institutionId, isModalOpen}) => {
 
     const [dataSource, setDataSource] = useState([]);
     const [count, setCount] = useState(2);
+    const [patientReportColumn, setPatientReportColumn] = useState([]) ; 
+    const [institutionReportColumn, setInstitutionReportColumn] = useState([]) ; 
+
+    const CustomSelect = ({ value, onChange }) => {
+        return (
+            <Select style={{ width: 300, marginTop: "auto", marginBottom: "auto" }} 
+                value={value} onChange={onChange}>
+                {[...patientReportColumn].map((eleemnt) => { 
+                    return(
+                        <Option value={eleemnt?.value}>{eleemnt?.value} | <Tag color='green'>Patient</Tag></Option>
+                    )
+                })}
+
+                {[...institutionReportColumn].map((element) => {
+                    return(
+                        <Option value={element?.value}>{element?.value} | <Tag color='blue'>Institution</Tag></Option>
+                    )
+                })}
+            </Select>
+        );
+    };
+
     const handleDelete = (key) => {
         const newData = dataSource.filter((item) => item.key !== key);
         setDataSource(newData);
@@ -173,8 +193,6 @@ const CustomReportHeaderGenerator = ({institutionId, isModalOpen}) => {
             return [...newData]; // Update state with new data
         });
     }
-    
-
 
     const handleSelectChange = (key, value) => {
         const dataIndex = dataSource.findIndex((record) => record.key === key);
@@ -192,44 +210,47 @@ const CustomReportHeaderGenerator = ({institutionId, isModalOpen}) => {
         setDataSourceSec(newData);
     };
 
+    // Left side related columns
     const defaultColumns = [
 
         {
             title: 'Patient Column-value',
             dataIndex: 'columnName',
-            render: (text, record) => (
-                <CustomSelect
-                    value={record.columnName}
-                    onChange={(value) => handleSelectChange(record.key, value)}
-                />
-            ),
+            render: (text, record) => {
+                return (
+                    <CustomSelect
+                        value={record?.value}
+                        onChange={(value) => handleSelectChange(record.key, value)}
+                    />
+                )
+            },
         },
 
         {
             title: 'Patient Column-name',
-            dataIndex: 'customColumnName',
+            dataIndex: 'column_name',
             width: '30%',
             editable: true,
         },
 
-        {
-            title : "Position", 
-            dataIndex: "position",
-            render: (text, record) => {
-                return(
-                    <Select
-                        value = {text || "left"}
-                        options={[
-                            {label: "Left", value: "left"}, 
-                            {label: "Right", value: "right"}
-                        ]}
-                        onChange={(value) => {
-                            handlePostitionChanges(record?.key, value)
-                        }}
-                    />
-                )
-            }
-        }, 
+        // {
+        //     title : "Position", 
+        //     dataIndex: "postition",
+        //     render: (text, record) => {
+        //         return(
+        //             <Select
+        //                 value = {text || "left"}
+        //                 options={[
+        //                     {label: "Left", value: "left"}, 
+        //                     {label: "Right", value: "right"}
+        //                 ]}
+        //                 onChange={(value) => {
+        //                     handlePostitionChanges(record?.key, value)
+        //                 }}
+        //             />
+        //         )
+        //     }
+        // }, 
         
         {
             title: 'Actions',
@@ -244,12 +265,14 @@ const CustomReportHeaderGenerator = ({institutionId, isModalOpen}) => {
     const handleAdd = () => {
         const newData = {
             key: count,
-            columnName: 'study__patient_name',
-            customColumnName: `Patient name`,
+            value: 'study__patient_name',
+            column_name: `Patient name`,
+            postition: "left", 
+            order: dataSource?.length + 1, 
+            type: "patient"
         };
         setDataSource([...dataSource, newData]);
         setCount(count + 1);
-        NotificationMessage("success", "Added new row in Patient report setting")
     };  
 
     const handleSave = (row) => {
@@ -286,8 +309,9 @@ const CustomReportHeaderGenerator = ({institutionId, isModalOpen}) => {
         };
     });
 
-    const [dataSourceSec, setDataSourceSec] = useState([]);
+    // Institution report setting related functionality =================
 
+    const [dataSourceSec, setDataSourceSec] = useState([]);
     const [countSec, setCountSec] = useState(2);
     
     const handleDeleteSec = (key) => {
@@ -304,43 +328,49 @@ const CustomReportHeaderGenerator = ({institutionId, isModalOpen}) => {
         });
     }
     
+    // Right side related columns
     const defaultColumnsSec = [
         {
             title: 'Institution Column-name',
             dataIndex: 'columnName',
-            render: (text, record) => (
-                <InstitutionCustomSelect
-                    value={record.columnName}
-                    onChange={(value) => handleSelectChangeSec(record.key, value)}
-                />
-            ),
+            render: (text, record) => {
+                return (
+                    <CustomSelect
+                        value={record?.value}
+                        onChange={(value) => handleSelectChangeSec(record.key, value)}
+                    />
+                )
+            },
         },
 
         {
             title: 'Institition Column-name',
-            dataIndex: 'customColumnName',
+            dataIndex: 'column_name',
             width: '30%',
             editable: true,
         },
 
-        {
-            title : "Position", 
-            dataIndex: "position",
-            render: (text, record) => {
-                return(
-                    <Select
-                        value = {text || "left"}
-                        options={[
-                            {label: "Left", value: "left"}, 
-                            {label: "Right", value: "right"}
-                        ]}
-                        onChange={(value) => {
-                            handlePostitionChangesSec(record?.key, value)
-                        }}
-                    />
-                )
-            }
-        }, 
+        // {
+        //     title : "Position", 
+        //     dataIndex: "postition",
+        //     render: (text, record) => {
+        //         console.log("Institution postion");
+        //         console.log(record);
+                
+        //         return(
+        //             <Select
+        //                 value = {text || "left"}
+        //                 options={[
+        //                     {label: "Left", value: "left"}, 
+        //                     {label: "Right", value: "right"}
+        //                 ]}
+        //                 onChange={(value) => {
+        //                     handlePostitionChangesSec(record?.key, value)
+        //                 }}
+        //             />
+        //         )
+        //     }
+        // }, 
 
         {
             title: 'operation',
@@ -355,12 +385,14 @@ const CustomReportHeaderGenerator = ({institutionId, isModalOpen}) => {
     const handleAddSec = () => {
         const newData = {
             key: countSec,
-            columnName: 'name',
-            customColumnName: `Institution name`,
+            value: 'name',
+            column_name: `Institution name`,
+            postition: "right", 
+            order: dataSourceSec?.length + 1, 
+            type: "institution"
         };
         setDataSourceSec([...dataSourceSec, newData]);
         setCountSec(countSec + 1);
-        NotificationMessage("success", "Add new row in institution report setting")
     };
     
     const handleSaveSec = (row) => {
@@ -397,59 +429,19 @@ const CustomReportHeaderGenerator = ({institutionId, isModalOpen}) => {
         };
     });
 
-    
-
-    const [patientReportColumn, setPatientReportColumn] = useState([]) ; 
-
-    const CustomSelect = ({ value, onChange }) => {
-        return (
-            <Select style={{ width: 300, marginTop: "auto", marginBottom: "auto" }} value={value} onChange={onChange}>
-                {patientReportColumn.map((eleemnt) => { 
-                    return(
-                        <Option value={eleemnt}>{eleemnt}</Option>
-                    )
-                })}
-            </Select>
-        );
-    };
-
-    const [institutionReportColumn, setInstitutionReportColumn] = useState([]) ; 
-
-    const InstitutionCustomSelect = ({ value, onChange }) => {
-        return (
-            <Select style={{ width: 300, marginTop: "auto", marginBottom: "auto" }} 
-                value={value} 
-                onChange={onChange}
-            >
-                {institutionReportColumn.map((eleemnt) => { 
-                    return(
-                        <Option value="option1">{eleemnt}</Option>
-                    )
-                })}
-            </Select>
-        );
-    };
-
 
     const closePopupDiv=()=>{
-
         isModalOpen(false) ; 
-        
     }
 
-    // ============ Fetch report related columns information ============== //
+    // Fetch institution report related columns information 
     const FetchReportColumn = async () => {
-        
         setIsLoading(true) ; 
-
         let responseData = await APIHandler("POST", {}, 'institute/v1/fetch-report-columns') ; 
-
         setIsLoading(false) ; 
 
         if (responseData === false){
-
             NotificationMessage("warning", "Network request failed") ; 
-        
         }   else if (responseData['status']  === true){
 
             let patientColumn = [] ; 
@@ -457,9 +449,15 @@ const CustomReportHeaderGenerator = ({institutionId, isModalOpen}) => {
 
             responseData['message'].map((element) => {
                 if (element.option === "Patient"){
-                    patientColumn.push(element.value) ; 
+                    patientColumn.push({
+                        value: element.value, 
+                        "type": "patient"
+                    }) ; 
                 }   else{
-                    institutionColumn.push(element.value) ; 
+                    institutionColumn.push({
+                        value: element.value,
+                        "type": "institution"
+                    }) ; 
                 }
             })
 
@@ -471,59 +469,59 @@ const CustomReportHeaderGenerator = ({institutionId, isModalOpen}) => {
         }
     }
 
+    // Default paient colunm related information 
     const [defaultPatientOption, setDefaultPatientOption] = useState([
         {
             'key': 0,
-            'columnName': "study__patient_name", 
-            "customColumnName": "Patient name"
+            'value': "study__patient_name", 
+            "column_name": "Patient name", 
+            "postition": "left", 
+            "order": 1, 
+            "type": "patient"
         },
         {
             'key': 1,
-            'columnName': "study__patient_id", 
-            "customColumnName": "Patient id"
+            'value': "study__patient_id", 
+            "column_name": "Patient id", 
+            "postition": "left", 
+            "order": 2, 
+            "type": "patient"
         },
         {
             'key': 2,
-            'columnName': "modality", 
-            "customColumnName": "Modality"
+            'value': "modality", 
+            "column_name": "Modality", 
+            "postition": "left", 
+            "order": 3, 
+            "type": "patient"
         },
         {
             'key': 3,
-            'columnName': "gender", 
-            "customColumnName": "Gender"
+            'value': "gender", 
+            "column_name": "Gender", 
+            "postition": "left", 
+            "order": 4, 
+            "type": "patient"
         },
     ]) ; 
 
+    // Default institution column related information 
     const [defaultInstitutionOption, setDefaultInstitutionOtion] = useState([
         {
             'key': 0,
-            'columnName': "name", 
-            "customColumnName": "Institution name"
-        }, 
-        {
-            'key':1,
-            'columnName': "address", 
-            "customColumnName": "Institution address"
-        }, 
-        {
-            'key': 2,
-            'columnName': "contact", 
-            "customColumnName": "Contact number"
-        }, 
-        {
-            'key': 4,
-            'columnName': "email", 
-            "customColumnName": "Email address"
+            'value': "name", 
+            "column_name": "Institution name", 
+            "posititon": "right", 
+            "order": 1, 
+            "type": "institution"
         }
 
     ]) ; 
 
+    // Fetch institution report related information 
     const FetchInstitutionReportSetting = async () => {
-
         setIsLoading(true) ; 
-
         let responseData = await APIHandler("POST", {"id": institutionId}, 'institute/v1/fetch-institution-report' ) ; 
-
         setIsLoading(false); 
 
         if (responseData === false){
@@ -531,43 +529,49 @@ const CustomReportHeaderGenerator = ({institutionId, isModalOpen}) => {
             NotificationMessage("warning", "Network request failed") ;
 
         }   else if (responseData['status'] === true){
+            
+            let institution_report_setting = responseData?.data?.institution_report_details ; 
+            let left_columns = [] ;
+            let right_columns = [] ; 
 
-            let institutionReport = [] ; 
-            let institutionIndex = 0 ; 
-
-            Object.keys(responseData['data']?.institution_report_details).forEach(key => {
-                const value = responseData['data']?.institution_report_details[key];
-                console.log(value);
-                
-                institutionReport.push({
-                    'key': institutionIndex, 
-                    'columnName': key, 
-                    'customColumnName': value?.column_name, 
-                    "position": value?.position
-                })
-                institutionIndex += 1; 
-            });
-
-            setDataSourceSec([...institutionReport]) ; 
-
-            let patientReport = [] ; 
-            let patientReportIndex = 0 ; 
-
-            let patientExcludeColumn = ["Patient id", "Patient name"] ; 
-            Object.keys(responseData['data']?.patient_report_details).forEach(key => {
-                const value = responseData['data']?.patient_report_details[key];
-                if (!patientExcludeColumn.includes(value)){
-                    patientReport.push({
-                        'key': patientReportIndex, 
-                        'columnName': key, 
-                        'customColumnName': value?.column_name, 
-                        "position": value?.position
+            Object.entries(institution_report_setting).forEach(([key, item]) => {
+                if (item?.position == "left"){
+                    left_columns.push({
+                        ...item,
+                        value: key
                     })
-                    patientReportIndex += 1; 
+                }   else {
+                    right_columns.push({
+                        ...item, 
+                        value: key
+                    })
                 }
             });
 
-            setDataSource([...patientReport]) ; 
+            let finalLeftData = [] ; 
+            let finalRightData = [] ; 
+
+            left_columns?.map((element, index) => {
+                let order = index + 1;
+                left_columns?.map((element) => {
+                    if (+element?.order ===  +order){
+                        finalLeftData.push(element) ; 
+                    }
+                })  
+            })
+
+            right_columns?.map((element, index) => {
+                let order = index + 1;
+                right_columns?.map((element) => {
+                    if (+element?.order ===  +order){
+                        finalRightData.push(element) ; 
+                    }
+                })  
+            })
+
+            setDataSource([...left_columns]) ; 
+            setDataSourceSec([...right_columns]) ; 
+
 
 
         }   else {
@@ -648,48 +652,33 @@ const CustomReportHeaderGenerator = ({institutionId, isModalOpen}) => {
 
     // ****** Save institution report setting related option handler ***** // 
     const SaveReportOptionHandle = async () => {
+        let institution_report_details = {} ; 
 
-        let savePatientdetails = {} ; 
-
-        dataSource.map((element) => {
-            savePatientdetails[element.columnName] = {
-                "column_name": element.customColumnName, 
-                "position": element?.position || "left"
-            } ; 
+        dataSource?.map((element, index) => {
+            institution_report_details[element?.value] = {...element, order: index + 1}
         })
 
-        let saveInstitutionDetails = {} ; 
-
-        dataSourceSec.map((element) => {
-            saveInstitutionDetails[element.columnName] = {
-                "column_name": element.customColumnName, 
-                "position": element?.position || "left"
-            } ; 
+        dataSourceSec?.map((element, index) => {
+            institution_report_details[element?.value] = {
+                ...element, order: index + 1
+            }
         })
 
         if (institutionId !== null){
 
             let requestPayload = {
                 "id": institutionId, 
-                "institution_report_details": saveInstitutionDetails, 
-                "patient_report_details": savePatientdetails
+                "institution_report_details": institution_report_details, 
             }; 
 
             setIsLoading(true) ; 
-
             let responseData = await APIHandler("POST", requestPayload, "institute/v1/update-institution-report") ; 
-
             setIsLoading(false) ; 
-
             if (responseData === false){
-            
                 NotificationMessage("warning", "Network request failed") ; 
-            
             } else if (responseData['status'] === true){
-
                 isModalOpen(false) ; 
                 NotificationMessage("success", "Institution report setting update successfully") ; 
-            
             }   else {
 
                 NotificationMessage("warning","Network request failed" ,responseData['messgae']) ; 
@@ -735,7 +724,7 @@ const CustomReportHeaderGenerator = ({institutionId, isModalOpen}) => {
 
                     </div>
 
-                    {/* ==== Patient report setting option handling ====  */}
+                    {/* ===== Left side columns information ====  */}
 
                     <div style={{paddingLeft: "1rem", paddingRight: "1rem"}}>
 
@@ -751,7 +740,7 @@ const CustomReportHeaderGenerator = ({institutionId, isModalOpen}) => {
                                     }
                                 }>
                                 <Tag color='#87d068'>
-                                    Patient Report Setting
+                                   Left Side Columns
                                 </Tag>
                             </div>
 
@@ -782,8 +771,7 @@ const CustomReportHeaderGenerator = ({institutionId, isModalOpen}) => {
 
                     </div>  
 
-                    {/* ==== Instittuion report setting option handling =====  */}
-
+                    {/* ====== Right side columns information ====== }                                 */}
                     <div style={{
                         paddingLeft: "1rem", 
                         paddingRight: "1rem", 
@@ -803,7 +791,7 @@ const CustomReportHeaderGenerator = ({institutionId, isModalOpen}) => {
                                     }
                                 }>
                                 <Tag color='#87d068'>
-                                    Institution Report Setting
+                                    Right Side Columns
                                 </Tag>
                             </div>
                             <Button

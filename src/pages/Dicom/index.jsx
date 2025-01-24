@@ -282,8 +282,8 @@ const Dicom = () => {
     getAllStudyData({
       page_size: currentPagination.limit || 10,
       page_number: currentPagination.page,
-      all_premission_id: JSON.parse(localStorage.getItem('all_permission_id')),
-      all_assign_id: JSON.parse(localStorage.getItem('all_assign_id'))
+      all_premission_id: [],
+      all_assign_id: []
     })
       .then(res => {
         if (res.data.status) {
@@ -488,8 +488,8 @@ const Dicom = () => {
       filter: removeNullValues(values),
       page_size: pagination?.limit || 10,
       page_number: pagination?.page || 1,
-      all_permission_id: JSON.parse(localStorage.getItem('all_permission_id')),
-      all_assign_id: JSON.parse(localStorage.getItem('all_assign_id')),
+      all_permission_id: [],
+      all_assign_id: [],
       deleted_skip: false
     })
       .then(res => {
@@ -541,8 +541,8 @@ const Dicom = () => {
       ...values,
       page_size: pagination?.limit || 10,
       page_number: pagination?.page || 1,
-      all_premission_id: JSON.parse(localStorage.getItem('all_permission_id')),
-      all_assign_id: JSON.parse(localStorage.getItem('all_assign_id'))
+      all_premission_id: [],
+      all_assign_id: []
     })
       .then(res => {
         if (res.data.status) {
@@ -758,15 +758,19 @@ const Dicom = () => {
 
   const handleCellClick = (record) => {
     const newSelectedRowKeys = [...selectedRowKeys];
+    const tempStudyRferenceIdKeys = [...studyReferenceIdArray] ; 
 
     const index = newSelectedRowKeys.indexOf(record.id);
     if (index > -1) {
       newSelectedRowKeys.splice(index, 1);
+      tempStudyRferenceIdKeys = tempStudyRferenceIdKeys.filterr((item) => +item?.id !== +record?.id)
     } else {
       newSelectedRowKeys.push(record.id);
+      tempStudyRferenceIdKeys.push(record) ; 
     }
     setSelectedRowKeys(newSelectedRowKeys); // Update the selected row keys
-
+    setStudyIdArray([...newSelectedRowKeys]) ; 
+    setStudyReferenceIdArray(tempStudyRferenceIdKeys) ;    
   };
 
   const columns = [
@@ -1932,7 +1936,6 @@ const Dicom = () => {
 
 
       {/* ==== Advanced search option ====  */}
-
       <AdvancedSearchModal
         name={'Advanced Search'}
         retrieveStudyData={retrieveStudyData}
@@ -1942,7 +1945,6 @@ const Dicom = () => {
 
 
       {/* ==== Quick assign study option ====  */}
-
       {isQuickAssignStudyModalOpen && (
         <AssignStudyModified
           isAssignModifiedModalOpen={isQuickAssignStudyModalOpen}

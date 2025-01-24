@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { useBreadcrumbs } from '../../hooks/useBreadcrumbs'
-import { Button, Card, Col, Form, Input, Row, Select, Radio, Upload, message } from 'antd'
+import { Button, Card, Col, Form, Input, Row, Select, Radio, Upload, message, Divider, Space } from 'antd'
 import '../../../ckeditor5/build/ckeditor'
 import { CKEditor } from '@ckeditor/ckeditor5-react'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -11,18 +11,72 @@ import {
   updateReport
 } from '../../apis/studiesApi'
 import NotificationMessage from '../../components/NotificationMessage'
-import { descriptionOptions } from '../../helpers/utils'
+import { descriptionOptions, MODALITY_OPTIONS } from '../../helpers/utils'
 import API from '../../apis/getApi'
 import APIHandler from '../../apis/apiHandler'
-import { UploadOutlined } from '@ant-design/icons'
+import { UploadOutlined } from '@ant-design/icons';
+import { PlusOutlined } from '@ant-design/icons'; 
+
 
 const AddTemplate = () => {
-  const navigate = useNavigate() ; 
-  const [editorData, setEditorData] = useState('') ; 
-  const [loading, setLoading] = useState(false) ; 
+  const navigate = useNavigate();
+  const { id } = useParams()
+
+  const [editorData, setEditorData] = useState('');
+  const [modalityOptions, setModalityOptions] = useState([...MODALITY_OPTIONS]);
+  const [descriptionSelectionOptions, setDescriptionSelectionOptions] = useState([...descriptionOptions]);
+  const [loading, setLoading] = useState(false);
   const { changeBreadcrumbs } = useBreadcrumbs()
   const [form] = Form.useForm()
-  const { id } = useParams()
+
+  // Modality 
+  const [name, setName] = useState('');
+  const inputRef = useRef();
+
+  // Study description
+  const [description, setDescription] = useState("");
+  const descriptionRef = useRef();
+
+  // Custom Modality enter related option handler 
+  const onNameChange = (event) => {
+    setName(event.target.value);
+  };
+
+  const addItem = (e) => {
+    try {
+      e.preventDefault();
+    } catch (error) {
+    }
+
+    if (name !== "" && name !== undefined && name !== null) {
+      setModalityOptions([{ label: name, value: name }, ...modalityOptions]);
+      setName('');
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 0);
+    }
+  };
+
+  // Custom study description related option handler 
+  const onDescriptionChange = (event) => {
+    setDescription(event.target.value);
+  };
+
+  const addDescriptionItem = (e) => {
+    try {
+      e.preventDefault();
+    } catch (error) {
+    }
+
+    if (description !== "" && description !== undefined && description !== null) {
+      setDescriptionSelectionOptions([{ label: description, value: description }, ...descriptionSelectionOptions]);
+      setDescription('');
+      setTimeout(() => {
+        descriptionRef.current?.focus();
+      }, 0);
+    }
+  };
+
 
   // **** Reterive particular template information **** // 
   const retrieveTemplateData = () => {
@@ -63,6 +117,9 @@ const AddTemplate = () => {
             value: item.id
           }))
           setInstitutionOptions(resData)
+          form.setFieldsValue({
+            "institution_select": resData
+          })
         } else {
           NotificationMessage(
             'warning',
@@ -88,12 +145,12 @@ const AddTemplate = () => {
     let responseData = await APIHandler(
       "POST",
       requestPayload,
-      "institute/v1/fetch-radiologist-name"
+      "institute/v1/fetch-radiologist-name?is_template_radiologist=true"
     );
 
     if (responseData["status"] === true) {
 
-      const resData = responseData['data'].map((element) => ({
+      const resData = responseData?.radiologist?.map((element) => ({
         label: element.name,
         value: element.id
       }))
@@ -104,7 +161,6 @@ const AddTemplate = () => {
   }
 
   // **** Reterive institution modality name list options **** // 
-  const [modalityOptions, setModalityOptions] = useState([]);
   const FetchInstitutionModalityList = async () => {
     let requestPayload = {};
     let responseData = await APIHandler(
@@ -137,7 +193,7 @@ const AddTemplate = () => {
     changeBreadcrumbs(crumbs);
     retrieveInstitutionDataFunction();
     FetchAllRadiologist();
-    FetchInstitutionModalityList();
+    // FetchInstitutionModalityList();
   }, [])
 
   // **** Template submit request handler **** // 
@@ -208,27 +264,27 @@ const AddTemplate = () => {
         if (values?.study_radiologist !== undefined) {
           requestPayload['radiologist'] = radiologistMatch == 1 ? radiologistMatchValue : values?.study_radiologist
         }
-        setLoading(true) ;
+        setLoading(true);
         updateReport({ ...requestPayload })
-        .then(res => {
-          setLoading(false); // Ensure loading is stopped for both success and failure cases
-          if (res.data.status) {
-            NotificationMessage('success', 'Template updated successfully');
-            navigate('/reports');
-          } else {
-            NotificationMessage(
-              'warning',
-              'Network request failed',
-              res.data.message || 'Unknown error occurred'
-            );
-          }
-        })
-        .catch(err => {
-          setLoading(false);
-          const errorMessage =
-            err.response?.data?.message || 'An unexpected error occurred';
-          NotificationMessage('warning', 'Network request failed', errorMessage);
-        });
+          .then(res => {
+            setLoading(false); // Ensure loading is stopped for both success and failure cases
+            if (res.data.status) {
+              NotificationMessage('success', 'Template updated successfully');
+              navigate('/reports');
+            } else {
+              NotificationMessage(
+                'warning',
+                'Network request failed',
+                res.data.message || 'Unknown error occurred'
+              );
+            }
+          })
+          .catch(err => {
+            setLoading(false);
+            const errorMessage =
+              err.response?.data?.message || 'An unexpected error occurred';
+            NotificationMessage('warning', 'Network request failed', errorMessage);
+          });
 
       }
     } else {
@@ -242,6 +298,8 @@ const AddTemplate = () => {
     if (file) {
       const reader = new FileReader();
       reader.onload = async (e) => {
+        console.log(reader.result);
+        
         const arrayBuffer = reader.result;
         const text = await mammoth.convertToHtml({ arrayBuffer });
         setEditorData(text.value);
@@ -259,16 +317,22 @@ const AddTemplate = () => {
     },
     showUploadList: false,
     onChange(info) {
-      handleFileChange(info)
+      handleFileChange(info);
     },
     beforeUpload: (file) => {
-      const isFileValid = (file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
-      if (!isFileValid) {
-        message.error(`${file.name} is not a valid file`);
+      console.log("File type informaTion ", file?.type);
+      
+      const isDocx = file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+      const isDoc = file.type === 'application/msword';
+      
+      if (!isDocx && !isDoc) {
+        message.error(`${file.name} is not a valid file type. Only .doc or .docx files are allowed.`);
+        return Upload.LIST_IGNORE; // Reject the file
       }
-      return isFileValid || Upload.LIST_IGNORE;
+      return true; // Accept the file
     },
   };
+  
 
   return (
     <div>
@@ -312,19 +376,46 @@ const AddTemplate = () => {
                   {
                     required: true,
                     whitespace: true,
-                    message: 'Please Enter Template Name'
+                    message: 'Please, Select template Modality'
                   }
                 ]}
               >
                 <Select
-                  placeholder="Select Study Description"
-                  options={modalityOptions}
+                  placeholder="Select Modality"
                   showSearch
                   filterSort={(optionA, optionB) =>
-                    (optionA?.label ?? "")
-                      .toLowerCase()
-                      .localeCompare((optionB?.label ?? "").toLowerCase())
+                    (optionA?.label ?? "").toLowerCase().localeCompare((optionB?.label ?? "").toLowerCase())
                   }
+                  dropdownRender={(menu) => (
+                    <>
+                      {menu}
+                      <Divider
+                        style={{
+                          margin: '8px 0',
+                        }}
+                      />
+                      <Space
+                        style={{
+                          padding: '0 8px 4px',
+                        }}
+                      >
+                        <Input
+                          placeholder="Please enter item"
+                          ref={inputRef}
+                          value={name}
+                          onChange={onNameChange}
+                          onKeyDown={(e) => e.stopPropagation()}
+                        />
+                        <Button type="text" icon={<PlusOutlined />} onClick={addItem}>
+                          Add item
+                        </Button>
+                      </Space>
+                    </>
+                  )}
+                  options={modalityOptions.map((item) => ({
+                    label: item?.label,
+                    value: item?.value,
+                  }))}
                 />
               </Form.Item>
 
@@ -343,13 +434,42 @@ const AddTemplate = () => {
               >
                 <Select
                   placeholder="Select Modality Description"
-                  options={descriptionOptions}
                   showSearch
                   filterSort={(optionA, optionB) =>
                     (optionA?.label ?? "")
                       .toLowerCase()
                       .localeCompare((optionB?.label ?? "").toLowerCase())
                   }
+                  dropdownRender={(menu) => (
+                    <>
+                      {menu}
+                      <Divider
+                        style={{
+                          margin: '8px 0',
+                        }}
+                      />
+                      <Space
+                        style={{
+                          padding: '0 8px 4px',
+                        }}
+                      >
+                        <Input
+                          placeholder="Please enter item"
+                          ref={descriptionRef}
+                          value={description}
+                          onChange={onDescriptionChange}
+                          onKeyDown={(e) => e.stopPropagation()}
+                        />
+                        <Button type="text" icon={<PlusOutlined />} onClick={addDescriptionItem}>
+                          Add item
+                        </Button>
+                      </Space>
+                    </>
+                  )}
+                  options={descriptionSelectionOptions.map((item) => ({
+                    label: item?.label,
+                    value: item?.value,
+                  }))}
                 />
               </Form.Item>
 
@@ -451,7 +571,7 @@ const AddTemplate = () => {
               </Form.Item>
 
               {/* Gender  */}
-              <Form.Item
+              {/* <Form.Item
                 label='Gender'
                 name='gender'
                 rules={[
@@ -467,8 +587,24 @@ const AddTemplate = () => {
 
                 </Radio.Group>
 
-              </Form.Item>
+              </Form.Item> */}
 
+              <Form.Item
+                label='Gender'
+                name='gender'
+                rules={[
+                  {
+                    required: true,
+                  },
+                ]}
+              >
+                <Select placeholder="Select Gender">
+                  <Select.Option value="Male">Male</Select.Option>
+                  <Select.Option value="Female">Female</Select.Option>
+                  <Select.Option value="Male,Female">Both</Select.Option>
+                  <Select.Option value="Others">Others</Select.Option>
+                </Select>
+              </Form.Item>
             </Col>
 
             <Col
@@ -481,7 +617,6 @@ const AddTemplate = () => {
               <Form.Item style={{ position: "relative" }}>
 
                 <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "10px" }}>
-                  {/* Template Doc input  */}
                   <div style={{ fontWeight: "700" }}>Create Template</div>
                   <Upload {...props} className='m'>
                     <Button type='primary' icon={<UploadOutlined />}>Insert Doc File</Button>
@@ -503,7 +638,7 @@ const AddTemplate = () => {
 
             <Form.Item className='btn-div'>
               <Button onClick={() => navigate(-1)}>Cancel</Button>
-              <Button type='primary' htmlType='submit' loading = {loading}>
+              <Button type='primary' htmlType='submit' loading={loading}>
                 Save
               </Button>
             </Form.Item>

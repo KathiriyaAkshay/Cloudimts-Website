@@ -40,8 +40,6 @@ const Login = () => {
       .then(res => {
         if (res.data.status) {
           API.defaults.headers.common["Authorization"] = `Bearer ${res.data.data.accessToken}`
-          
-          // Setup user token information 
           localStorage.setItem('token', res.data.data.accessToken)
 
           // Setup user all permission id information 
@@ -58,14 +56,10 @@ const Login = () => {
             )
           )
 
-          // Setup UserId 
-          localStorage.setItem('userID', res.data.data.user_id)
-
-          // Setup Role id 
           localStorage.setItem('role_id', res.data.data.rold_id)
-
-          // Setup User custom id 
-          localStorage.setItem('custom_user_id', res.data.data.custom_user_id)
+          
+          localStorage.setItem('userID', res.data.data.user_id) // User_details_table_id
+          localStorage.setItem('custom_user_id', res.data.data.custom_user_id) // Owner_custom_user_table_id
 
           NotificationMessage('success', 'Successfully Login')
           
