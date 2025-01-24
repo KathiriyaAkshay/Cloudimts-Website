@@ -819,22 +819,30 @@ const Dicom = () => {
       dataIndex: 'institution',
       width: "10%",
       className: `${checkPermissionStatus('View Institution name')
-        ? 'Study-count-column '
-        : 'column-display-none'
-        }`,
+          ? 'Study-count-column '
+          : 'column-display-none'
+      }`,
       render: (text, record) => (
-        record.urgent_case ? <>
-          <Tag color='red'>
-            <span style={{ fontWeight: 600 }}>{text}</span>
-          </Tag>
-        </> : <>
-          <Tag color='black'>
-            <span style={{ fontWeight: 600 }}>{text}</span>
-          </Tag>
-        </>
+          record.urgent_case ? (
+              <Tooltip title = {text.length > 15?text:""}>
+                <Tag color='red'>
+                    <span style={{ fontWeight: 600 }}>
+                        {text.length > 15 ? `${text.substring(0, 15)}...` : text} 
+                    </span>
+                </Tag>
+              </Tooltip>
+          ) : (
+              <Tooltip title = {text.length > 15?text:""}>
+                <Tag color='black'>
+                    <span style={{ fontWeight: 600 }}>
+                        {text.length > 15 ? `${text.substring(0, 15)}...` : text} 
+                    </span>
+                </Tag>
+              </Tooltip>
+          )
       ),
       onCell: (record) => ({
-        onClick: () => handleCellClick(record)
+          onClick: () => handleCellClick(record)
       })
     },
     checkPermissionStatus('Study id') && {
