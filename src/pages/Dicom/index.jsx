@@ -757,8 +757,8 @@ const Dicom = () => {
   }
 
   const handleCellClick = (record) => {
-    const newSelectedRowKeys = [...selectedRowKeys];
-    const tempStudyRferenceIdKeys = [...studyReferenceIdArray] ; 
+    let newSelectedRowKeys = [...selectedRowKeys];
+    let tempStudyRferenceIdKeys = [...studyReferenceIdArray] ; 
 
     const index = newSelectedRowKeys.indexOf(record.id);
     if (index > -1) {

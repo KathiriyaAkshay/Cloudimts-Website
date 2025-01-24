@@ -127,38 +127,38 @@ const Editor = ({ id }) => {
   const convertedPatientTableInitially = (institutionReport, isReturn) => {
     setIsTableCreate(false);
     const data = `<div>
-    <table style="width: 100%; border-collapse: collapse;">
-        <tbody>
-            ${(() => {
-                if (!institutionReport) {
-                    return ''; 
-                }
+      <table style="width: 100%; border-collapse: collapse;">
+          <tbody>
+              ${(() => {
+                  if (!institutionReport) {
+                      return ''; 
+                  }
 
-                const leftData = [...institutionReport?.left];
-                const rightData = [...institutionReport?.right];
-                const maxLength = Math.max(leftData?.length, rightData?.length);
+                  const leftData = [...institutionReport?.left];
+                  const rightData = [...institutionReport?.right];
+                  const maxLength = Math.max(leftData?.length, rightData?.length);
 
-                const generateTableRow = (leftColumn, rightColumn) => {
-                    let newRow = '<tr>';
-                    newRow += `
-                        <td style="text-align: left; padding: 8px; font-weight:600">${leftColumn?.column_name || ''}</td>
-                        <td style="padding: 8px;">${leftColumn?.column_value || ''}</td>
-                        <td style="text-align: left; padding: 8px; font-weight:600">${rightColumn?.column_name || ''}</td>
-                        <td style="padding: 8px;">${rightColumn?.column_value || ''}</td>
-                    `;
-                    newRow += '</tr>';
-                    return newRow;
-                };
+                  const generateTableRow = (leftColumn, rightColumn) => {
+                      let newRow = '<tr>';
+                      newRow += `
+                          <td style="text-align: left; padding: 8px; font-weight:600">${leftColumn?.column_name || ''}</td>
+                          <td style="padding: 8px;">${leftColumn?.column_value || ''}</td>
+                          <td style="text-align: left; padding: 8px; font-weight:600">${rightColumn?.column_name || ''}</td>
+                          <td style="padding: 8px;">${rightColumn?.column_value || ''}</td>
+                      `;
+                      newRow += '</tr>';
+                      return newRow;
+                  };
 
-                return Array.from({ length: maxLength }).fill(0).map((_, index) => {
-                    const leftColumn = leftData[index];
-                    const rightColumn = rightData[index];
-                    return generateTableRow(leftColumn, rightColumn);
-                });
-            })()}
-        </tbody>
-    </table>
-</div>`;
+                  return Array.from({ length: maxLength }).fill(0).map((_, index) => {
+                      const leftColumn = leftData[index];
+                      const rightColumn = rightData[index];
+                      return generateTableRow(leftColumn, rightColumn);
+                  });
+              })()}
+          </tbody>
+      </table>
+    </div>`;
     setIsTableCreate(true);
     if (isReturn == true) {
       return data;

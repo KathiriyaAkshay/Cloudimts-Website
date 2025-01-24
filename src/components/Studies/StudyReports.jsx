@@ -7,7 +7,8 @@ import {
   Tag,
   Tooltip,
   Typography,
-  Table
+  Table,
+  Empty
 } from "antd";
 import React, { useContext, useEffect, useState } from "react";
 import {
@@ -402,8 +403,8 @@ const StudyReports = ({
           
           <div className='Assign-study-reports-option-input-layout'>
 
-            {checkPermissionStatus("Report study") && (
-              <div className='Report-modal-all-option-div'>
+            <div className='Report-modal-all-option-div'>
+              {checkPermissionStatus("Report study") && (
                 <Button
                   key='link'
                   type='primary'
@@ -418,8 +419,15 @@ const StudyReports = ({
                 >
                   Study Report
                 </Button>
-                </div>
-            )}
+              )}
+
+              {!checkPermissionStatus("Report study") && (
+                <Empty
+                  style={{marginTop: 25}}
+                  description = "Not have reporting permission"
+                />
+              )}
+            </div>
 
 
             {/* Patient data information  */}

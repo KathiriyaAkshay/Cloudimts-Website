@@ -214,9 +214,11 @@ const AddTemplate = () => {
         if (values?.study_radiologist !== undefined) {
           requestPayload['radiologist'] = values?.study_radiologist
         }
+        setLoading(true) ; 
         insertNewTemplate({ ...requestPayload })
           .then(res => {
             if (res.data.status) {
+              setLoading(false) ; 
               NotificationMessage('success', 'Template successfully created')
               navigate('/reports')
             } else {
@@ -227,9 +229,10 @@ const AddTemplate = () => {
               )
             }
           })
-          .catch(err =>
+          .catch((err) => {
+            setLoading(false) ; 
             NotificationMessage('warning', 'Network request failed', err.response.data.message)
-          )
+          })
       } else {
         let requestPayload = {
           id: id,
