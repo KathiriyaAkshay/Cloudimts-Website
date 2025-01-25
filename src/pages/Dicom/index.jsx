@@ -77,7 +77,10 @@ let timeOut = null;
 
 const Dicom = () => {
   const [isLoading, setIsLoading] = useState(false)
-  const { setStudyIdArray, setStudyReferenceIdArray, studyReferenceIdArray, setSeriesIdList, totalPages, setTotalPages, studyCountInforamtion, setStudyCountInformation, studyIdArray } = useContext(StudyIdContext)
+  const { setStudyIdArray, setStudyReferenceIdArray, studyReferenceIdArray, 
+    setSeriesIdList, totalPages, setTotalPages, studyCountInforamtion, setStudyCountInformation, 
+    selectedRowKeys, setSelectedRowKeys
+  } = useContext(StudyIdContext)
   const { isFilterSelected, isAdvanceSearchSelected, setIsAdvanceSearchSelected } = useContext(FilterSelectedContext);
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
@@ -162,7 +165,7 @@ const Dicom = () => {
   const [reUploadOptionModel, setReUploadOptionModel] = useState(false);
   const [reuploadStudyData, setReuploadStudyData] = useState({});
 
-  const [selectedRowKeys, setSelectedRowKeys] = useState([]); // Store the selected row keys
+  // const [selectedRowKeys, setSelectedRowKeys] = useState([]); // Store the selected row keys
 
   const checkPermissionStatus = name => {
     const permission = permissionData['StudyTable view']?.find(

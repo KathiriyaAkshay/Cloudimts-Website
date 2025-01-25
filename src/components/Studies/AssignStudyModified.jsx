@@ -12,7 +12,11 @@ const AssignStudyModified = ({
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [form] = Form.useForm();
-  const { studyIdArray, setStudyIdArray, studyReferenceIdArray, setStudyReferenceIdArray } = useContext(StudyIdContext);
+  const { studyIdArray, 
+    setStudyIdArray, 
+    studyReferenceIdArray, 
+    setStudyReferenceIdArray, 
+  } = useContext(StudyIdContext);
   const [seriesIdList, setSeriesIdList] = useState([]) ; 
 
   const [radiologistType, setRadiologistType] = useState(undefined);
@@ -84,6 +88,8 @@ const AssignStudyModified = ({
         } else if (responseData['status'] === true) {
           setIsAssignModifiedModalOpen(false);
           setStudyIdArray([]);
+          setSelectedRowKeys([]) ; 
+          setStudyReferenceIdArray([]) ; 
           NotificationMessage("success", "Study assigned successfully");
         } else {
           NotificationMessage("warning", "Network request failed", responseData['message']);

@@ -8,6 +8,7 @@ const StudyIdProvider = ({ children }) => {
   const [seriesIdList, setSeriesIdList] = useState([]);
   const [totalPages, setTotalPages] = useState(0) ; 
   const [studyCountInforamtion, setStudyCountInformation] = useState({}) ; 
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]); // Store the selected row keys
 
   return (
     <StudyIdContext.Provider
@@ -20,7 +21,9 @@ const StudyIdProvider = ({ children }) => {
         totalPages, 
         setTotalPages, 
         studyCountInforamtion, 
-        setStudyCountInformation
+        setStudyCountInformation, 
+        selectedRowKeys, 
+        setSelectedRowKeys
       }}>
       {children}
     </StudyIdContext.Provider>
