@@ -1,3 +1,5 @@
+const OHIF_VIEWER = import.meta.env.VITE_APP_OHIF_VIEWER ; 
+
 import { CKEditor } from '@ckeditor/ckeditor5-react'
 import React, { useContext, useEffect, useState, useRef, useCallback } from 'react'
 import '../../ckeditor5/build/ckeditor'
@@ -210,19 +212,22 @@ const Editor = ({ id }) => {
       setInstitutionId(responseData?.data?.institution_id);
       setGenderId(responseData?.data?.Gender);
 
-      // setAssignStudyData(responseData?.data?.assigned_study_data?.study_data?.images) ; 
-      const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'tiff', 'svg'];
-      const imageUrls = responseData?.data?.assigned_study_data?.study_data?.images.filter(url => {
-        const extension = url.split('.').pop().toLowerCase(); 
-        return imageExtensions.includes(extension); 
-      });
-
-      const nonImageUrls = responseData?.data?.assigned_study_data?.study_data?.images.filter(url => {
-        const extension = url.split('.').pop().toLowerCase(); 
-        return !imageExtensions.includes(extension); 
-      });
-      setAssignStudyDataImage(imageUrls) ; 
-      setAssignStudyDataDocument(nonImageUrls) ; 
+      try {
+        const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'tiff', 'svg'];
+        const imageUrls = responseData?.data?.assigned_study_data?.study_data?.images.filter(url => {
+          const extension = url.split('.').pop().toLowerCase(); 
+          return imageExtensions.includes(extension); 
+        });
+  
+        const nonImageUrls = responseData?.data?.assigned_study_data?.study_data?.images.filter(url => {
+          const extension = url.split('.').pop().toLowerCase(); 
+          return !imageExtensions.includes(extension); 
+        });
+        setAssignStudyDataImage(imageUrls) ; 
+        setAssignStudyDataDocument(nonImageUrls) ; 
+      } catch (error) {
+        
+      }
 
       // Institution report details fetch ======================================
       let institutionReportPayload = {
@@ -415,10 +420,7 @@ const Editor = ({ id }) => {
   };
 
   // **** StudyUID information **** // 
-  const studyUIDInformation = `https://viewer.cloudimts.com/ohif/viewer?url=../studies/` + localStorage.getItem("studyUIDValue") + "/ohif-dicom-json";
-
   const [imageSlider, setImageSlider] = useState([])
-
 
   function getFileNameFromURL(url) {
     const pathSegments = url.split('/');
@@ -610,17 +612,6 @@ const Editor = ({ id }) => {
                             )}
                           </div>
 
-                          {/* <div style={{ width: "100%", textAlign: "right", paddingRight: 10 }}>
-                          <Button
-                            style={{ marginLeft: "auto" }}
-                            type='primary'
-                            onClick={() => {
-                              convertPatientDataToTable(true);
-                              NotificationMessage("success", "Images added successfully")
-                            }}>
-                            Insert
-                          </Button>
-                        </div> */}
                         </>
                       )}
 
@@ -628,13 +619,13 @@ const Editor = ({ id }) => {
                       {selectedItem?.isOhifViewerSelected && (
                         <>
                           <div style={{ width: "100%", height: "100%", overflowY: "auto" }} onBeforeInput={scrollToBottom}>
-                            <iframe src={studyUIDInformation} width="100%" height="800px" className='ohif-container' id='ohif-frame'></iframe>
+                            <iframe src={`${OHIF_VIEWER}/viewer?StudyInstanceUIDs=${patientInformation?.Study_UID}`} width="100%" height="800px" className='ohif-container' id='ohif-frame'></iframe>
                           </div>
                         </>
                       )}
 
                       {/* ==== Manual images information layout =====  */}
-                      <div>
+                      {/* <div>
                         <div style={{ display: "flex" }}>
                           <div>
                             
@@ -697,6 +688,7 @@ const Editor = ({ id }) => {
                         </Spin>
 
                       </div>
+                       */}
                     </div>
 
                   </Splitter.Panel>

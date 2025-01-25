@@ -71,6 +71,7 @@ import ReUploadIcon from "../../assets/images/reupload.png";
 import ManulImageDrawer from './manulImageDrawer'
 import moment from 'moment';
 import { DownloadOutlined } from '@ant-design/icons';
+import { handleOHIFViewer } from '../../helpers/ohif.viewer';
 
 const BASE_URL = import.meta.env.VITE_APP_SOCKET_BASE_URL;
 let timeOut = null;
@@ -1127,7 +1128,7 @@ const Dicom = () => {
                       className='ohif-viwer-option-icon'
                       onClick={() => {
                         handleCellDoubleClick(record);
-                        window.open(`https://viewer.cloudimts.com/ohif/viewer?url=../studies/${record?.study?.study_original_id}/ohif-dicom-json`, "_blank");
+                        handleOHIFViewer(record?.study?.study_uid) ; 
                       }} />
                   </Tooltip>
                 )}

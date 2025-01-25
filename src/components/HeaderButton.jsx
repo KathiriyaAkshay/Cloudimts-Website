@@ -452,7 +452,7 @@ const HeaderButton = ({
                 Patient data
               </Button>
 
-              <Button
+              {/* <Button
                 type={selectedItem?.isImagesSelected?"primary":"default"}
                 onClick={() =>
                   setSelectedItem(prev => ({
@@ -466,7 +466,7 @@ const HeaderButton = ({
                 }
               >
                 Study Images
-              </Button>
+              </Button> */}
 
               <Button type='primary' onClick={() =>
                   setSelectedItem(prev => ({
