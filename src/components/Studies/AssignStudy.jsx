@@ -16,6 +16,7 @@ import {
 } from "antd";
 import React, { useEffect, useState, useContext, useRef } from "react";
 import {
+  createStudyDescription,
   fetchAssignStudy,
   getStudyData,
   postAssignStudy,
@@ -28,7 +29,8 @@ import { descriptionOptions } from "../../helpers/utils";
 import APIHandler from "../../apis/apiHandler";
 import { UserPermissionContext } from "../../hooks/userPermissionContext";
 import { PlusOutlined } from "@ant-design/icons";
-import { CENTER_OWNER_RADIOLOGIST, RADIOLOGIST } from "../../constant/radiologist.role";
+import { RADIOLOGIST } from "../../constant/radiologist.role";
+import { getStudyModalityList, getStudyDescriptionList } from "../../apis/studiesApi";
 
 const AssignStudy = ({
   isAssignModalOpen,
@@ -45,7 +47,10 @@ const AssignStudy = ({
   const [value, setValues] = useState([]);
   const [imageFile, setImageFile] = useState(null);
   const [assignUserId, setAssignUserId] = useState(null);
-  const [items, setItems] = useState(descriptionOptions);
+  const [modalityOptions, setModalityOptions] = useState([]);
+  const [modalityOptionsLoading, setModalityOptionsLoading] = useState(false) ; 
+  const [items, setItems] = useState([]);
+  const [studyDescriptionLoading, setStudyDescriptionLoading] = useState(false) ; 
   const [name, setName] = useState('');
   const inputRef = useRef(null);
 
@@ -53,7 +58,7 @@ const AssignStudy = ({
     setName(event.target.value);
   };
 
-  const addItem = (e) => {
+  const addItem = async (e) => {
     try {
       e.preventDefault();
     } catch (error) {
@@ -61,12 +66,22 @@ const AssignStudy = ({
 
     if (name !== "" && name !== undefined && name !== null){
       setItems([{ label: name, value: name }, ...items]);
+      await InsertStudyDescription({study_description: name})
       setName('');
       setTimeout(() => {
         inputRef.current?.focus();
       }, 0);
     }
   };
+
+  const InsertStudyDescription = async (params) => {
+    await createStudyDescription(params)
+      .then((res) => {
+        
+      }).catch((error) => {
+
+      })
+  }
 
   // Permission information context
   const { permissionData } = useContext(UserPermissionContext);
@@ -365,7 +380,6 @@ const AssignStudy = ({
   };
 
   // **** Reterive institution modality name list options **** // 
-  const [modalityOptions, setModalityOptions] = useState([]);
   const FetchInstitutionModalityList = async () => {
     let requestPayload = {};
     let responseData = await APIHandler(
@@ -386,14 +400,50 @@ const AssignStudy = ({
 
   }
 
+  // ***** Reterive all modality list related information ***** // 
+  const FetchModalityList = async () => {
+    setModalityOptionsLoading(true); 
+    await getStudyModalityList({})
+      .then((res) => {
+        let tempOptions = res?.data?.data?.map((element) => {
+          return {
+            label : element?.modality, 
+            value: element?.modality
+          }
+        })
+        setModalityOptions(tempOptions) ; 
+      }).catch((error) => {
+      })
+    setModalityOptionsLoading(false); 
+  }
+
+  // **** Reterive all study description list related information **** // 
+  const FetchStudyDescriptionList = async () => {
+    setStudyDescriptionLoading(true) ; 
+    await getStudyDescriptionList({})
+      .then((res) => {
+        let tempOtion = res?.data?.data?.map((element) => {
+          return {
+            label: element?.study_description, 
+            value: element?.study_description
+          }
+        })
+        setItems(tempOtion) ; 
+      }).catch((error) => {})
+    setStudyDescriptionLoading(false) ; 
+  }
+  
+
 
   useEffect(() => {
     if (studyID && isAssignModalOpen) {
       retrieveStudyData();
       setValues([]);
       // FetchRadiologist();
-      FetchInstitutionModalityList();
+      // FetchInstitutionModalityList();
       retrieveAssignStudyDetails();
+      FetchStudyDescriptionList() ; 
+      FetchModalityList() ; 
     }
   }, [studyID, isAssignModalOpen]);
 
@@ -635,6 +685,7 @@ const AssignStudy = ({
                             className="clinical-history-modality-selection"
                             placeholder="Select Study Description"
                             options={modalityOptions}
+                            loading = {modalityOptionsLoading}
                             showSearch
                             onChange={(values, option) => {
                               form.setFieldValue("modality", option?.label);

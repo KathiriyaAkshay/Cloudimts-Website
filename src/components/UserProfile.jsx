@@ -133,19 +133,11 @@ const UserProfile = () => {
 
   // User information fetch handler 
   const ProfileInfomationOpener = async () => {
-
-    setShowDrawer(true);
-
     setProfileSpinner(true);
-
     let responseData = await APIHandler("POST", {}, 'user/v1/user-profile');
-
     setProfileSpinner(false);
-
     if (responseData === false) {
-
       NotificationMessage("warning", "Network request failed");
-
     } else if (responseData['status'] === true) {
 
       setProfileInformation({ ...responseData['data'] });
@@ -203,7 +195,10 @@ const UserProfile = () => {
     }
   }, [supportData])
 
-  useEffect(() => { retrieveSupportData() }, [])
+  useEffect(() => { 
+    retrieveSupportData() 
+    ProfileInfomationOpener() ; 
+  }, [])
 
 
   return (
@@ -231,40 +226,90 @@ const UserProfile = () => {
           </Flex>
 
           {/* ==== Support option icon ====  */}
-          <Button
-            onClick={() => setShow(true)}
-            type="primary"
-            style={{ display: "flex", gap: "8px", alignItems: "center" }}
-          >
-            <BiSupport />
-          </Button>
+          <div>
+            <Flex style={{
+              marginTop: "auto", 
+              marginBottom: "auto", 
+              verticalAlign: "center", 
+              marginRight: 10
+            }} gap={10}>
+              <div style={{
+                fontSize: 22, 
+                marginTop: 8, 
+                marginBottom: "auto", 
+                cursor: "pointer", 
+                color: "blue"
+              }} 
+                onClick={() => setShow(true)}
+              >
+                <BiSupport />
+              </div>
 
-          {/* ==== download option ==== */}
-          {window.location.pathname != "/studies" && (
-            <Tooltip title="Download App">
-              <Button
-                onClick={() => { navigate("/downloads") }}
+              {/* <Button
+                onClick={() => setShow(true)}
                 type="primary"
                 style={{ display: "flex", gap: "8px", alignItems: "center" }}
               >
-                <DownloadOutlined />
-              </Button>
-            </Tooltip>
-          )}
+              </Button> */}
+
+              {/* ==== download option ==== */}
+              {window.location.pathname != "/studies" && (
+                <Tooltip title="Download App">
+                  <DownloadOutlined 
+                    style={{
+                      fontSize: 22, 
+                      marginTop: "auto", 
+                      marginBottom: "auto", 
+                      color: "blue"
+                    }}
+                  />
+                  {/* <Button
+                    onClick={() => { navigate("/downloads") }}
+                    type="primary"
+                    style={{ display: "flex", gap: "8px", alignItems: "center" }}
+                  >
+                  </Button> */}
+                </Tooltip>
+              )}
 
 
-          {/* ==== User option icon ====  */}
+              {/* ==== User option icon ====  */}
+              {/* <div onClick={() => {
+                setShowDrawer(true) ; 
+              }}>
+                <UserOutlined 
+                  style={{
+                    fontSize: 20, 
+                    color: "blue", 
+                    marginTop: "auto", 
+                    marginBottom: "auto"
+                  }}
+                />
+              </div> */}
 
-          <Avatar
-            style={{ marginRight: "30px" }}
-            size="large"
-            className="avatar"
-            onClick={() => ProfileInfomationOpener()}
-          >
+              <div style={{
+                marginTop: "auto", 
+                marginBottom: "auto", 
+                fontSize: 12, 
+                fontWeight: 600
+              }}>
+                {profileInformation?.username}
+              </div>
 
-            <UserOutlined />
+              <Avatar
+                style={{marginTop: "auto", marginBottom: "auto" }}
+                size="default"
+                className="avatar"
+                onClick={() =>{
+                  setShowDrawer(true) ; 
+                  // ProfileInfomationOpener()
+                }}
+              >
 
-          </Avatar>
+                <UserOutlined/>
+              </Avatar>
+            </Flex>
+          </div>
 
         </Space>
 

@@ -21,7 +21,9 @@ import { descriptionOptions, EmailHeaderContent, ReportDesclamierContent } from 
 import { CloseCircleOutlined, DownloadOutlined, PlusOutlined } from '@ant-design/icons'
 import { convertToDDMMYYYY } from '../helpers/utils'
 import { Splitter } from 'antd'
-import { BsEyeFill } from 'react-icons/bs'
+import { BsEyeFill } from 'react-icons/bs' ; 
+import { getStudyModalityList, getStudyDescriptionList } from '../apis/studiesApi';
+import { createStudyModality, createStudyDescription } from '../apis/studiesApi';
 
 const Editor = ({ id }) => {
   const navigate = useNavigate();
@@ -47,7 +49,8 @@ const Editor = ({ id }) => {
   const [partientInfoDrawerOption, setPatientInfoDrawerOption] = useState("info");
 
   const [reportStudyDescription, setReportStudyDescription] = useState(null);
-  const [items, setItems] = useState(descriptionOptions);
+  const [studyDescriptionLoading, setStudyDescriptionLoading] = useState(false) ; 
+  const [items, setItems] = useState([]);
   const [name, setName] = useState('');
   const inputRef = useRef(null);
 
@@ -56,6 +59,7 @@ const Editor = ({ id }) => {
   const [patientInformation, setPatientInformation] = useState(undefined);
   const [patientReportList, setPatientReportList] = useState([]);
   const [isTableCreate, setIsTableCreate] = useState(false);
+  const [tableHtmlData, setTableHtmlData] = useState(undefined) ; 
   const [templateOption, setTemplateOptions] = useState([]);
   const [assignStudyDataImage, setAssignStudyDataImage] = useState([]) ; 
   const [assignStudyDataDocument, setAssignStudyDataDocument] = useState([]) ; 
@@ -85,7 +89,8 @@ const Editor = ({ id }) => {
 
       const resData = responseData?.data.map((data) => ({
         label: data?.name,
-        value: data?.id
+        value: data?.id, 
+        ...data
       }))
 
       setTemplateOptions([...resData]);
@@ -162,6 +167,7 @@ const Editor = ({ id }) => {
       </table>
     </div>`;
     setIsTableCreate(true);
+    setTableHtmlData(data) ; 
     if (isReturn == true) {
       return data;
     } else {
@@ -279,7 +285,8 @@ const Editor = ({ id }) => {
       const res = await fetchTemplate({ id: selectedItem?.templateId });
 
       if (res?.data?.status) {
-        setEditorData(prevData => prevData + (res?.data?.data?.report_data || ""));
+        setEditorData(tableHtmlData + res?.data?.data?.report_data) ; 
+        // setEditorData(prevData => prevData + (res?.data?.data?.report_data || ""));
       } else {
         NotificationMessage('warning', 'Network request failed', res?.data?.message || "Unknown error occurred");
       }
@@ -400,11 +407,11 @@ const Editor = ({ id }) => {
     }
   ]
 
-  const onNameChange = (event) => {
+  const onNameChange = async (event) => {
     setName(event.target.value);
   };
 
-  const addItem = (e) => {
+  const addItem = async (e) => {
     try {
       e.preventDefault();
     } catch (error) {
@@ -412,12 +419,36 @@ const Editor = ({ id }) => {
 
     if (name !== "" && name !== undefined && name !== null){
       setItems([{ label: name, value: name }, ...items]);
+      await InsertStudyDescription({study_description: name}) ; 
       setName('');
       setTimeout(() => {
         inputRef.current?.focus();
       }, 0);
     }
   };
+
+  // **** Fetch study description list *** // 
+  const FetchStudyDescriptionList = async () => {
+    setStudyDescriptionLoading(true) ; 
+    await getStudyDescriptionList({})
+      .then((res) => {
+        let tempOtion = res?.data?.data?.map((element) => {
+          return {
+            label: element?.study_description, 
+            value: element?.study_description
+          }
+        })
+        setItems(tempOtion) ; 
+      }).catch((error) => {})
+    setStudyDescriptionLoading(false) ; 
+  }
+
+  const InsertStudyDescription = async (params) => {
+    await createStudyDescription(params)
+      .then((res) => {})
+      .catch((error) => {})
+  }
+  useEffect(() => {FetchStudyDescriptionList()}, []) ; 
 
   // **** StudyUID information **** // 
   const [imageSlider, setImageSlider] = useState([])
@@ -743,12 +774,17 @@ const Editor = ({ id }) => {
 
                   <Flex style={{ width: "47%", justifyContent: "flex-end", gap: 15 }}>
 
-                    <div style={{ marginTop: "auto", marginBottom: "auto" }}>
+                    <div style={{ marginTop: "auto", marginBottom: "auto"}}>
                       <Tooltip title="Report template">
                         <Select
-                          className="template-selection-option-division"
                           placeholder="choose template"
-                          options={templateOption}
+                          options={templateOption?.map((element) => {
+                            return {
+                              label: `${element?.modality} | ${element?.label}`, 
+                              value: element?.value
+                            }
+                          })}
+                          style={{width: 200}}
                           showSearch
                           value={selectedItem?.templateId}
                           onChange={(e) =>

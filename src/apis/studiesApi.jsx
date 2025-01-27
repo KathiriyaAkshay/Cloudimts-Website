@@ -885,3 +885,59 @@ export const viewReported = async (params = {}) => {
   );
   return viewReported;
 };
+
+export const getStudyModalityList = async (params = {}) => {
+  let token = GetToken() ; 
+  const getModality = await API.get(
+    `/studies/v1/modality`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  ) ; 
+  return getModality ; 
+}
+
+
+export const getStudyDescriptionList = async (params = {}) => {
+  let token = GetToken() ; 
+
+  const getStudyDescriptionList = await API.get(
+    "/studies/v1/study_description", 
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  ); 
+  return getStudyDescriptionList ; 
+}
+
+export const createStudyModality = async (params = {}) => {
+  let token = GetToken() ; 
+  const createModality = await API.post(
+    "studies/v1/modality/create", 
+    params, 
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  ) ; 
+  return createModality ; 
+}
+
+export const createStudyDescription = async (params = {}) => {
+  let token = GetToken() ; 
+  const createStudyDescription = await API.post(
+    "studies/v1/study_description/create", 
+    params, 
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  ); 
+  return createStudyDescription ; 
+}

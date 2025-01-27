@@ -164,7 +164,9 @@ const CustomReportHeaderGenerator = ({institutionId, isModalOpen}) => {
     const CustomSelect = ({ value, onChange }) => {
         return (
             <Select style={{ width: 300, marginTop: "auto", marginBottom: "auto" }} 
-                value={value} onChange={onChange}>
+                value={value} onChange={(value) => {
+                    onChange(value)
+                }}>
                 {[...patientReportColumn].map((eleemnt) => { 
                     return(
                         <Option value={eleemnt?.value}>{eleemnt?.value} | <Tag color='green'>Patient</Tag></Option>
@@ -194,20 +196,43 @@ const CustomReportHeaderGenerator = ({institutionId, isModalOpen}) => {
         });
     }
 
-    const handleSelectChange = (key, value) => {
-        const dataIndex = dataSource.findIndex((record) => record.key === key);
-        const newData = [...dataSource];
-        newData[dataIndex] = { ...newData[dataIndex], columnName: value };
+    const handleSelectChange = (key, value, index) => {
+        let temp = dataSource ; 
+        let updateTemp = temp.map((element, indexValue) => {
+            if (indexValue == index){
+                return {
+                    ...element, 
+                    value: value
+                }
+            }   else {
+                return {...element}
+            }
+        })
+        setDataSource(updateTemp) ; 
+        // const dataIndex = dataSource.findIndex((record) => record.key === key);
+        // console.log("Data index information", dataIndex);
+        
+        // const newData = [...dataSource];
+        // newData[dataIndex] = { ...newData[dataIndex], columnName: value };
 
-        setDataSource(newData);;
+        // setDataSource(newData);;
     };
 
-    const handleSelectChangeSec = (key, value) => {
-        const dataIndex = dataSourceSec.findIndex((record) => record.key === key);
-        const newData = [...dataSourceSec];
-        newData[dataIndex] = { ...newData[dataIndex], columnName: value };
-
-        setDataSourceSec(newData);
+    const handleSelectChangeSec = (key, value, index) => {
+        let temp = dataSourceSec; 
+        let updatedTemp = temp?.map((element, indexValue) => {
+            if (indexValue == index){
+                return {
+                    ...element, 
+                    value: value
+                }
+            }   else {
+                return {
+                    ...element
+                }
+            }
+        })
+        setDataSourceSec(updatedTemp);
     };
 
     // Left side related columns
@@ -216,11 +241,11 @@ const CustomReportHeaderGenerator = ({institutionId, isModalOpen}) => {
         {
             title: 'Patient Column-value',
             dataIndex: 'columnName',
-            render: (text, record) => {
+            render: (text, record, index) => {
                 return (
                     <CustomSelect
                         value={record?.value}
-                        onChange={(value) => handleSelectChange(record.key, value)}
+                        onChange={(value) => handleSelectChange(record.key, value, index)}
                     />
                 )
             },
@@ -333,11 +358,11 @@ const CustomReportHeaderGenerator = ({institutionId, isModalOpen}) => {
         {
             title: 'Institution Column-name',
             dataIndex: 'columnName',
-            render: (text, record) => {
+            render: (text, record, index) => {
                 return (
                     <CustomSelect
                         value={record?.value}
-                        onChange={(value) => handleSelectChangeSec(record.key, value)}
+                        onChange={(value) => handleSelectChangeSec(record.key, value, index)}
                     />
                 )
             },

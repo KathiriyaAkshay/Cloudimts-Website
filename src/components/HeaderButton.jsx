@@ -32,6 +32,7 @@ import {
 } from '../helpers/studyDataFilter'
 import OHIF from "../assets/images/menu.png" ; 
 import WeasisViewer from "../assets/images/Weasis.png" ; 
+import API from '../apis/getApi'
 
 const HeaderButton = ({
   id,
@@ -89,69 +90,74 @@ const HeaderButton = ({
   }, [window.location.pathname])
 
   // Function to handle file selection and conversion
-  const handleFileChange = (event) => {
+  const handleFileChange = async (event) => {
     const file = event.file.originFileObj;
     if (file) {
-      const reader = new FileReader();
-      reader.onload = async (e) => {
-        const arrayBuffer = reader.result;
-        const text = await mammoth.convertToHtml({ arrayBuffer });
-        const data = `
-          <!DOCTYPE html>
-            <html lang="en">
-            <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Centered Content with Table Border</title>
-            <style>
-                body {
-                    margin: 0;
-                    padding: 0;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    height: 100vh;
-                    width:100%;
-                }
-                .container {
-                    text-align: center;
-                    border: 2px solid #000;
-                    padding: 20px;
-                }
-                table {
-                    border-collapse: collapse;
-                    margin: auto;
-                }
-                table, th, td {
-                    padding:5px !important;
-                    border: 1px solid #000;
-                }
-            </style>
-            </head>
-            <body>
-            <div class="container">`+ text.value + `
-            </div>
-            </body>
-            </html>
-   
-          `
-        setDocFileData(text.value);
+      if (String(file?.name).endsWith(".doc")){
+        // Flag to prevent multiple calls
+        if (file.isProcessing) return; // Check if this file is already being processed
+        file.isProcessing = true;
 
-      };
-      reader.readAsArrayBuffer(file);
+        try {
+          let formData = new FormData() ; 
+          formData.append("file", file) ; 
+
+          let token = localStorage.getItem("token") ;
+          let response = await API.post("/image/v1/doc_to_docx", 
+            formData, 
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "multipart/form-data"
+              }
+            }
+          ); 
+          const docxFileUrl = response.data?.message?.url; // URL to the converted DOCX file
+          const docxResponse = await fetch(docxFileUrl);
+          const docxBlob = await docxResponse.blob();
+
+          // // Pass the DOCX file content to mammoth for conversion to HTML
+          const arrayBuffer = await docxBlob.arrayBuffer();
+          const { value } = await mammoth.convertToHtml({ arrayBuffer });
+
+          let tempValue = String(value).replace("Evaluation Warning: The document was created with Spire.Doc for Python.", "") ; 
+          setDocFileData(tempValue) ; 
+
+        } catch (error) {
+          
+        }
+      } else {
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+          const arrayBuffer = reader.result;
+          const text = await mammoth.convertToHtml({ arrayBuffer });
+          setDocFileData(text.value);
+        };
+        reader.readAsArrayBuffer(file);
+      }
     }
   };
 
   const props = {
     name: 'file',
     action: 'https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188',
+    accept: ".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     headers: {
       authorization: 'authorization-text',
     },
-    accept:".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     showUploadList: false,
     onChange(info) {
-      handleFileChange(info)
+      handleFileChange(info);
+    },
+    beforeUpload: (file) => {
+      const isDocx = file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+      const isDoc = file.type === 'application/msword';
+      
+      if (!isDocx && !isDoc) {
+        message.error(`${file.name} is not a valid file type. Only .doc or .docx files are allowed.`);
+        return Upload.LIST_IGNORE; // Reject the file
+      }
+      return true; // Accept the file
     },
   };
 

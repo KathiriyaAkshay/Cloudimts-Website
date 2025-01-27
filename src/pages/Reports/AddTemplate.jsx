@@ -11,20 +11,22 @@ import {
   updateReport
 } from '../../apis/studiesApi'
 import NotificationMessage from '../../components/NotificationMessage'
-import { descriptionOptions, MODALITY_OPTIONS } from '../../helpers/utils'
 import API from '../../apis/getApi'
 import APIHandler from '../../apis/apiHandler'
 import { UploadOutlined } from '@ant-design/icons';
 import { PlusOutlined } from '@ant-design/icons'; 
-
+import { getStudyDescriptionList, getStudyModalityList } from '../../apis/studiesApi'
+import { createStudyModality, createStudyDescription } from '../../apis/studiesApi'; 
 
 const AddTemplate = () => {
   const navigate = useNavigate();
   const { id } = useParams()
 
   const [editorData, setEditorData] = useState('');
-  const [modalityOptions, setModalityOptions] = useState([...MODALITY_OPTIONS]);
-  const [descriptionSelectionOptions, setDescriptionSelectionOptions] = useState([...descriptionOptions]);
+  const [modalityOptions, setModalityOptions] = useState([]);
+  const [modalityOptionsLoading, setModalityOptionsLoading] = useState(false) ; 
+  const [descriptionSelectionOptions, setDescriptionSelectionOptions] = useState([]);
+  const [descriptionOptionsLoading, setDescriptionOptionsLoading] = useState(false) ; 
   const [loading, setLoading] = useState(false);
   const { changeBreadcrumbs } = useBreadcrumbs()
   const [form] = Form.useForm()
@@ -42,7 +44,7 @@ const AddTemplate = () => {
     setName(event.target.value);
   };
 
-  const addItem = (e) => {
+  const addItem = async (e) => {
     try {
       e.preventDefault();
     } catch (error) {
@@ -50,6 +52,7 @@ const AddTemplate = () => {
 
     if (name !== "" && name !== undefined && name !== null) {
       setModalityOptions([{ label: name, value: name }, ...modalityOptions]);
+      await InsertModalityOption({modality: name}) ; 
       setName('');
       setTimeout(() => {
         inputRef.current?.focus();
@@ -62,7 +65,7 @@ const AddTemplate = () => {
     setDescription(event.target.value);
   };
 
-  const addDescriptionItem = (e) => {
+  const addDescriptionItem = async (e) => {
     try {
       e.preventDefault();
     } catch (error) {
@@ -70,12 +73,61 @@ const AddTemplate = () => {
 
     if (description !== "" && description !== undefined && description !== null) {
       setDescriptionSelectionOptions([{ label: description, value: description }, ...descriptionSelectionOptions]);
+      await InsertStudyDescription({study_description: description}) ; 
       setDescription('');
       setTimeout(() => {
         descriptionRef.current?.focus();
       }, 0);
     }
   };
+
+  // **** Fetch study modality list **** // 
+  const FetchModalityList = async () => {
+    setModalityOptionsLoading(true) ;
+    await getStudyModalityList({})
+      .then((res) => {
+        let tempOptions = res?.data?.data?.map((element) => {
+          return {
+            label : element?.modality, 
+            value: element?.modality
+          }
+        })
+        setModalityOptions(tempOptions) ; 
+      })
+    setModalityOptionsLoading(false) ; 
+  } ; 
+
+  const FetchStudyDescriptionList = async () => {
+    setDescriptionOptionsLoading(true) ; 
+    await getStudyDescriptionList({})
+      .then((res) => {
+        let tempOtion = res?.data?.data?.map((element) => {
+          return {
+            label: element?.study_description, 
+            value: element?.study_description
+          }
+        })
+        setDescriptionSelectionOptions(tempOtion) ; 
+      })
+    setDescriptionOptionsLoading(false) ; 
+  }
+
+  const InsertStudyDescription = async (params) => {
+    await createStudyDescription(params)
+      .then((res) => {})
+      .catch((error) => {})
+  }
+
+  const InsertModalityOption = async (params) => {
+    await createStudyModality(params)
+    .then((res) => {})
+    .catch((error) => {} )
+  }
+
+  useEffect(() => {
+    FetchModalityList() ; 
+    FetchStudyDescriptionList() ; 
+  },[]); 
 
 
   // **** Reterive particular template information **** // 
@@ -154,6 +206,9 @@ const AddTemplate = () => {
         label: element.name,
         value: element.id
       }))
+      form.setFieldsValue({
+        "study_radiologist": resData
+      })
 
       setAllRadiologistOption(resData);
 
@@ -296,18 +351,51 @@ const AddTemplate = () => {
   }
 
   // Function to handle file selection and conversion
-  const handleFileChange = (event) => {
+  const handleFileChange = async (event) => {
     const file = event.file.originFileObj;
     if (file) {
-      const reader = new FileReader();
-      reader.onload = async (e) => {
-        console.log(reader.result);
-        
-        const arrayBuffer = reader.result;
-        const text = await mammoth.convertToHtml({ arrayBuffer });
-        setEditorData(text.value);
-      };
-      reader.readAsArrayBuffer(file);
+      if (String(file?.name).endsWith(".doc")){
+        // Flag to prevent multiple calls
+        if (file.isProcessing) return; // Check if this file is already being processed
+        file.isProcessing = true;
+
+        try {
+          let formData = new FormData() ; 
+          formData.append("file", file) ; 
+
+          let token = localStorage.getItem("token") ;
+          let response = await API.post("/image/v1/doc_to_docx", 
+            formData, 
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "multipart/form-data"
+              }
+            }
+          ); 
+          const docxFileUrl = response.data?.message?.url; // URL to the converted DOCX file
+          const docxResponse = await fetch(docxFileUrl);
+          const docxBlob = await docxResponse.blob();
+
+          // // Pass the DOCX file content to mammoth for conversion to HTML
+          const arrayBuffer = await docxBlob.arrayBuffer();
+          const { value } = await mammoth.convertToHtml({ arrayBuffer });
+
+          let tempValue = String(value).replace("Evaluation Warning: The document was created with Spire.Doc for Python.", "") ; 
+          setEditorData(tempValue) ; 
+
+        } catch (error) {
+          
+        }
+      } else {
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+          const arrayBuffer = reader.result;
+          const text = await mammoth.convertToHtml({ arrayBuffer });
+          setEditorData(text.value);
+        };
+        reader.readAsArrayBuffer(file);
+      }
     }
   };
 
@@ -323,8 +411,6 @@ const AddTemplate = () => {
       handleFileChange(info);
     },
     beforeUpload: (file) => {
-      console.log("File type informaTion ", file?.type);
-      
       const isDocx = file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
       const isDoc = file.type === 'application/msword';
       
@@ -335,6 +421,11 @@ const AddTemplate = () => {
       return true; // Accept the file
     },
   };
+
+  useEffect(() => {
+    let tempEditorData = String(editorData).replace("Evaluation Warning: The document was created with Spire.Doc for Python.", "") ; 
+    setEditorData(tempEditorData) ; 
+  }, [editorData])
   
 
   return (
@@ -389,6 +480,7 @@ const AddTemplate = () => {
                   filterSort={(optionA, optionB) =>
                     (optionA?.label ?? "").toLowerCase().localeCompare((optionB?.label ?? "").toLowerCase())
                   }
+                  loading = {modalityOptionsLoading}
                   dropdownRender={(menu) => (
                     <>
                       {menu}
@@ -443,6 +535,7 @@ const AddTemplate = () => {
                       .toLowerCase()
                       .localeCompare((optionB?.label ?? "").toLowerCase())
                   }
+                  loading = {descriptionOptionsLoading}
                   dropdownRender={(menu) => (
                     <>
                       {menu}
